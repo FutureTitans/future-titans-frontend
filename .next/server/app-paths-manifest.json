@@ -1,0 +1,19 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/signup/page": "app/signup/page.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/student/dashboard/page": "app/student/dashboard/page.js",
+  "/student/modules/[id]/page": "app/student/modules/[id]/page.js",
+  "/student/submission/page": "app/student/submission/page.js",
+  "/student/modules/page": "app/student/modules/page.js",
+  "/student/profile/page": "app/student/profile/page.js",
+  "/admin/modules/[id]/page": "app/admin/modules/[id]/page.js",
+  "/admin/students/page": "app/admin/students/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/schools/page": "app/admin/schools/page.js",
+  "/admin/modules/page": "app/admin/modules/page.js",
+  "/admin/students/[id]/page": "app/admin/students/[id]/page.js",
+  "/admin/submissions/page": "app/admin/submissions/page.js",
+  "/admin/analytics/page": "app/admin/analytics/page.js"
+}
