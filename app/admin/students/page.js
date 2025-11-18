@@ -14,14 +14,24 @@ export default function StudentsPage() {
   const [schoolSlugs, setSchoolSlugs] = useState([]);
   const [selectedSlug, setSelectedSlug] = useState('');
 
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
+
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         const data = await admin.getStudents({
           search,
           schoolSlug: selectedSlug || undefined,
+          page: pagination.page,
+          limit: 50,
         });
-        setStudents(data);
+        // Handle both old format (array) and new format (object with students and pagination)
+        if (Array.isArray(data)) {
+          setStudents(data);
+        } else {
+          setStudents(data.students || []);
+          setPagination(data.pagination || { page: 1, totalPages: 1, total: 0 });
+        }
       } catch (error) {
         console.error('Failed to fetch students:', error);
       } finally {
@@ -29,7 +39,7 @@ export default function StudentsPage() {
       }
     };
     fetchStudents();
-  }, [search, selectedSlug]);
+  }, [search, selectedSlug, pagination.page]);
 
   useEffect(() => {
     const fetchSlugs = async () => {

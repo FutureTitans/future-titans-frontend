@@ -13,21 +13,33 @@ export default function SubmissionsPage() {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
   const [detailedSubmission, setDetailedSubmission] = useState(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
-
-  useEffect(() => {
-    fetchSubmissions();
-  }, [filter]);
+  const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
   const fetchSubmissions = async () => {
     try {
-      const data = await submission.getAll({ status: filter });
-      setSubmissions(data);
+      const data = await submission.getAll({ status: filter, page: pagination.page, limit: 50 });
+      // Handle both old format (array) and new format (object with submissions and pagination)
+      if (Array.isArray(data)) {
+        setSubmissions(data);
+      } else {
+        setSubmissions(data.submissions || []);
+        setPagination(data.pagination || { page: 1, totalPages: 1, total: 0 });
+      }
     } catch (error) {
       console.error('Failed to fetch submissions:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    setPagination({ page: 1, totalPages: 1, total: 0 }); // Reset to page 1 when filter changes
+    fetchSubmissions();
+  }, [filter]);
+
+  useEffect(() => {
+    fetchSubmissions();
+  }, [pagination.page]);
 
   const fetchSubmissionDetails = async (submissionId) => {
     try {
