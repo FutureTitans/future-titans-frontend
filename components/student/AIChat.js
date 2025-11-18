@@ -1,18 +1,23 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { aiChat } from '@/lib/api';
-import { Send, Loader, Volume2, VolumeX } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { aiChat, auth } from '@/lib/api';
+import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy } from 'lucide-react';
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
 export default function AIChatComponent({ moduleId, chapterId }) {
+  const router = useRouter();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [ssiScore, setSSIScore] = useState(null);
   const [ttsEnabled, setTtsEnabled] = useState(true);
   const [voice, setVoice] = useState(null);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [allModulesCompleted, setAllModulesCompleted] = useState(false);
+  const [finishing, setFinishing] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -23,9 +28,23 @@ export default function AIChatComponent({ moduleId, chapterId }) {
         if (data.ssiScore) {
           setSSIScore(data.ssiScore);
         }
+        setIsCompleted(data.isCompleted || false);
+        
+        // Check if all modules and chapters are completed
+        // This is a simplified check - the backend will verify all chapters are actually completed
+        try {
+          const profile = await auth.getProfile();
+          const modulesProgress = profile?.modulesProgress || [];
+          const hasModules = modulesProgress.length > 0;
+          // Check if all modules show 100% completion (backend verifies actual chapter completion)
+          const allCompleted = hasModules && modulesProgress.every((m) => (m.completionPercentage || 0) >= 100);
+          setAllModulesCompleted(allCompleted);
+        } catch (e) {
+          console.error('Failed to check module completion:', e);
+        }
 
         // Auto-start SURGE session: if no conversation yet, trigger the first AI question
-        if (!data.conversation || data.conversation.length === 0) {
+        if (!data.conversation || data.conversation.length === 0 && !data.isCompleted) {
           try {
             setIsLoading(true);
             // Send a hidden seed message so the engine can generate the first question
@@ -38,6 +57,7 @@ export default function AIChatComponent({ moduleId, chapterId }) {
             const seeded = await aiChat.getChatHistory(moduleId, chapterId);
             setMessages(seeded.conversation);
             if (seeded.ssiScore) setSSIScore(seeded.ssiScore);
+            setIsCompleted(seeded.isCompleted || false);
           } catch (e) {
             console.error('Failed to auto-start SURGE chat:', e);
           } finally {
@@ -117,7 +137,7 @@ export default function AIChatComponent({ moduleId, chapterId }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || isCompleted) return;
 
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
@@ -135,12 +155,59 @@ export default function AIChatComponent({ moduleId, chapterId }) {
       console.error('Failed to send message:', error);
       const errorMessage = {
         role: 'assistant',
-        message: 'Sorry, I encountered an error. Please try again.',
+        message: error?.error || error?.message || 'Sorry, I encountered an error. Please try again.',
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleFinishChapter = async () => {
+    if (isCompleted || finishing) return;
+    
+    setFinishing(true);
+    try {
+      const response = await aiChat.finishChapterChat(moduleId, chapterId);
+      setIsCompleted(true);
+      if (response.finalSSI) {
+        setSSIScore(response.finalSSI);
+      }
+      
+      // Always check completion status using dedicated endpoint
+      try {
+        const completionStatus = await auth.checkCompletionStatus();
+        console.log('📊 Completion Status:', completionStatus);
+        
+        setAllModulesCompleted(completionStatus.allCompleted || response.allModulesCompleted);
+        
+        // Show detailed status in alert if not complete
+        if (!completionStatus.allCompleted) {
+          const incompleteModules = completionStatus.details
+            .filter(d => !d.isComplete)
+            .map(d => `${d.moduleTitle}: ${d.completedChapters}/${d.totalChapters} chapters (${d.completionPercentage}%)`)
+            .join('\n');
+          
+          console.warn('⚠️ Modules incomplete:', incompleteModules);
+        }
+      } catch (e) {
+        console.error('❌ Failed to check completion status:', e);
+        // Fallback to backend response
+        setAllModulesCompleted(response.allModulesCompleted || false);
+      }
+      
+      // Show appropriate message
+      if (response.allModulesCompleted) {
+        alert('🎉 Congratulations! You\'ve completed all modules and chapters! You can now submit your idea.');
+      } else {
+        alert('✅ Chapter AI session completed! Your final SSI score for this chapter has been recorded.');
+      }
+    } catch (error) {
+      console.error('Failed to finish chapter:', error);
+      alert('❌ Failed to finish chapter: ' + (error?.error || error?.message || 'Unknown error'));
+    } finally {
+      setFinishing(false);
     }
   };
 
@@ -229,26 +296,71 @@ export default function AIChatComponent({ moduleId, chapterId }) {
         </div>
       )}
 
-      {/* Input */}
-      <form onSubmit={handleSendMessage} className="border-t border-neutral-border p-4">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message..."
-            className="flex-1 px-4 py-2 border border-neutral-border rounded-lg focus:outline-none focus:border-primary-red"
-            disabled={isLoading}
-          />
+      {/* Finish Chapter Button */}
+      {!isCompleted && messages.length > 0 && (
+        <div className="border-t border-neutral-border p-4 bg-accent-gold bg-opacity-10">
           <button
-            type="submit"
-            disabled={isLoading || !input.trim()}
-            className="bg-primary-red text-white px-4 py-2 rounded-lg hover:bg-primary-darkRed disabled:opacity-50 transition-colors"
+            onClick={handleFinishChapter}
+            disabled={finishing || isLoading}
+            className="w-full flex items-center justify-center gap-2 bg-accent-gold text-white px-4 py-3 rounded-lg hover:bg-accent-amber disabled:opacity-50 transition-colors font-semibold"
           >
-            <Send className="w-5 h-5" />
+            <CheckCircle className="w-5 h-5" />
+            {finishing ? 'Finishing...' : 'Finish Chapter & Finalize SSI Score'}
+          </button>
+          <p className="text-xs text-neutral-medium mt-2 text-center">
+            Click to end this chapter's AI session and record your final SSI score
+          </p>
+        </div>
+      )}
+
+      {/* All Modules Completed - Submit Idea Button */}
+      {isCompleted && allModulesCompleted && (
+        <div className="border-t border-neutral-border p-4 bg-semantic-success bg-opacity-10">
+          <div className="text-center mb-3">
+            <p className="font-semibold text-semantic-success mb-1">🎉 Congratulations!</p>
+            <p className="text-sm text-neutral-medium">You've completed all modules and chapters!</p>
+          </div>
+          <button
+            onClick={() => router.push('/student/submission')}
+            className="w-full flex items-center justify-center gap-2 bg-semantic-success text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold"
+          >
+            <Trophy className="w-5 h-5" />
+            Submit Your Idea
           </button>
         </div>
-      </form>
+      )}
+
+      {/* Input */}
+      {!isCompleted && (
+        <form onSubmit={handleSendMessage} className="border-t border-neutral-border p-4">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type your message..."
+              className="flex-1 px-4 py-2 border border-neutral-border rounded-lg focus:outline-none focus:border-primary-red"
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              className="bg-primary-red text-white px-4 py-2 rounded-lg hover:bg-primary-darkRed disabled:opacity-50 transition-colors"
+            >
+              <Send className="w-5 h-5" />
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Completed Message */}
+      {isCompleted && !allModulesCompleted && (
+        <div className="border-t border-neutral-border p-4 bg-neutral-light text-center">
+          <p className="text-sm text-neutral-medium">
+            ✅ This chapter's AI session is complete. Your final SSI score has been recorded.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

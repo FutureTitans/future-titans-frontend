@@ -120,6 +120,12 @@ export default function GlobalAIChat() {
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error('Global AI chat error:', error);
+      const errorMessage = {
+        role: 'assistant',
+        message: error?.error || error?.message || 'Sorry, I encountered an error. Please try again.',
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }

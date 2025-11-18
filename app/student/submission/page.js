@@ -115,15 +115,41 @@ export default function IdeaSubmissionPage() {
         return;
       }
 
-      // Check module completion – require all assigned modules to be 100% complete
-      const modulesProgress = profile?.modulesProgress || [];
-      const hasModules = modulesProgress.length > 0;
-      const allCompleted = hasModules && modulesProgress.every((m) => (m.completionPercentage || 0) >= 100);
+      // Check module completion using dedicated endpoint for accurate check
+      try {
+        const completionStatus = await auth.checkCompletionStatus();
+        console.log('📊 Submission Page - Completion Status:', completionStatus);
+        
+        if (!completionStatus.allCompleted) {
+          const incompleteDetails = completionStatus.details
+            .filter(d => !d.isComplete)
+            .map(d => {
+              const title = d.moduleTitle || 'Unknown Module';
+              const completed = d.completedChapters ?? 0;
+              const total = d.totalChapters ?? 0;
+              const percent = d.completionPercentage ?? 0;
+              return `• ${title}: ${completed}/${total} chapters (${percent}%)`;
+            })
+            .join('\n');
+          
+          console.log('Incomplete modules details:', completionStatus.details.filter(d => !d.isComplete));
+          
+          alert(`Complete all learning modules before accessing the final submission form.\n\nIncomplete modules:\n${incompleteDetails || 'Unable to load module details'}`);
+          router.push('/student/dashboard');
+          return;
+        }
+      } catch (error) {
+        console.error('Failed to check completion status:', error);
+        // Fallback to old check
+        const modulesProgress = profile?.modulesProgress || [];
+        const hasModules = modulesProgress.length > 0;
+        const allCompleted = hasModules && modulesProgress.every((m) => (m.completionPercentage || 0) >= 100);
 
-      if (!allCompleted) {
-        alert('Complete all learning modules before accessing the final submission form.');
-        router.push('/student/dashboard');
-        return;
+        if (!allCompleted) {
+          alert('Complete all learning modules before accessing the final submission form.');
+          router.push('/student/dashboard');
+          return;
+        }
       }
 
       setEligible(true);
@@ -262,8 +288,14 @@ export default function IdeaSubmissionPage() {
       alert('🎉 Idea submitted successfully!');
       router.push('/student/dashboard');
     } catch (error) {
-      console.error('Failed to submit idea:', error);
-      alert('❌ Failed to submit idea: ' + (error.message || 'Unknown error'));
+      console.error('❌ Failed to submit idea:', error);
+      console.error('Error details:', {
+        message: error.message,
+        error: error.error,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      alert('❌ Failed to submit idea: ' + (error.error || error.message || 'Unknown error'));
     } finally {
       setSubmitting(false);
     }

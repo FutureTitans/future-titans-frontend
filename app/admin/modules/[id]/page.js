@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { modules } from '@/lib/api';
-import { BookOpen, Plus, Trash2, ArrowLeft, ArrowUp, ArrowDown, CheckCircle } from 'lucide-react';
+import { BookOpen, Plus, Trash2, ArrowLeft, ArrowUp, ArrowDown, CheckCircle, Pencil } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function AdminModuleDetailPage() {
@@ -15,6 +15,8 @@ export default function AdminModuleDetailPage() {
   const [moduleData, setModuleData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [editingChapterId, setEditingChapterId] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
   const [chapterForm, setChapterForm] = useState({
     title: '',
     description: '',
@@ -24,7 +26,7 @@ export default function AdminModuleDetailPage() {
     audioUrl: '',
     pdfUrl: '',
     subtitles: '',
-    aiPrompt: '',
+    aiPrompt: '', // Required field
     surgeDimensionFocus: '',
   });
 
@@ -62,15 +64,27 @@ export default function AdminModuleDetailPage() {
 
   const handleCreateChapter = async (e) => {
     e.preventDefault();
-    if (!chapterForm.title) {
-      alert('Chapter title is required');
+    
+    // Clear previous errors
+    setFormErrors({});
+    
+    // Validate required fields
+    const errors = {};
+    if (!chapterForm.title || !chapterForm.title.trim()) {
+      errors.title = 'Chapter title is required';
+    }
+    if (!chapterForm.aiPrompt || !chapterForm.aiPrompt.trim()) {
+      errors.aiPrompt = 'Custom AI Prompt is required for all chapters';
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       return;
     }
 
     try {
       setSaving(true);
-      const order = (moduleData?.chapters?.length || 0) + 1;
-
+      
       const content = {
         type: chapterForm.type,
         text: chapterForm.type === 'text' ? chapterForm.text : '',
@@ -79,16 +93,33 @@ export default function AdminModuleDetailPage() {
         pdfUrl: chapterForm.type === 'pdf' ? chapterForm.pdfUrl : '',
       };
 
-      await modules.createChapter(moduleId, {
-        title: chapterForm.title,
-        description: chapterForm.description,
-        order,
-        content,
-        subtitles: chapterForm.subtitles,
-        aiPrompt: chapterForm.aiPrompt,
-        surgeDimensionFocus: chapterForm.surgeDimensionFocus,
-      });
+      if (editingChapterId) {
+        // Update existing chapter
+        await modules.updateChapter(moduleId, editingChapterId, {
+          title: chapterForm.title,
+          description: chapterForm.description,
+          content,
+          subtitles: chapterForm.subtitles,
+          aiPrompt: chapterForm.aiPrompt.trim(),
+          surgeDimensionFocus: chapterForm.surgeDimensionFocus,
+        });
+        alert('✅ Chapter updated successfully');
+      } else {
+        // Create new chapter
+        const order = (moduleData?.chapters?.length || 0) + 1;
+        await modules.createChapter(moduleId, {
+          title: chapterForm.title,
+          description: chapterForm.description,
+          order,
+          content,
+          subtitles: chapterForm.subtitles,
+          aiPrompt: chapterForm.aiPrompt.trim(),
+          surgeDimensionFocus: chapterForm.surgeDimensionFocus,
+        });
+        alert('✅ Chapter created successfully');
+      }
 
+      // Reset form
       setChapterForm({
         title: '',
         description: '',
@@ -101,15 +132,52 @@ export default function AdminModuleDetailPage() {
         aiPrompt: '',
         surgeDimensionFocus: '',
       });
+      setEditingChapterId(null);
+      setFormErrors({});
 
       await fetchModule();
-      alert('✅ Chapter created successfully');
     } catch (error) {
-      console.error('Failed to create chapter:', error);
-      alert('❌ Failed to create chapter');
+      console.error('Failed to save chapter:', error);
+      alert('❌ Failed to save chapter: ' + (error?.error || error?.message || 'Unknown error'));
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleEditChapter = (chapter) => {
+    setEditingChapterId(chapter._id);
+    setChapterForm({
+      title: chapter.title || '',
+      description: chapter.description || '',
+      type: chapter.content?.type || 'text',
+      text: chapter.content?.text || '',
+      videoUrl: chapter.content?.videoUrl || '',
+      audioUrl: chapter.content?.audioUrl || '',
+      pdfUrl: chapter.content?.pdfUrl || '',
+      subtitles: chapter.subtitles || '',
+      aiPrompt: chapter.aiPrompt || '',
+      surgeDimensionFocus: chapter.surgeDimensionFocus || '',
+    });
+    setFormErrors({});
+    // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingChapterId(null);
+    setChapterForm({
+      title: '',
+      description: '',
+      type: 'text',
+      text: '',
+      videoUrl: '',
+      audioUrl: '',
+      pdfUrl: '',
+      subtitles: '',
+      aiPrompt: '',
+      surgeDimensionFocus: '',
+    });
+    setFormErrors({});
   };
 
   const handleDeleteChapter = async (chapterId) => {
@@ -212,9 +280,26 @@ export default function AdminModuleDetailPage() {
       <div className="card mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-bold text-lg flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Chapter
+            {editingChapterId ? (
+              <>
+                <Pencil className="w-4 h-4" />
+                Edit Chapter
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4" />
+                Add Chapter
+              </>
+            )}
           </h2>
+          {editingChapterId && (
+            <button
+              onClick={handleCancelEdit}
+              className="text-sm text-neutral-medium hover:text-neutral-dark transition"
+            >
+              Cancel Edit
+            </button>
+          )}
         </div>
         <form onSubmit={handleCreateChapter} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
@@ -223,10 +308,18 @@ export default function AdminModuleDetailPage() {
               <input
                 type="text"
                 value={chapterForm.title}
-                onChange={(e) => setChapterForm({ ...chapterForm, title: e.target.value })}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg"
+                onChange={(e) => {
+                  setChapterForm({ ...chapterForm, title: e.target.value });
+                  if (formErrors.title) setFormErrors({ ...formErrors, title: '' });
+                }}
+                className={`w-full px-3 py-2 border rounded-lg ${
+                  formErrors.title ? 'border-semantic-error' : 'border-neutral-border'
+                }`}
                 placeholder="Chapter title"
               />
+              {formErrors.title && (
+                <p className="text-sm text-semantic-error mt-1">{formErrors.title}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">Content Type *</label>
@@ -322,13 +415,27 @@ export default function AdminModuleDetailPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Custom AI Prompt (optional)</label>
+              <label className="block text-sm font-medium mb-2">
+                Custom AI Prompt (Required) *
+                <span className="block text-xs text-neutral-medium mt-1">
+                  This prompt will guide the AI Co-Founder for this specific chapter. It will be combined with the SURGE framework.
+                </span>
+              </label>
               <textarea
                 value={chapterForm.aiPrompt}
-                onChange={(e) => setChapterForm({ ...chapterForm, aiPrompt: e.target.value })}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-20"
-                placeholder="Override default SURGE prompt for this chapter"
+                onChange={(e) => {
+                  setChapterForm({ ...chapterForm, aiPrompt: e.target.value });
+                  if (formErrors.aiPrompt) setFormErrors({ ...formErrors, aiPrompt: '' });
+                }}
+                className={`w-full px-3 py-2 border rounded-lg h-24 ${
+                  formErrors.aiPrompt ? 'border-semantic-error' : 'border-neutral-border'
+                }`}
+                placeholder="Enter a custom prompt that guides the AI for this chapter. Example: 'Help the student understand market differentiation by asking questions about their favorite products and what makes them unique.'"
+                required
               />
+              {formErrors.aiPrompt && (
+                <p className="text-sm text-semantic-error mt-1">{formErrors.aiPrompt}</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium mb-2">SURGE Focus Dimension (optional)</label>
@@ -347,14 +454,33 @@ export default function AdminModuleDetailPage() {
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end gap-3">
+            {editingChapterId && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                disabled={saving}
+                className="px-6 py-2 border border-neutral-border rounded-lg hover:bg-neutral-light transition disabled:opacity-50"
+              >
+                Cancel
+              </button>
+            )}
             <button
               type="submit"
               disabled={saving}
               className="flex items-center gap-2 bg-primary-red text-white px-6 py-2 rounded-lg hover:bg-primary-darkRed transition disabled:opacity-50"
             >
-              <Plus className="w-4 h-4" />
-              {saving ? 'Saving...' : 'Add Chapter'}
+              {editingChapterId ? (
+                <>
+                  <Pencil className="w-4 h-4" />
+                  {saving ? 'Updating...' : 'Update Chapter'}
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  {saving ? 'Saving...' : 'Add Chapter'}
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -413,13 +539,24 @@ export default function AdminModuleDetailPage() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => handleDeleteChapter(chapter._id)}
-                    disabled={saving}
-                    className="flex items-center gap-2 text-semantic-error hover:bg-red-50 px-3 py-2 rounded-lg transition disabled:opacity-50"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEditChapter(chapter)}
+                      disabled={saving}
+                      className="flex items-center gap-2 text-primary-red hover:bg-primary-lightRed px-3 py-2 rounded-lg transition disabled:opacity-50"
+                      title="Edit chapter"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteChapter(chapter._id)}
+                      disabled={saving}
+                      className="flex items-center gap-2 text-semantic-error hover:bg-red-50 px-3 py-2 rounded-lg transition disabled:opacity-50"
+                      title="Delete chapter"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               ))}
           </div>
