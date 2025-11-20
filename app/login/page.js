@@ -130,7 +130,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-primary-red text-white py-3 rounded-lg font-semibold hover:bg-primary-darkRed transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                className="w-full bg-[#305c4d] text-white py-3 rounded-lg font-semibold hover:bg-primary-darkRed transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
               >
                 {isLoading ? 'Signing In...' : 'Sign In'}
               </button>
@@ -139,7 +139,7 @@ export default function LoginPage() {
             {/* Sign Up Link */}
             <p className="text-center text-neutral-medium mt-6">
               Don't have an account?{' '}
-              <Link href="/signup" className="text-primary-red font-semibold hover:text-primary-darkRed">
+              <Link href="/signup" className="text-[#305c4d] font-semibold hover:text-[#dbb016]">
                 Sign Up
               </Link>
             </p>
