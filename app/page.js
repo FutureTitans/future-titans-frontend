@@ -39,7 +39,7 @@ export default function Landing() {
         ref={parallaxRef}
         className="parallax relative h-screen flex items-center justify-center bg-cover bg-center"
         style={{
-          backgroundImage: `linear-gradient(135deg, rgba(220, 38, 38, 0.95) 0%, rgba(153, 27, 27, 0.95) 100%)`,
+          backgroundImage: `linear-gradient(135deg, #dbb016 0%, #dbb016 100%)`,
         }}
       >
         <div className="absolute inset-0 opacity-10">
@@ -61,13 +61,13 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Link
               href="/signup"
-              className="bg-white text-primary-red px-8 py-4 rounded-lg font-semibold hover:bg-primary-lightRed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+              className="bg-white text-[#305c4d] px-8 py-4 rounded-lg font-semibold hover:bg-primary-lightRed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
             >
               Get Started <ArrowRight className="w-5 h-5" />
             </Link>
             <Link
               href="/login"
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-primary-red transition-all duration-300"
+              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-[#305c4d] transition-all duration-300"
             >
               Sign In
             </Link>
@@ -87,30 +87,30 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: <Zap className="w-12 h-12 text-accent-gold" />,
+                icon: <Zap className="w-12 h-12 text-[#dbb016]" />,
                 title: 'AI Co-Founder',
                 description: 'Get personalized mentorship from an AI that understands your entrepreneurial journey',
               },
               {
-                icon: <Users className="w-12 h-12 text-accent-gold" />,
+                icon: <Users className="w-12 h-12 text-[#dbb016]" />,
                 title: 'Learn Together',
                 description: 'Access structured modules designed to build entrepreneurial mindset and resilience',
               },
               {
-                icon: <Award className="w-12 h-12 text-accent-gold" />,
+                icon: <Award className="w-12 h-12 text-[#dbb016]" />,
                 title: 'Get Recognized',
                 description: 'Submit your ideas, get evaluated, and join a network of innovators',
               },
             ].map((feature, idx) => (
               <div
                 key={idx}
-                className="card hover:border-primary-red group cursor-pointer slide-up"
+                className="card hover:border-[#dbb016] group cursor-pointer slide-up"
                 style={{ animationDelay: `${idx * 0.1}s` }}
               >
                 <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold mb-3 group-hover:text-primary-red transition-colors">
+                <h3 className="text-[#305c4d] text-xl font-semibold mb-3 group-hover:text-[#dbb016] transition-colors">
                   {feature.title}
                 </h3>
                 <p className="text-neutral-medium">{feature.description}</p>
@@ -125,7 +125,7 @@ export default function Landing() {
         <div className="container-lg">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-4xl font-bold mb-6 text-primary-darkRed">The SURGE Framework</h2>
+              <h2 className="text-4xl font-bold mb-6 text-[#305c4d]">The SURGE Framework</h2>
               <p className="text-lg text-neutral-dark mb-6">
                 We use a proprietary 5-stage framework to develop your entrepreneurial mindset:
               </p>
@@ -139,7 +139,7 @@ export default function Landing() {
                   { letter: 'E', title: 'Entrepreneurial Leadership', desc: 'Lead teams and inspire change' },
                 ].map((item, idx) => (
                   <li key={idx} className="flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-primary-red text-white flex items-center justify-center font-bold flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-[#dbb016] text-white flex items-center justify-center font-bold flex-shrink-0">
                       {item.letter}
                     </div>
                     <div>
@@ -152,11 +152,11 @@ export default function Landing() {
             </div>
 
             <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
-              <div className="absolute inset-0 bg-gradient-red-gold opacity-20"></div>
+              <div className="absolute inset-0 bg-[linear-gradient(90deg,#dbb016,#dbb016)] opacity-20"></div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <Sparkles className="w-24 h-24 text-primary-red mx-auto mb-4 animate-bounce" />
-                  <p className="text-2xl font-bold text-primary-red">Your Journey Starts Here</p>
+                  <Sparkles className="w-24 h-24 text-[#dbb016] mx-auto mb-4 animate-bounce" />
+                  <p className="text-2xl font-bold text-[#dbb016]">Your Journey Starts Here</p>
                 </div>
               </div>
             </div>
@@ -184,7 +184,7 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-primary-red text-white">
+      <section className="py-20 bg-[#dbb016] text-white">
         <div className="container-lg text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Make an Impact?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
@@ -193,7 +193,7 @@ export default function Landing() {
 
           <Link
             href="/signup"
-            className="inline-block bg-white text-primary-red px-10 py-4 rounded-lg font-semibold hover:bg-primary-lightRed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="inline-block bg-white text-[#305c4d] px-10 py-4 rounded-lg font-semibold hover:bg-primary-lightRed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:text-[#dbb016]"
           >
             Start Your Journey Now
           </Link>
@@ -201,12 +201,12 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-neutral-dark text-white py-12">
+      <footer className="bg-[#5B532C] text-white py-12">
         <div className="container-lg">
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <h3 className="text-xl font-bold mb-4">Future Titans</h3>
-              <p className="text-neutral-medium">Empowering the next generation of innovators.</p>
+              <p className="text-white">Empowering the next generation of innovators.</p>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Platform</h4>
@@ -234,7 +234,7 @@ export default function Landing() {
             </div>
           </div>
 
-          <div className="border-t border-neutral-medium pt-8 text-center text-neutral-medium">
+          <div className="border-t border-white pt-8 text-center text-white">
             <p>&copy; 2025 Future Titans. All rights reserved.</p>
           </div>
         </div>

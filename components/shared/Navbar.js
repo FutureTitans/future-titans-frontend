@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { Menu, X, LogOut, User } from 'lucide-react';
+import Image from "next/image";
 
 export default function Navbar() {
   const router = useRouter();
@@ -31,27 +32,30 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white border-b border-neutral-border sticky top-0 z-40">
+    <nav className="bg-[#5B532C] border-b border-neutral-border sticky top-0 z-40">
       <div className="container-lg">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-red-gold rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">FT</span>
-            </div>
-            <span className="font-bold text-lg gradient-text hidden sm:inline">Future Titans</span>
+          <Link href="/" className="flex items-center ">
+          <Image 
+    src="/images/logo.png" 
+    alt="Youngpreneurs Logo" 
+    width={280} 
+    height={90} 
+    priority
+  />
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
             {!user ? (
               <>
-                <Link href="/login" className="text-neutral-dark hover:text-primary-red transition">
+                <Link href="/login" className="text-white hover:text-[#dbb016] transition">
                   Sign In
                 </Link>
                 <Link
                   href="/signup"
-                  className="bg-primary-red text-white px-6 py-2 rounded-lg hover:bg-primary-darkRed transition"
+                  className="bg-white text-[#305c4d] px-6 py-2 rounded-lg hover:bg-primary-darkRed hover:text-[#dbb016] transition"
                 >
                   Get Started
                 </Link>
@@ -120,12 +124,12 @@ export default function Navbar() {
           <div className="md:hidden pb-4 space-y-4 border-t border-neutral-border">
             {!user ? (
               <>
-                <Link href="/login" className="block text-neutral-dark hover:text-primary-red transition py-2">
+                <Link href="/login" className="block text-neutral-dark hover:text-[#305c4d] transition py-2">
                   Sign In
                 </Link>
                 <Link
                   href="/signup"
-                  className="block bg-primary-red text-white px-4 py-2 rounded-lg hover:bg-primary-darkRed text-center transition"
+                  className="block bg-[#305c4d] text-white px-4 py-2 rounded-lg hover:bg-[#dbb016] text-center transition"
                 >
                   Get Started
                 </Link>
