@@ -143,6 +143,14 @@ export default function StudentModulesPage() {
               <div className="mb-4">
                 <div className="flex justify-between items-start mb-3">
                   <div className="flex items-center gap-2">
+                    {module.mentorProfilePicture && (
+                      <img 
+                        src={module.mentorProfilePicture} 
+                        alt="Mentor" 
+                        className="w-10 h-10 rounded-full border-2 border-primary-red object-cover"
+                        onError={(e) => { e.target.style.display = 'none'; }}
+                      />
+                    )}
                     <span className="text-2xl">{getDifficultyIcon(module.difficulty)}</span>
                     <span className={`badge capitalize ${getDifficultyColor(module.difficulty)}`}>
                       {module.difficulty}

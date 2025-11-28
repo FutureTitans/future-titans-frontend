@@ -292,6 +292,14 @@ export default function ModulePlayerPage() {
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
+              {module.mentorProfilePicture && (
+                <img 
+                  src={module.mentorProfilePicture} 
+                  alt="Mentor" 
+                  className="w-12 h-12 rounded-full border-2 border-primary-red object-cover"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
+              )}
               <div>
                 <h1 className="font-bold text-xl">{module.title}</h1>
                 <p className="text-sm text-neutral-medium">
