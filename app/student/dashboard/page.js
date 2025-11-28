@@ -220,7 +220,17 @@ export default function StudentDashboard() {
                   className="border border-neutral-border rounded-lg p-6 hover:shadow-lg transition"
                 >
                   <div className="flex justify-between items-start mb-4">
-                    <h4 className="font-bold text-lg">{module.title}</h4>
+                    <div className="flex items-center gap-3">
+                      {module.mentorProfilePicture && (
+                        <img 
+                          src={module.mentorProfilePicture} 
+                          alt="Mentor" 
+                          className="w-12 h-12 rounded-full border-2 border-primary-red object-cover"
+                          onError={(e) => { e.target.style.display = 'none'; }}
+                        />
+                      )}
+                      <h4 className="font-bold text-lg">{module.title}</h4>
+                    </div>
                     <span className="badge badge-success">
                       <CheckCircle className="w-4 h-4 mr-1" />
                       Available
