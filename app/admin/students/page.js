@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { admin } from '@/lib/api';
-import { Search, Eye } from 'lucide-react';
+import { Search, Eye, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
@@ -135,13 +135,33 @@ export default function StudentsPage() {
                     )}
                   </td>
                   <td className="p-4">
-                    <button
-                      className="text-primary-red hover:text-primary-darkRed transition"
-                      title="View details"
-                      onClick={() => router.push(`/admin/students/${student._id}`)}
-                    >
-                      <Eye className="w-5 h-5" />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        className="text-primary-red hover:text-primary-darkRed transition"
+                        title="View details"
+                        onClick={() => router.push(`/admin/students/${student._id}`)}
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
+                      <button
+                        className="text-semantic-error hover:text-red-700 transition"
+                        title="Delete student"
+                        onClick={async () => {
+                          if (confirm(`Are you sure you want to delete ${student.name}? This will delete all their data including AI chats and submissions. This action cannot be undone.`)) {
+                            try {
+                              await admin.deleteStudent(student._id);
+                              alert('✅ Student deleted successfully');
+                              // Refresh the list
+                              window.location.reload();
+                            } catch (error) {
+                              alert('❌ Failed to delete student: ' + (error?.error || error?.message || 'Unknown error'));
+                            }
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-5 h-5" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

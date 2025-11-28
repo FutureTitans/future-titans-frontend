@@ -7,28 +7,37 @@ import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy } from 'lucide-reac
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
-export default function AIChatComponent({ moduleId, chapterId }) {
+export default function AIChatComponent({ moduleId, chapterId, module }) {
   const router = useRouter();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [ssiScore, setSSIScore] = useState(null);
-  const [ttsEnabled, setTtsEnabled] = useState(true);
+  const [ttsEnabled, setTtsEnabled] = useState(false); // Voice off by default
   const [voice, setVoice] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [allModulesCompleted, setAllModulesCompleted] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const messagesEndRef = useRef(null);
 
+  const [timeSpent, setTimeSpent] = useState(0);
+  const [startTime, setStartTime] = useState(null);
+
   useEffect(() => {
     const loadHistory = async () => {
       try {
         const data = await aiChat.getChatHistory(moduleId, chapterId);
-        setMessages(data.conversation);
+        setMessages(data.conversation || []);
         if (data.ssiScore) {
           setSSIScore(data.ssiScore);
         }
         setIsCompleted(data.isCompleted || false);
+        if (data.timeSpent) {
+          setTimeSpent(data.timeSpent);
+        }
+        if (data.startedAt && !data.isCompleted) {
+          setStartTime(new Date(data.startedAt));
+        }
         
         // Check if all modules and chapters are completed
         // This is a simplified check - the backend will verify all chapters are actually completed
@@ -74,6 +83,18 @@ export default function AIChatComponent({ moduleId, chapterId }) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Update time spent in real-time
+  useEffect(() => {
+    if (!startTime || isCompleted) return;
+    
+    const interval = setInterval(() => {
+      const elapsed = Math.floor((new Date() - startTime) / 1000);
+      setTimeSpent(elapsed);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime, isCompleted]);
 
   // Load best-available TTS voice once
   useEffect(() => {
@@ -212,7 +233,7 @@ export default function AIChatComponent({ moduleId, chapterId }) {
   };
 
   return (
-    <div className="flex flex-col bg-white rounded-2xl border border-neutral-border/60 shadow-lg overflow-hidden md:h-[520px] md:max-h-[70vh]">
+    <div className="flex flex-col bg-white rounded-2xl border border-neutral-border/60 shadow-lg overflow-hidden h-full max-h-[calc(100vh-120px)]">
       {/* Header */}
       <div className="bg-gradient-red-gold text-white px-4 py-3 md:p-6 flex items-center justify-between">
         <div>
@@ -230,7 +251,7 @@ export default function AIChatComponent({ moduleId, chapterId }) {
       </div>
 
       {/* Messages (own scroll, independent from page scroll) */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 md:p-6 space-y-4 bg-neutral-light/40 scrollbar-thin scrollbar-thumb-neutral-border/70 scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto px-4 py-3 md:p-6 space-y-4 bg-neutral-light/40 scrollbar-thin scrollbar-thumb-neutral-border/70 scrollbar-track-transparent min-h-0">
         {messages.filter(
           (m) => !(m.role === 'user' && m.message === AUTO_SURGE_SEED)
         ).length === 0 ? (
@@ -278,7 +299,14 @@ export default function AIChatComponent({ moduleId, chapterId }) {
       {/* SSI Score Display */}
       {ssiScore && (
         <div className="border-t border-neutral-border p-4 bg-primary-lightRed">
-          <p className="text-sm font-semibold text-primary-red mb-2">Current SSI Score: {ssiScore.overall}/100</p>
+          <div className="flex justify-between items-center mb-2">
+            <p className="text-sm font-semibold text-primary-red">Current SSI Score: {ssiScore.overall}/100</p>
+            {timeSpent > 0 && (
+              <p className="text-xs text-neutral-medium">
+                Time: {Math.floor(timeSpent / 60)}m {timeSpent % 60}s
+              </p>
+            )}
+          </div>
           <div className="grid grid-cols-5 gap-2 text-xs">
             {[
               { label: 'S', key: 'selfAwareness' },
