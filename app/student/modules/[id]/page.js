@@ -19,7 +19,7 @@ export default function ModulePlayerPage() {
   const [showAIChat, setShowAIChat] = useState(false);
   const [loading, setLoading] = useState(true);
   const [chapterLoading, setChapterLoading] = useState(false);
-  const [autoStartedChat, setAutoStartedChat] = useState(false);
+  const [chapterCompleted, setChapterCompleted] = useState({}); // Track which chapters are marked complete
 
   useEffect(() => {
     if (!isStudent()) {
@@ -32,11 +32,27 @@ export default function ModulePlayerPage() {
 
   useEffect(() => {
     if (module && module.chapters && module.chapters.length > 0) {
-      fetchChapterContent(module.chapters[currentChapter]._id);
+      const chapterId = module.chapters[currentChapter]._id;
+      fetchChapterContent(chapterId);
+      
+      // Check if this chapter was already marked complete
+      // This ensures chat history loads properly
+      const checkChapterComplete = async () => {
+        try {
+          const history = await aiChat.getChatHistory(moduleId, chapterId);
+          if (history.conversation && history.conversation.length > 0) {
+            setChapterCompleted(prev => ({ ...prev, [chapterId]: true }));
+            setShowAIChat(true);
+          }
+        } catch (e) {
+          // Chapter not started yet
+        }
+      };
+      checkChapterComplete();
     }
   }, [module, currentChapter]);
 
-  // Auto-open AI chat after video ends (YouTube Iframe API) and seed first SURGE-style question
+  // YouTube Iframe API setup (chat no longer auto-opens - must click "Mark Complete" first)
   useEffect(() => {
     if (!module || !module.chapters || module.chapters.length === 0) return;
     const current = module.chapters[currentChapter];
@@ -49,17 +65,10 @@ export default function ModulePlayerPage() {
       const player = new YT.Player('chapter-video-player', {
         events: {
           onStateChange: (event) => {
-            // 0 = ended
-            if (event.data === 0 && current.aiInteractionEnabled && !autoStartedChat) {
-              setShowAIChat(true);
-              setAutoStartedChat(true);
-              aiChat
-                .sendMessage(
-                  moduleId,
-                  current._id,
-                  'I have just finished watching this chapter video. Please start by asking me your first SURGE-style question to reflect on what I learned.'
-                )
-                .catch((err) => console.error('Failed to auto-start AI chat after video:', err));
+            // Video ended - but chat only opens after "Mark Complete" is clicked
+            // This is just for tracking video completion if needed
+            if (event.data === 0) {
+              console.log('Video ended for chapter:', current.title);
             }
           },
         },
@@ -79,7 +88,7 @@ export default function ModulePlayerPage() {
       }
       window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
     }
-  }, [module, currentChapter, autoStartedChat, moduleId]);
+  }, [module, currentChapter, moduleId]);
 
   const fetchModule = async () => {
     try {
@@ -122,26 +131,33 @@ export default function ModulePlayerPage() {
 
   const completeChapter = async () => {
     try {
-      await aiChat.completeChapter(moduleId, module.chapters[currentChapter]._id);
+      const chapterId = module.chapters[currentChapter]._id;
+      await aiChat.completeChapter(moduleId, chapterId);
+      
+      // Mark chapter as completed locally
+      setChapterCompleted(prev => ({ ...prev, [chapterId]: true }));
+      
       // Refresh module data to update progress
-      fetchModule();
+      await fetchModule();
 
-       const current = module.chapters[currentChapter];
-       if (current?.aiInteractionEnabled && !autoStartedChat) {
-         setShowAIChat(true);
-         setAutoStartedChat(true);
-         try {
-           await aiChat.sendMessage(
-             moduleId,
-             current._id,
-             'I have just completed this chapter. Please guide me with SURGE-style questions to reflect and improve my entrepreneurial mindset based on this module.'
-           );
-         } catch (err) {
-           console.error('Failed to auto-start AI chat after completion:', err);
-         }
-       }
+      // Open AI chat ONLY after marking complete (this is the only way to open chat)
+      const current = module.chapters[currentChapter];
+      if (current?.aiInteractionEnabled) {
+        setShowAIChat(true);
+        // Auto-start the chat with a seed message
+        try {
+          await aiChat.sendMessage(
+            moduleId,
+            current._id,
+            'I have just completed this chapter. Please guide me with SURGE-style questions to reflect and improve my entrepreneurial mindset based on this module.'
+          );
+        } catch (err) {
+          console.error('Failed to auto-start AI chat after completion:', err);
+        }
+      }
     } catch (error) {
       console.error('Failed to complete chapter:', error);
+      alert('Failed to mark chapter as complete: ' + (error?.error || error?.message || 'Unknown error'));
     }
   };
 
@@ -295,19 +311,14 @@ export default function ModulePlayerPage() {
                 <button
                   onClick={async () => {
                     const nextVisible = !showAIChat;
-                    setShowAIChat(nextVisible);
-                    // If opening for the first time in this chapter, auto-seed first question
-                    if (nextVisible && !autoStartedChat) {
-                      setAutoStartedChat(true);
-                      try {
-                        await aiChat.sendMessage(
-                          moduleId,
-                          currentChapterData._id,
-                          'Let’s start our SURGE reflection for this chapter. Please ask me your first question to help me think like a young founder.'
-                        );
-                      } catch (err) {
-                        console.error('Failed to auto-start AI chat from toggle:', err);
-                      }
+                    // Only allow opening chat if chapter is marked complete
+                    if (nextVisible && chapterCompleted[currentChapterData._id]) {
+                      setShowAIChat(true);
+                    } else if (!nextVisible) {
+                      setShowAIChat(false);
+                    } else {
+                      // Chapter not completed yet - show message
+                      alert('Please mark this chapter as complete first to access the AI chat.');
                     }
                   }}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition ${
@@ -441,12 +452,13 @@ export default function ModulePlayerPage() {
             </div>
           </div>
 
-          {/* AI Chat Panel */}
-          {showAIChat && currentChapterData?.aiInteractionEnabled && (
+          {/* AI Chat Panel - Only show if chapter is marked complete */}
+          {showAIChat && currentChapterData?.aiInteractionEnabled && chapterCompleted[currentChapterData._id] && (
             <div className="w-1/2 border-l border-neutral-border">
               <AIChatComponent 
                 moduleId={moduleId} 
-                chapterId={currentChapterData._id} 
+                chapterId={currentChapterData._id}
+                module={module}
               />
             </div>
           )}

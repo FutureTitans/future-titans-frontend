@@ -271,6 +271,9 @@ export default function AdminStudentDetailPage() {
                   <p className="text-xs text-neutral-medium">
                     Messages: {chat.conversation?.length || 0} · Completed:{' '}
                     {chat.isCompleted ? 'Yes' : 'No'}
+                    {chat.timeSpent && (
+                      <> · Time: {Math.floor(chat.timeSpent / 60)}m {chat.timeSpent % 60}s</>
+                    )}
                   </p>
                 </div>
                 <div className="text-right">

@@ -18,6 +18,8 @@ export default function ModulesPage() {
     difficulty: 'beginner',
     estimatedCompletionTime: 60,
     aiQuestionsPerChapter: 10,
+    mentorProfilePicture: null, // File object
+    mentorProfilePictureUrl: '', // Existing URL for display
   });
 
   useEffect(() => {
@@ -51,22 +53,34 @@ export default function ModulesPage() {
       return;
     }
     try {
+      // Prepare data for API call
+      const submitData = {
+        title: formData.title,
+        description: formData.description,
+        difficulty: formData.difficulty,
+        estimatedCompletionTime: formData.estimatedCompletionTime,
+        aiQuestionsPerChapter: formData.aiQuestionsPerChapter,
+        aiInteractionEnabled: true,
+      };
+      
+      // Handle mentor profile picture: if file is selected, use it; otherwise use URL if exists
+      if (formData.mentorProfilePicture instanceof File) {
+        submitData.mentorProfilePicture = formData.mentorProfilePicture;
+      } else if (formData.mentorProfilePictureUrl && formData.mentorProfilePictureUrl.trim()) {
+        // Backward compatibility: if URL exists and no new file, use URL
+        submitData.mentorProfilePicture = formData.mentorProfilePictureUrl.trim();
+      }
+
       if (editingModule) {
         // Update existing module
-        console.log('Updating module with data:', formData);
-        const result = await modules.update(editingModule._id, {
-          ...formData,
-          aiInteractionEnabled: true,
-        });
+        console.log('Updating module with data:', submitData);
+        const result = await modules.update(editingModule._id, submitData);
         console.log('Module updated:', result);
         alert('✅ Module updated successfully!');
       } else {
         // Create new module
-        console.log('Creating module with data:', formData);
-        const result = await modules.create({
-          ...formData,
-          aiInteractionEnabled: true,
-        });
+        console.log('Creating module with data:', submitData);
+        const result = await modules.create(submitData);
         console.log('Module created:', result);
         alert('✅ Module created successfully!');
       }
@@ -78,6 +92,8 @@ export default function ModulesPage() {
         difficulty: 'beginner',
         estimatedCompletionTime: 60,
         aiQuestionsPerChapter: 10,
+        mentorProfilePicture: null,
+        mentorProfilePictureUrl: '',
       });
       setEditingModule(null);
       setShowForm(false);
@@ -179,26 +195,73 @@ export default function ModulesPage() {
                 className="px-4 py-2 border border-neutral-border rounded-lg"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-2">
-                Default AI Questions per Chapter
-                <span className="block text-xs text-neutral-medium">
-                  How many SURGE-style questions the AI should ask after each chapter (default 10).
-                </span>
-              </label>
-              <input
-                type="number"
-                min={1}
-                max={20}
-                value={formData.aiQuestionsPerChapter}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    aiQuestionsPerChapter: parseInt(e.target.value || '10', 10),
-                  })
-                }
-                className="w-full px-4 py-2 border border-neutral-border rounded-lg"
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Default AI Questions per Chapter
+                  <span className="block text-xs text-neutral-medium">
+                    How many SURGE-style questions the AI should ask after each chapter (default 10).
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={20}
+                  value={formData.aiQuestionsPerChapter}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      aiQuestionsPerChapter: parseInt(e.target.value || '10', 10),
+                    })
+                  }
+                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Mentor Profile Picture
+                  <span className="block text-xs text-neutral-medium">
+                    Upload a profile picture for the mentor (optional). This will be shown in the AI chat. Max 5MB, JPG/PNG/WebP.
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg,image/webp"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      if (file.size > 5 * 1024 * 1024) {
+                        alert('File size must be less than 5MB');
+                        e.target.value = '';
+                        return;
+                      }
+                      setFormData({ ...formData, mentorProfilePicture: file, mentorProfilePictureUrl: '' });
+                    }
+                  }}
+                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
+                />
+                {formData.mentorProfilePictureUrl && !formData.mentorProfilePicture && (
+                  <div className="mt-2">
+                    <p className="text-xs text-neutral-medium mb-1">Current image:</p>
+                    <img 
+                      src={formData.mentorProfilePictureUrl} 
+                      alt="Mentor" 
+                      className="w-20 h-20 rounded-full object-cover border border-neutral-border"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+                {formData.mentorProfilePicture && (
+                  <div className="mt-2">
+                    <p className="text-xs text-neutral-medium mb-1">New image selected:</p>
+                    <img 
+                      src={URL.createObjectURL(formData.mentorProfilePicture)} 
+                      alt="Mentor preview" 
+                      className="w-20 h-20 rounded-full object-cover border border-neutral-border"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
             <div className="flex gap-4">
               <button
@@ -277,6 +340,8 @@ export default function ModulesPage() {
                       typeof module.aiQuestionsPerChapter === 'number'
                         ? module.aiQuestionsPerChapter
                         : 10,
+                    mentorProfilePicture: null,
+                    mentorProfilePictureUrl: module.mentorProfilePicture || '',
                   });
                   setShowForm(true);
                 }}

@@ -13,7 +13,7 @@ export default function GlobalAIChat() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [ttsEnabled, setTtsEnabled] = useState(true);
+  const [ttsEnabled, setTtsEnabled] = useState(false); // Voice off by default
   const [voice, setVoice] = useState(null);
   const messagesEndRef = useRef(null);
 
@@ -179,7 +179,7 @@ export default function GlobalAIChat() {
             </div>
           </div>
 
-          <div className="flex-1 max-h-80 overflow-y-auto p-3 space-y-3">
+          <div className="flex-1 overflow-y-auto p-3 space-y-3 min-h-0">
             {messages.length === 0 ? (
               <div className="text-center text-neutral-medium text-sm py-6">
                 Start by sharing what you’re working on, or ask for help exploring an idea.
