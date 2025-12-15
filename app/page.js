@@ -88,7 +88,7 @@ export default function Landing() {
             {[
               {
                 icon: <Zap className="w-12 h-12 text-accent-gold" />,
-                title: 'AI Co-Founder',
+                title: 'ZUNOVA',
                 description: 'Get personalized mentorship from an AI that understands your entrepreneurial journey',
               },
               {

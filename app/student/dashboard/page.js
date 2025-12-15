@@ -276,7 +276,7 @@ export default function StudentDashboard() {
             <div className="card text-center">
               <Brain className="w-12 h-12 text-semantic-info mx-auto mb-4" />
               <h4 className="font-bold mb-2">AI Mentor</h4>
-              <p className="text-neutral-medium text-sm">Chat with your AI co-founder</p>
+              <p className="text-neutral-medium text-sm">Chat with ZUNOVA</p>
             </div>
           </div>
         )}

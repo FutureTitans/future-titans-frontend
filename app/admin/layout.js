@@ -59,6 +59,9 @@ export default function AdminLayout({ children }) {
             <a href="/admin/schools" className="block px-4 py-2 rounded-lg hover:bg-primary-lightRed text-neutral-dark hover:text-primary-red transition">
               🏫 School Slugs
             </a>
+            <a href="/admin/settings" className="block px-4 py-2 rounded-lg hover:bg-primary-lightRed text-neutral-dark hover:text-primary-red transition">
+              ⚙️ Settings
+            </a>
             <hr className="my-4" />
             <a href="/" className="block px-4 py-2 rounded-lg hover:bg-primary-lightRed text-neutral-dark hover:text-primary-red transition text-sm">
               🏠 Back to Home
