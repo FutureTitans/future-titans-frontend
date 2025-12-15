@@ -141,7 +141,7 @@ export default function GlobalAIChat() {
           type="button"
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 bg-primary-red text-white rounded-full w-14 h-14 flex items-center justify-center shadow-2xl hover:bg-primary-darkRed transition z-40"
-          title="Chat with your AI Co-Founder"
+          title="Chat with ZUNOVA"
         >
           <MessageCircle className="w-7 h-7" />
         </button>
@@ -152,7 +152,7 @@ export default function GlobalAIChat() {
         <div className="fixed bottom-6 right-6 w-full max-w-sm bg-white rounded-xl shadow-2xl border border-neutral-border flex flex-col z-40">
           <div className="bg-gradient-red-gold text-white px-4 py-3 rounded-t-xl flex items-center justify-between">
             <div>
-              <p className="font-semibold text-sm">AI Co-Founder (Global)</p>
+              <p className="font-semibold text-sm">ZUNOVA (Global)</p>
               <p className="text-xs opacity-90">
                 Ask anything about ideas, mindset, or SURGE — beyond the modules.
               </p>

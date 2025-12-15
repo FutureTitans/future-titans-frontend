@@ -237,7 +237,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       {/* Header */}
       <div className="bg-gradient-red-gold text-white px-4 py-3 md:p-6 flex items-center justify-between">
         <div>
-          <h3 className="text-xl font-bold mb-1">AI Co-Founder</h3>
+          <h3 className="text-xl font-bold mb-1">ZUNOVA</h3>
           <p className="text-sm opacity-90">Your personalized learning partner</p>
         </div>
         <button

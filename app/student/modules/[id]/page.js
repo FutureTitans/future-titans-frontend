@@ -336,7 +336,7 @@ export default function ModulePlayerPage() {
                   }`}
                 >
                   <Brain className="w-4 h-4" />
-                  AI Co-Founder
+                  ZUNOVA
                 </button>
               )}
             </div>

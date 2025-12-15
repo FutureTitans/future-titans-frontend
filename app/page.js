@@ -87,8 +87,8 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                icon: <Zap className="w-12 h-12 text-[#dbb016]" />,
-                title: 'AI Co-Founder',
+                icon: <Zap className="w-12 h-12 text-accent-gold" />,
+                title: 'ZUNOVA',
                 description: 'Get personalized mentorship from an AI that understands your entrepreneurial journey',
               },
               {
