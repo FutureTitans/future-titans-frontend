@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { modules, payment } from '@/lib/api';
 import { isStudent, getUser } from '@/lib/auth';
-import { BookOpen, Clock, Users, Star, ArrowRight, Lock, Play, CheckCircle } from 'lucide-react';
+import { BookOpen, Clock, Users, Star, ArrowLeft, Lock, Play, CheckCircle, Filter } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function StudentModulesPage() {
@@ -45,27 +45,15 @@ export default function StudentModulesPage() {
 
   const filteredModules = modulesList.filter(module => {
     if (filter === 'all') return true;
-    if (filter === 'beginner') return module.difficulty === 'beginner';
-    if (filter === 'intermediate') return module.difficulty === 'intermediate';
-    if (filter === 'advanced') return module.difficulty === 'advanced';
-    return true;
+    return module.difficulty === filter;
   });
 
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
-      case 'beginner': return 'text-semantic-success';
-      case 'intermediate': return 'text-accent-gold';
-      case 'advanced': return 'text-semantic-error';
-      default: return 'text-neutral-medium';
-    }
-  };
-
-  const getDifficultyIcon = (difficulty) => {
-    switch (difficulty) {
-      case 'beginner': return '🌱';
-      case 'intermediate': return '🌿';
-      case 'advanced': return '🌳';
-      default: return '📚';
+      case 'beginner': return 'from-green-400 to-green-600';
+      case 'intermediate': return 'from-yellow-400 to-orange-500';
+      case 'advanced': return 'from-red-500 to-red-700';
+      default: return 'from-gray-400 to-gray-600';
     }
   };
 
@@ -74,34 +62,19 @@ export default function StudentModulesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-white-light">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-border">
-        <div className="container-lg py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold gradient-text">Learning Modules</h1>
-              <p className="text-neutral-medium">Master entrepreneurship with AI-powered learning</p>
-            </div>
-            <Link href="/student/dashboard" className="text-primary-red hover:text-primary-darkRed transition">
-              ← Back to Dashboard
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="container-lg py-8">
+    <div className="min-h-screen relative" style={{ zIndex: 1 }}>
+      <div className="container-lg py-8 space-y-6">
         {/* Payment Check */}
         {!paymentStatus?.isPaid && (
-          <div className="card mb-8 border-l-4 border-l-semantic-error bg-semantic-error bg-opacity-5">
+          <div className="glass border-l-4 border-l-red-500 p-6 rounded-2xl">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-lg text-semantic-error mb-2">🔒 Access Restricted</h3>
-                <p className="text-neutral-dark">Complete payment to unlock all learning modules</p>
+                <h3 className="font-bold text-lg text-red-600 mb-2">🔒 Access Restricted</h3>
+                <p className="text-gray-700">Complete payment to unlock all learning modules</p>
               </div>
               <Link
                 href="/student/dashboard"
-                className="bg-semantic-error text-white px-6 py-3 rounded-lg hover:bg-red-600 transition font-semibold"
+                className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-xl hover:shadow-lg transition font-semibold"
               >
                 Complete Payment
               </Link>
@@ -110,9 +83,10 @@ export default function StudentModulesPage() {
         )}
 
         {/* Filters */}
-        <div className="card mb-8">
-          <div className="flex flex-wrap gap-4">
-            <h3 className="font-semibold text-neutral-dark mr-4">Filter by difficulty:</h3>
+        <div className="glass p-4 rounded-2xl">
+          <div className="flex flex-wrap items-center gap-3">
+            <Filter className="w-5 h-5 text-gray-600" />
+            <span className="font-semibold text-gray-700 mr-2">Filter:</span>
             {[
               { key: 'all', label: 'All Modules', icon: '📚' },
               { key: 'beginner', label: 'Beginner', icon: '🌱' },
@@ -122,10 +96,10 @@ export default function StudentModulesPage() {
               <button
                 key={item.key}
                 onClick={() => setFilter(item.key)}
-                className={`px-4 py-2 rounded-lg transition flex items-center gap-2 ${
+                className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-sm font-medium ${
                   filter === item.key
-                    ? 'bg-primary-red text-white'
-                    : 'bg-neutral-light text-neutral-dark hover:bg-neutral-border'
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
+                    : 'glass-subtle text-gray-700 hover:bg-white/50'
                 }`}
               >
                 <span>{item.icon}</span>
@@ -138,67 +112,66 @@ export default function StudentModulesPage() {
         {/* Modules Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredModules.map((module) => (
-            <div key={module._id} className="card hover:shadow-xl transition-all group">
+            <div key={module._id} className="card group cursor-pointer">
               {/* Module Header */}
               <div className="mb-4">
                 <div className="flex justify-between items-start mb-3">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     {module.mentorProfilePicture && (
                       <img 
                         src={module.mentorProfilePicture} 
                         alt="Mentor" 
-                        className="w-10 h-10 rounded-full border-2 border-primary-red object-cover"
+                        className="w-12 h-12 rounded-full border-2 border-white object-cover shadow-md"
                         onError={(e) => { e.target.style.display = 'none'; }}
                       />
                     )}
-                    <span className="text-2xl">{getDifficultyIcon(module.difficulty)}</span>
-                    <span className={`badge capitalize ${getDifficultyColor(module.difficulty)}`}>
+                    <span className={`text-2xl bg-gradient-to-r ${getDifficultyColor(module.difficulty)} bg-clip-text text-transparent font-bold capitalize`}>
                       {module.difficulty}
                     </span>
                   </div>
                   {paymentStatus?.isPaid ? (
-                    <CheckCircle className="w-5 h-5 text-semantic-success" />
+                    <CheckCircle className="w-5 h-5 text-green-500" />
                   ) : (
-                    <Lock className="w-5 h-5 text-neutral-medium" />
+                    <Lock className="w-5 h-5 text-gray-400" />
                   )}
                 </div>
                 
-                <h3 className="font-bold text-xl mb-2 group-hover:text-primary-red transition">
+                <h3 className="font-bold text-xl mb-2 text-gray-800 group-hover:text-red-600 transition line-clamp-2">
                   {module.title}
                 </h3>
-                <p className="text-neutral-medium text-sm line-clamp-3">
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
                   {module.description}
                 </p>
               </div>
 
               {/* Module Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-neutral-medium" />
+              <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Clock className="w-4 h-4" />
                   <span>{module.estimatedCompletionTime} min</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-neutral-medium" />
+                <div className="flex items-center gap-2 text-gray-600">
+                  <BookOpen className="w-4 h-4" />
                   <span>{module.chapters?.length || 0} chapters</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-neutral-medium" />
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Users className="w-4 h-4" />
                   <span>Interactive</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Star className="w-4 h-4 text-accent-gold" />
+                <div className="flex items-center gap-2 text-yellow-500">
+                  <Star className="w-4 h-4" />
                   <span>AI Powered</span>
                 </div>
               </div>
 
-              {/* Progress Bar (if started) */}
+              {/* Progress Bar */}
               <div className="mb-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-neutral-medium">Progress</span>
-                  <span className="text-sm font-semibold">0%</span>
+                  <span className="text-xs text-gray-600">Progress</span>
+                  <span className="text-xs font-semibold text-gray-800">0%</span>
                 </div>
-                <div className="w-full bg-neutral-light rounded-full h-2">
-                  <div className="bg-gradient-red-gold h-2 rounded-full" style={{ width: '0%' }}></div>
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div className="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full transition-all" style={{ width: '0%' }}></div>
                 </div>
               </div>
 
@@ -206,7 +179,7 @@ export default function StudentModulesPage() {
               {paymentStatus?.isPaid ? (
                 <Link
                   href={`/student/modules/${module._id}`}
-                  className="w-full bg-primary-red text-white py-3 px-4 rounded-lg hover:bg-primary-darkRed transition font-semibold flex items-center justify-center gap-2 group-hover:shadow-lg"
+                  className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 rounded-xl hover:shadow-lg transition font-semibold flex items-center justify-center gap-2 group-hover:scale-105"
                 >
                   <Play className="w-4 h-4" />
                   Start Learning
@@ -214,7 +187,7 @@ export default function StudentModulesPage() {
               ) : (
                 <button
                   disabled
-                  className="w-full bg-neutral-light text-neutral-medium py-3 px-4 rounded-lg cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full glass-subtle text-gray-500 py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Lock className="w-4 h-4" />
                   Locked
@@ -223,8 +196,8 @@ export default function StudentModulesPage() {
 
               {/* AI Feature Badge */}
               {module.aiInteractionEnabled && (
-                <div className="mt-3 flex items-center justify-center gap-2 text-xs text-accent-gold">
-                  <span className="w-2 h-2 bg-accent-gold rounded-full animate-pulse"></span>
+                <div className="mt-3 flex items-center justify-center gap-2 text-xs text-yellow-600">
+                  <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
                   ZUNOVA Available
                 </div>
               )}
@@ -236,8 +209,8 @@ export default function StudentModulesPage() {
         {filteredModules.length === 0 && (
           <div className="card text-center py-12">
             <div className="text-6xl mb-4">📚</div>
-            <h3 className="font-bold text-xl mb-2">No modules found</h3>
-            <p className="text-neutral-medium mb-6">
+            <h3 className="font-bold text-xl mb-2 text-gray-800">No modules found</h3>
+            <p className="text-gray-600 mb-6">
               {filter === 'all' 
                 ? 'No modules are available yet. Check back soon!' 
                 : `No ${filter} modules available. Try a different filter.`
@@ -245,7 +218,7 @@ export default function StudentModulesPage() {
             </p>
             <button
               onClick={() => setFilter('all')}
-              className="bg-primary-red text-white px-6 py-2 rounded-lg hover:bg-primary-darkRed transition"
+              className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-2 rounded-xl hover:shadow-lg transition font-semibold"
             >
               Show All Modules
             </button>
@@ -254,7 +227,7 @@ export default function StudentModulesPage() {
 
         {/* Learning Path Info */}
         {paymentStatus?.isPaid && modulesList.length > 0 && (
-          <div className="card mt-8 bg-gradient-red-gold text-white">
+          <div className="card bg-gradient-to-r from-red-500 to-orange-500 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-xl mb-2">🎯 Your Learning Path</h3>
@@ -262,7 +235,7 @@ export default function StudentModulesPage() {
                   Complete modules in order to maximize your learning experience and SSI score
                 </p>
               </div>
-              <ArrowRight className="w-8 h-8 opacity-75" />
+              <ArrowLeft className="w-8 h-8 opacity-75 rotate-180" />
             </div>
           </div>
         )}

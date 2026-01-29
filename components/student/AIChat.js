@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { aiChat, auth } from '@/lib/api';
-import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy } from 'lucide-react';
+import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles } from 'lucide-react';
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
@@ -13,13 +13,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [ssiScore, setSSIScore] = useState(null);
-  const [ttsEnabled, setTtsEnabled] = useState(false); // Voice off by default
+  const [ttsEnabled, setTtsEnabled] = useState(false);
   const [voice, setVoice] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [allModulesCompleted, setAllModulesCompleted] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const messagesEndRef = useRef(null);
-
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime, setStartTime] = useState(null);
 
@@ -39,30 +38,20 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
           setStartTime(new Date(data.startedAt));
         }
         
-        // Check if all modules and chapters are completed
-        // This is a simplified check - the backend will verify all chapters are actually completed
         try {
           const profile = await auth.getProfile();
           const modulesProgress = profile?.modulesProgress || [];
           const hasModules = modulesProgress.length > 0;
-          // Check if all modules show 100% completion (backend verifies actual chapter completion)
           const allCompleted = hasModules && modulesProgress.every((m) => (m.completionPercentage || 0) >= 100);
           setAllModulesCompleted(allCompleted);
         } catch (e) {
           console.error('Failed to check module completion:', e);
         }
 
-        // Auto-start SURGE session: if no conversation yet, trigger the first AI question
         if (!data.conversation || data.conversation.length === 0 && !data.isCompleted) {
           try {
             setIsLoading(true);
-            // Send a hidden seed message so the engine can generate the first question
-            await aiChat.sendMessage(
-              moduleId,
-              chapterId,
-              AUTO_SURGE_SEED
-            );
-            // Reload history so we pick up the assistant's first question
+            await aiChat.sendMessage(moduleId, chapterId, AUTO_SURGE_SEED);
             const seeded = await aiChat.getChatHistory(moduleId, chapterId);
             setMessages(seeded.conversation);
             if (seeded.ssiScore) setSSIScore(seeded.ssiScore);
@@ -84,69 +73,45 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Update time spent in real-time
   useEffect(() => {
     if (!startTime || isCompleted) return;
-    
     const interval = setInterval(() => {
       const elapsed = Math.floor((new Date() - startTime) / 1000);
       setTimeSpent(elapsed);
     }, 1000);
-
     return () => clearInterval(interval);
   }, [startTime, isCompleted]);
 
-  // Load best-available TTS voice once
   useEffect(() => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return;
-
     const pickBestVoice = () => {
       const voices = window.speechSynthesis.getVoices();
       if (!voices || voices.length === 0) return;
-
-      // Prefer high-quality English neural voices
-      const preferredOrder = [
-        'Google US English',
-        'Google UK English',
-        'Microsoft Guy',
-        'Microsoft Aria',
-      ];
-
-      let selected =
-        voices.find((v) => preferredOrder.some((name) => v.name.includes(name))) ||
+      const preferredOrder = ['Google US English', 'Google UK English', 'Microsoft Guy', 'Microsoft Aria'];
+      let selected = voices.find((v) => preferredOrder.some((name) => v.name.includes(name))) ||
         voices.find((v) => v.lang === 'en-US') ||
         voices.find((v) => v.lang.startsWith('en')) ||
         voices[0];
-
       setVoice(selected || null);
     };
-
     pickBestVoice();
     if (window.speechSynthesis.getVoices().length === 0) {
       window.speechSynthesis.addEventListener('voiceschanged', pickBestVoice);
-      return () => {
-        window.speechSynthesis.removeEventListener('voiceschanged', pickBestVoice);
-      };
+      return () => window.speechSynthesis.removeEventListener('voiceschanged', pickBestVoice);
     }
   }, []);
 
-  // TTS for latest assistant message
   useEffect(() => {
     if (!ttsEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
     const last = messages[messages.length - 1];
     if (!last || last.role !== 'assistant' || !last.message) return;
-
     try {
       const synth = window.speechSynthesis;
       if (!synth) return;
       synth.cancel();
       const utterance = new SpeechSynthesisUtterance(last.message);
-      if (voice) {
-        utterance.voice = voice;
-      } else {
-        utterance.lang = 'en-US';
-      }
-      // Slightly tuned for more natural feel
+      if (voice) utterance.voice = voice;
+      else utterance.lang = 'en-US';
       utterance.rate = 1.0;
       utterance.pitch = 1.05;
       utterance.volume = 1.0;
@@ -187,7 +152,6 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
   const handleFinishChapter = async () => {
     if (isCompleted || finishing) return;
-    
     setFinishing(true);
     try {
       const response = await aiChat.finishChapterChat(moduleId, chapterId);
@@ -195,30 +159,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       if (response.finalSSI) {
         setSSIScore(response.finalSSI);
       }
-      
-      // Always check completion status using dedicated endpoint
       try {
         const completionStatus = await auth.checkCompletionStatus();
-        console.log('📊 Completion Status:', completionStatus);
-        
         setAllModulesCompleted(completionStatus.allCompleted || response.allModulesCompleted);
-        
-        // Show detailed status in alert if not complete
-        if (!completionStatus.allCompleted) {
-          const incompleteModules = completionStatus.details
-            .filter(d => !d.isComplete)
-            .map(d => `${d.moduleTitle}: ${d.completedChapters}/${d.totalChapters} chapters (${d.completionPercentage}%)`)
-            .join('\n');
-          
-          console.warn('⚠️ Modules incomplete:', incompleteModules);
-        }
       } catch (e) {
-        console.error('❌ Failed to check completion status:', e);
-        // Fallback to backend response
         setAllModulesCompleted(response.allModulesCompleted || false);
       }
-      
-      // Show appropriate message
       if (response.allModulesCompleted) {
         alert('🎉 Congratulations! You\'ve completed all modules and chapters! You can now submit your idea.');
       } else {
@@ -232,64 +178,89 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
     }
   };
 
+  const filteredMessages = messages.filter((m) => !(m.role === 'user' && m.message === AUTO_SURGE_SEED));
+
   return (
-    <div className="flex flex-col bg-white rounded-2xl border border-neutral-border/60 shadow-lg overflow-hidden h-full max-h-[calc(100vh-120px)]">
-      {/* Header */}
-      <div className="bg-gradient-red-gold text-white px-4 py-3 md:p-6 flex items-center justify-between">
-        <div>
-          <h3 className="text-xl font-bold mb-1">ZUNOVA</h3>
-          <p className="text-sm opacity-90">Your personalized learning partner</p>
+    <div className="flex flex-col glass rounded-2xl border border-white/30 shadow-2xl overflow-hidden h-full max-h-[calc(100vh-120px)]">
+      {/* Premium Bot Header */}
+      <div className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white px-4 py-4 md:px-6 md:py-5 flex items-center justify-between relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 to-orange-600/20"></div>
+        <div className="flex items-center gap-3 relative z-10">
+          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30 flex items-center justify-center shadow-lg">
+            <Bot className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h3 className="text-lg md:text-xl font-bold flex items-center gap-2">
+              ZUNOVA
+              <Sparkles className="w-4 h-4 animate-pulse" />
+            </h3>
+            <p className="text-xs md:text-sm opacity-90">Your AI Learning Partner</p>
+          </div>
         </div>
         <button
           type="button"
           onClick={() => setTtsEnabled((v) => !v)}
-          className="flex items-center gap-1 text-xs bg-white/10 px-3 py-1 rounded-full hover:bg-white/20 transition"
+          className="relative z-10 flex items-center gap-1 text-xs bg-white/20 backdrop-blur-sm px-3 py-2 rounded-full hover:bg-white/30 transition border border-white/20"
         >
           {ttsEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          <span>{ttsEnabled ? 'Voice On' : 'Voice Off'}</span>
+          <span className="hidden sm:inline">{ttsEnabled ? 'Voice On' : 'Voice Off'}</span>
         </button>
       </div>
 
-      {/* Messages (own scroll, independent from page scroll) */}
-      <div className="flex-1 overflow-y-auto px-4 py-3 md:p-6 space-y-4 bg-neutral-light/40 scrollbar-thin scrollbar-thumb-neutral-border/70 scrollbar-track-transparent min-h-0">
-        {messages.filter(
-          (m) => !(m.role === 'user' && m.message === AUTO_SURGE_SEED)
-        ).length === 0 ? (
-          <div className="flex items-center justify-center h-full text-center">
-            <div>
-              <p className="text-neutral-medium mb-2">Start your conversation</p>
-              <p className="text-sm text-neutral-medium">Ask questions and share your ideas</p>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-3 py-4 md:px-6 md:py-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/30 min-h-0">
+        {filteredMessages.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-center px-4">
+            <div className="glass-subtle p-6 rounded-2xl max-w-sm">
+              <Bot className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600 font-medium mb-1">Start your conversation</p>
+              <p className="text-sm text-gray-500">Ask questions and share your ideas with ZUNOVA</p>
             </div>
           </div>
         ) : (
-          messages
-            .filter(
-              (msg) => !(msg.role === 'user' && msg.message === AUTO_SURGE_SEED)
-            )
-            .map((msg, idx) => (
-              <div
-                key={idx}
-                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-xs px-4 py-2 rounded-lg ${
-                    msg.role === 'user'
-                      ? 'bg-primary-red text-white rounded-br-none'
-                      : 'bg-neutral-light text-neutral-dark rounded-bl-none'
-                  }`}
-                >
-                  <p>{msg.message}</p>
-                  <span className="text-xs opacity-70 mt-1 block">
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                  </span>
+          filteredMessages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
+            >
+              {msg.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mr-2 flex-shrink-0 shadow-md">
+                  <Bot className="w-4 h-4 text-white" />
                 </div>
+              )}
+              <div
+                className={`max-w-[85%] md:max-w-xs px-4 py-3 rounded-2xl shadow-md ${
+                  msg.role === 'user'
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-br-sm'
+                    : 'glass-subtle text-gray-800 rounded-bl-sm border border-white/30'
+                }`}
+              >
+                <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+                <span className={`text-xs mt-2 block ${msg.role === 'user' ? 'text-white/70' : 'text-gray-500'}`}>
+                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
               </div>
-            ))
+              {msg.role === 'user' && (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center ml-2 flex-shrink-0 shadow-md">
+                  <span className="text-white text-xs font-bold">U</span>
+                </div>
+              )}
+            </div>
+          ))
         )}
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-neutral-light p-4 rounded-lg animate-pulse">
-              <Loader className="w-5 h-5 animate-spin" />
+          <div className="flex justify-start animate-fade-in">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mr-2 flex-shrink-0 shadow-md">
+              <Bot className="w-4 h-4 text-white" />
+            </div>
+            <div className="glass-subtle px-4 py-3 rounded-2xl rounded-bl-sm border border-white/30">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-1">
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                </div>
+              </div>
             </div>
           </div>
         )}
@@ -298,26 +269,34 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
       {/* SSI Score Display */}
       {ssiScore && (
-        <div className="border-t border-neutral-border p-4 bg-primary-lightRed">
-          <div className="flex justify-between items-center mb-2">
-            <p className="text-sm font-semibold text-primary-red">Current SSI Score: {ssiScore.overall}/100</p>
+        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
+            <p className="text-sm font-semibold text-gray-800">
+              SSI Score: <span className="text-red-600">{ssiScore.overall}/100</span>
+            </p>
             {timeSpent > 0 && (
-              <p className="text-xs text-neutral-medium">
-                Time: {Math.floor(timeSpent / 60)}m {timeSpent % 60}s
+              <p className="text-xs text-gray-600">
+                ⏱️ {Math.floor(timeSpent / 60)}m {timeSpent % 60}s
               </p>
             )}
           </div>
           <div className="grid grid-cols-5 gap-2 text-xs">
             {[
-              { label: 'S', key: 'selfAwareness' },
-              { label: 'U', key: 'understandingOpportunities' },
-              { label: 'R', key: 'resilience' },
-              { label: 'G', key: 'growthExecution' },
-              { label: 'E', key: 'entrepreneurialLeadership' },
+              { label: 'S', key: 'selfAwareness', name: 'Self' },
+              { label: 'U', key: 'understandingOpportunities', name: 'Understand' },
+              { label: 'R', key: 'resilience', name: 'Resilience' },
+              { label: 'G', key: 'growthExecution', name: 'Growth' },
+              { label: 'E', key: 'entrepreneurialLeadership', name: 'Leadership' },
             ].map((item) => (
               <div key={item.key} className="text-center">
-                <p className="text-xs font-bold text-primary-red">{item.label}</p>
-                <p className="text-xs">{ssiScore[item.key] || 0}%</p>
+                <p className="text-xs font-bold text-gray-700 mb-1">{item.label}</p>
+                <div className="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+                  <div
+                    className="bg-gradient-to-r from-red-500 to-orange-500 h-1.5 rounded-full transition-all"
+                    style={{ width: `${ssiScore[item.key] || 0}%` }}
+                  />
+                </div>
+                <p className="text-xs text-gray-600">{ssiScore[item.key] || 0}%</p>
               </div>
             ))}
           </div>
@@ -326,31 +305,31 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
       {/* Finish Chapter Button */}
       {!isCompleted && messages.length > 0 && (
-        <div className="border-t border-neutral-border p-4 bg-accent-gold bg-opacity-10">
+        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle">
           <button
             onClick={handleFinishChapter}
             disabled={finishing || isLoading}
-            className="w-full flex items-center justify-center gap-2 bg-accent-gold text-white px-4 py-3 rounded-lg hover:bg-accent-amber disabled:opacity-50 transition-colors font-semibold"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-3 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all font-semibold"
           >
             <CheckCircle className="w-5 h-5" />
-            {finishing ? 'Finishing...' : 'Finish Chapter & Finalize SSI Score'}
+            {finishing ? 'Finishing...' : 'Finish Chapter & Finalize SSI'}
           </button>
-          <p className="text-xs text-neutral-medium mt-2 text-center">
-            Click to end this chapter's AI session and record your final SSI score
+          <p className="text-xs text-gray-600 mt-2 text-center">
+            End this chapter's AI session and record your final SSI score
           </p>
         </div>
       )}
 
-      {/* All Modules Completed - Submit Idea Button */}
+      {/* All Modules Completed */}
       {isCompleted && allModulesCompleted && (
-        <div className="border-t border-neutral-border p-4 bg-semantic-success bg-opacity-10">
+        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle bg-green-50/50">
           <div className="text-center mb-3">
-            <p className="font-semibold text-semantic-success mb-1">🎉 Congratulations!</p>
-            <p className="text-sm text-neutral-medium">You've completed all modules and chapters!</p>
+            <p className="font-semibold text-green-700 mb-1">🎉 Congratulations!</p>
+            <p className="text-sm text-gray-700">You've completed all modules and chapters!</p>
           </div>
           <button
             onClick={() => router.push('/student/submission')}
-            className="w-full flex items-center justify-center gap-2 bg-semantic-success text-white px-4 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold"
+            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl hover:shadow-lg transition-all font-semibold"
           >
             <Trophy className="w-5 h-5" />
             Submit Your Idea
@@ -360,20 +339,20 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
       {/* Input */}
       {!isCompleted && (
-        <form onSubmit={handleSendMessage} className="border-t border-neutral-border p-4">
+        <form onSubmit={handleSendMessage} className="border-t border-white/20 px-3 py-3 md:px-6 md:py-4 glass-subtle">
           <div className="flex gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Type your message..."
-              className="flex-1 px-4 py-2 border border-neutral-border rounded-lg focus:outline-none focus:border-primary-red"
+              className="flex-1 px-4 py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm md:text-base"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="bg-primary-red text-white px-4 py-2 rounded-lg hover:bg-primary-darkRed disabled:opacity-50 transition-colors"
+              className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
             >
               <Send className="w-5 h-5" />
             </button>
@@ -383,8 +362,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
       {/* Completed Message */}
       {isCompleted && !allModulesCompleted && (
-        <div className="border-t border-neutral-border p-4 bg-neutral-light text-center">
-          <p className="text-sm text-neutral-medium">
+        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle text-center">
+          <p className="text-sm text-gray-700">
             ✅ This chapter's AI session is complete. Your final SSI score has been recorded.
           </p>
         </div>
@@ -392,4 +371,3 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
     </div>
   );
 }
-

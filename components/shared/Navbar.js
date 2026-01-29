@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { Menu, X, LogOut, User } from 'lucide-react';
@@ -10,6 +11,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const pathname = usePathname();
   const { user, logout, hydrateUser } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,6 +22,11 @@ export default function Navbar() {
     hydrateUser();
     setMounted(true);
   }, [hydrateUser]);
+
+  // Hide navbar on School POC pages
+  if (pathname?.startsWith('/school-poc')) {
+    return null;
+  }
 
   // Hide navbar on School POC pages
   if (pathname?.startsWith('/school-poc')) {
@@ -38,108 +45,27 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 w-full z-50 pt-4 px-4 md:px-8">
-      <nav className="max-w-7xl mx-auto glass-panel px-6 py-3 flex justify-between items-center transition-all duration-300">
-        {/* Logo */}
-        <Link href="/" className="flex items-center">
-          <Image
-            src="/images/logo.png"
-            alt="Youngpreneurs Logo"
-            width={180}
-            height={50}
-            className="object-contain" // improved logo handling
-            priority
-          />
-        </Link>
+    <nav className="glass-strong border-b border-white/20 sticky top-0 z-50">
+      <div className="container-lg">
+        <div className="flex justify-between items-center py-4">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-white font-bold text-sm">YP</span>
+            </div>
+            <span className="font-bold text-lg text-gray-800 hidden sm:inline">YoungPreneurs</span>
+          </Link>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          {!user ? (
-            <>
-              <Link href="/login" className="text-neutral-dark font-medium hover:text-[#c7a536] transition">
-                Sign In
-              </Link>
-              <Link
-                href="/signup"
-                className="glass-button text-sm"
-              >
-                Get Started
-              </Link>
-            </>
-          ) : (
-            <>
-              {isStudent() && (
-                <>
-                  <Link href="/student/dashboard" className="text-neutral-dark hover:text-primary-red transition font-medium">
-                    Dashboard
-                  </Link>
-                  <Link href="/student/modules" className="text-neutral-dark hover:text-primary-red transition font-medium">
-                    Modules
-                  </Link>
-                </>
-              )}
-              {isAdmin() && (
-                <>
-                  <Link href="/admin" className="text-neutral-dark hover:text-primary-red transition font-medium">
-                    Admin
-                  </Link>
-                </>
-              )}
-              <div className="flex items-center gap-4 pl-4 border-l border-neutral-border/30">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (isStudent()) {
-                      router.push('/student/profile');
-                    } else if (isAdmin()) {
-                      router.push('/admin');
-                    }
-                  }}
-                  className="flex items-center gap-2 text-sm font-semibold text-neutral-dark hover:text-primary-red transition"
-                  title="View profile"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center text-primary-red">
-                    {user?.name?.charAt(0) || 'U'}
-                  </div>
-                  {user?.name}
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="text-neutral-medium hover:text-semantic-error transition"
-                  title="Logout"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden p-2 text-neutral-dark"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? (
-            <X className="w-6 h-6" />
-          ) : (
-            <Menu className="w-6 h-6" />
-          )}
-        </button>
-      </nav>
-
-      {/* Mobile Menu Dropdown (Floating) */}
-      {isMobileMenuOpen && (
-        <div className="absolute top-20 left-4 right-4 z-40">
-          <div className="glass-panel p-4 space-y-4 flex flex-col">
+          {/* Desktop Menu */}
+          <div className="hidden md:flex items-center gap-6">
             {!user ? (
               <>
-                <Link href="/login" className="text-neutral-dark font-medium hover:text-primary-red py-2 px-2 hover:bg-neutral-light rounded-lg transition">
+                <Link href="/login" className="text-gray-700 hover:text-red-600 transition font-medium">
                   Sign In
                 </Link>
                 <Link
                   href="/signup"
-                  className="glass-button text-center justify-center flex"
+                  className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-2 rounded-xl hover:shadow-lg transition font-semibold"
                 >
                   Get Started
                 </Link>
@@ -148,24 +74,98 @@ export default function Navbar() {
               <>
                 {isStudent() && (
                   <>
-                    <Link href="/student/dashboard" className="text-neutral-dark font-medium hover:text-primary-red py-2 px-2 hover:bg-neutral-light rounded-lg transition">
+                    <Link href="/student/dashboard" className="text-gray-700 hover:text-red-600 transition font-medium">
                       Dashboard
                     </Link>
-                    <Link href="/student/modules" className="text-neutral-dark font-medium hover:text-primary-red py-2 px-2 hover:bg-neutral-light rounded-lg transition">
+                    <Link href="/student/modules" className="text-gray-700 hover:text-red-600 transition font-medium">
                       Modules
                     </Link>
                   </>
                 )}
                 {isAdmin() && (
                   <>
-                    <Link href="/admin" className="text-neutral-dark font-medium hover:text-primary-red py-2 px-2 hover:bg-neutral-light rounded-lg transition">
+                    <Link href="/admin" className="text-gray-700 hover:text-red-600 transition font-medium">
+                      Admin
+                    </Link>
+                  </>
+                )}
+                <div className="flex items-center gap-4 pl-4 border-l border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (isStudent()) {
+                        router.push('/student/profile');
+                      } else if (isAdmin()) {
+                        router.push('/admin');
+                      }
+                    }}
+                    className="text-sm text-gray-700 hover:text-red-600 transition font-medium"
+                    title="View profile"
+                  >
+                    {user?.name}
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="text-gray-600 hover:text-red-600 transition"
+                    title="Logout"
+                  >
+                    <LogOut className="w-5 h-5" />
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden p-2 text-gray-700"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden pb-4 space-y-3 border-t border-gray-200 pt-4">
+            {!user ? (
+              <>
+                <Link href="/login" className="block text-gray-700 hover:text-red-600 transition py-2 font-medium">
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  className="block bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2 rounded-xl hover:shadow-lg text-center transition font-semibold"
+                >
+                  Get Started
+                </Link>
+              </>
+            ) : (
+              <>
+                {isStudent() && (
+                  <>
+                    <Link href="/student/dashboard" className="block text-gray-700 hover:text-red-600 transition py-2 font-medium">
+                      Dashboard
+                    </Link>
+                    <Link href="/student/modules" className="block text-gray-700 hover:text-red-600 transition py-2 font-medium">
+                      Modules
+                    </Link>
+                  </>
+                )}
+                {isAdmin() && (
+                  <>
+                    <Link href="/admin" className="block text-gray-700 hover:text-red-600 transition py-2 font-medium">
                       Admin Dashboard
                     </Link>
                   </>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="text-left text-semantic-error font-medium hover:bg-red-50 py-2 px-2 rounded-lg transition w-full"
+                  className="w-full text-left text-red-600 hover:bg-red-50 px-4 py-2 rounded-xl transition font-medium"
                 >
                   Logout
                 </button>
