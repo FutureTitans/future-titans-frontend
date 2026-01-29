@@ -1,4 +1,4 @@
-// File: C:\Users\USER\Desktop\futureTitans\future-titans-frontend\app\layout.js
+// File: /Users/prashantjadon/Desktop/personalfreeprojects/futuretitansLastProject/frontend/app/layout.js
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

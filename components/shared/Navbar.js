@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { Menu, X, LogOut, User } from 'lucide-react';
@@ -10,6 +10,7 @@ import Image from "next/image";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, logout, hydrateUser } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -19,6 +20,11 @@ export default function Navbar() {
     hydrateUser();
     setMounted(true);
   }, [hydrateUser]);
+
+  // Hide navbar on School POC pages
+  if (pathname?.startsWith('/school-poc')) {
+    return null;
+  }
 
   if (!mounted) {
     // Render nothing until client-side auth state is hydrated
@@ -37,13 +43,13 @@ export default function Navbar() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center ">
-          <Image 
-    src="/images/logo.png" 
-    alt="Youngpreneurs Logo" 
-    width={280} 
-    height={90} 
-    priority
-  />
+            <Image
+              src="/images/logo.png"
+              alt="Youngpreneurs Logo"
+              width={280}
+              height={90}
+              priority
+            />
           </Link>
 
           {/* Desktop Menu */}

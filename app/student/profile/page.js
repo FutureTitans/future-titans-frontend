@@ -3,14 +3,15 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { auth } from '@/lib/api';
+import { auth, achievements } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import { ArrowLeft, User, School, MapPin, Globe2, Trophy } from 'lucide-react';
+import { ArrowLeft, User, School, MapPin, Globe2, Trophy, Award } from 'lucide-react';
 
 export default function StudentProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
+  const [achievementsData, setAchievementsData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,8 +22,12 @@ export default function StudentProfilePage() {
 
     const loadProfile = async () => {
       try {
-        const data = await auth.getProfile();
-        setProfile(data);
+        const [profileData, achievementsRes] = await Promise.all([
+          auth.getProfile(),
+          achievements.getAll().catch(() => ({ achievements: [], stats: { total: 0 } })),
+        ]);
+        setProfile(profileData);
+        setAchievementsData(achievementsRes);
       } catch (error) {
         console.error('Failed to load profile:', error);
       } finally {
@@ -137,6 +142,71 @@ export default function StudentProfilePage() {
             </div>
           </div>
         </div>
+
+        {/* Achievements Section */}
+        {achievementsData && achievementsData.achievements.length > 0 && (
+          <div className="card">
+            <div className="flex items-center gap-2 mb-6">
+              <Award className="w-5 h-5 text-accent-gold" />
+              <h3 className="font-bold text-xl text-gray-800">Your Achievements</h3>
+              <span className="bg-neutral-light px-3 py-1 rounded-full text-sm font-semibold text-neutral-dark">
+                {achievementsData.stats.total}
+              </span>
+            </div>
+
+            {/* Achievement Stats */}
+            <div className="grid grid-cols-4 gap-4 mb-6">
+              <div className="text-center bg-neutral-light/50 p-3 rounded-xl border border-neutral-border">
+                <p className="text-xs text-neutral-medium mb-1">Common</p>
+                <p className="text-xl font-bold text-gray-800">{achievementsData.stats.byRarity.common}</p>
+              </div>
+              <div className="text-center bg-blue-50/50 p-3 rounded-xl border border-blue-100">
+                <p className="text-xs text-neutral-medium mb-1">Rare</p>
+                <p className="text-xl font-bold text-blue-600">{achievementsData.stats.byRarity.rare}</p>
+              </div>
+              <div className="text-center bg-purple-50/50 p-3 rounded-xl border border-purple-100">
+                <p className="text-xs text-neutral-medium mb-1">Epic</p>
+                <p className="text-xl font-bold text-purple-600">{achievementsData.stats.byRarity.epic}</p>
+              </div>
+              <div className="text-center bg-amber-50/50 p-3 rounded-xl border border-amber-100">
+                <p className="text-xs text-neutral-medium mb-1">Legendary</p>
+                <p className="text-xl font-bold text-amber-600">{achievementsData.stats.byRarity.legendary}</p>
+              </div>
+            </div>
+
+            {/* Achievements Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {achievementsData.achievements.map((achievement) => (
+                <div
+                  key={achievement._id}
+                  className={`bg-white p-4 rounded-xl border-2 transition-all hover:scale-105 ${achievement.rarity === 'legendary' ? 'border-amber-400' :
+                      achievement.rarity === 'epic' ? 'border-purple-400' :
+                        achievement.rarity === 'rare' ? 'border-blue-400' :
+                          'border-gray-200'
+                    }`}
+                >
+                  <div className={`achievement-badge achievement-${achievement.rarity} mx-auto mb-3`}></div>
+                  <h4 className="font-bold text-sm text-gray-800 mb-1 text-center">{achievement.title}</h4>
+                  <p className="text-xs text-neutral-medium text-center mb-2">{achievement.description}</p>
+                  <div className="flex items-center justify-center gap-1">
+                    <span className={`text-xs px-2 py-1 rounded-full capitalize ${achievement.rarity === 'legendary' ? 'bg-amber-100 text-amber-700' :
+                        achievement.rarity === 'epic' ? 'bg-purple-100 text-purple-700' :
+                          achievement.rarity === 'rare' ? 'bg-blue-100 text-blue-700' :
+                            'bg-gray-100 text-gray-700'
+                      }`}>
+                      {achievement.rarity}
+                    </span>
+                  </div>
+                  {achievement.unlockedAt && (
+                    <p className="text-xs text-neutral-medium text-center mt-2">
+                      {new Date(achievement.unlockedAt).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Progress overview */}
         <div className="grid md:grid-cols-3 gap-6">

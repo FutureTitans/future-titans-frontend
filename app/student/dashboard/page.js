@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
-import { modules, payment, aiChat } from '@/lib/api';
+import { modules, payment, aiChat, achievements } from '@/lib/api';
 import { isStudent, getUser } from '@/lib/auth';
 import { BookOpen, Trophy, CreditCard, Brain, ArrowRight, Clock, CheckCircle, Play } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -15,6 +15,7 @@ export default function StudentDashboard() {
   const [modulesList, setModulesList] = useState([]);
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [ssiScore, setSSIScore] = useState(null);
+  const [achievementsData, setAchievementsData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,15 +31,17 @@ export default function StudentDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const [modulesData, paymentData, ssiData] = await Promise.all([
+      const [modulesData, paymentData, ssiData, achievementsRes] = await Promise.all([
         modules.getAll().catch(() => []),
         payment.getPaymentStatus().catch(() => ({ isPaid: false })),
         aiChat.getSSI().catch(() => ({ overallSSI: 0, breakdown: {} })),
+        achievements.getAll().catch(() => ({ achievements: [], stats: { total: 0 } })),
       ]);
 
       setModulesList(modulesData);
       setPaymentStatus(paymentData);
       setSSIScore(ssiData);
+      setAchievementsData(achievementsRes);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     } finally {
@@ -222,9 +225,9 @@ export default function StudentDashboard() {
                   <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-3">
                       {module.mentorProfilePicture && (
-                        <img 
-                          src={module.mentorProfilePicture} 
-                          alt="Mentor" 
+                        <img
+                          src={module.mentorProfilePicture}
+                          alt="Mentor"
                           className="w-12 h-12 rounded-full border-2 border-primary-red object-cover"
                           onError={(e) => { e.target.style.display = 'none'; }}
                         />
@@ -257,6 +260,22 @@ export default function StudentDashboard() {
             </div>
           )}
         </div>
+
+        {/* Achievements Section */}
+        {achievementsData && achievementsData.stats.total > 0 && (
+          <div className="card mt-8">
+            <h3 className="font-bold text-xl text-gray-800 mb-6">Recent Achievements</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+              {achievementsData.achievements.slice(0, 5).map((achievement) => (
+                <div key={achievement._id} className="text-center group">
+                  <div className={`achievement-badge achievement-${achievement.rarity} mx-auto mb-3 transform group-hover:scale-110 transition-transform`}></div>
+                  <p className="text-xs font-semibold text-gray-800">{achievement.title}</p>
+                  <p className="text-xs text-neutral-medium capitalize">{achievement.rarity}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Quick Actions */}
         {paymentStatus?.isPaid && (

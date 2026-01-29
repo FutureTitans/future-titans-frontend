@@ -16,6 +16,9 @@ export default function SchoolSlugsPage() {
     description: '',
     price: 499,
     isActive: true,
+    pocName: '',
+    pocEmail: '',
+    pocPassword: '',
   });
 
   useEffect(() => {
@@ -47,6 +50,9 @@ export default function SchoolSlugsPage() {
       description: '',
       price: 499,
       isActive: true,
+      pocName: '',
+      pocEmail: '',
+      pocPassword: '',
     });
     setFormOpen(true);
   };
@@ -59,6 +65,9 @@ export default function SchoolSlugsPage() {
       description: slug.description || '',
       price: slug.price,
       isActive: slug.isActive,
+      pocName: slug.pocName || '',
+      pocEmail: slug.pocEmail || '',
+      pocPassword: '', // Don't pre-fill password for security
     });
     setFormOpen(true);
   };
@@ -202,6 +211,54 @@ export default function SchoolSlugsPage() {
                 className="w-full px-3 py-2 border border-neutral-border rounded-lg h-20"
                 placeholder="Notes about this school/cohort or special terms."
               />
+            </div>
+
+            {/* POC Credentials Section */}
+            <div className="border-t border-neutral-border pt-4 mt-4">
+              <h4 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                <span>🔐</span> School POC Login Credentials
+                <span className="text-xs font-normal text-neutral-medium">(optional)</span>
+              </h4>
+              <div className="grid md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">POC Name</label>
+                  <input
+                    type="text"
+                    value={formData.pocName}
+                    onChange={(e) => setFormData({ ...formData, pocName: e.target.value })}
+                    className="w-full px-3 py-2 border border-neutral-border rounded-lg"
+                    placeholder="e.g. Principal Name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">POC Email</label>
+                  <input
+                    type="email"
+                    value={formData.pocEmail}
+                    onChange={(e) => setFormData({ ...formData, pocEmail: e.target.value })}
+                    className="w-full px-3 py-2 border border-neutral-border rounded-lg"
+                    placeholder="e.g. poc@school.edu"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    POC Password
+                    {editingSlug && (
+                      <span className="text-xs text-neutral-medium ml-1">(leave blank to keep current)</span>
+                    )}
+                  </label>
+                  <input
+                    type="password"
+                    value={formData.pocPassword}
+                    onChange={(e) => setFormData({ ...formData, pocPassword: e.target.value })}
+                    className="w-full px-3 py-2 border border-neutral-border rounded-lg"
+                    placeholder="••••••••"
+                  />
+                </div>
+              </div>
+              <p className="text-xs text-neutral-medium mt-2">
+                POC can login at <code className="bg-gray-100 px-1 py-0.5 rounded">/school-poc/login</code> to view student data for this school.
+              </p>
             </div>
 
             <div className="flex justify-end gap-3">

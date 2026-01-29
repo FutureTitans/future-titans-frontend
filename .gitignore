@@ -10,3 +10,7 @@
 /test-reports/
 /test-coverage/
 /test-reports/  
+/.next/
+/out/
+/public/uploads/
+/public/uploads/
