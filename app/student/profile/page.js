@@ -64,7 +64,6 @@ export default function StudentProfilePage() {
   ).length;
 
   return (
-  return (
     <div className="min-h-screen pt-24 pb-12 px-4 relative overflow-hidden">
       {/* Background Mesh Gradients */}
       <div className="fixed inset-0 z-0 pointer-events-none">
@@ -174,8 +173,8 @@ export default function StudentProfilePage() {
               {achievementsData.achievements.map((achievement) => (
                 <div key={achievement._id} className="text-center group">
                   <div className={`aspect-square rounded-2xl mb-3 flex items-center justify-center transition-transform group-hover:scale-105 border-2 ${achievement.rarity === 'legendary' ? 'bg-amber-50 border-amber-200' :
-                      achievement.rarity === 'epic' ? 'bg-purple-50 border-purple-200' :
-                        'bg-white border-gray-100'
+                    achievement.rarity === 'epic' ? 'bg-purple-50 border-purple-200' :
+                      'bg-white border-gray-100'
                     }`}>
                     <div className={`achievement-badge achievement-${achievement.rarity} w-12 h-12`}></div>
                   </div>
