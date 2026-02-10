@@ -33,212 +33,228 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="w-full overflow-hidden">
-      {/* Hero Section */}
-      <section
-        ref={parallaxRef}
-        className="parallax relative h-screen flex items-center justify-center bg-cover bg-center"
-        style={{
-          backgroundImage: `linear-gradient(135deg, #dbb016 0%, #dbb016 100%)`,
-        }}
-      >
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-10 right-10 w-72 h-72 bg-accent-gold rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 left-10 w-72 h-72 bg-accent-amber rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        </div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Mesh Gradients */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-purple-200/30 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-amber-200/30 rounded-full blur-[120px]"></div>
+        <div className="absolute top-[40%] left-[40%] w-[40%] h-[40%] bg-indigo-200/20 rounded-full blur-[100px]"></div>
+      </div>
 
-        <div className="container-lg text-center text-white slide-up relative z-10">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Future Titans
-            <br />
-            <span className="gradient-text">Innovation Challenge</span>
-          </h1>
+      <div className="relative z-10">
+        {/* Navigation is handled by external Navbar component */}
 
-          <p className="text-xl md:text-2xl mb-8 text-gray-100 max-w-2xl mx-auto leading-relaxed">
-            Transform your ideas into impact. Learn from AI-powered mentorship while building the solutions the world needs.
-          </p>
+        {/* Hero Section */}
+        <section className="min-h-screen flex items-center justify-center pt-24 pb-12 px-4">
+          <div className="container mx-auto text-center max-w-5xl">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel border-amber-200/30 bg-white/40 mb-8 animate-fade-in-up">
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              <span className="text-sm font-semibold text-gray-700 tracking-wide uppercase">The Future of Innovation</span>
+            </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tight text-gray-900 mb-8 leading-[1.1]">
+              Future Titans
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-purple-600">
+                Innovation Challenge
+              </span>
+            </h1>
+
+            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
+              Transform your ideas into impact. Experience AI-powered mentorship and build the solutions the world needs.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <Link
+                href="/signup"
+                className="glass-button px-10 py-5 text-lg shadow-xl shadow-amber-500/20 hover:shadow-amber-500/30 group"
+              >
+                <div className="flex items-center gap-2">
+                  Get Started
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </Link>
+              <Link
+                href="/login"
+                className="px-10 py-5 rounded-full bg-white/30 backdrop-blur-md border border-white/40 text-gray-700 font-semibold hover:bg-white/50 transition-all hover:scale-105"
+              >
+                Sign In
+              </Link>
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+              <ChevronDown className="w-6 h-6 text-gray-400" />
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="py-24 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Future Titans?</h2>
+              <p className="text-xl text-gray-500">Everything you need to succeed as a young innovator</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {[
+                {
+                  icon: <Zap className="w-8 h-8 text-amber-600" />,
+                  title: 'ZUNOVA AI Mentorship',
+                  description: 'Get personalized feedback and guidance from our advanced AI mentor tailored to your journey.'
+                },
+                {
+                  icon: <Users className="w-8 h-8 text-purple-600" />,
+                  title: 'Collaborative Learning',
+                  description: 'Connect with peers, form teams, and solve problems together in a global community.'
+                },
+                {
+                  icon: <Award className="w-8 h-8 text-indigo-600" />,
+                  title: 'Global Recognition',
+                  description: 'Submit your projects, get evaluated by experts, and win prestige and prizes.'
+                },
+              ].map((feature, idx) => (
+                <div key={idx} className="glass-panel p-8 glass-panel-hover group">
+                  <div className="w-16 h-16 rounded-2xl bg-white/60 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* SURGE Framework Section */}
+        <section className="py-24 px-4 relative">
+          <div className="absolute inset-0 bg-white/30 backdrop-blur-sm -z-10"></div>
+          <div className="container mx-auto max-w-6xl">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+              <div>
+                <div className="inline-block px-4 py-1 rounded-full bg-purple-100/50 text-purple-700 text-sm font-bold mb-4">METHODOLOGY</div>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">The SURGE Framework</h2>
+                <p className="text-xl text-gray-600 mb-10 leading-relaxed">
+                  Our proprietary 5-stage framework is designed to systematically build your entrepreneurial mindset from the ground up.
+                </p>
+
+                <div className="space-y-6">
+                  {[
+                    { letter: 'S', title: 'Self Awareness', desc: 'Identify your strengths and passion' },
+                    { letter: 'U', title: 'Understanding', desc: 'Find gaps and market opportunities' },
+                    { letter: 'R', title: 'Resilience', desc: 'Learn to pivot and overcome failure' },
+                    { letter: 'G', title: 'Growth', desc: 'Scale your solution and impact' },
+                    { letter: 'E', title: 'Entrepreneurial Leadership', desc: 'Lead teams with vision' },
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-center gap-6 group">
+                      <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-xl font-bold shadow-lg group-hover:scale-110 transition-transform">
+                        {item.letter}
+                      </div>
+                      <div>
+                        <h4 className="text-xl font-bold text-gray-900">{item.title}</h4>
+                        <p className="text-gray-500">{item.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="relative">
+                <div className="glass-panel p-2 rotate-2 hover:rotate-0 transition-transform duration-500">
+                  <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-amber-500 opacity-90 flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
+                    <div className="text-center text-white p-8 relative z-10">
+                      <Sparkles className="w-20 h-20 mx-auto mb-6 text-amber-300 animate-pulse" />
+                      <h3 className="text-4xl font-bold mb-2">Start Your Surge</h3>
+                      <p className="text-white/80">Join the movement today</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Stats Section */}
+        <section className="py-24 px-4 bg-gray-900 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(251,191,36,0.1),transparent_50%)]"></div>
+          <div className="container mx-auto max-w-6xl relative z-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-gray-800">
+              {[
+                { number: '10K+', label: 'Students' },
+                { number: '50+', label: 'Countries' },
+                { number: '$1M+', label: 'Ideas Impact' },
+                { number: '95%', label: 'Satisfaction' },
+              ].map((stat, idx) => (
+                <div key={idx} className="p-4">
+                  <div className="text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-400 mb-2">{stat.number}</div>
+                  <div className="text-gray-400 font-medium tracking-wide uppercase text-sm">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-32 px-4 text-center">
+          <div className="container mx-auto max-w-4xl glass-panel p-16 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 via-purple-500 to-indigo-600"></div>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">Ready to shape the future?</h2>
+            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+              Join thousands of student innovators who are already building tomorrow's solutions.
+            </p>
             <Link
               href="/signup"
-              className="bg-white text-[#305c4d] px-8 py-4 rounded-lg font-semibold hover:bg-primary-lightRed transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+              className="glass-button px-12 py-6 text-xl inline-block shadow-2xl shadow-amber-500/30 hover:shadow-amber-500/40 hover:-translate-y-1 transition-transform"
             >
-              Get Started <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
-              href="/login"
-              className="border-2 border-white text-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-[#305c4d] transition-all duration-300"
-            >
-              Sign In
+              Start Your Journey Now
             </Link>
           </div>
+        </section>
 
-          <div className="animate-bounce">
-            <ChevronDown className="w-8 h-8 mx-auto text-white" />
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-white">
-        <div className="container-lg">
-          <h2 className="text-4xl font-bold text-center mb-16 gradient-text">Why Future Titans?</h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: <Zap className="w-12 h-12 text-accent-gold" />,
-                title: 'ZUNOVA',
-                description: 'Get personalized mentorship from an AI that understands your entrepreneurial journey',
-              },
-              {
-                icon: <Users className="w-12 h-12 text-[#dbb016]" />,
-                title: 'Learn Together',
-                description: 'Access structured modules designed to build entrepreneurial mindset and resilience',
-              },
-              {
-                icon: <Award className="w-12 h-12 text-[#dbb016]" />,
-                title: 'Get Recognized',
-                description: 'Submit your ideas, get evaluated, and join a network of innovators',
-              },
-            ].map((feature, idx) => (
-              <div
-                key={idx}
-                className="card hover:border-[#dbb016] group cursor-pointer slide-up"
-                style={{ animationDelay: `${idx * 0.1}s` }}
-              >
-                <div className="mb-4 group-hover:scale-110 transition-transform duration-300">
-                  {feature.icon}
-                </div>
-                <h3 className="text-[#305c4d] text-xl font-semibold mb-3 group-hover:text-[#dbb016] transition-colors">
-                  {feature.title}
-                </h3>
-                <p className="text-neutral-medium">{feature.description}</p>
+        {/* Footer */}
+        <footer className="bg-white/50 backdrop-blur-lg border-t border-gray-200 py-16 px-4">
+          <div className="container mx-auto max-w-6xl">
+            <div className="grid md:grid-cols-4 gap-12 mb-12">
+              <div className="col-span-1 md:col-span-1">
+                <div className="font-bold text-2xl text-gray-900 mb-4">Future Titans</div>
+                <p className="text-gray-500">Empowering the next generation of innovators with tools, mentorship, and community.</p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SURGE Framework Section */}
-      <section className="py-20 bg-primary-lightRed">
-        <div className="container-lg">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold mb-6 text-[#305c4d]">The SURGE Framework</h2>
-              <p className="text-lg text-neutral-dark mb-6">
-                We use a proprietary 5-stage framework to develop your entrepreneurial mindset:
-              </p>
-
-              <ul className="space-y-4">
-                {[
-                  { letter: 'S', title: 'Self Awareness', desc: 'Understand your strengths and opportunities' },
-                  { letter: 'U', title: 'Understanding', desc: 'Spot market opportunities and gaps' },
-                  { letter: 'R', title: 'Resilience', desc: 'Build the grit to overcome challenges' },
-                  { letter: 'G', title: 'Growth', desc: 'Execute and scale your solutions' },
-                  { letter: 'E', title: 'Entrepreneurial Leadership', desc: 'Lead teams and inspire change' },
-                ].map((item, idx) => (
-                  <li key={idx} className="flex gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#dbb016] text-white flex items-center justify-center font-bold flex-shrink-0">
-                      {item.letter}
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-primary-darkRed">{item.title}</h4>
-                      <p className="text-neutral-medium text-sm">{item.desc}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="relative h-96 rounded-lg overflow-hidden shadow-xl">
-              <div className="absolute inset-0 bg-[linear-gradient(90deg,#dbb016,#dbb016)] opacity-20"></div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <Sparkles className="w-24 h-24 text-[#dbb016] mx-auto mb-4 animate-bounce" />
-                  <p className="text-2xl font-bold text-[#dbb016]">Your Journey Starts Here</p>
+              <div>
+                <h4 className="font-bold text-gray-900 mb-4">Platform</h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li><Link href="#" className="hover:text-amber-600 transition">Modules</Link></li>
+                  <li><Link href="#" className="hover:text-amber-600 transition">Challenges</Link></li>
+                  <li><Link href="#" className="hover:text-amber-600 transition">Community</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 mb-4">Company</h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li><Link href="#" className="hover:text-amber-600 transition">About</Link></li>
+                  <li><Link href="#" className="hover:text-amber-600 transition">Contact</Link></li>
+                  <li><Link href="#" className="hover:text-amber-600 transition">Privacy</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-bold text-gray-900 mb-4">Connect</h4>
+                <div className="flex gap-4">
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition cursor-pointer">
+                    <Users className="w-5 h-5" />
+                  </div>
+                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition cursor-pointer">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-20 bg-white">
-        <div className="container-lg">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            {[
-              { number: '10K+', label: 'Students' },
-              { number: '50+', label: 'Countries' },
-              { number: '$1M+', label: 'Ideas Submitted' },
-              { number: '95%', label: 'Success Rate' },
-            ].map((stat, idx) => (
-              <div key={idx} className="fade-in" style={{ animationDelay: `${idx * 0.1}s` }}>
-                <p className="text-4xl font-bold gradient-text mb-2">{stat.number}</p>
-                <p className="text-neutral-medium">{stat.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-[#dbb016] text-white">
-        <div className="container-lg text-center">
-          <h2 className="text-4xl font-bold mb-6">Ready to Make an Impact?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Join thousands of young innovators transforming ideas into solutions that change the world.
-          </p>
-
-          <Link
-            href="/signup"
-            className="inline-block bg-white text-[#305c4d] px-10 py-4 rounded-lg font-semibold hover:bg-primary-lightRed transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 hover:text-[#dbb016]"
-          >
-            Start Your Journey Now
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[#5B532C] text-white py-12">
-        <div className="container-lg">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div>
-              <h3 className="text-xl font-bold mb-4">Future Titans</h3>
-              <p className="text-white">Empowering the next generation of innovators.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Platform</h4>
-              <ul className="space-y-2 text-neutral-medium">
-                <li><Link href="/modules">Modules</Link></li>
-                <li><Link href="/challenges">Challenges</Link></li>
-                <li><Link href="/community">Community</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-neutral-medium">
-                <li><Link href="/about">About</Link></li>
-                <li><Link href="/contact">Contact</Link></li>
-                <li><Link href="/privacy">Privacy</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Connect</h4>
-              <ul className="space-y-2 text-neutral-medium">
-                <li><Link href="#">Twitter</Link></li>
-                <li><Link href="#">LinkedIn</Link></li>
-                <li><Link href="#">Instagram</Link></li>
-              </ul>
+            <div className="pt-8 border-t border-gray-200 text-center text-gray-500 text-sm">
+              &copy; 2025 Future Titans. All rights reserved.
             </div>
           </div>
-
-          <div className="border-t border-white pt-8 text-center text-white">
-            <p>&copy; 2025 Future Titans. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 }

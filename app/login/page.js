@@ -56,108 +56,103 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-white-light flex flex-col">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-border">
-        <div className="container-lg py-6">
-          <Link href="/" className="flex items-center gap-2 text-primary-red hover:text-primary-darkRed transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+    <div className="min-h-screen pt-24 pb-12 px-4 flex items-center justify-center relative overflow-hidden">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-200/30 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-amber-200/30 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="w-full max-w-lg relative z-10">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-neutral-600 hover:text-primary-red transition mb-8 group">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Link>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+          <p className="text-lg text-gray-600">Sign in to continue your innovation journey</p>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-md">
-          <div className="card">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold gradient-text mb-2">Welcome Back</h1>
-              <p className="text-neutral-medium">Sign in to continue your learning journey</p>
+        <div className="glass-panel p-8 md:p-10 shadow-2xl">
+          {errors.submit && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
+              <span className="text-xl">⚠️</span> {errors.submit}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Email Address</label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="your@email.com"
+                className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.email ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                  }`}
+                disabled={isLoading}
+              />
+              {errors.email && <p className="text-red-500 text-sm mt-1 ml-1">{errors.email}</p>}
             </div>
 
-            {errors.submit && (
-              <div className="bg-semantic-error bg-opacity-10 border border-semantic-error text-semantic-error px-4 py-3 rounded-lg mb-6">
-                {errors.submit}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Email Address</label>
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Password</label>
+              <div className="relative">
                 <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
+                  type={showPassword ? 'text' : 'password'}
+                  name="password"
+                  value={formData.password}
                   onChange={handleChange}
-                  placeholder="your@email.com"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                    errors.email ? 'border-semantic-error' : 'border-neutral-border'
-                  }`}
+                  placeholder="••••••••"
+                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.password ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                    }`}
                   disabled={isLoading}
                 />
-                {errors.email && <p className="text-semantic-error text-sm mt-1">{errors.email}</p>}
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                      errors.password ? 'border-semantic-error' : 'border-neutral-border'
-                    }`}
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-medium"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-                {errors.password && <p className="text-semantic-error text-sm mt-1">{errors.password}</p>}
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-[#305c4d] text-white py-3 rounded-lg font-semibold hover:bg-primary-darkRed transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-              >
-                {isLoading ? 'Signing In...' : 'Sign In'}
-              </button>
-            </form>
-
-            {/* Forgot Password Link */}
-            <div className="text-center mt-4">
-              <Link href="/forgot-password" className="text-sm text-primary-red hover:text-primary-darkRed">
-                Forgot Password?
-              </Link>
+              {errors.password && <p className="text-red-500 text-sm mt-1 ml-1">{errors.password}</p>}
             </div>
 
-            {/* Sign Up Link */}
-            <p className="text-center text-neutral-medium mt-6">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-[#305c4d] font-semibold hover:text-[#dbb016]">
-                Sign Up
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="glass-button w-full py-4 text-lg shadow-xl shadow-red-500/20 hover:shadow-red-500/30 flex justify-center items-center"
+            >
+              {isLoading ? (
+                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                'Sign In'
+              )}
+            </button>
+          </form>
+
+          {/* Links */}
+          <div className="flex items-center justify-between mt-8 text-sm">
+            <Link href="/forgot-password" className="text-neutral-500 hover:text-primary-red transition">
+              Forgot Password?
+            </Link>
+            <p className="text-neutral-500">
+              New here?{' '}
+              <Link href="/signup" className="text-primary-red font-semibold hover:text-red-700 transition">
+                Create Account
               </Link>
             </p>
+          </div>
 
-            {/* Admin Login Credentials */}
-            <div className="mt-8 pt-6 border-t border-neutral-border">
-              <p className="text-sm text-neutral-medium text-center mb-4">Demo Admin Credentials:</p>
-              <div className="bg-neutral-light p-4 rounded-lg text-sm space-y-2">
-                <p><strong>Email:</strong> admin@futuretitans.com</p>
-                <p><strong>Password:</strong> admin123</p>
-              </div>
+          {/* Demo Credentials */}
+          <div className="mt-8 pt-6 border-t border-gray-200/50">
+            <p className="text-xs text-gray-400 text-center mb-3 uppercase tracking-wider font-semibold">Demo Access</p>
+            <div className="bg-gray-50/50 border border-gray-100 p-4 rounded-xl text-xs text-gray-500 flex flex-col items-center gap-1">
+              <p>Email: <span className="font-mono text-gray-700">admin@futuretitans.com</span></p>
+              <p>Password: <span className="font-mono text-gray-700">admin123</span></p>
             </div>
           </div>
         </div>

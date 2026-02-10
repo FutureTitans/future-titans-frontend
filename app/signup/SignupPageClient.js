@@ -74,147 +74,134 @@ export default function SignupPageClient() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-white-light flex flex-col">
-      {/* Header */}
-      <div className="bg-white border-b border-neutral-border">
-        <div className="container-lg py-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-primary-red hover:text-primary-darkRed transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
+    <div className="min-h-screen pt-24 pb-12 px-4 flex items-center justify-center relative overflow-hidden">
+      {/* Dynamic Background Elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-200/30 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-amber-200/30 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="w-full max-w-2xl relative z-10">
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-neutral-600 hover:text-primary-red transition mb-8 group">
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Back to Home
           </Link>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-md">
-          <div className="card">
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold gradient-text mb-2">Create Account</h1>
-              <p className="text-neutral-medium">Join Future Titans and start your innovation journey</p>
-              {initialSlug && (
-                <p className="mt-2 text-xs text-neutral-medium">
-                  You are registering via a special school link (<span className="font-mono">{initialSlug}</span>).
-                  Your course fee will be adjusted accordingly.
-                </p>
-              )}
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create Account</h1>
+          <p className="text-lg text-gray-600">Join Future Titans and start your innovation journey</p>
+          {initialSlug && (
+            <div className="mt-4 inline-block bg-amber-50 border border-amber-200 rounded-full px-4 py-1 text-sm text-amber-800">
+              ✨ Special Offer applied via <span className="font-mono font-bold">{initialSlug}</span>
             </div>
+          )}
+        </div>
 
-            {errors.submit && (
-              <div className="bg-semantic-error bg-opacity-10 border border-semantic-error text-semantic-error px-4 py-3 rounded-lg mb-6">
-                {errors.submit}
-              </div>
-            )}
+        <div className="glass-panel p-8 md:p-10 shadow-2xl">
+          {errors.submit && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
+              <span className="text-xl">⚠️</span> {errors.submit}
+            </div>
+          )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
               {/* Name */}
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Full Name</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Full Name</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="John Doe"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                    errors.name ? 'border-semantic-error' : 'border-neutral-border'
-                  }`}
+                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.name ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                    }`}
                   disabled={isLoading}
                 />
-                {errors.name && <p className="text-semantic-error text-sm mt-1">{errors.name}</p>}
+                {errors.name && <p className="text-red-500 text-sm mt-1 ml-1">{errors.name}</p>}
               </div>
 
               {/* Email */}
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Email</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="john@example.com"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                    errors.email ? 'border-semantic-error' : 'border-neutral-border'
-                  }`}
+                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.email ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                    }`}
                   disabled={isLoading}
                 />
-                {errors.email && <p className="text-semantic-error text-sm mt-1">{errors.email}</p>}
+                {errors.email && <p className="text-red-500 text-sm mt-1 ml-1">{errors.email}</p>}
               </div>
 
               {/* Phone */}
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Phone</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Phone</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+91 XXXXX XXXXX"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                    errors.phone ? 'border-semantic-error' : 'border-neutral-border'
-                  }`}
+                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.phone ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                    }`}
                   disabled={isLoading}
                 />
-                {errors.phone && <p className="text-semantic-error text-sm mt-1">{errors.phone}</p>}
+                {errors.phone && <p className="text-red-500 text-sm mt-1 ml-1">{errors.phone}</p>}
               </div>
 
               {/* School */}
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">School/Institution</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">School/Institution</label>
                 <input
                   type="text"
                   name="school"
                   value={formData.school}
                   onChange={handleChange}
                   placeholder="Your School"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                    errors.school ? 'border-semantic-error' : 'border-neutral-border'
-                  }`}
+                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.school ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                    }`}
                   disabled={isLoading}
                 />
-                {errors.school && <p className="text-semantic-error text-sm mt-1">{errors.school}</p>}
+                {errors.school && <p className="text-red-500 text-sm mt-1 ml-1">{errors.school}</p>}
               </div>
 
-              {/* City & Country */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-dark mb-2">City</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    placeholder="Mumbai"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                      errors.city ? 'border-semantic-error' : 'border-neutral-border'
+              {/* City */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">City</label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="Mumbai"
+                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.city ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
                     }`}
-                    disabled={isLoading}
-                  />
-                  {errors.city && <p className="text-semantic-error text-sm mt-1">{errors.city}</p>}
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-neutral-dark mb-2">Country</label>
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.country}
-                    onChange={handleChange}
-                    placeholder="India"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                      errors.country ? 'border-semantic-error' : 'border-neutral-border'
+                  disabled={isLoading}
+                />
+                {errors.city && <p className="text-red-500 text-sm mt-1 ml-1">{errors.city}</p>}
+              </div>
+
+              {/* Country */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Country</label>
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  placeholder="India"
+                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.country ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
                     }`}
-                    disabled={isLoading}
-                  />
-                  {errors.country && <p className="text-semantic-error text-sm mt-1">{errors.country}</p>}
-                </div>
+                  disabled={isLoading}
+                />
+                {errors.country && <p className="text-red-500 text-sm mt-1 ml-1">{errors.country}</p>}
               </div>
 
               {/* Password */}
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Password</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
@@ -222,25 +209,24 @@ export default function SignupPageClient() {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                      errors.password ? 'border-semantic-error' : 'border-neutral-border'
-                    }`}
+                    className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.password ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                      }`}
                     disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-medium"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
-                {errors.password && <p className="text-semantic-error text-sm mt-1">{errors.password}</p>}
+                {errors.password && <p className="text-red-500 text-sm mt-1 ml-1">{errors.password}</p>}
               </div>
 
               {/* Confirm Password */}
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Confirm Password</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Confirm Password</label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
@@ -248,46 +234,47 @@ export default function SignupPageClient() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="••••••••"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20 ${
-                      errors.confirmPassword ? 'border-semantic-error' : 'border-neutral-border'
-                    }`}
+                    className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.confirmPassword ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
+                      }`}
                     disabled={isLoading}
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-medium"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
                 {errors.confirmPassword && (
-                  <p className="text-semantic-error text-sm mt-1">{errors.confirmPassword}</p>
+                  <p className="text-red-500 text-sm mt-1 ml-1">{errors.confirmPassword}</p>
                 )}
               </div>
+            </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-[#305c4d] text-white py-3 rounded-lg font-semibold hover:bg-primary-darkRed transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
-              >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
-              </button>
-            </form>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="glass-button w-full py-4 text-lg shadow-xl shadow-red-500/20 hover:shadow-red-500/30 flex justify-center items-center mt-8"
+            >
+              {isLoading ? (
+                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                'Create Account'
+              )}
+            </button>
+          </form>
 
-            {/* Login Link */}
-            <p className="text-center text-neutral-medium mt-6">
-              Already have an account?{' '}
-              <Link href="/login" className="text-[#305c4d] font-semibold hover:text-[#dbb016]">
-                Sign In
-              </Link>
-            </p>
-          </div>
+          {/* Login Link */}
+          <p className="text-center text-neutral-500 mt-8">
+            Already have an account?{' '}
+            <Link href="/login" className="text-primary-red font-semibold hover:text-red-700 transition">
+              Sign In
+            </Link>
+          </p>
         </div>
       </div>
     </div>
   );
 }
-
-
