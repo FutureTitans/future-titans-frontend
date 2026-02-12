@@ -1,4 +1,4 @@
-// File: /Users/prashantjadon/Desktop/personalfreeprojects/futuretitansLastProject/frontend/app/login/page.js
+// File: C:\Users\USER\Desktop\futureTitans\future-titans-frontend\app\login\page.js
 import * as entry from '../../../../app/login/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
