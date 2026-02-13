@@ -6,7 +6,7 @@
   --glass-border: rgba(255, 255, 255, 0.5);
   --glass-surface: rgba(255, 255, 255, 0.75);
   --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-  --primary-gradient: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+  --primary-gradient: linear-gradient(135deg, #c7a536 0%, #f8c51d 100%);
   --gold-gradient: linear-gradient(135deg, #FCD34D 0%, #D97706 100%);
 }
 
@@ -65,7 +65,7 @@ body {
   /* Pill shape */
   padding: 12px 24px;
   font-weight: 600;
-  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+  
   transition: all 0.3s ease;
   backdrop-filter: blur(4px);
 }
@@ -73,12 +73,12 @@ body {
 .glass-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
-  background: linear-gradient(135deg, #EF4444 0%, #B91C1C 100%);
+  background: linear-gradient(135deg, #c7a22a 0%, #aa8b24 100%);
 }
 
 .glass-button-secondary {
   background: rgba(255, 255, 255, 0.5);
-  color: #1F2937;
+  color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 9999px;
   padding: 12px 24px;
@@ -139,7 +139,7 @@ a {
 }
 
 a:hover {
-  color: #dbb016;
+  color: #ffffff;
 }
 
 /* Buttons */

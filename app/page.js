@@ -77,7 +77,7 @@ export default function Landing() {
               </Link>
               <Link
                 href="/login"
-                className="px-10 py-5 rounded-full bg-white/30 backdrop-blur-md border border-white/40 text-gray-700 font-semibold hover:bg-white/50 transition-all hover:scale-105"
+                className="px-10 py-5 rounded-full bg-white/30 backdrop-blur-md border border-white/40 text-gray-700 font-semibold hover:bg-[#c7a536] transition-all hover:scale-105"
               >
                 Sign In
               </Link>

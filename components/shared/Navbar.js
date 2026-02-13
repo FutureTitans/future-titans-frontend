@@ -56,7 +56,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           {!user ? (
             <>
-              <Link href="/login" className="text-neutral-dark font-medium hover:text-primary-red transition">
+              <Link href="/login" className="text-neutral-dark font-medium hover:text-[#c7a536] transition">
                 Sign In
               </Link>
               <Link
