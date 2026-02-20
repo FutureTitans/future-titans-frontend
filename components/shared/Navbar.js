@@ -44,9 +44,9 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">YP</span>
+              <span className="text-white font-bold text-sm">FT</span>
             </div>
-            <span className="font-bold text-lg text-gray-800 hidden sm:inline">YoungPreneurs</span>
+            <span className="font-bold text-lg text-gray-800 hidden sm:inline">Future Titans</span>
           </Link>
 
           {/* Desktop Menu */}

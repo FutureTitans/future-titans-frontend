@@ -56,8 +56,8 @@ export default function Landing() {
               Future Titans
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#0F5132] to-[#1B6B4C]">
-  Innovation Challenge
-</span>
+                Innovation Challenge
+              </span>
 
             </h1>
 
@@ -66,10 +66,10 @@ export default function Landing() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-             <Link
-  href="/signup"
-  className="glass-button px-10 py-5 text-lg shadow-xl shadow-[#1B6B4C]/20 hover:shadow-[#1B6B4C]/30 group"
->
+              <Link
+                href="/signup"
+                className="glass-button px-10 py-5 text-lg shadow-xl shadow-[#1B6B4C]/20 hover:shadow-[#1B6B4C]/30 group"
+              >
                 <div className="flex items-center gap-2">
                   Get Started
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -94,9 +94,9 @@ export default function Landing() {
         <section className="py-24 px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-[#0F5132] mb-4">
-  Why Future Titans?
-</h2>
+              <h2 className="text-4xl font-bold text-[#0F5132] mb-4">
+                Why Future Titans?
+              </h2>
 
 
               <p className="text-xl text-[#2E2E2E]-500">Everything you need to succeed as a young innovator</p>
@@ -165,22 +165,22 @@ export default function Landing() {
                 </div>
               </div>
 
-            <div className="relative">
-  <div className="glass-panel p-2 rotate-2 hover:rotate-0 transition-transform duration-500">
-    <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-[#6B8E6E] via-[#5A7D5D] to-[#4C6F4F] opacity-90 flex items-center justify-center relative overflow-hidden">
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
-      <div className="text-center text-white p-8 relative z-10">
-        <Sparkles className="w-20 h-20 mx-auto mb-6 text-white animate-pulse" />
-     <h3 className="text-4xl font-bold mb-2 text-white">
-  Start Your Surge
-</h3>
+              <div className="relative">
+                <div className="glass-panel p-2 rotate-2 hover:rotate-0 transition-transform duration-500">
+                  <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-[#6B8E6E] via-[#5A7D5D] to-[#4C6F4F] opacity-90 flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
+                    <div className="text-center text-white p-8 relative z-10">
+                      <Sparkles className="w-20 h-20 mx-auto mb-6 text-white animate-pulse" />
+                      <h3 className="text-4xl font-bold mb-2 text-white">
+                        Start Your Surge
+                      </h3>
 
 
-        <p className="text-white/80">Join the movement today</p>
-      </div>
-    </div>
-  </div>
-</div>
+                      <p className="text-white/80">Join the movement today</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
             </div>
           </div>
@@ -198,11 +198,11 @@ export default function Landing() {
                 { number: '95%', label: 'Satisfaction' },
               ].map((stat, idx) => (
                 <div key={idx} className="p-4">
-                 <div className="text-5xl font-bold text-[#0F5132] mb-2">
-  {stat.number}
-</div>
+                  <div className="text-5xl font-bold text-white mb-2">
+                    {stat.number}
+                  </div>
 
-                  <div className="text-gray-400 font-medium tracking-wide uppercase text-sm">{stat.label}</div>
+                  <div className="text-white/70 font-medium tracking-wide uppercase text-sm">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -211,24 +211,24 @@ export default function Landing() {
 
         {/* CTA Section */}
         <section className="py-32 px-4 text-center">
-      <div className="container mx-auto max-w-4xl glass-panel bg-[#6B8E6E] p-16 relative overflow-hidden">
-  <div className="absolute top-0 left-0 w-full h-2"></div>
+          <div className="container mx-auto max-w-4xl glass-panel bg-[#6B8E6E] p-16 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-2"></div>
 
-  <h2 className="text-4xl md:text-5xl font-bold text-[#0F5132] mb-6">
-    Ready to shape the future?
-  </h2>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Ready to shape the future?
+            </h2>
 
-  <p className="text-xl text-[#2E2E2E] mb-10 max-w-2xl mx-auto">
-    Join thousands of student innovators who are already building tomorrow's solutions.
-  </p>
+            <p className="text-xl text-white/90 mb-10 max-w-2xl mx-auto">
+              Join thousands of student innovators who are already building tomorrow's solutions.
+            </p>
 
-  <Link
-    href="/signup"
-    className="glass-button px-12 py-6 text-xl inline-block shadow-2xl shadow-amber-500/30 hover:shadow-amber-500/40 hover:-translate-y-1 transition-transform"
-  >
-    Start Your Journey Now
-  </Link>
-</div>
+            <Link
+              href="/signup"
+              className="glass-button px-12 py-6 text-xl inline-block shadow-2xl shadow-amber-500/30 hover:shadow-amber-500/40 hover:-translate-y-1 transition-transform"
+            >
+              Start Your Journey Now
+            </Link>
+          </div>
 
 
 
@@ -241,22 +241,22 @@ export default function Landing() {
             <div className="grid md:grid-cols-4 gap-12 mb-12">
               <div className="col-span-1 md:col-span-1">
                 <div className="font-bold text-2xl text-gray-900 mb-4">Future Titans</div>
-                <p className="text-white-500 mb-4">Empowering the next generation of innovators with tools, mentorship, and community.</p>
+                <p className="text-white/80 mb-4">Empowering the next generation of innovators with tools, mentorship, and community.</p>
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 mb-4">Platform</h4>
                 <ul className="space-y-2 ">
-                  <li><Link href="#" className="text-gray-900 hover:text-amber-600 transition">Modules</Link></li>
-                  <li><Link href="#" className="text-gray-900 hover:text-amber-600 transition">Challenges</Link></li>
-                  <li><Link href="#" className="text-gray-900 hover:text-amber-600 transition">Community</Link></li>
+                  <li><Link href="/" className="text-gray-900 hover:text-amber-600 transition">Modules</Link></li>
+                  <li><Link href="/" className="text-gray-900 hover:text-amber-600 transition">Challenges</Link></li>
+                  <li><Link href="/" className="text-gray-900 hover:text-amber-600 transition">Community</Link></li>
                 </ul>
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 mb-4">Company</h4>
                 <ul className="space-y-2 text-gray-600">
-                  <li><Link href="#" className="text-gray-900 hover:text-amber-600 transition">About</Link></li>
-                  <li><Link href="#" className="text-gray-900 hover:text-amber-600 transition">Contact</Link></li>
-                  <li><Link href="#" className="text-gray-900 hover:text-amber-600 transition">Privacy</Link></li>
+                  <li><Link href="/" className="text-gray-900 hover:text-amber-600 transition">About</Link></li>
+                  <li><Link href="/" className="text-gray-900 hover:text-amber-600 transition">Contact</Link></li>
+                  <li><Link href="/" className="text-gray-900 hover:text-amber-600 transition">Privacy</Link></li>
                 </ul>
               </div>
               <div>
