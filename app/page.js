@@ -262,12 +262,15 @@ export default function Landing() {
               <div>
                 <h4 className="font-bold text-gray-900 mb-4">Connect</h4>
                 <div className="flex gap-4">
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition cursor-pointer">
-                    <Users className="w-5 h-5" />
-                  </div>
-                  <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition cursor-pointer">
-                    <Sparkles className="w-5 h-5" />
-                  </div>
+                  <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MThlOW93dXJtYjRpeQ==" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition cursor-pointer">
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                  <a href="https://www.facebook.com/share/1cqPc5C3LW/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition cursor-pointer">
+                    <Facebook className="w-5 h-5" />
+                  </a>
+                  <a href="https://www.linkedin.com/company/youngpreneurs-ai/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-amber-100 hover:text-amber-600 transition cursor-pointer">
+                    <Linkedin className="w-5 h-5" />
+                  </a>
                 </div>
               </div>
             </div>
