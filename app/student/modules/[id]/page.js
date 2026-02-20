@@ -152,22 +152,26 @@ export default function ModulePlayerPage() {
     if (!url) return '';
     try {
       const parsed = new URL(url);
+      let baseUrl = url;
 
       if (parsed.hostname.includes('youtu.be')) {
         const id = parsed.pathname.replace('/', '');
-        return `https://www.youtube.com/embed/${id}`;
-      }
-
-      if (parsed.hostname.includes('youtube.com')) {
+        baseUrl = `https://www.youtube.com/embed/${id}`;
+      } else if (parsed.hostname.includes('youtube.com')) {
         const id = parsed.searchParams.get('v');
-        if (id) return `https://www.youtube.com/embed/${id}`;
-
-        if (parsed.pathname.startsWith('/embed/')) {
-          return url;
+        if (id) {
+          baseUrl = `https://www.youtube.com/embed/${id}`;
         }
       }
 
-      return url;
+      if (baseUrl.includes('youtube.com/embed/')) {
+        const separator = baseUrl.includes('?') ? '&' : '?';
+        if (!baseUrl.includes('rel=0')) {
+          baseUrl = `${baseUrl}${separator}rel=0`;
+        }
+      }
+
+      return baseUrl;
     } catch {
       return url;
     }
@@ -312,8 +316,8 @@ export default function ModulePlayerPage() {
                     }
                   }}
                   className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-xl transition font-medium text-xs md:text-sm ${showAIChat
-                      ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
-                      : 'glass-subtle text-gray-700 hover:bg-white/50'
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
+                    : 'glass-subtle text-gray-700 hover:bg-white/50'
                     }`}
                 >
                   <Brain className="w-3.5 h-3.5 md:w-4 md:h-4" />
@@ -357,10 +361,10 @@ export default function ModulePlayerPage() {
                   key={chapter._id}
                   onClick={() => setCurrentChapter(index)}
                   className={`min-w-[200px] lg:w-full text-left p-3 lg:p-4 rounded-xl transition-all ${isActive
-                      ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
-                      : isCompleted
-                        ? 'glass-subtle hover:bg-white/50 border border-green-200'
-                        : 'glass-subtle hover:bg-white/50'
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
+                    : isCompleted
+                      ? 'glass-subtle hover:bg-white/50 border border-green-200'
+                      : 'glass-subtle hover:bg-white/50'
                     }`}
                 >
                   <div className="flex items-center gap-3">
