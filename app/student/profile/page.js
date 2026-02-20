@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { auth, achievements } from '@/lib/api';
-import { auth, achievements } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { ArrowLeft, User, School, MapPin, Globe2, Trophy, Palette, Save, Award, Sparkles } from 'lucide-react';
@@ -21,7 +20,6 @@ const themes = [
 export default function StudentProfilePage() {
   const router = useRouter();
   const [profile, setProfile] = useState(null);
-  const [achievementsData, setAchievementsData] = useState(null);
   const [achievementsData, setAchievementsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -179,8 +177,8 @@ export default function StudentProfilePage() {
                   key={theme.id}
                   onClick={() => setSelectedTheme(theme.id)}
                   className={`relative p-4 rounded-xl border-2 transition-all ${selectedTheme === theme.id
-                      ? 'border-gray-800 shadow-lg scale-105'
-                      : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-gray-800 shadow-lg scale-105'
+                    : 'border-gray-200 hover:border-gray-300'
                     }`}
                 >
                   <div className={`w-full h-16 rounded-lg bg-gradient-to-br ${theme.gradient} mb-2`}></div>
@@ -269,9 +267,9 @@ export default function StudentProfilePage() {
                 <div
                   key={achievement._id}
                   className={`glass-subtle p-4 rounded-xl border-2 transition-all hover:scale-105 ${achievement.rarity === 'legendary' ? 'border-yellow-400' :
-                      achievement.rarity === 'epic' ? 'border-purple-400' :
-                        achievement.rarity === 'rare' ? 'border-blue-400' :
-                          'border-gray-200'
+                    achievement.rarity === 'epic' ? 'border-purple-400' :
+                      achievement.rarity === 'rare' ? 'border-blue-400' :
+                        'border-gray-200'
                     }`}
                 >
                   <div className={`achievement-badge achievement-${achievement.rarity} mx-auto mb-3`}></div>
@@ -279,9 +277,9 @@ export default function StudentProfilePage() {
                   <p className="text-xs text-gray-600 text-center mb-2">{achievement.description}</p>
                   <div className="flex items-center justify-center gap-1">
                     <span className={`text-xs px-2 py-1 rounded-full ${achievement.rarity === 'legendary' ? 'bg-yellow-100 text-yellow-700' :
-                        achievement.rarity === 'epic' ? 'bg-purple-100 text-purple-700' :
-                          achievement.rarity === 'rare' ? 'bg-blue-100 text-blue-700' :
-                            'bg-gray-100 text-gray-700'
+                      achievement.rarity === 'epic' ? 'bg-purple-100 text-purple-700' :
+                        achievement.rarity === 'rare' ? 'bg-blue-100 text-blue-700' :
+                          'bg-gray-100 text-gray-700'
                       }`}>
                       {achievement.rarity}
                     </span>
@@ -295,7 +293,6 @@ export default function StudentProfilePage() {
               ))}
             </div>
           </div>
-        )}
         )}
 
         {/* Module Progress */}

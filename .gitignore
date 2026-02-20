@@ -10,7 +10,6 @@
 /test-reports/
 /test-coverage/
 /test-reports/  
-<<<<<<< HEAD
 /.next/
 /out/
 /public/uploads/
@@ -18,19 +17,3 @@
 node_modules
 .next
 .env
-=======
-# Next.js
-.next/
-out/
-
-# Dependencies
-node_modules/
-
-# Env
-.env
-.env.local
-.env.production
-
-# OS
-.DS_Store
->>>>>>> 99da0da (chore: remove .next build artifacts and fix gitignore)

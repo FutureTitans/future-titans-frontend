@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
-import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { Menu, X, LogOut, User } from 'lucide-react';
@@ -11,7 +10,6 @@ import Image from "next/image";
 
 export default function Navbar() {
   const router = useRouter();
-  const pathname = usePathname();
   const pathname = usePathname();
   const { user, logout, hydrateUser } = useAuthStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -22,11 +20,6 @@ export default function Navbar() {
     hydrateUser();
     setMounted(true);
   }, [hydrateUser]);
-
-  // Hide navbar on School POC pages
-  if (pathname?.startsWith('/school-poc')) {
-    return null;
-  }
 
   // Hide navbar on School POC pages
   if (pathname?.startsWith('/school-poc')) {
@@ -172,9 +165,9 @@ export default function Navbar() {
               </>
             )}
           </div>
-        </div>
-      )}
-    </header>
+        )}
+      </div>
+    </nav>
   );
 }
 

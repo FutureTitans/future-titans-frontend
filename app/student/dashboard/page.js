@@ -17,7 +17,6 @@ export default function StudentDashboard() {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [ssiScore, setSSIScore] = useState(null);
   const [achievementsData, setAchievementsData] = useState(null);
-  const [achievementsData, setAchievementsData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
