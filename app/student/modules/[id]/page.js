@@ -26,7 +26,7 @@ export default function ModulePlayerPage() {
       router.push('/login');
       return;
     }
-    
+
     fetchModule();
   }, [router, moduleId]);
 
@@ -34,7 +34,7 @@ export default function ModulePlayerPage() {
     if (module && module.chapters && module.chapters.length > 0) {
       const chapterId = module.chapters[currentChapter]._id;
       fetchChapterContent(chapterId);
-      
+
       const checkChapterComplete = async () => {
         try {
           const history = await aiChat.getChatHistory(moduleId, chapterId);
@@ -125,7 +125,7 @@ export default function ModulePlayerPage() {
     try {
       const chapterId = module.chapters[currentChapter]._id;
       await aiChat.completeChapter(moduleId, chapterId);
-      
+
       setChapterCompleted(prev => ({ ...prev, [chapterId]: true }));
       await fetchModule();
 
@@ -187,7 +187,7 @@ export default function ModulePlayerPage() {
             </div>
           </div>
         );
-      
+
       case 'video':
         return (
           <div className="aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
@@ -201,7 +201,7 @@ export default function ModulePlayerPage() {
             />
           </div>
         );
-      
+
       case 'audio':
         return (
           <div className="glass p-12 rounded-2xl text-center">
@@ -212,7 +212,7 @@ export default function ModulePlayerPage() {
             </audio>
           </div>
         );
-      
+
       case 'pdf':
         return (
           <div className="glass p-12 rounded-2xl text-center">
@@ -229,7 +229,7 @@ export default function ModulePlayerPage() {
             </a>
           </div>
         );
-      
+
       default:
         return (
           <div className="text-center py-12 glass rounded-2xl">
@@ -276,27 +276,29 @@ export default function ModulePlayerPage() {
                 <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
               </button>
               {module.mentorProfilePicture && (
-                <img 
-                  src={module.mentorProfilePicture} 
-                  alt="Mentor" 
-                  className="w-8 h-8 md:w-12 md:h-12 rounded-full border-2 border-white object-cover shadow-md flex-shrink-0"
-                  onError={(e) => { e.target.style.display = 'none'; }}
-                />
+                <div className="flex items-center gap-2 mr-2">
+                  <img
+                    src={module.mentorProfilePicture}
+                    alt="Mentor"
+                    className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-white object-cover shadow-md flex-shrink-0"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
               )}
               <div className="min-w-0 flex-1">
-                <h1 className="font-bold text-base md:text-xl text-gray-800 truncate">{module.title}</h1>
-                <p className="text-xs md:text-sm text-gray-600">
+                <h1 className="font-bold text-lg md:text-2xl text-gray-800 truncate">{module.title}</h1>
+                <p className="text-xs md:text-sm text-gray-600 mt-1">
                   Chapter {currentChapter + 1} of {module.chapters.length}
                 </p>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-4 md:gap-6 w-full sm:w-auto justify-between sm:justify-end">
               <div className="text-right sm:text-left">
                 <div className="text-xs md:text-sm font-semibold text-gray-800">{progressPercentage}%</div>
                 <div className="text-[10px] md:text-xs text-gray-600">Complete</div>
               </div>
-              
+
               {currentChapterData?.aiInteractionEnabled && (
                 <button
                   onClick={async () => {
@@ -309,11 +311,10 @@ export default function ModulePlayerPage() {
                       alert('Please mark this chapter as complete first to access the AI chat.');
                     }
                   }}
-                  className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-xl transition font-medium text-xs md:text-sm ${
-                    showAIChat
+                  className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-xl transition font-medium text-xs md:text-sm ${showAIChat
                       ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
                       : 'glass-subtle text-gray-700 hover:bg-white/50'
-                  }`}
+                    }`}
                 >
                   <Brain className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   <span className="hidden sm:inline">ZUNOVA</span>
@@ -321,7 +322,7 @@ export default function ModulePlayerPage() {
               )}
             </div>
           </div>
-          
+
           {/* Progress Bar */}
           <div className="mt-3 md:mt-4">
             <div className="w-full bg-gray-200 rounded-full h-1.5 md:h-2 overflow-hidden">
@@ -336,8 +337,13 @@ export default function ModulePlayerPage() {
 
       <div className="flex flex-col lg:flex-row">
         {/* Sidebar - Chapter List */}
-        <div className="w-full lg:w-80 glass border-r-0 lg:border-r border-white/20 min-h-[200px] lg:min-h-[calc(100vh-80px)] p-4 lg:p-6 order-2 lg:order-1">
-          <div className="flex items-center gap-2 mb-4 lg:mb-6">
+        <div className="w-full lg:w-80 glass border-r-0 lg:border-r border-white/20 min-h-[200px] lg:min-h-[calc(100vh-80px)] p-4 lg:p-6 order-2 lg:order-1 flex flex-col">
+          {module.coverImage && (
+            <div className="mb-6 rounded-xl overflow-hidden shadow-md shrink-0">
+              <img src={module.coverImage} alt="Cover" className="w-full h-40 object-cover" />
+            </div>
+          )}
+          <div className="flex items-center gap-2 mb-4 lg:mb-6 shrink-0">
             <BookOpen className="w-5 h-5 text-gray-700" />
             <h3 className="font-bold text-base lg:text-lg text-gray-800">Chapters</h3>
           </div>
@@ -345,23 +351,21 @@ export default function ModulePlayerPage() {
             {module.chapters.map((chapter, index) => {
               const isCompleted = chapterCompleted[chapter._id];
               const isActive = index === currentChapter;
-              
+
               return (
                 <button
                   key={chapter._id}
                   onClick={() => setCurrentChapter(index)}
-                  className={`min-w-[200px] lg:w-full text-left p-3 lg:p-4 rounded-xl transition-all ${
-                    isActive
+                  className={`min-w-[200px] lg:w-full text-left p-3 lg:p-4 rounded-xl transition-all ${isActive
                       ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
                       : isCompleted
-                      ? 'glass-subtle hover:bg-white/50 border border-green-200'
-                      : 'glass-subtle hover:bg-white/50'
-                  }`}
+                        ? 'glass-subtle hover:bg-white/50 border border-green-200'
+                        : 'glass-subtle hover:bg-white/50'
+                    }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold flex-shrink-0 ${
-                      isActive ? 'bg-white text-red-600' : isCompleted ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
-                    }`}>
+                    <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold flex-shrink-0 ${isActive ? 'bg-white text-red-600' : isCompleted ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
+                      }`}>
                       {isCompleted && !isActive ? (
                         <CheckCircle className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
                       ) : (
@@ -468,8 +472,8 @@ export default function ModulePlayerPage() {
           {/* AI Chat Panel - Mobile: Full width overlay, Desktop: Side panel */}
           {showAIChat && currentChapterData?.aiInteractionEnabled && chapterCompleted[currentChapterData._id] && (
             <div className={`${showAIChat ? 'w-full lg:w-1/2' : 'hidden'} border-t lg:border-t-0 lg:border-l border-white/20 glass`}>
-              <AIChatComponent 
-                moduleId={moduleId} 
+              <AIChatComponent
+                moduleId={moduleId}
                 chapterId={currentChapterData._id}
                 module={module}
               />

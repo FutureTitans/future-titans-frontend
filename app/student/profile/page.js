@@ -26,6 +26,8 @@ export default function StudentProfilePage() {
   const [selectedTheme, setSelectedTheme] = useState('default');
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [profilePicturePreview, setProfilePicturePreview] = useState(null);
 
   useEffect(() => {
     if (!isStudent()) {
@@ -58,11 +60,17 @@ export default function StudentProfilePage() {
   const handleSaveProfile = async () => {
     setSaving(true);
     try {
-      await auth.updateProfile({
+      const submitData = {
         profileTheme: selectedTheme,
         displayName: displayName || undefined,
         bio: bio || undefined,
-      });
+      };
+
+      if (profilePicture instanceof File) {
+        submitData.profilePicture = profilePicture;
+      }
+
+      await auth.updateProfile(submitData);
       await loadProfile();
       alert('Profile updated successfully!');
     } catch (error) {
@@ -103,17 +111,19 @@ export default function StudentProfilePage() {
         {/* Profile Header Card */}
         <div className="card">
           <div className="flex items-center gap-6">
-            {profile.profilePicture ? (
-              <img
-                src={profile.profilePicture}
-                alt={profile.name}
-                className="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg"
-              />
-            ) : (
-              <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${selectedThemeData.gradient} flex items-center justify-center shadow-lg`}>
-                <User className="w-12 h-12 text-white" />
-              </div>
-            )}
+            <div className="relative group">
+              {profilePicturePreview || profile.profilePicture ? (
+                <img
+                  src={profilePicturePreview || profile.profilePicture}
+                  alt={profile.name}
+                  className="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg group-hover:opacity-80 transition"
+                />
+              ) : (
+                <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${selectedThemeData.gradient} flex items-center justify-center shadow-lg group-hover:opacity-80 transition`}>
+                  <User className="w-12 h-12 text-white" />
+                </div>
+              )}
+            </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold text-gray-800 mb-1">{profile.displayName || profile.name}</h2>
               <p className="text-sm text-gray-600 mb-2">{profile.email}</p>
@@ -191,6 +201,29 @@ export default function StudentProfilePage() {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Profile Picture Upload */}
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Profile Picture (Optional)</label>
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/jpg,image/webp"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    e.target.value = '';
+                    return;
+                  }
+                  setProfilePicture(file);
+                  setProfilePicturePreview(URL.createObjectURL(file));
+                }
+              }}
+              className="w-full glass-subtle border border-white/30 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <p className="text-xs text-gray-500 mt-1">Leave empty to keep your current picture. JPG, JPEG, PNG, or WebP. Max 5MB.</p>
           </div>
 
           {/* Display Name */}

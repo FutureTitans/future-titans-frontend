@@ -20,6 +20,8 @@ export default function ModulesPage() {
     aiQuestionsPerChapter: 10,
     mentorProfilePicture: null, // File object
     mentorProfilePictureUrl: '', // Existing URL for display
+    coverImage: null, // File object
+    coverImageUrl: '', // Existing URL for display
   });
 
   useEffect(() => {
@@ -62,13 +64,19 @@ export default function ModulesPage() {
         aiQuestionsPerChapter: formData.aiQuestionsPerChapter,
         aiInteractionEnabled: true,
       };
-      
+
       // Handle mentor profile picture: if file is selected, use it; otherwise use URL if exists
       if (formData.mentorProfilePicture instanceof File) {
         submitData.mentorProfilePicture = formData.mentorProfilePicture;
       } else if (formData.mentorProfilePictureUrl && formData.mentorProfilePictureUrl.trim()) {
-        // Backward compatibility: if URL exists and no new file, use URL
         submitData.mentorProfilePicture = formData.mentorProfilePictureUrl.trim();
+      }
+
+      // Handle cover image
+      if (formData.coverImage instanceof File) {
+        submitData.coverImage = formData.coverImage;
+      } else if (formData.coverImageUrl && formData.coverImageUrl.trim()) {
+        submitData.coverImage = formData.coverImageUrl.trim();
       }
 
       if (editingModule) {
@@ -84,7 +92,7 @@ export default function ModulesPage() {
         console.log('Module created:', result);
         alert('✅ Module created successfully!');
       }
-      
+
       // Reset form
       setFormData({
         title: '',
@@ -94,10 +102,12 @@ export default function ModulesPage() {
         aiQuestionsPerChapter: 10,
         mentorProfilePicture: null,
         mentorProfilePictureUrl: '',
+        coverImage: null,
+        coverImageUrl: '',
       });
       setEditingModule(null);
       setShowForm(false);
-      
+
       // Refresh modules list after a short delay to ensure DB has saved
       setTimeout(() => {
         fetchModules();
@@ -144,6 +154,8 @@ export default function ModulesPage() {
                 difficulty: 'beginner',
                 estimatedCompletionTime: 60,
                 aiQuestionsPerChapter: 10,
+                mentorProfilePicture: null,
+                coverImage: null,
               });
               setShowForm(!showForm);
             }}
@@ -243,9 +255,9 @@ export default function ModulesPage() {
                 {formData.mentorProfilePictureUrl && !formData.mentorProfilePicture && (
                   <div className="mt-2">
                     <p className="text-xs text-neutral-medium mb-1">Current image:</p>
-                    <img 
-                      src={formData.mentorProfilePictureUrl} 
-                      alt="Mentor" 
+                    <img
+                      src={formData.mentorProfilePictureUrl}
+                      alt="Mentor"
                       className="w-20 h-20 rounded-full object-cover border border-neutral-border"
                       onError={(e) => { e.target.style.display = 'none'; }}
                     />
@@ -254,10 +266,58 @@ export default function ModulesPage() {
                 {formData.mentorProfilePicture && (
                   <div className="mt-2">
                     <p className="text-xs text-neutral-medium mb-1">New image selected:</p>
-                    <img 
-                      src={URL.createObjectURL(formData.mentorProfilePicture)} 
-                      alt="Mentor preview" 
+                    <img
+                      src={URL.createObjectURL(formData.mentorProfilePicture)}
+                      alt="Mentor preview"
                       className="w-20 h-20 rounded-full object-cover border border-neutral-border"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Course Profile Picture (Cover Image)
+                  <span className="block text-xs text-neutral-medium">
+                    Upload a comprehensive image that represents this module. Max 5MB, JPG/PNG/WebP.
+                  </span>
+                </label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg,image/webp"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      if (file.size > 5 * 1024 * 1024) {
+                        alert('File size must be less than 5MB');
+                        e.target.value = '';
+                        return;
+                      }
+                      setFormData({ ...formData, coverImage: file, coverImageUrl: '' });
+                    }
+                  }}
+                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
+                />
+                {formData.coverImageUrl && !formData.coverImage && (
+                  <div className="mt-2">
+                    <p className="text-xs text-neutral-medium mb-1">Current cover image:</p>
+                    <img
+                      src={formData.coverImageUrl}
+                      alt="Cover"
+                      className="h-32 rounded-lg object-cover border border-neutral-border"
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
+                )}
+                {formData.coverImage && (
+                  <div className="mt-2">
+                    <p className="text-xs text-neutral-medium mb-1">New cover image selected:</p>
+                    <img
+                      src={URL.createObjectURL(formData.coverImage)}
+                      alt="Cover preview"
+                      className="h-32 rounded-lg object-cover border border-neutral-border"
                     />
                   </div>
                 )}
@@ -289,7 +349,10 @@ export default function ModulesPage() {
       <div className="grid md:grid-cols-2 gap-6">
         {modulesList.map((module) => (
           <div key={module._id} className="card hover:shadow-lg transition-all">
-            <div className="mb-4">
+            {module.coverImage && (
+              <img src={module.coverImage} alt={module.title} className="w-full h-40 object-cover rounded-t-xl mb-4" />
+            )}
+            <div className="p-4">
               <div className="flex justify-between items-start mb-2">
                 <h3 className="font-bold text-lg">{module.title}</h3>
                 <span className={`badge ${module.isPublished ? 'badge-success' : 'badge-red'}`}>
@@ -342,6 +405,8 @@ export default function ModulesPage() {
                         : 10,
                     mentorProfilePicture: null,
                     mentorProfilePictureUrl: module.mentorProfilePicture || '',
+                    coverImage: null,
+                    coverImageUrl: module.coverImage || '',
                   });
                   setShowForm(true);
                 }}
