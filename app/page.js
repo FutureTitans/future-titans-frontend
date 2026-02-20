@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, isAdmin, isStudent } from '@/lib/auth';
-import { ArrowRight, Zap, Users, Award, Sparkles, ChevronDown } from 'lucide-react';
+import { ArrowRight, Zap, Users, Award, Sparkles, ChevronDown, Instagram, Facebook, Linkedin } from 'lucide-react';
 
 export default function Landing() {
   const router = useRouter();
