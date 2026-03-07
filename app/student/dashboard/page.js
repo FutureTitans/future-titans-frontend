@@ -146,11 +146,355 @@ export default function StudentDashboard() {
         )}
 
         {/* Main Dashboard Container */}
-        <div className="w-full bg-gradient-to-br from-[#f7f3e8] to-[#f1e6c9] p-6 rounded-2xl">
-          <div className="flex gap-6">
+        <div className="w-full bg-gradient-to-br from-[#f7f3e8] to-[#f1e6c9] p-3 sm:p-4 md:p-6 rounded-2xl">
+          
+          {/* Mobile Layout - Single column (<768px) */}
+          <div className="flex flex-col gap-4 md:hidden">
+            
+            {/* Profile Card - Mobile */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-4 sm:p-5">
+              <div className="w-full aspect-square rounded-[16px] overflow-hidden mb-4">
+                {profile?.profilePicture ? (
+                  <img
+                    src={profile.profilePicture}
+                    alt={user?.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-yellow-200 to-amber-200 flex items-center justify-center">
+                    <User className="w-12 h-12 sm:w-16 sm:h-16 text-amber-600" />
+                  </div>
+                )}
+              </div>
+              <h3 className="font-bold text-lg sm:text-[20px] text-gray-900 mb-1">Future CEO</h3>
+              <p className="text-xs sm:text-sm text-gray-500 mb-4">
+                {user?.age || '16'} year-old, {user?.nationality || 'Indian'} {user?.gender || 'male'} student
+              </p>
+              <div className="w-full">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-xs text-gray-600">Progress</span>
+                  <span className="text-xs font-semibold text-gray-900">65%</span>
+                </div>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-2 bg-[#FFD84D] rounded-full transition-all duration-500"
+                    style={{ width: '65%' }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Stat Cards - Mobile */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFD84D]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{modulesList.length}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Available Modules</p>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFD84D]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{ssiScore?.overallSSI || 0}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">SSI Score</p>
+                </div>
+              </div>
+              
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFD84D]" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{completedModules}</h3>
+                  <p className="text-xs sm:text-sm text-gray-600">Completed</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Learning Progress Card - Mobile */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-4 sm:p-6">
+              <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-4 sm:mb-6">Learning Progress</h3>
+              <div className="relative">
+                <ResponsiveContainer width="100%" height={180}>
+                  <LineChart data={[
+                    { week: 'W1', marketing: 20, finance: 15 },
+                    { week: 'W2', marketing: 35, finance: 30 },
+                    { week: 'W3', marketing: 50, finance: 45 },
+                    { week: 'W4', marketing: 65, finance: 55 },
+                    { week: 'W5', marketing: 75, finance: 60 },
+                    { week: 'W6', marketing: 85, finance: 70 },
+                    { week: 'W7', marketing: 90, finance: 75 },
+                    { week: 'W8', marketing: 95, finance: 80 },
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="week" 
+                      tick={{ fontSize: 9 }}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      domain={[0, 100]}
+                      ticks={[0, 25, 50, 75, 100]}
+                      tickFormatter={(value) => value === 0 ? 'Novice' : value === 25 ? 'Intermediate' : value === 50 ? 'Advanced' : value === 75 ? 'Expert' : 'Master'}
+                      tick={{ fontSize: 9 }}
+                      axisLine={false}
+                    />
+                    <Tooltip />
+                    <Line 
+                      type="monotone" 
+                      dataKey="marketing" 
+                      stroke="#FFD84D" 
+                      strokeWidth={2}
+                      dot={{ fill: "#FFD84D", r: 2 }}
+                      activeDot={{ r: 4 }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="finance" 
+                      stroke="#C9A84E" 
+                      strokeWidth={2}
+                      dot={{ fill: "#C9A84E", r: 2 }}
+                      activeDot={{ r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Project Work Time Card - Mobile */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-4 sm:p-5">
+              <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-4 sm:mb-6">Project Work Time</h3>
+              <div className="flex flex-col items-center mb-4 sm:mb-6">
+                <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-3 sm:mb-4">
+                  <svg className="transform -rotate-90 w-full h-full">
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="40%"
+                      stroke="#e5e7eb"
+                      strokeWidth="8"
+                      fill="none"
+                    />
+                    <circle
+                      cx="50%"
+                      cy="50%"
+                      r="40%"
+                      stroke="#FFD84D"
+                      strokeWidth="8"
+                      fill="none"
+                      strokeDasharray={`${0.65 * 251.33} 251.33`}
+                      className="transition-all duration-500"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <p className="text-sm sm:text-lg font-bold text-gray-900">1h 45m</p>
+                    <p className="text-xs sm:text-sm text-gray-600">Today</p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2 sm:space-y-3">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 bg-[#FFD84D] rounded-full mt-1.5 flex-shrink-0"></div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs sm:text-sm text-gray-700">Market Research</p>
+                    <p className="text-xs text-gray-500">1h 45m</p>
+                  </div>
+                </div>
+                <div className="border-t border-gray-100 pt-2 sm:pt-3">
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-[#C9A84E] rounded-full mt-1.5 flex-shrink-0"></div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm text-gray-700">Business Model Canvas</p>
+                      <p className="text-xs text-gray-500">1h 45m</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tablet Layout - 2 columns (768px-1023px) */}
+          <div className="hidden md:flex lg:hidden flex-col gap-6">
+            {/* Top Row - Profile + Project Time */}
+            <div className="grid grid-cols-2 gap-6">
+              {/* Profile Card */}
+              <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5">
+                <div className="w-full aspect-square rounded-[16px] overflow-hidden mb-4">
+                  {profile?.profilePicture ? (
+                    <img
+                      src={profile.profilePicture}
+                      alt={user?.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-yellow-200 to-amber-200 flex items-center justify-center">
+                      <User className="w-16 h-16 text-amber-600" />
+                    </div>
+                  )}
+                </div>
+                <h3 className="font-bold text-[20px] text-gray-900 mb-1">Future CEO</h3>
+                <p className="text-sm text-gray-500 mb-4">
+                  {user?.age || '16'} year-old, {user?.nationality || 'Indian'} {user?.gender || 'male'} student
+                </p>
+                <div className="w-full">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs text-gray-600">Progress</span>
+                    <span className="text-xs font-semibold text-gray-900">65%</span>
+                  </div>
+                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-2 bg-[#FFD84D] rounded-full transition-all duration-500"
+                      style={{ width: '65%' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Project Work Time Card */}
+              <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5">
+                <h3 className="font-bold text-lg text-gray-900 mb-6">Project Work Time</h3>
+                <div className="flex flex-col items-center mb-6">
+                  <div className="relative w-32 h-32 mb-4">
+                    <svg className="transform -rotate-90 w-32 h-32">
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="#e5e7eb"
+                        strokeWidth="12"
+                        fill="none"
+                      />
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="#FFD84D"
+                        strokeWidth="12"
+                        fill="none"
+                        strokeDasharray={`${0.65 * 351.86} 351.86`}
+                        className="transition-all duration-500"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <p className="text-lg font-bold text-gray-900">1h 45m</p>
+                      <p className="text-sm text-gray-600">Today</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-[#FFD84D] rounded-full mt-1.5 flex-shrink-0"></div>
+                    <div className="min-w-0">
+                      <p className="text-sm text-gray-700">Market Research</p>
+                      <p className="text-xs text-gray-500">1h 45m</p>
+                    </div>
+                  </div>
+                  <div className="border-t border-gray-100 pt-3">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-[#C9A84E] rounded-full mt-1.5 flex-shrink-0"></div>
+                      <div className="min-w-0">
+                        <p className="text-sm text-gray-700">Business Model Canvas</p>
+                        <p className="text-xs text-gray-500">1h 45m</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Stat Cards */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <BookOpen className="w-6 h-6 text-[#FFD84D]" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-2xl font-bold text-gray-900 truncate">{modulesList.length}</h3>
+                  <p className="text-sm text-gray-600">Available Modules</p>
+                </div>
+              </div>
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <Brain className="w-6 h-6 text-[#FFD84D]" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-2xl font-bold text-gray-900 truncate">{ssiScore?.overallSSI || 0}</h3>
+                  <p className="text-sm text-gray-600">SSI Score</p>
+                </div>
+              </div>
+              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                  <Trophy className="w-6 h-6 text-[#FFD84D]" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-2xl font-bold text-gray-900 truncate">{completedModules}</h3>
+                  <p className="text-sm text-gray-600">Completed</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Learning Progress Card */}
+            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-6">
+              <h3 className="font-bold text-lg text-gray-900 mb-6">Learning Progress</h3>
+              <div className="relative">
+                <ResponsiveContainer width="100%" height={250}>
+                  <LineChart data={[
+                    { week: 'W1', marketing: 20, finance: 15 },
+                    { week: 'W2', marketing: 35, finance: 30 },
+                    { week: 'W3', marketing: 50, finance: 45 },
+                    { week: 'W4', marketing: 65, finance: 55 },
+                    { week: 'W5', marketing: 75, finance: 60 },
+                    { week: 'W6', marketing: 85, finance: 70 },
+                    { week: 'W7', marketing: 90, finance: 75 },
+                    { week: 'W8', marketing: 95, finance: 80 },
+                  ]}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis 
+                      dataKey="week" 
+                      tick={{ fontSize: 11 }}
+                      axisLine={false}
+                    />
+                    <YAxis 
+                      domain={[0, 100]}
+                      ticks={[0, 25, 50, 75, 100]}
+                      tickFormatter={(value) => value === 0 ? 'Novice' : value === 25 ? 'Intermediate' : value === 50 ? 'Advanced' : value === 75 ? 'Expert' : 'Master'}
+                      tick={{ fontSize: 11 }}
+                      axisLine={false}
+                    />
+                    <Tooltip />
+                    <Line 
+                      type="monotone" 
+                      dataKey="marketing" 
+                      stroke="#FFD84D" 
+                      strokeWidth={3}
+                      dot={{ fill: "#FFD84D", r: 4 }}
+                      activeDot={{ r: 6 }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="finance" 
+                      stroke="#C9A84E" 
+                      strokeWidth={3}
+                      dot={{ fill: "#C9A84E", r: 4 }}
+                      activeDot={{ r: 6 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop Layout - 3 columns (1024px+) */}
+          <div className="hidden lg:flex gap-6">
             
             {/* LEFT SIDEBAR CARD - Profile */}
-            <div className="w-[300px] bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5">
+            <div className="w-[300px] bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5 flex-shrink-0">
               {/* Profile Image */}
               <div className="w-full aspect-square rounded-[16px] overflow-hidden mb-4">
                 {profile?.profilePicture ? (
@@ -190,39 +534,39 @@ export default function StudentDashboard() {
             </div>
 
             {/* CENTER CONTENT */}
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 space-y-6 min-w-0">
               
               {/* TOP STAT CARDS */}
               <div className="flex gap-6">
                 {/* Available Modules Card */}
-                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center">
+                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4 min-w-0">
+                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
                     <BookOpen className="w-6 h-6 text-[#FFD84D]" />
                   </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900">{modulesList.length}</h3>
+                  <div className="min-w-0">
+                    <h3 className="text-2xl font-bold text-gray-900 truncate">{modulesList.length}</h3>
                     <p className="text-sm text-gray-600">Available Modules</p>
                   </div>
                 </div>
 
                 {/* SSI Score Card */}
-                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center">
+                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4 min-w-0">
+                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
                     <Brain className="w-6 h-6 text-[#FFD84D]" />
                   </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900">{ssiScore?.overallSSI || 0}</h3>
+                  <div className="min-w-0">
+                    <h3 className="text-2xl font-bold text-gray-900 truncate">{ssiScore?.overallSSI || 0}</h3>
                     <p className="text-sm text-gray-600">SSI Score</p>
                   </div>
                 </div>
 
                 {/* Completed Card */}
-                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center">
+                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4 min-w-0">
+                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
                     <Trophy className="w-6 h-6 text-[#FFD84D]" />
                   </div>
-                  <div>
-                    <h3 className="text-2xl font-bold text-gray-900">{completedModules}</h3>
+                  <div className="min-w-0">
+                    <h3 className="text-2xl font-bold text-gray-900 truncate">{completedModules}</h3>
                     <p className="text-sm text-gray-600">Completed</p>
                   </div>
                 </div>
@@ -282,7 +626,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* RIGHT SIDEBAR CARD - Project Work Time */}
-            <div className="w-[260px] bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5">
+            <div className="w-[260px] bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5 flex-shrink-0">
               <h3 className="font-bold text-lg text-gray-900 mb-6">Project Work Time</h3>
               
               {/* Circular Progress Ring */}
@@ -318,8 +662,8 @@ export default function StudentDashboard() {
               {/* List Items */}
               <div className="space-y-3">
                 <div className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-[#FFD84D] rounded-full mt-1.5"></div>
-                  <div>
+                  <div className="w-2 h-2 bg-[#FFD84D] rounded-full mt-1.5 flex-shrink-0"></div>
+                  <div className="min-w-0">
                     <p className="text-sm text-gray-700">Market Research</p>
                     <p className="text-xs text-gray-500">1h 45m</p>
                   </div>
@@ -327,8 +671,8 @@ export default function StudentDashboard() {
                 
                 <div className="border-t border-gray-100 pt-3">
                   <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-[#C9A84E] rounded-full mt-1.5"></div>
-                    <div>
+                    <div className="w-2 h-2 bg-[#C9A84E] rounded-full mt-1.5 flex-shrink-0"></div>
+                    <div className="min-w-0">
                       <p className="text-sm text-gray-700">Business Model Canvas</p>
                       <p className="text-xs text-gray-500">1h 45m</p>
                     </div>
@@ -341,15 +685,125 @@ export default function StudentDashboard() {
 
         
         {/* Learning Modules Section */}
-        <div>
-          <div className="flex justify-between items-center mb-6">
+        <div className="mt-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
             <h3 className="font-bold text-xl text-gray-900">Learning Modules</h3>
-            <Link href="/student/modules" className="text-amber-600 hover:text-amber-700 transition-colors">
+            <Link href="/student/modules" className="text-amber-600 hover:text-amber-700 transition-colors text-sm sm:text-base">
               View All →
             </Link>
           </div>
           
-          <div className="grid grid-cols-3 gap-6">
+          {/* Mobile Layout - Single column */}
+          <div className="block lg:hidden space-y-6">
+            {/* Module Card 1 - Mobile */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-4 sm:p-6">
+              <h4 className="font-bold text-base sm:text-lg text-gray-900 mb-3">
+                The Entrepreneur's Launch Blueprint: From Idea Spark to Pitch-Ready Success by Fred Katz
+              </h4>
+              
+              {/* Badges */}
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-gray-600 mb-4">
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Beginner</span>
+                <span className="text-xs sm:text-sm">80 min</span>
+                <span className="text-xs sm:text-sm">5 chapters</span>
+                <span className="text-green-600 font-semibold text-xs sm:text-sm">Available</span>
+              </div>
+              
+              {/* Description */}
+              <p className="text-sm text-gray-600 mb-6">
+                A comprehensive guide to taking your startup idea from concept to a compelling pitch. Learn market research, business modeling, and effective communication strategies.
+              </p>
+              
+              {/* CTA Button */}
+              <Link
+                href={`/student/modules/${modulesList[0]?._id || '#'}`}
+                className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-yellow-400 to-red-400 hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+              >
+                Start Learning ▶
+              </Link>
+            </div>
+
+            {/* Calendar Card - Mobile */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-4 sm:p-6">
+              <h4 className="font-bold text-lg text-gray-900 mb-4">Calendar</h4>
+              
+              {/* Weekday Row */}
+              <div className="grid grid-cols-6 gap-1 text-center mb-4">
+                {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, i) => (
+                  <div key={i} className="text-xs text-gray-600 font-medium">{day}</div>
+                ))}
+              </div>
+              
+              {/* Calendar Days */}
+              <div className="grid grid-cols-6 gap-1 mb-6">
+                {Array.from({ length: 30 }, (_, i) => {
+                  const dayNum = i + 1;
+                  const isHighlighted = dayNum === 15;
+                  return (
+                    <div
+                      key={i}
+                      className={`
+                        w-8 h-8 flex items-center justify-center text-xs rounded-lg transition-all
+                        ${isHighlighted ? 'bg-yellow-400 text-white font-bold' : 'text-gray-700 hover:bg-gray-100'}
+                      `}
+                    >
+                      {dayNum}
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Events */}
+              <div className="space-y-3">
+                <div className="p-3 bg-yellow-50 rounded-2xl border border-yellow-200">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-xs font-semibold text-gray-900">Nov 15</span>
+                    <span className="text-xs text-amber-600">4 PM</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-gray-900 mb-1">Live Masterclass: Idea to Reality</h4>
+                </div>
+                
+                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-200">
+                  <div className="flex justify-between items-start mb-1">
+                    <span className="text-xs font-semibold text-gray-900">Nov 20</span>
+                    <span className="text-xs text-gray-600">5 PM</span>
+                  </div>
+                  <h4 className="font-bold text-sm text-gray-900 mb-1">Idea Validation Workshop</h4>
+                </div>
+              </div>
+            </div>
+
+            {/* Module Card 2 - Mobile */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-4 sm:p-6">
+              <h4 className="font-bold text-base sm:text-lg text-gray-900 mb-3">
+                The Solution Seeker's Journey: From Ideas to Action by Naisha Kapoor
+              </h4>
+              
+              {/* Badges */}
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-gray-600 mb-4">
+                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Beginner</span>
+                <span className="text-xs sm:text-sm">28 min</span>
+                <span className="text-xs sm:text-sm">5 chapters</span>
+                <span className="text-green-600 font-semibold text-xs sm:text-sm">Available</span>
+              </div>
+              
+              {/* Description */}
+              <p className="text-sm text-gray-600 mb-6">
+                Discover how to identify real-world problems and develop innovative solutions. Learn design thinking, prototyping, and validation techniques.
+              </p>
+              
+              {/* CTA Button */}
+              <Link
+                href={`/student/modules/${modulesList[1]?._id || '#'}`}
+                className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-yellow-400 to-red-400 hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
+              >
+                Start Learning ▶
+              </Link>
+            </div>
+          </div>
+
+          {/* Desktop Layout - 3 columns */}
+          <div className="hidden lg:grid lg:grid-cols-3 gap-6">
             {/* Left Module Card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6">
               <h4 className="font-bold text-lg text-gray-900 mb-3">
@@ -380,6 +834,8 @@ export default function StudentDashboard() {
 
             {/* Calendar Card */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6">
+              <h4 className="font-bold text-lg text-gray-900 mb-4">Calendar</h4>
+              
               {/* Weekday Row */}
               <div className="grid grid-cols-6 gap-1 text-center mb-4">
                 {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, i) => (
