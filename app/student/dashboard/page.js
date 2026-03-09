@@ -146,7 +146,7 @@ export default function StudentDashboard() {
         )}
 
         {/* Main Dashboard Container */}
-        <div className="w-full bg-gradient-to-br from-[#f7f3e8] to-[#f1e6c9] p-3 sm:p-4 md:p-6 rounded-2xl">
+        <div className="w-full bg-[#dcae1a] p-3 sm:p-4 md:p-6 rounded-2xl">
           
           {/* Mobile Layout - Single column (<768px) */}
           <div className="flex flex-col gap-4 md:hidden">
