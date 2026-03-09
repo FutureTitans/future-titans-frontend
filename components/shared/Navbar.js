@@ -43,10 +43,16 @@ export default function Navbar() {
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">FT</span>
-            </div>
-            <span className="font-bold text-lg text-gray-800 hidden sm:inline">Future Titans</span>
+            <Image 
+              src="/logo.png" 
+              alt="Future Titans" 
+              width={156}
+              height={156}
+              className="object-cover"
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
           </Link>
 
           {/* Desktop Menu */}
