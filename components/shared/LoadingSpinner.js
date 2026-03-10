@@ -3,15 +3,14 @@
 export default function LoadingSpinner({ size = 'md', message = 'Loading...' }) {
   const sizeClasses = {
     sm: 'w-6 h-6',
-    md: 'w-12 h-12',
-    lg: 'w-16 h-16',
+    md: 'w-10 h-10',
+    lg: 'w-14 h-14',
   };
 
   return (
-    <div className="flex flex-col items-center justify-center">
-      <div className={`${sizeClasses[size]} border-4 border-neutral-light border-t-primary-red rounded-full animate-spin`} />
-      {message && <p className="mt-4 text-neutral-medium">{message}</p>}
+    <div className="min-h-screen flex flex-col items-center justify-center">
+      <div className={`${sizeClasses[size]} border-2 border-[#D4AF37]/20 border-t-[#D4AF37] rounded-full animate-spin`} />
+      {message && <p className="mt-4 text-gray-500 text-sm">{message}</p>}
     </div>
   );
 }
-

@@ -66,12 +66,12 @@ function ResetPasswordForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-white-light flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <div className="bg-white border-b border-neutral-border">
-        <div className="container-lg py-6">
-          <Link href="/login" className="flex items-center gap-2 text-primary-red hover:text-primary-darkRed transition-colors">
-            <ArrowLeft className="w-5 h-5" />
+      <div className="glass-strong border-b border-white/20">
+        <div className="container-lg py-5">
+          <Link href="/login" className="flex items-center gap-2 text-[#D4AF37] hover:text-[#B8952E] transition-colors text-sm font-medium">
+            <ArrowLeft className="w-4 h-4" />
             Back to Login
           </Link>
         </div>
@@ -82,39 +82,39 @@ function ResetPasswordForm() {
         <div className="w-full max-w-md">
           <div className="card">
             <div className="mb-8">
-              <h1 className="text-3xl font-bold gradient-text mb-2">Reset Password</h1>
-              <p className="text-neutral-medium">Enter your new password</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h1>
+              <p className="text-gray-500">Enter your new password</p>
             </div>
 
             {error && (
-              <div className="bg-semantic-error bg-opacity-10 border border-semantic-error text-semantic-error px-4 py-3 rounded-lg mb-6">
+              <div className="bg-red-50/80 border border-red-200/50 text-red-700 px-4 py-3 rounded-2xl mb-6 text-sm backdrop-blur-sm">
                 {error}
               </div>
             )}
 
             {message && (
-              <div className="bg-semantic-success bg-opacity-10 border border-semantic-success text-semantic-success px-4 py-3 rounded-lg mb-6">
+              <div className="bg-green-50/80 border border-green-200/50 text-green-700 px-4 py-3 rounded-2xl mb-6 text-sm backdrop-blur-sm">
                 {message}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">New Password</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">New Password</label>
                 <div className="relative">
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={formData.newPassword}
                     onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 border border-neutral-border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20"
+                    className="glass-input"
                     disabled={isLoading || !token}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-medium"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -122,21 +122,21 @@ function ResetPasswordForm() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-dark mb-2">Confirm Password</label>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Confirm Password</label>
                 <div className="relative">
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={formData.confirmPassword}
                     onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                     placeholder="••••••••"
-                    className="w-full px-4 py-3 border border-neutral-border rounded-lg focus:outline-none focus:border-primary-red focus:ring-2 focus:ring-primary-red focus:ring-opacity-20"
+                    className="glass-input"
                     disabled={isLoading || !token}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-neutral-medium"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
                   >
                     {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -146,14 +146,14 @@ function ResetPasswordForm() {
               <button
                 type="submit"
                 disabled={isLoading || !token}
-                className="w-full bg-primary-red text-white py-3 rounded-lg font-semibold hover:bg-primary-darkRed transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="glass-button w-full py-3.5 text-base disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Resetting...' : 'Reset Password'}
               </button>
             </form>
 
             <div className="mt-6 text-center">
-              <Link href="/login" className="text-sm text-primary-red hover:text-primary-darkRed">
+              <Link href="/login" className="text-sm text-[#D4AF37] hover:text-[#B8952E] transition font-medium">
                 Back to Login
               </Link>
             </div>
@@ -167,10 +167,10 @@ function ResetPasswordForm() {
 export default function ResetPasswordPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-white-light flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-red mx-auto mb-4"></div>
-          <p className="text-neutral-medium">Loading...</p>
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-[#D4AF37]/20 border-t-[#D4AF37] mx-auto mb-4"></div>
+          <p className="text-gray-500 text-sm">Loading...</p>
         </div>
       </div>
     }>
@@ -178,4 +178,3 @@ export default function ResetPasswordPage() {
     </Suspense>
   );
 }
-

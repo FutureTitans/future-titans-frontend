@@ -6,9 +6,26 @@ import { useRouter } from 'next/navigation';
 import Script from 'next/script';
 import { modules, payment, aiChat, achievements, auth } from '@/lib/api';
 import { isStudent, getUser } from '@/lib/auth';
-import { BookOpen, Trophy, CreditCard, Brain, ArrowRight, Clock, CheckCircle, Play, User, Bell, LayoutDashboard, Zap, GraduationCap, CalendarDays, ListChecks, TrendingUp, Target, Circle, Square } from 'lucide-react';
+import {
+  ChevronDown,
+  CreditCard,
+  Brain,
+  User,
+  BookOpen,
+  Trophy,
+  Play,
+  Settings,
+  Laptop,
+  Gift,
+  MonitorPlay,
+  CheckCircle2,
+  Circle,
+  Clock,
+  Video,
+  ArrowRight
+} from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, YAxis } from 'recharts';
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -83,7 +100,7 @@ export default function StudentDashboard() {
           email: user?.email,
         },
         theme: {
-          color: '#DC2626',
+          color: '#D4AF37',
         },
       };
 
@@ -98,45 +115,86 @@ export default function StudentDashboard() {
     return <LoadingSpinner message="Loading your dashboard..." />;
   }
 
+  const isUserPaid = profile?.isPaid || user?.isPaid || paymentStatus?.isPaid;
+
   const completedModules = profile?.modulesProgress?.filter(mp => mp.completionPercentage >= 100).length || 0;
   const totalTimeSpent = profile?.modulesProgress?.reduce((sum, mp) => sum + (mp.timeSpent || 0), 0) || 0;
   const hoursSpent = Math.floor(totalTimeSpent / 3600);
   const minutesSpent = Math.floor((totalTimeSpent % 3600) / 60);
-  const timeDisplay = hoursSpent > 0 ? `${hoursSpent}h ${minutesSpent}m` : `${minutesSpent}m`;
+  const timeProgress = hoursSpent > 0 ? Math.min((hoursSpent / 10) * 100, 100) : 5; // Fake 10 hour goal
 
-  // Calculate overall progress
   const overallProgress = profile?.modulesProgress?.length > 0
     ? Math.round(profile.modulesProgress.reduce((sum, mp) => sum + (mp.completionPercentage || 0), 0) / profile.modulesProgress.length)
     : 0;
 
+  // Build bar chart from real per-module completion
+  const barChartData = modulesList.length > 0
+    ? modulesList.map((mod, i) => {
+      const mp = profile?.modulesProgress?.find(p => (p.moduleId?._id || p.moduleId) === mod._id);
+      return { name: `M${i + 1}`, value: mp?.completionPercentage || 0, title: mod.title };
+    })
+    : [{ name: 'No Data', value: 0 }];
+
+  // Build dynamic calendar from current date
+  const now = new Date();
+  const currentMonth = now.toLocaleString('default', { month: 'long' });
+  const currentYear = now.getFullYear();
+  const dayOfWeek = now.getDay(); // 0=Sun
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const weekDays = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(now);
+    d.setDate(now.getDate() + mondayOffset + i);
+    return d;
+  });
+  const dayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const todayDate = now.getDate();
+
+  // Build real schedule events from recent modules / last accessed
+  const recentModules = (profile?.modulesProgress || [])
+    .filter(mp => mp.lastAccessedAt)
+    .sort((a, b) => new Date(b.lastAccessedAt) - new Date(a.lastAccessedAt))
+    .slice(0, 2)
+    .map(mp => {
+      const mod = modulesList.find(m => m._id === (mp.moduleId?._id || mp.moduleId));
+      return {
+        title: mod?.title || 'Module',
+        subtitle: `${mp.completionPercentage || 0}% complete · ${mp.completedChapters?.length || 0} chapters done`,
+        time: new Date(mp.lastAccessedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }),
+      };
+    });
+
+  // Previous & next month names
+  const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1).toLocaleString('default', { month: 'long' });
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1).toLocaleString('default', { month: 'long' });
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#f6eddc] via-[#f3e4c2] to-[#ecd59a] relative overflow-hidden">
-      {/* Abstract wave decoration */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-yellow-300 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-80 h-80 bg-amber-300 rounded-full filter blur-3xl"></div>
+    <div className="min-h-screen relative overflow-hidden bg-[#F5EDD6]">
+      {/* Background blobs for warm cream glassmorphism */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 left-[-10%] w-[50%] h-[50%] bg-[#FFFFFF]/60 rounded-full filter blur-[100px]"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#D4AF37]/10 rounded-full filter blur-[100px]"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-6 space-y-6 relative z-10">
-        
-        {/* Payment Status */}
-        {!paymentStatus?.isPaid && (
-          <div className="bg-white/70 backdrop-blur-md rounded-3xl shadow-lg p-5">
-            <div className="flex items-center justify-between">
+      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-4 md:px-8 xl:px-12 py-4 sm:py-6 md:py-8 relative z-10">
+
+        {/* Payment Status Banner */}
+        {!isUserPaid && (
+          <div className="glass-panel p-5 mb-8 border border-[#B8952E]/30 bg-gradient-to-r from-white/60 to-[#F5D76E]/10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 className="font-bold text-lg text-amber-800 mb-2">🔓 Unlock Full Access</h3>
-                <p className="text-amber-700">
+                <h3 className="font-bold text-lg text-[#B8952E] mb-1">🔓 Unlock Full Access</h3>
+                <p className="text-gray-700 text-sm">
                   Complete your payment to access all modules and AI features.
                   {paymentStatus?.price && paymentStatus.price !== 999 && (
-                    <span className="block text-sm mt-1">
-                      Special price via school link: <span className="font-semibold">₹{paymentStatus.price}</span> (standard ₹999)
+                    <span className="block mt-1 font-medium text-[#B8952E]">
+                      Special price via school link: ₹{paymentStatus.price} (standard ₹999)
                     </span>
                   )}
                 </p>
               </div>
               <button
                 onClick={handlePayment}
-                className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white px-6 py-3 rounded-2xl hover:shadow-lg transition-all duration-300 font-semibold flex items-center gap-2"
+                className="glass-button px-6 py-3 flex items-center gap-2 flex-shrink-0 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white border-0 shadow-lg shadow-[#D4AF37]/30 hover:scale-105"
               >
                 <CreditCard className="w-5 h-5" />
                 Pay ₹{paymentStatus?.price || 999}
@@ -145,773 +203,357 @@ export default function StudentDashboard() {
           </div>
         )}
 
-        {/* Main Dashboard Container */}
-        <div className="w-full bg-[#dcae1a] p-3 sm:p-4 md:p-6 rounded-2xl">
-          
-          {/* Mobile Layout - Single column (<768px) */}
-          <div className="flex flex-col gap-4 md:hidden">
-            
-            {/* Profile Card - Mobile */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-4 sm:p-5">
-              <div className="w-full aspect-square rounded-[16px] overflow-hidden mb-4">
-                {profile?.profilePicture ? (
-                  <img
-                    src={profile.profilePicture}
-                    alt={user?.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-yellow-200 to-amber-200 flex items-center justify-center">
-                    <User className="w-12 h-12 sm:w-16 sm:h-16 text-amber-600" />
-                  </div>
-                )}
-              </div>
-              <h3 className="font-bold text-lg sm:text-[20px] text-gray-900 mb-1">Future CEO</h3>
-              <p className="text-xs sm:text-sm text-gray-500 mb-4">
-                {user?.age || '16'} year-old, {user?.nationality || 'Indian'} {user?.gender || 'male'} student
-              </p>
-              <div className="w-full">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-gray-600">Progress</span>
-                  <span className="text-xs font-semibold text-gray-900">65%</span>
-                </div>
-                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-2 bg-[#FFD84D] rounded-full transition-all duration-500"
-                    style={{ width: '65%' }}
-                  />
-                </div>
-              </div>
-            </div>
+        {/* Dashboard Header */}
+        <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
+          <div>
+            <h1 className="text-2xl sm:text-4xl md:text-5xl font-light text-gray-900 tracking-tight mb-3 sm:mb-6">
+              Welcome in, <span className="font-medium text-gray-800">{user?.name?.split(' ')[0] || 'Titan'}</span>
+            </h1>
 
-            {/* Stat Cards - Mobile */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                  <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFD84D]" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{modulesList.length}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Available Modules</p>
-                </div>
+            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <span className="px-4 py-1.5 bg-gray-900 text-white rounded-full text-xs font-medium">Modules</span>
+                <span className="px-4 py-1.5 bg-[#F5D76E]/30 text-gray-800 rounded-full text-xs font-semibold">{overallProgress}%</span>
               </div>
-              
-              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                  <Brain className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFD84D]" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{ssiScore?.overallSSI || 0}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600">SSI Score</p>
-                </div>
+              <div className="flex-1 min-w-[100px] sm:min-w-[200px] h-2 bg-white/50 rounded-full overflow-hidden border border-white/50">
+                <div
+                  className="h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(255,255,255,0.7)_4px,rgba(255,255,255,0.7)_8px)]"
+                  style={{
+                    width: `${overallProgress}%`,
+                    backgroundColor: '#D4AF37'
+                  }}
+                />
               </div>
-              
-              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-3 sm:p-4 flex items-center gap-3 sm:gap-4">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                  <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFD84D]" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{completedModules}</h3>
-                  <p className="text-xs sm:text-sm text-gray-600">Completed</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Learning Progress Card - Mobile */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-4 sm:p-6">
-              <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-4 sm:mb-6">Learning Progress</h3>
-              <div className="relative">
-                <ResponsiveContainer width="100%" height={180}>
-                  <LineChart data={[
-                    { week: 'W1', marketing: 20, finance: 15 },
-                    { week: 'W2', marketing: 35, finance: 30 },
-                    { week: 'W3', marketing: 50, finance: 45 },
-                    { week: 'W4', marketing: 65, finance: 55 },
-                    { week: 'W5', marketing: 75, finance: 60 },
-                    { week: 'W6', marketing: 85, finance: 70 },
-                    { week: 'W7', marketing: 90, finance: 75 },
-                    { week: 'W8', marketing: 95, finance: 80 },
-                  ]}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis 
-                      dataKey="week" 
-                      tick={{ fontSize: 9 }}
-                      axisLine={false}
-                    />
-                    <YAxis 
-                      domain={[0, 100]}
-                      ticks={[0, 25, 50, 75, 100]}
-                      tickFormatter={(value) => value === 0 ? 'Novice' : value === 25 ? 'Intermediate' : value === 50 ? 'Advanced' : value === 75 ? 'Expert' : 'Master'}
-                      tick={{ fontSize: 9 }}
-                      axisLine={false}
-                    />
-                    <Tooltip />
-                    <Line 
-                      type="monotone" 
-                      dataKey="marketing" 
-                      stroke="#FFD84D" 
-                      strokeWidth={2}
-                      dot={{ fill: "#FFD84D", r: 2 }}
-                      activeDot={{ r: 4 }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="finance" 
-                      stroke="#C9A84E" 
-                      strokeWidth={2}
-                      dot={{ fill: "#C9A84E", r: 2 }}
-                      activeDot={{ r: 4 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* Project Work Time Card - Mobile */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-4 sm:p-5">
-              <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-4 sm:mb-6">Project Work Time</h3>
-              <div className="flex flex-col items-center mb-4 sm:mb-6">
-                <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-3 sm:mb-4">
-                  <svg className="transform -rotate-90 w-full h-full">
-                    <circle
-                      cx="50%"
-                      cy="50%"
-                      r="40%"
-                      stroke="#e5e7eb"
-                      strokeWidth="8"
-                      fill="none"
-                    />
-                    <circle
-                      cx="50%"
-                      cy="50%"
-                      r="40%"
-                      stroke="#FFD84D"
-                      strokeWidth="8"
-                      fill="none"
-                      strokeDasharray={`${0.65 * 251.33} 251.33`}
-                      className="transition-all duration-500"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <p className="text-sm sm:text-lg font-bold text-gray-900">1h 45m</p>
-                    <p className="text-xs sm:text-sm text-gray-600">Today</p>
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-[#FFD84D] rounded-full mt-1.5 flex-shrink-0"></div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs sm:text-sm text-gray-700">Market Research</p>
-                    <p className="text-xs text-gray-500">1h 45m</p>
-                  </div>
-                </div>
-                <div className="border-t border-gray-100 pt-2 sm:pt-3">
-                  <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-[#C9A84E] rounded-full mt-1.5 flex-shrink-0"></div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs sm:text-sm text-gray-700">Business Model Canvas</p>
-                      <p className="text-xs text-gray-500">1h 45m</p>
-                    </div>
-                  </div>
-                </div>
+              <div className="hidden sm:block px-4 py-1.5 bg-white/60 text-gray-600 rounded-full text-xs border border-white/50">
+                Progress
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Tablet Layout - 2 columns (768px-1023px) */}
-          <div className="hidden md:flex lg:hidden flex-col gap-6">
-            {/* Top Row - Profile + Project Time */}
-            <div className="grid grid-cols-2 gap-6">
-              {/* Profile Card */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5">
-                <div className="w-full aspect-square rounded-[16px] overflow-hidden mb-4">
+        {/* 3-Column Layout */}
+        <div className="flex flex-col xl:flex-row gap-6">
+
+          {/* --- LEFT COLUMN: Profile & Links (25%) --- */}
+          <div className="xl:w-[25%] flex flex-col gap-6">
+            {/* Profile Card */}
+            <div className="glass-panel p-4 sm:p-6 relative overflow-hidden group">
+              <div className="absolute -top-12 -right-12 w-40 h-40 bg-[#D4AF37]/10 blur-3xl rounded-full transition-transform group-hover:scale-150 duration-700"></div>
+
+              <div className="flex sm:flex-col items-center sm:items-center gap-4 sm:gap-0">
+                <div className="w-20 h-20 sm:w-32 sm:h-32 sm:mx-auto rounded-2xl sm:rounded-3xl overflow-hidden sm:mb-6 shadow-xl relative z-10 border-4 border-white/50 flex-shrink-0">
                   {profile?.profilePicture ? (
-                    <img
-                      src={profile.profilePicture}
-                      alt={user?.name}
-                      className="w-full h-full object-cover"
-                    />
+                    <img src={profile.profilePicture} alt={user?.name} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-yellow-200 to-amber-200 flex items-center justify-center">
-                      <User className="w-16 h-16 text-amber-600" />
+                    <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#F5D76E]/20 flex items-center justify-center">
+                      <User className="w-12 h-12 text-[#D4AF37]" />
                     </div>
                   )}
                 </div>
-                <h3 className="font-bold text-[20px] text-gray-900 mb-1">Future CEO</h3>
-                <p className="text-sm text-gray-500 mb-4">
-                  {user?.age || '16'} year-old, {user?.nationality || 'Indian'} {user?.gender || 'male'} student
-                </p>
-                <div className="w-full">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-gray-600">Progress</span>
-                    <span className="text-xs font-semibold text-gray-900">65%</span>
-                  </div>
-                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-2 bg-[#FFD84D] rounded-full transition-all duration-500"
-                      style={{ width: '65%' }}
-                    />
+
+                <div className="text-left sm:text-center relative z-10 flex-1 min-w-0">
+                  <h3 className="font-bold text-lg sm:text-2xl text-gray-900 mb-1">{user?.name}</h3>
+                  <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-5 font-medium">{profile?.bio || 'Innovation Student'}</p>
+
+                  <div className="inline-block px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-2xl text-xs sm:text-sm font-semibold shadow-xl shadow-gray-900/20">
+                    <span className="text-[#F5D76E]">{ssiScore?.overallSSI || 0}</span> SSI Score
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Project Work Time Card */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5">
-                <h3 className="font-bold text-lg text-gray-900 mb-6">Project Work Time</h3>
-                <div className="flex flex-col items-center mb-6">
-                  <div className="relative w-32 h-32 mb-4">
-                    <svg className="transform -rotate-90 w-32 h-32">
-                      <circle
-                        cx="64"
-                        cy="64"
-                        r="56"
-                        stroke="#e5e7eb"
-                        strokeWidth="12"
-                        fill="none"
-                      />
-                      <circle
-                        cx="64"
-                        cy="64"
-                        r="56"
-                        stroke="#FFD84D"
-                        strokeWidth="12"
-                        fill="none"
-                        strokeDasharray={`${0.65 * 351.86} 351.86`}
-                        className="transition-all duration-500"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <p className="text-lg font-bold text-gray-900">1h 45m</p>
-                      <p className="text-sm text-gray-600">Today</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-[#FFD84D] rounded-full mt-1.5 flex-shrink-0"></div>
-                    <div className="min-w-0">
-                      <p className="text-sm text-gray-700">Market Research</p>
-                      <p className="text-xs text-gray-500">1h 45m</p>
-                    </div>
-                  </div>
-                  <div className="border-t border-gray-100 pt-3">
-                    <div className="flex items-start gap-2">
-                      <div className="w-2 h-2 bg-[#C9A84E] rounded-full mt-1.5 flex-shrink-0"></div>
-                      <div className="min-w-0">
-                        <p className="text-sm text-gray-700">Business Model Canvas</p>
-                        <p className="text-xs text-gray-500">1h 45m</p>
+            {/* Quick Links / Settings */}
+            <div className="glass-panel p-2">
+              <ul className="space-y-1">
+                {[
+                  { label: 'Profile Settings', icon: Settings, href: '/student/profile' },
+                  { label: 'Learning Modules', icon: BookOpen, subtitle: `${modulesList.length} available`, href: '/student/modules' },
+                  { label: 'Achievements', icon: Trophy, subtitle: `${achievementsData?.stats?.total || 0} earned`, href: '/student/profile' },
+                  { label: 'SSI Breakdown', icon: Brain, subtitle: `Score: ${ssiScore?.overallSSI || 0}` },
+                ].map((item, idx) => (
+                  <li key={idx}>
+                    <Link href={item.href || '#'} className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-white/60 transition-colors text-left group">
+                      <div>
+                        <div className="flex items-center gap-3">
+                          <item.icon className="w-4 h-4 text-gray-500 group-hover:text-[#D4AF37] transition-colors" />
+                          <span className="text-sm font-medium text-gray-800">{item.label}</span>
+                        </div>
+                        {item.subtitle && (
+                          <div className="flex items-center gap-2 mt-2 ml-7">
+                            <span className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">{item.subtitle}</span>
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Stat Cards */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                  <BookOpen className="w-6 h-6 text-[#FFD84D]" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-2xl font-bold text-gray-900 truncate">{modulesList.length}</h3>
-                  <p className="text-sm text-gray-600">Available Modules</p>
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                  <Brain className="w-6 h-6 text-[#FFD84D]" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-2xl font-bold text-gray-900 truncate">{ssiScore?.overallSSI || 0}</h3>
-                  <p className="text-sm text-gray-600">SSI Score</p>
-                </div>
-              </div>
-              <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                  <Trophy className="w-6 h-6 text-[#FFD84D]" />
-                </div>
-                <div className="min-w-0">
-                  <h3 className="text-2xl font-bold text-gray-900 truncate">{completedModules}</h3>
-                  <p className="text-sm text-gray-600">Completed</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Learning Progress Card */}
-            <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-6">
-              <h3 className="font-bold text-lg text-gray-900 mb-6">Learning Progress</h3>
-              <div className="relative">
-                <ResponsiveContainer width="100%" height={250}>
-                  <LineChart data={[
-                    { week: 'W1', marketing: 20, finance: 15 },
-                    { week: 'W2', marketing: 35, finance: 30 },
-                    { week: 'W3', marketing: 50, finance: 45 },
-                    { week: 'W4', marketing: 65, finance: 55 },
-                    { week: 'W5', marketing: 75, finance: 60 },
-                    { week: 'W6', marketing: 85, finance: 70 },
-                    { week: 'W7', marketing: 90, finance: 75 },
-                    { week: 'W8', marketing: 95, finance: 80 },
-                  ]}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                    <XAxis 
-                      dataKey="week" 
-                      tick={{ fontSize: 11 }}
-                      axisLine={false}
-                    />
-                    <YAxis 
-                      domain={[0, 100]}
-                      ticks={[0, 25, 50, 75, 100]}
-                      tickFormatter={(value) => value === 0 ? 'Novice' : value === 25 ? 'Intermediate' : value === 50 ? 'Advanced' : value === 75 ? 'Expert' : 'Master'}
-                      tick={{ fontSize: 11 }}
-                      axisLine={false}
-                    />
-                    <Tooltip />
-                    <Line 
-                      type="monotone" 
-                      dataKey="marketing" 
-                      stroke="#FFD84D" 
-                      strokeWidth={3}
-                      dot={{ fill: "#FFD84D", r: 4 }}
-                      activeDot={{ r: 6 }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="finance" 
-                      stroke="#C9A84E" 
-                      strokeWidth={3}
-                      dot={{ fill: "#C9A84E", r: 4 }}
-                      activeDot={{ r: 6 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+                      <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
-          {/* Desktop Layout - 3 columns (1024px+) */}
-          <div className="hidden lg:flex gap-6">
-            
-            {/* LEFT SIDEBAR CARD - Profile */}
-            <div className="w-[300px] bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5 flex-shrink-0">
-              {/* Profile Image */}
-              <div className="w-full aspect-square rounded-[16px] overflow-hidden mb-4">
-                {profile?.profilePicture ? (
-                  <img
-                    src={profile.profilePicture}
-                    alt={user?.name}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-yellow-200 to-amber-200 flex items-center justify-center">
-                    <User className="w-16 h-16 text-amber-600" />
+          {/* --- CENTER COLUMN: Charts & Calendar (50%) --- */}
+          <div className="xl:w-[50%] flex flex-col gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 sm:h-[260px]">
+              {/* Progress Bar Chart */}
+              <div className="glass-panel p-4 sm:p-6 flex flex-col relative overflow-hidden min-h-[220px] sm:min-h-0">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-gray-900 font-medium text-lg">Progress</h3>
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span className="text-3xl font-light text-gray-900">{hoursSpent}.{minutesSpent}h</span>
+                      <span className="text-xs text-gray-500">Learning Time</span>
+                    </div>
                   </div>
-                )}
-              </div>
-              
-              {/* Title */}
-              <h3 className="font-bold text-[20px] text-gray-900 mb-1">Future CEO</h3>
-              
-              {/* Subtitle */}
-              <p className="text-sm text-gray-500 mb-4">
-                {user?.age || '16'} year-old, {user?.nationality || 'Indian'} {user?.gender || 'male'} student
-              </p>
-              
-              {/* Progress Bar */}
-              <div className="w-full">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs text-gray-600">Progress</span>
-                  <span className="text-xs font-semibold text-gray-900">65%</span>
-                </div>
-                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-2 bg-[#FFD84D] rounded-full transition-all duration-500"
-                    style={{ width: '65%' }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* CENTER CONTENT */}
-            <div className="flex-1 space-y-6 min-w-0">
-              
-              {/* TOP STAT CARDS */}
-              <div className="flex gap-6">
-                {/* Available Modules Card */}
-                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4 min-w-0">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                    <BookOpen className="w-6 h-6 text-[#FFD84D]" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-2xl font-bold text-gray-900 truncate">{modulesList.length}</h3>
-                    <p className="text-sm text-gray-600">Available Modules</p>
+                  <div className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center text-gray-500 hover:text-gray-900 cursor-pointer shadow-sm">
+                    <ArrowRight className="w-4 h-4 -rotate-45" />
                   </div>
                 </div>
 
-                {/* SSI Score Card */}
-                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4 min-w-0">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                    <Brain className="w-6 h-6 text-[#FFD84D]" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-2xl font-bold text-gray-900 truncate">{ssiScore?.overallSSI || 0}</h3>
-                    <p className="text-sm text-gray-600">SSI Score</p>
-                  </div>
-                </div>
-
-                {/* Completed Card */}
-                <div className="flex-1 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-[16px] shadow-md p-4 flex items-center gap-4 min-w-0">
-                  <div className="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                    <Trophy className="w-6 h-6 text-[#FFD84D]" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="text-2xl font-bold text-gray-900 truncate">{completedModules}</h3>
-                    <p className="text-sm text-gray-600">Completed</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* LEARNING PROGRESS CARD */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-6">
-                <h3 className="font-bold text-lg text-gray-900 mb-6">Learning Progress</h3>
-                
-                {/* Chart Area */}
-                <div className="relative">
-                  <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={[
-                      { week: 'Week 1', marketing: 20, finance: 15 },
-                      { week: 'Week 2', marketing: 35, finance: 30 },
-                      { week: 'Week 3', marketing: 50, finance: 45 },
-                      { week: 'Week 4', marketing: 65, finance: 55 },
-                      { week: 'Week 5', marketing: 75, finance: 60 },
-                      { week: 'Week 6', marketing: 85, finance: 70 },
-                      { week: 'Week 7', marketing: 90, finance: 75 },
-                      { week: 'Week 8', marketing: 95, finance: 80 },
-                    ]}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                      <XAxis 
-                        dataKey="week" 
-                        tick={{ fontSize: 12 }}
+                <div className="flex-1 mt-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={barChartData} barSize={barChartData.length > 5 ? 6 : 14}>
+                      <XAxis
+                        dataKey="name"
                         axisLine={false}
+                        tickLine={false}
+                        tick={{ fontSize: 10, fill: '#9CA3AF' }}
+                        dy={10}
                       />
-                      <YAxis 
-                        domain={[0, 100]}
-                        ticks={[0, 25, 50, 75, 100]}
-                        tickFormatter={(value) => value === 0 ? 'Novice' : value === 25 ? 'Intermediate' : value === 50 ? 'Advanced' : value === 75 ? 'Expert' : 'Master'}
-                        tick={{ fontSize: 12 }}
-                        axisLine={false}
+                      <YAxis hide domain={[0, 100]} />
+                      <Tooltip
+                        cursor={{ fill: 'rgba(255,255,255,0.4)' }}
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}
+                        formatter={(val, name, props) => [`${val}%`, props.payload.title || 'Progress']}
                       />
-                      <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="marketing" 
-                        stroke="#FFD84D" 
-                        strokeWidth={3}
-                        dot={{ fill: "#FFD84D", r: 5 }}
-                        activeDot={{ r: 7 }}
-                      />
-                      <Line 
-                        type="monotone" 
-                        dataKey="finance" 
-                        stroke="#C9A84E" 
-                        strokeWidth={3}
-                        dot={{ fill: "#C9A84E", r: 5 }}
-                        activeDot={{ r: 7 }}
-                      />
-                    </LineChart>
+                      <Bar dataKey="value" radius={[10, 10, 10, 10]}>
+                        {barChartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.value >= 100 ? '#D4AF37' : entry.value > 0 ? '#F5D76E' : '#E5E7EB'} />
+                        ))}
+                      </Bar>
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </div>
-            </div>
 
-            {/* RIGHT SIDEBAR CARD - Project Work Time */}
-            <div className="w-[260px] bg-white/90 backdrop-blur-sm rounded-[20px] shadow-lg p-5 flex-shrink-0">
-              <h3 className="font-bold text-lg text-gray-900 mb-6">Project Work Time</h3>
-              
-              {/* Circular Progress Ring */}
-              <div className="flex flex-col items-center mb-6">
-                <div className="relative w-32 h-32 mb-4">
-                  <svg className="transform -rotate-90 w-32 h-32">
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke="#e5e7eb"
-                      strokeWidth="12"
-                      fill="none"
-                    />
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke="#FFD84D"
-                      strokeWidth="12"
-                      fill="none"
-                      strokeDasharray={`${0.65 * 351.86} 351.86`}
-                      className="transition-all duration-500"
-                    />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <p className="text-lg font-bold text-gray-900">1h 45m</p>
-                    <p className="text-sm text-gray-600">Today</p>
+              {/* Time Tracker Radial */}
+              <div className="glass-panel p-4 sm:p-6 flex flex-col relative min-h-[240px] sm:min-h-0">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-gray-900 font-medium text-lg">Time tracker</h3>
+                  <div className="w-8 h-8 rounded-full bg-white/80 flex items-center justify-center text-gray-500 hover:text-gray-900 cursor-pointer shadow-sm">
+                    <ArrowRight className="w-4 h-4 -rotate-45" />
                   </div>
                 </div>
-              </div>
-              
-              {/* List Items */}
-              <div className="space-y-3">
-                <div className="flex items-start gap-2">
-                  <div className="w-2 h-2 bg-[#FFD84D] rounded-full mt-1.5 flex-shrink-0"></div>
-                  <div className="min-w-0">
-                    <p className="text-sm text-gray-700">Market Research</p>
-                    <p className="text-xs text-gray-500">1h 45m</p>
-                  </div>
-                </div>
-                
-                <div className="border-t border-gray-100 pt-3">
-                  <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-[#C9A84E] rounded-full mt-1.5 flex-shrink-0"></div>
-                    <div className="min-w-0">
-                      <p className="text-sm text-gray-700">Business Model Canvas</p>
-                      <p className="text-xs text-gray-500">1h 45m</p>
+
+                <div className="flex-1 flex flex-col items-center justify-center relative">
+                  <div className="relative w-36 h-36">
+                    {/* Dashed background circle */}
+                    <svg className="w-full h-full transform -rotate-90">
+                      <circle
+                        cx="72" cy="72" r="60"
+                        stroke="#E5E7EB"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeDasharray="4 4"
+                      />
+                      {/* Solid progress ring */}
+                      <circle
+                        cx="72" cy="72" r="60"
+                        stroke="#F5D76E"
+                        strokeWidth="8"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeDasharray={`${(timeProgress / 100) * 377} 377`}
+                        className="transition-all duration-1000 ease-out"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-light text-gray-900">{hoursSpent.toString().padStart(2, '0')}:{minutesSpent.toString().padStart(2, '0')}</span>
+                      <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Work Time</span>
                     </div>
                   </div>
+
+                  {/* Decorative timeline markers */}
+                  <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-4 text-gray-400">
+                    <Play className="w-4 h-4" />
+                    <div className="w-px h-4 bg-gray-300"></div>
+                    <Clock className="w-4 h-4" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
 
-        
-        {/* Learning Modules Section */}
-        <div className="mt-8">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-            <h3 className="font-bold text-xl text-gray-900">Learning Modules</h3>
-            <Link href="/student/modules" className="text-amber-600 hover:text-amber-700 transition-colors text-sm sm:text-base">
-              View All →
-            </Link>
-          </div>
-          
-          {/* Mobile Layout - Single column */}
-          <div className="block lg:hidden space-y-6">
-            {/* Module Card 1 - Mobile */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-4 sm:p-6">
-              <h4 className="font-bold text-base sm:text-lg text-gray-900 mb-3">
-                The Entrepreneur's Launch Blueprint: From Idea Spark to Pitch-Ready Success by Fred Katz
-              </h4>
-              
-              {/* Badges */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-gray-600 mb-4">
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Beginner</span>
-                <span className="text-xs sm:text-sm">80 min</span>
-                <span className="text-xs sm:text-sm">5 chapters</span>
-                <span className="text-green-600 font-semibold text-xs sm:text-sm">Available</span>
+            {/* Calendar / Schedule Strip */}
+            <div className="glass-panel p-4 sm:p-6 flex-1 flex flex-col">
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="font-medium text-gray-500 text-sm">{prevMonth}</h3>
+                <h3 className="font-bold text-gray-900 text-lg tracking-wide">{currentMonth} {currentYear}</h3>
+                <h3 className="font-medium text-gray-500 text-sm">{nextMonth}</h3>
               </div>
-              
-              {/* Description */}
-              <p className="text-sm text-gray-600 mb-6">
-                A comprehensive guide to taking your startup idea from concept to a compelling pitch. Learn market research, business modeling, and effective communication strategies.
-              </p>
-              
-              {/* CTA Button */}
-              <Link
-                href={`/student/modules/${modulesList[0]?._id || '#'}`}
-                className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-yellow-400 to-red-400 hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                Start Learning ▶
-              </Link>
-            </div>
 
-            {/* Calendar Card - Mobile */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-4 sm:p-6">
-              <h4 className="font-bold text-lg text-gray-900 mb-4">Calendar</h4>
-              
-              {/* Weekday Row */}
-              <div className="grid grid-cols-6 gap-1 text-center mb-4">
-                {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, i) => (
-                  <div key={i} className="text-xs text-gray-600 font-medium">{day}</div>
-                ))}
-              </div>
-              
-              {/* Calendar Days */}
-              <div className="grid grid-cols-6 gap-1 mb-6">
-                {Array.from({ length: 30 }, (_, i) => {
-                  const dayNum = i + 1;
-                  const isHighlighted = dayNum === 15;
+              <div className="flex justify-between px-2 mb-6">
+                {weekDays.map((d, i) => {
+                  const isToday = d.getDate() === todayDate;
                   return (
-                    <div
-                      key={i}
-                      className={`
-                        w-8 h-8 flex items-center justify-center text-xs rounded-lg transition-all
-                        ${isHighlighted ? 'bg-yellow-400 text-white font-bold' : 'text-gray-700 hover:bg-gray-100'}
-                      `}
-                    >
-                      {dayNum}
+                    <div key={i} className="text-center">
+                      <p className={`text-xs ${isToday ? 'text-gray-900 font-bold' : 'text-gray-400 font-medium'}`}>{dayLabels[i]}</p>
+                      <p className={`text-sm mt-1 w-8 h-8 flex items-center justify-center rounded-full mx-auto ${isToday ? 'bg-[#D4AF37] text-white font-bold' : 'text-gray-600'}`}>{d.getDate()}</p>
                     </div>
                   );
                 })}
               </div>
-              
-              {/* Events */}
-              <div className="space-y-3">
-                <div className="p-3 bg-yellow-50 rounded-2xl border border-yellow-200">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="text-xs font-semibold text-gray-900">Nov 15</span>
-                    <span className="text-xs text-amber-600">4 PM</span>
-                  </div>
-                  <h4 className="font-bold text-sm text-gray-900 mb-1">Live Masterclass: Idea to Reality</h4>
-                </div>
-                
-                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-200">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="text-xs font-semibold text-gray-900">Nov 20</span>
-                    <span className="text-xs text-gray-600">5 PM</span>
-                  </div>
-                  <h4 className="font-bold text-sm text-gray-900 mb-1">Idea Validation Workshop</h4>
-                </div>
-              </div>
-            </div>
 
-            {/* Module Card 2 - Mobile */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-4 sm:p-6">
-              <h4 className="font-bold text-base sm:text-lg text-gray-900 mb-3">
-                The Solution Seeker's Journey: From Ideas to Action by Naisha Kapoor
-              </h4>
-              
-              {/* Badges */}
-              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-sm text-gray-600 mb-4">
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Beginner</span>
-                <span className="text-xs sm:text-sm">28 min</span>
-                <span className="text-xs sm:text-sm">5 chapters</span>
-                <span className="text-green-600 font-semibold text-xs sm:text-sm">Available</span>
+              {/* Recent Activity Events */}
+              <div className="flex-1 mt-4 space-y-4">
+                {recentModules.length > 0 ? recentModules.map((evt, i) => (
+                  <div key={i} className={`p-3 sm:p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between shadow-sm gap-2 ${i === 0 ? 'bg-gray-900 text-white' : 'bg-white border border-gray-100'}`}>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-sm font-semibold truncate ${i === 0 ? 'text-white' : 'text-gray-900'}`}>{evt.title}</p>
+                      <p className={`text-[10px] mt-1 ${i === 0 ? 'text-gray-400' : 'text-gray-500'}`}>{evt.subtitle}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      <span className={`text-[10px] font-medium ${i === 0 ? 'text-gray-400' : 'text-gray-500'}`}>Last: {evt.time}</span>
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${i === 0 ? 'bg-[#D4AF37]' : 'bg-[#F5D76E]/30'}`}>
+                        <Play className={`w-3 h-3 ${i === 0 ? 'text-black' : 'text-[#B8952E]'}`} />
+                      </div>
+                    </div>
+                  </div>
+                )) : (
+                  <div className="text-center py-10">
+                    <BookOpen className="w-8 h-8 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-400 text-sm">No recent activity yet.</p>
+                    <p className="text-gray-400 text-xs mt-1">Start a module to see your activity here!</p>
+                  </div>
+                )}
               </div>
-              
-              {/* Description */}
-              <p className="text-sm text-gray-600 mb-6">
-                Discover how to identify real-world problems and develop innovative solutions. Learn design thinking, prototyping, and validation techniques.
-              </p>
-              
-              {/* CTA Button */}
-              <Link
-                href={`/student/modules/${modulesList[1]?._id || '#'}`}
-                className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-yellow-400 to-red-400 hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base"
-              >
-                Start Learning ▶
-              </Link>
             </div>
           </div>
 
-          {/* Desktop Layout - 3 columns */}
-          <div className="hidden lg:grid lg:grid-cols-3 gap-6">
-            {/* Left Module Card */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6">
-              <h4 className="font-bold text-lg text-gray-900 mb-3">
-                The Entrepreneur's Launch Blueprint: From Idea Spark to Pitch-Ready Success by Fred Katz
-              </h4>
-              
-              {/* Badges */}
-              <div className="flex items-center gap-3 text-sm text-gray-600 mb-4">
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Beginner</span>
-                <span>80 min</span>
-                <span>5 chapters</span>
-                <span className="text-green-600 font-semibold">Available</span>
+          {/* --- RIGHT COLUMN: Stats & Tasks (25%) --- */}
+          <div className="xl:w-[25%] flex flex-col gap-6">
+
+            {/* Top Minimal Stats */}
+            <div className="flex justify-between items-center px-2 pt-2 glass-panel sm:bg-transparent sm:backdrop-blur-none sm:border-0 sm:shadow-none p-4 sm:p-0 sm:rounded-none">
+              <div className="text-center group cursor-pointer">
+                <div className="flex items-center justify-center gap-1 mb-1 text-gray-400 group-hover:text-[#D4AF37] transition-colors">
+                  <BookOpen className="w-3 h-3" />
+                </div>
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 tracking-tight">{modulesList.length}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mt-1">Modules</p>
               </div>
-              
-              {/* Description */}
-              <p className="text-sm text-gray-600 mb-6">
-                A comprehensive guide to taking your startup idea from concept to a compelling pitch. Learn market research, business modeling, and effective communication strategies.
-              </p>
-              
-              {/* CTA Button */}
-              <Link
-                href={`/student/modules/${modulesList[0]?._id || '#'}`}
-                className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-yellow-400 to-red-400 hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2"
-              >
-                Start Learning ▶
-              </Link>
+              <div className="text-center group cursor-pointer">
+                <div className="flex items-center justify-center gap-1 mb-1 text-gray-400 group-hover:text-[#D4AF37] transition-colors">
+                  <Trophy className="w-3 h-3" />
+                </div>
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 tracking-tight">{completedModules}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mt-1">Complete</p>
+              </div>
+              <div className="text-center group cursor-pointer">
+                <div className="flex items-center justify-center gap-1 mb-1 text-gray-400 group-hover:text-[#D4AF37] transition-colors">
+                  <CheckCircle2 className="w-3 h-3" />
+                </div>
+                <p className="text-2xl sm:text-3xl lg:text-4xl font-light text-gray-900 tracking-tight">{achievementsData?.stats?.total || 0}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mt-1">Badges</p>
+              </div>
             </div>
 
-            {/* Calendar Card */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6">
-              <h4 className="font-bold text-lg text-gray-900 mb-4">Calendar</h4>
-              
-              {/* Weekday Row */}
-              <div className="grid grid-cols-6 gap-1 text-center mb-4">
-                {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day, i) => (
-                  <div key={i} className="text-xs text-gray-600 font-medium">{day}</div>
-                ))}
+            {/* Overall Course Progress Mini */}
+            <div className="flex items-center gap-4 bg-white/40 px-5 py-3 rounded-2xl border border-white/60">
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-800 mb-2">Total Journey</p>
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#F5D76E] rounded-full transition-all duration-700" style={{ width: `${overallProgress}%` }}></div>
+                </div>
               </div>
-              
-              {/* Calendar Days */}
-              <div className="grid grid-cols-6 gap-1 mb-6">
-                {Array.from({ length: 30 }, (_, i) => {
-                  const dayNum = i + 1;
-                  const isHighlighted = dayNum === 15;
+              <div className="text-xl font-light text-gray-900">{overallProgress}%</div>
+            </div>
+
+            {/* Dark Card - Module Tasks */}
+            <div className="bg-[#1A1A1A] rounded-[24px] sm:rounded-[32px] p-4 sm:p-6 flex-1 shadow-2xl flex flex-col border border-gray-800 relative overflow-hidden min-h-[300px] max-h-[500px] xl:max-h-none">
+              {/* Ambient top light */}
+              <div className="absolute top-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-50 blur-sm"></div>
+
+              <div className="flex justify-between items-end mb-4 sm:mb-8 relative z-10">
+                <h3 className="text-lg sm:text-xl font-medium text-white tracking-wide">Module Tasks</h3>
+                <span className="text-2xl font-light text-[#F5D76E]">{completedModules}/{modulesList.length}</span>
+              </div>
+
+              <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-4 relative z-10 custom-scrollbar-dark">
+                {modulesList.map((mod, index) => {
+                  const modProgress = profile?.modulesProgress?.find(p => p.moduleId?._id === mod._id || p.moduleId === mod._id);
+                  const isDone = modProgress?.completionPercentage >= 100;
+
                   return (
-                    <div
-                      key={i}
-                      className={`
-                        w-8 h-8 flex items-center justify-center text-xs rounded-lg transition-all
-                        ${isHighlighted ? 'bg-yellow-400 text-white font-bold' : 'text-gray-700 hover:bg-gray-100'}
-                      `}
-                    >
-                      {dayNum}
+                    <div key={mod._id} className="flex gap-4 group">
+                      <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#D4AF37]/10 transition-colors">
+                        {isDone ? (
+                          <CheckCircle2 className="w-5 h-5 text-[#D4AF37]" />
+                        ) : (
+                          <MonitorPlay className="w-5 h-5 text-gray-400 group-hover:text-[#F5D76E]" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 flex items-center justify-between border-b border-white/5 pb-4 group-hover:border-white/10 transition-colors">
+                        <div className="pr-4 truncate">
+                          <p className={`text-sm font-medium truncate ${isDone ? 'text-gray-400 line-through decoration-gray-600' : 'text-gray-100'}`}>
+                            {mod.title}
+                          </p>
+                          <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-wider">
+                            {mod.chapters?.length || 0} Chapters
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0 flex items-center justify-center">
+                          {isDone ? (
+                            <div className="w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center text-black">
+                              <svg width="10" height="8" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1 4L3.5 6.5L9 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                              </svg>
+                            </div>
+                          ) : (
+                            <Circle className="w-5 h-5 text-gray-600" />
+                          )}
+                        </div>
+                      </div>
                     </div>
                   );
                 })}
-              </div>
-              
-              {/* Events */}
-              <div className="space-y-3">
-                <div className="p-3 bg-yellow-50 rounded-2xl border border-yellow-200">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="text-xs font-semibold text-gray-900">Nov 15</span>
-                    <span className="text-xs text-amber-600">4 PM</span>
-                  </div>
-                  <h4 className="font-bold text-sm text-gray-900 mb-1">Live Masterclass: Idea to Reality</h4>
-                </div>
-                
-                <div className="p-3 bg-gray-50 rounded-2xl border border-gray-200">
-                  <div className="flex justify-between items-start mb-1">
-                    <span className="text-xs font-semibold text-gray-900">Nov 20</span>
-                    <span className="text-xs text-gray-600">5 PM</span>
-                  </div>
-                  <h4 className="font-bold text-sm text-gray-900 mb-1">Idea Validation Workshop</h4>
-                </div>
-              </div>
-            </div>
 
-            {/* Right Module Card */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6">
-              <h4 className="font-bold text-lg text-gray-900 mb-3">
-                The Solution Seeker's Journey: From Ideas to Action by Naisha Kapoor
-              </h4>
-              
-              {/* Badges */}
-              <div className="flex items-center gap-3 text-sm text-gray-600 mb-4">
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Beginner</span>
-                <span>28 min</span>
-                <span>5 chapters</span>
-                <span className="text-green-600 font-semibold">Available</span>
+                {modulesList.length === 0 && (
+                  <div className="text-center py-10">
+                    <p className="text-gray-500 text-sm">No modules available yet.</p>
+                  </div>
+                )}
               </div>
-              
-              {/* Description */}
-              <p className="text-sm text-gray-600 mb-6">
-                Discover how to identify real-world problems and develop innovative solutions. Learn design thinking, prototyping, and validation techniques.
-              </p>
-              
-              {/* CTA Button */}
+
               <Link
-                href={`/student/modules/${modulesList[1]?._id || '#'}`}
-                className="w-full py-3 rounded-2xl font-semibold text-white bg-gradient-to-r from-yellow-400 to-red-400 hover:from-yellow-500 hover:to-red-500 transition-all duration-300 flex items-center justify-center gap-2"
+                href="/student/modules"
+                className="mt-4 w-full py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-white text-sm font-medium text-center transition-colors border border-white/10"
               >
-                Start Learning ▶
+                View All Modules
               </Link>
             </div>
+
           </div>
         </div>
+
       </div>
+
+      {/* Styles for custom scrollbar in dark card */}
+      <style jsx global>{`
+        .custom-scrollbar-dark::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar-dark::-webkit-scrollbar-track {
+          background: rgba(255, 255, 255, 0.02);
+          border-radius: 4px;
+        }
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 4px;
+        }
+        .custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
+          background: rgba(212, 175, 55, 0.5);
+        }
+      `}</style>
 
       {/* Razorpay Script */}
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />

@@ -51,7 +51,7 @@ export default function StudentModulesPage() {
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'beginner': return 'from-green-400 to-green-600';
-      case 'intermediate': return 'from-yellow-400 to-orange-500';
+      case 'intermediate': return 'from-[#D4AF37] to-[#B8952E]';
       case 'advanced': return 'from-red-500 to-red-700';
       default: return 'from-gray-400 to-gray-600';
     }
@@ -66,15 +66,15 @@ export default function StudentModulesPage() {
       <div className="container-lg py-8 space-y-6">
         {/* Payment Check */}
         {!paymentStatus?.isPaid && (
-          <div className="glass border-l-4 border-l-red-500 p-6 rounded-2xl">
-            <div className="flex items-center justify-between">
+          <div className="glass-panel border-l-4 border-l-[#D4AF37] p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h3 className="font-bold text-lg text-red-600 mb-2">🔒 Access Restricted</h3>
-                <p className="text-gray-700">Complete payment to unlock all learning modules</p>
+                <h3 className="font-bold text-lg text-[#B8952E] mb-1">🔒 Access Restricted</h3>
+                <p className="text-gray-600 text-sm">Complete payment to unlock all learning modules</p>
               </div>
               <Link
                 href="/student/dashboard"
-                className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-xl hover:shadow-lg transition font-semibold"
+                className="glass-button px-6 py-3 flex-shrink-0"
               >
                 Complete Payment
               </Link>
@@ -83,10 +83,10 @@ export default function StudentModulesPage() {
         )}
 
         {/* Filters */}
-        <div className="glass p-4 rounded-2xl">
+        <div className="glass-panel p-4">
           <div className="flex flex-wrap items-center gap-3">
-            <Filter className="w-5 h-5 text-gray-600" />
-            <span className="font-semibold text-gray-700 mr-2">Filter:</span>
+            <Filter className="w-5 h-5 text-gray-500" />
+            <span className="font-semibold text-gray-600 mr-2 text-sm">Filter:</span>
             {[
               { key: 'all', label: 'All Modules', icon: '📚' },
               { key: 'beginner', label: 'Beginner', icon: '🌱' },
@@ -96,9 +96,9 @@ export default function StudentModulesPage() {
               <button
                 key={item.key}
                 onClick={() => setFilter(item.key)}
-                className={`px-4 py-2 rounded-xl transition-all flex items-center gap-2 text-sm font-medium ${filter === item.key
-                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
-                    : 'glass-subtle text-gray-700 hover:bg-white/50'
+                className={`px-4 py-2 rounded-full transition-all flex items-center gap-2 text-sm font-medium ${filter === item.key
+                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white shadow-md shadow-[#D4AF37]/15'
+                    : 'bg-white/50 text-gray-600 hover:bg-white/70 border border-white/40'
                   }`}
               >
                 <span>{item.icon}</span>
@@ -114,7 +114,7 @@ export default function StudentModulesPage() {
             <div key={module._id} className="card group cursor-pointer overflow-hidden p-0">
               {/* Cover Image */}
               {module.coverImage ? (
-                <div className="w-full h-48 bg-gray-200 relative">
+                <div className="w-full h-48 bg-gray-100 relative">
                   <img src={module.coverImage} alt={module.title} className="w-full h-full object-cover" />
                   <div className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full flex items-center gap-2 shadow-sm">
                     <span className={`text-sm bg-gradient-to-r ${getDifficultyColor(module.difficulty)} bg-clip-text text-transparent font-bold capitalize`}>
@@ -123,8 +123,8 @@ export default function StudentModulesPage() {
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-32 bg-gray-100 flex items-center justify-center border-b border-gray-200">
-                  <BookOpen className="w-12 h-12 text-gray-300" />
+                <div className="w-full h-32 bg-gradient-to-br from-[#D4AF37]/5 to-[#F5D76E]/5 flex items-center justify-center border-b border-white/30">
+                  <BookOpen className="w-12 h-12 text-[#D4AF37]/30" />
                 </div>
               )}
 
@@ -141,7 +141,7 @@ export default function StudentModulesPage() {
                             className="w-14 h-14 rounded-full border-2 border-white object-cover shadow-md"
                             onError={(e) => { e.target.style.display = 'none'; }}
                           />
-                          <span className="text-xs text-gray-500 font-medium">Instructor</span>
+                          <span className="text-xs text-gray-400 font-medium">Instructor</span>
                         </div>
                       )}
                       {!module.coverImage && (
@@ -153,33 +153,33 @@ export default function StudentModulesPage() {
                     {paymentStatus?.isPaid ? (
                       <CheckCircle className="w-6 h-6 text-green-500" />
                     ) : (
-                      <Lock className="w-6 h-6 text-gray-400" />
+                      <Lock className="w-6 h-6 text-gray-300" />
                     )}
                   </div>
 
-                  <h3 className="font-bold text-2xl mb-2 text-gray-800 group-hover:text-red-600 transition line-clamp-2 mt-2">
+                  <h3 className="font-bold text-xl mb-2 text-gray-800 group-hover:text-[#D4AF37] transition line-clamp-2 mt-2">
                     {module.title}
                   </h3>
-                  <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  <p className="text-gray-500 text-sm line-clamp-3 mb-4">
                     {module.description}
                   </p>
                 </div>
 
                 {/* Module Stats */}
                 <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-500">
                     <Clock className="w-4 h-4" />
                     <span>{module.estimatedCompletionTime} min</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-500">
                     <BookOpen className="w-4 h-4" />
                     <span>{module.chapters?.length || 0} chapters</span>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-600">
+                  <div className="flex items-center gap-2 text-gray-500">
                     <Users className="w-4 h-4" />
                     <span>Interactive</span>
                   </div>
-                  <div className="flex items-center gap-2 text-yellow-500">
+                  <div className="flex items-center gap-2 text-[#D4AF37]">
                     <Star className="w-4 h-4" />
                     <span>AI Powered</span>
                   </div>
@@ -188,11 +188,11 @@ export default function StudentModulesPage() {
                 {/* Progress Bar */}
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs text-gray-600">Progress</span>
-                    <span className="text-xs font-semibold text-gray-800">0%</span>
+                    <span className="text-xs text-gray-500">Progress</span>
+                    <span className="text-xs font-semibold text-gray-700">0%</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                    <div className="bg-gradient-to-r from-red-500 to-orange-500 h-2 rounded-full transition-all" style={{ width: '0%' }}></div>
+                  <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                    <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-2 rounded-full transition-all" style={{ width: '0%' }}></div>
                   </div>
                 </div>
 
@@ -200,7 +200,7 @@ export default function StudentModulesPage() {
                 {paymentStatus?.isPaid ? (
                   <Link
                     href={`/student/modules/${module._id}`}
-                    className="w-full bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-4 rounded-xl hover:shadow-lg transition font-semibold flex items-center justify-center gap-2 group-hover:scale-105"
+                    className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white py-3 px-4 rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/20 transition font-semibold flex items-center justify-center gap-2 group-hover:scale-[1.02]"
                   >
                     <Play className="w-4 h-4" />
                     Start Learning
@@ -208,7 +208,7 @@ export default function StudentModulesPage() {
                 ) : (
                   <button
                     disabled
-                    className="w-full glass-subtle text-gray-500 py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full bg-white/50 text-gray-400 py-3 px-4 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 border border-white/40"
                   >
                     <Lock className="w-4 h-4" />
                     Locked
@@ -217,8 +217,8 @@ export default function StudentModulesPage() {
 
                 {/* AI Feature Badge */}
                 {module.aiInteractionEnabled && (
-                  <div className="mt-3 flex items-center justify-center gap-2 text-xs text-yellow-600 bg-yellow-50 py-2 rounded-lg">
-                    <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+                  <div className="mt-3 flex items-center justify-center gap-2 text-xs text-[#B8952E] bg-[#D4AF37]/8 py-2 rounded-xl">
+                    <span className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse"></span>
                     ZUNOVA AI Available
                   </div>
                 )}
@@ -232,7 +232,7 @@ export default function StudentModulesPage() {
           <div className="card text-center py-12">
             <div className="text-6xl mb-4">📚</div>
             <h3 className="font-bold text-xl mb-2 text-gray-800">No modules found</h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-500 mb-6">
               {filter === 'all'
                 ? 'No modules are available yet. Check back soon!'
                 : `No ${filter} modules available. Try a different filter.`
@@ -240,7 +240,7 @@ export default function StudentModulesPage() {
             </p>
             <button
               onClick={() => setFilter('all')}
-              className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-2 rounded-xl hover:shadow-lg transition font-semibold"
+              className="glass-button px-6 py-3"
             >
               Show All Modules
             </button>
@@ -249,15 +249,15 @@ export default function StudentModulesPage() {
 
         {/* Learning Path Info */}
         {paymentStatus?.isPaid && modulesList.length > 0 && (
-          <div className="card bg-gradient-to-r from-red-500 to-orange-500 text-white">
+          <div className="card bg-gradient-to-r from-[#0F5132] to-[#1B6B4C] text-white border-none">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="font-bold text-xl mb-2">🎯 Your Learning Path</h3>
-                <p className="opacity-90">
+                <p className="opacity-80 text-sm">
                   Complete modules in order to maximize your learning experience and SSI score
                 </p>
               </div>
-              <ArrowLeft className="w-8 h-8 opacity-75 rotate-180" />
+              <ArrowLeft className="w-8 h-8 opacity-50 rotate-180" />
             </div>
           </div>
         )}

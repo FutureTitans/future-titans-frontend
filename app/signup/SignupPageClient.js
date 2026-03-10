@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { auth } from '@/lib/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { setAuthToken, setRefreshToken, setUser } from '@/lib/auth';
-import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function SignupPageClient() {
   const router = useRouter();
@@ -73,193 +73,104 @@ export default function SignupPageClient() {
     }
   };
 
-  return (
-    <div className="min-h-screen pt-24 pb-12 px-4 flex items-center justify-center relative overflow-hidden">
-      {/* Dynamic Background Elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-200/30 rounded-full blur-[120px] pointer-events-none"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-amber-200/30 rounded-full blur-[120px] pointer-events-none"></div>
+  const InputField = ({ label, name, type = 'text', placeholder, isPassword = false }) => {
+    const showPw = name === 'password' ? showPassword : showConfirmPassword;
+    const togglePw = name === 'password'
+      ? () => setShowPassword(!showPassword)
+      : () => setShowConfirmPassword(!showConfirmPassword);
 
-      <div className="w-full max-w-2xl relative z-10">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-neutral-600 hover:text-primary-red transition mb-8 group">
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            Back to Home
-          </Link>
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create Account</h1>
-          <p className="text-lg text-gray-600">Join Future Titans and start your innovation journey</p>
-          {initialSlug && (
-            <div className="mt-4 inline-block bg-amber-50 border border-amber-200 rounded-full px-4 py-1 text-sm text-amber-800">
-              ✨ Special Offer applied via <span className="font-mono font-bold">{initialSlug}</span>
-            </div>
+    return (
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">{label}</label>
+        <div className="relative">
+          <input
+            type={isPassword ? (showPw ? 'text' : 'password') : type}
+            name={name}
+            value={formData[name]}
+            onChange={handleChange}
+            placeholder={placeholder}
+            className={`glass-input ${errors[name] ? 'error' : ''}`}
+            disabled={isLoading}
+          />
+          {isPassword && (
+            <button
+              type="button"
+              onClick={togglePw}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            >
+              {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
           )}
         </div>
+        {errors[name] && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors[name]}</p>}
+      </div>
+    );
+  };
 
-        <div className="glass-panel p-8 md:p-10 shadow-2xl">
+  return (
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 py-12 pt-24">
+      {/* Background blobs */}
+      <div className="absolute top-[-15%] right-[-15%] w-[55%] h-[55%] bg-[#F5D76E]/15 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute bottom-[-15%] left-[-15%] w-[55%] h-[55%] bg-[#D4AF37]/12 rounded-full blur-[120px] pointer-events-none"></div>
+
+      <div className="w-full max-w-5xl relative z-10 grid md:grid-cols-5 gap-0 glass-panel overflow-hidden shadow-2xl">
+        {/* Left — Brand panel (desktop only) */}
+        <div className="hidden md:flex md:col-span-2 flex-col justify-center items-center p-10 bg-gradient-to-br from-[#0F5132] to-[#1B6B4C] relative overflow-hidden" style={{ borderRadius: '24px 0 0 24px' }}>
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-10 left-10 w-40 h-40 bg-[#D4AF37] rounded-full blur-3xl"></div>
+            <div className="absolute bottom-10 right-10 w-32 h-32 bg-[#F5D76E] rounded-full blur-3xl"></div>
+          </div>
+          <div className="relative z-10 text-center">
+            <Sparkles className="w-12 h-12 text-[#F5D76E] mx-auto mb-5 animate-pulse" />
+            <h2 className="text-2xl font-bold text-white mb-3">Join Future Titans</h2>
+            <p className="text-white/70 text-base leading-relaxed max-w-[260px] mx-auto">
+              Create your account and start your innovation journey today.
+            </p>
+          </div>
+        </div>
+
+        {/* Right — Form panel */}
+        <div className="md:col-span-3 p-6 sm:p-8 md:p-10">
+          <div className="mb-6">
+            <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#D4AF37] transition mb-5 group text-sm">
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              Back to Home
+            </Link>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h1>
+            <p className="text-gray-500 text-sm">Join Future Titans and start your innovation journey</p>
+            {initialSlug && (
+              <div className="mt-3 inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full px-4 py-1 text-xs text-[#B8952E] font-medium">
+                ✨ Special Offer applied via <span className="font-mono font-bold">{initialSlug}</span>
+              </div>
+            )}
+          </div>
+
           {errors.submit && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-2">
-              <span className="text-xl">⚠️</span> {errors.submit}
+            <div className="bg-red-50/80 border border-red-200/50 text-red-700 px-4 py-3 rounded-2xl mb-5 flex items-center gap-2 text-sm backdrop-blur-sm">
+              <span className="text-lg">⚠️</span> {errors.submit}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.name ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                    }`}
-                  disabled={isLoading}
-                />
-                {errors.name && <p className="text-red-500 text-sm mt-1 ml-1">{errors.name}</p>}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="john@example.com"
-                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.email ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                    }`}
-                  disabled={isLoading}
-                />
-                {errors.email && <p className="text-red-500 text-sm mt-1 ml-1">{errors.email}</p>}
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Phone</label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="+91 XXXXX XXXXX"
-                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.phone ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                    }`}
-                  disabled={isLoading}
-                />
-                {errors.phone && <p className="text-red-500 text-sm mt-1 ml-1">{errors.phone}</p>}
-              </div>
-
-              {/* School */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">School/Institution</label>
-                <input
-                  type="text"
-                  name="school"
-                  value={formData.school}
-                  onChange={handleChange}
-                  placeholder="Your School"
-                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.school ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                    }`}
-                  disabled={isLoading}
-                />
-                {errors.school && <p className="text-red-500 text-sm mt-1 ml-1">{errors.school}</p>}
-              </div>
-
-              {/* City */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">City</label>
-                <input
-                  type="text"
-                  name="city"
-                  value={formData.city}
-                  onChange={handleChange}
-                  placeholder="Mumbai"
-                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.city ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                    }`}
-                  disabled={isLoading}
-                />
-                {errors.city && <p className="text-red-500 text-sm mt-1 ml-1">{errors.city}</p>}
-              </div>
-
-              {/* Country */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Country</label>
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleChange}
-                  placeholder="India"
-                  className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.country ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                    }`}
-                  disabled={isLoading}
-                />
-                {errors.country && <p className="text-red-500 text-sm mt-1 ml-1">{errors.country}</p>}
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.password ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                      }`}
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-                {errors.password && <p className="text-red-500 text-sm mt-1 ml-1">{errors.password}</p>}
-              </div>
-
-              {/* Confirm Password */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Confirm Password</label>
-                <div className="relative">
-                  <input
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                    className={`w-full px-5 py-4 bg-white/50 border backdrop-blur-sm rounded-xl focus:outline-none focus:border-primary-red focus:ring-4 focus:ring-primary-red/10 transition-all ${errors.confirmPassword ? 'border-red-400 bg-red-50/50' : 'border-gray-200'
-                      }`}
-                    disabled={isLoading}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                  >
-                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1 ml-1">{errors.confirmPassword}</p>
-                )}
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid sm:grid-cols-2 gap-4">
+              <InputField label="Full Name" name="name" placeholder="John Doe" />
+              <InputField label="Email" name="email" type="email" placeholder="john@example.com" />
+              <InputField label="Phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" />
+              <InputField label="School/Institution" name="school" placeholder="Your School" />
+              <InputField label="City" name="city" placeholder="Mumbai" />
+              <InputField label="Country" name="country" placeholder="India" />
+              <InputField label="Password" name="password" placeholder="••••••••" isPassword />
+              <InputField label="Confirm Password" name="confirmPassword" placeholder="••••••••" isPassword />
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="glass-button w-full py-4 text-lg shadow-xl shadow-red-500/20 hover:shadow-red-500/30 flex justify-center items-center mt-8"
+              className="glass-button w-full py-4 text-base shadow-xl shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30 flex justify-center items-center mt-4"
             >
               {isLoading ? (
-                <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 'Create Account'
               )}
@@ -267,9 +178,9 @@ export default function SignupPageClient() {
           </form>
 
           {/* Login Link */}
-          <p className="text-center text-neutral-500 mt-8">
+          <p className="text-center text-gray-500 mt-6 text-sm">
             Already have an account?{' '}
-            <Link href="/login" className="text-primary-red font-semibold hover:text-red-700 transition">
+            <Link href="/login" className="text-[#D4AF37] font-semibold hover:text-[#B8952E] transition">
               Sign In
             </Link>
           </p>

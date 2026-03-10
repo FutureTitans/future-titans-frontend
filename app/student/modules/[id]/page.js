@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { modules, aiChat } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
-import { BookOpen, Play, MessageCircle, CheckCircle, Clock, ArrowLeft, ArrowRight, Brain, User, Trophy } from 'lucide-react';
+import { BookOpen, Play, MessageCircle, CheckCircle, Clock, ArrowLeft, ArrowRight, Brain, User, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import AIChatComponent from '@/components/student/AIChat';
 
@@ -20,6 +20,7 @@ export default function ModulePlayerPage() {
   const [loading, setLoading] = useState(true);
   const [chapterLoading, setChapterLoading] = useState(false);
   const [chapterCompleted, setChapterCompleted] = useState({});
+  const [showChaptersConfig, setShowChaptersConfig] = useState(true); // default open on desktop
 
   useEffect(() => {
     if (!isStudent()) {
@@ -194,11 +195,11 @@ export default function ModulePlayerPage() {
 
       case 'video':
         return (
-          <div className="aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
+          <div className="aspect-video bg-black rounded-[24px] overflow-hidden shadow-2xl border-4 border-white/50 relative group">
             <iframe
               id="chapter-video-player"
               src={getYouTubeEmbedUrl(content.videoUrl)}
-              className="w-full h-full"
+              className="w-full h-full absolute inset-0"
               allowFullScreen
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               title={chapterContent.title}
@@ -208,7 +209,7 @@ export default function ModulePlayerPage() {
 
       case 'audio':
         return (
-          <div className="glass p-12 rounded-2xl text-center">
+          <div className="glass-panel p-12 text-center shadow-lg border-white/40">
             <div className="text-6xl mb-6">🎧</div>
             <audio controls className="w-full max-w-md mx-auto">
               <source src={content.audioUrl} type="audio/mpeg" />
@@ -219,14 +220,14 @@ export default function ModulePlayerPage() {
 
       case 'pdf':
         return (
-          <div className="glass p-12 rounded-2xl text-center">
+          <div className="glass-panel p-12 text-center shadow-lg border-white/40">
             <div className="text-6xl mb-6">📄</div>
-            <p className="text-lg text-gray-700 mb-6">PDF Document</p>
+            <p className="text-lg text-gray-700 mb-6 font-medium">PDF Document provided for this chapter</p>
             <a
               href={content.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-8 py-3 rounded-xl hover:shadow-lg transition font-semibold inline-flex items-center gap-2"
+              className="glass-button px-8 py-3 inline-flex items-center gap-2"
             >
               <BookOpen className="w-5 h-5" />
               Open PDF
@@ -236,15 +237,19 @@ export default function ModulePlayerPage() {
 
       default:
         return (
-          <div className="text-center py-12 glass rounded-2xl">
-            <p className="text-gray-600">Content type not supported</p>
+          <div className="text-center py-12 glass-panel shadow-lg border-white/40">
+            <p className="text-gray-600 font-medium">Content type not supported</p>
           </div>
         );
     }
   };
 
   if (loading) {
-    return <LoadingSpinner message="Loading module..." />;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner message="Loading module..." />
+      </div>
+    );
   }
 
   if (!module) {
@@ -254,7 +259,7 @@ export default function ModulePlayerPage() {
           <h2 className="text-2xl font-bold mb-4 text-gray-800">Module not found</h2>
           <button
             onClick={() => router.push('/student/modules')}
-            className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-6 py-3 rounded-xl hover:shadow-lg transition font-semibold"
+            className="glass-button px-6 py-3"
           >
             Back to Modules
           </button>
@@ -265,33 +270,39 @@ export default function ModulePlayerPage() {
 
   const currentChapterData = module.chapters[currentChapter];
   const progressPercentage = Math.round(((currentChapter + 1) / module.chapters.length) * 100);
+  const zunovaAvailable = currentChapterData?.aiInteractionEnabled;
+  const isCompleted = chapterCompleted[currentChapterData?._id];
 
   return (
-    <div className="min-h-screen relative" style={{ zIndex: 1 }}>
-      {/* Module Info Bar */}
-      <div className="glass-strong border-b border-white/20 sticky top-0 z-50">
-        <div className="container-lg py-3 md:py-4">
+    <div className="min-h-screen relative overflow-x-hidden flex flex-col" style={{ zIndex: 1 }}>
+      {/* Background blobs */}
+      <div className="absolute inset-0 pointer-events-none z-[-1]">
+        <div className="absolute top-[10%] left-[10%] w-[50%] h-[50%] bg-[#F5D76E]/15 rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-[#D4AF37]/10 rounded-full blur-[120px]"></div>
+      </div>
+
+      {/* ─── Top Nav Bar ─── */}
+      <div className="glass-strong border-b border-white/40 sticky top-0 z-50">
+        <div className="w-full px-4 md:px-8 xl:px-12 py-3 md:py-4 max-w-[1920px] mx-auto">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
               <button
                 onClick={() => router.push('/student/modules')}
-                className="text-gray-600 hover:text-red-600 transition p-1.5 md:p-2 hover:bg-white/50 rounded-lg flex-shrink-0"
+                className="text-gray-600 hover:text-[#D4AF37] transition p-1.5 md:p-2 hover:bg-white/60 rounded-xl flex-shrink-0"
               >
                 <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
               </button>
               {module.mentorProfilePicture && (
-                <div className="flex items-center gap-2 mr-2">
-                  <img
-                    src={module.mentorProfilePicture}
-                    alt="Mentor"
-                    className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-white object-cover shadow-md flex-shrink-0"
-                    onError={(e) => { e.target.style.display = 'none'; }}
-                  />
-                </div>
+                <img
+                  src={module.mentorProfilePicture}
+                  alt="Mentor"
+                  className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-white object-cover shadow-sm flex-shrink-0"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
               )}
               <div className="min-w-0 flex-1">
-                <h1 className="font-bold text-lg md:text-2xl text-gray-800 truncate">{module.title}</h1>
-                <p className="text-xs md:text-sm text-gray-600 mt-1">
+                <h1 className="font-bold text-lg md:text-2xl text-gray-900 truncate">{module.title}</h1>
+                <p className="text-xs md:text-sm text-gray-500 mt-1 font-medium">
                   Chapter {currentChapter + 1} of {module.chapters.length}
                 </p>
               </div>
@@ -299,15 +310,15 @@ export default function ModulePlayerPage() {
 
             <div className="flex items-center gap-4 md:gap-6 w-full sm:w-auto justify-between sm:justify-end">
               <div className="text-right sm:text-left">
-                <div className="text-xs md:text-sm font-semibold text-gray-800">{progressPercentage}%</div>
-                <div className="text-[10px] md:text-xs text-gray-600">Complete</div>
+                <div className="text-xs md:text-sm font-bold text-[#B8952E]">{progressPercentage}%</div>
+                <div className="text-[10px] md:text-xs text-gray-500 font-semibold uppercase tracking-wider">Complete</div>
               </div>
 
-              {currentChapterData?.aiInteractionEnabled && (
+              {zunovaAvailable && (
                 <button
                   onClick={async () => {
                     const nextVisible = !showAIChat;
-                    if (nextVisible && chapterCompleted[currentChapterData._id]) {
+                    if (nextVisible && isCompleted) {
                       setShowAIChat(true);
                     } else if (!nextVisible) {
                       setShowAIChat(false);
@@ -315,23 +326,23 @@ export default function ModulePlayerPage() {
                       alert('Please mark this chapter as complete first to access the AI chat.');
                     }
                   }}
-                  className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-xl transition font-medium text-xs md:text-sm ${showAIChat
-                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
-                    : 'glass-subtle text-gray-700 hover:bg-white/50'
+                  className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full transition-all font-semibold text-xs md:text-sm ${showAIChat
+                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white shadow-md shadow-[#D4AF37]/30 border border-[#D4AF37]/10'
+                    : 'bg-white/50 text-[#B8952E] hover:bg-white/80 border border-white/60'
                     }`}
                 >
                   <Brain className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                  <span className="hidden sm:inline">ZUNOVA</span>
+                  <span className="hidden sm:inline">ZUNOVA AI</span>
                 </button>
               )}
             </div>
           </div>
 
-          {/* Progress Bar */}
+          {/* Progress Bar Line */}
           <div className="mt-3 md:mt-4">
-            <div className="w-full bg-gray-200 rounded-full h-1.5 md:h-2 overflow-hidden">
+            <div className="w-full bg-black/5 rounded-full h-1.5 md:h-2 overflow-hidden shadow-inner">
               <div
-                className="bg-gradient-to-r from-red-500 to-orange-500 h-1.5 md:h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-1.5 md:h-2 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercentage}%` }}
               />
             </div>
@@ -339,151 +350,154 @@ export default function ModulePlayerPage() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row">
-        {/* Sidebar - Chapter List */}
-        <div className="w-full lg:w-80 glass border-r-0 lg:border-r border-white/20 min-h-[200px] lg:min-h-[calc(100vh-80px)] p-4 lg:p-6 order-2 lg:order-1 flex flex-col">
-          {module.coverImage && (
-            <div className="mb-6 rounded-xl overflow-hidden shadow-md shrink-0">
-              <img src={module.coverImage} alt="Cover" className="w-full h-40 object-cover" />
-            </div>
-          )}
-          <div className="flex items-center gap-2 mb-4 lg:mb-6 shrink-0">
-            <BookOpen className="w-5 h-5 text-gray-700" />
-            <h3 className="font-bold text-base lg:text-lg text-gray-800">Chapters</h3>
-          </div>
-          <div className="space-y-2 overflow-x-auto flex lg:block gap-2 lg:gap-0 pb-2 lg:pb-0">
-            {module.chapters.map((chapter, index) => {
-              const isCompleted = chapterCompleted[chapter._id];
-              const isActive = index === currentChapter;
+      {/* ─── Main View ─── */}
+      <div className="w-full px-4 md:px-8 xl:px-12 max-w-[1920px] mx-auto flex-1 py-6 flex flex-col xl:flex-row gap-6">
 
-              return (
-                <button
-                  key={chapter._id}
-                  onClick={() => setCurrentChapter(index)}
-                  className={`min-w-[200px] lg:w-full text-left p-3 lg:p-4 rounded-xl transition-all ${isActive
-                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white shadow-lg'
-                    : isCompleted
-                      ? 'glass-subtle hover:bg-white/50 border border-green-200'
-                      : 'glass-subtle hover:bg-white/50'
-                    }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded-full flex items-center justify-center text-xs lg:text-sm font-bold flex-shrink-0 ${isActive ? 'bg-white text-red-600' : isCompleted ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
-                      }`}>
-                      {isCompleted && !isActive ? (
-                        <CheckCircle className="w-3.5 h-3.5 lg:w-4 lg:h-4" />
-                      ) : (
-                        index + 1
-                      )}
+        {/* Left Section: Chapters List */}
+        <div className="xl:w-[25%] w-full flex-shrink-0">
+          <div className="glass-panel p-4 sm:p-5 h-full xl:min-h-[600px] xl:sticky xl:top-[100px] flex flex-col">
+            <div className="flex items-center gap-3 mb-5 shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center text-[#B8952E]">
+                <BookOpen className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-bold text-lg text-gray-900 leading-tight">Course Chapters</h3>
+                <p className="text-xs text-gray-500 font-medium">{module.chapters.length} Total</p>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+              {module.chapters.map((chapter, index) => {
+                const completed = chapterCompleted[chapter._id];
+                const isActive = index === currentChapter;
+
+                return (
+                  <button
+                    key={chapter._id}
+                    onClick={() => {
+                      setCurrentChapter(index);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={`w-full text-left p-3.5 rounded-2xl transition-all border ${isActive
+                      ? 'bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] shadow-lg shadow-[#D4AF37]/20 border-transparent text-white'
+                      : completed
+                        ? 'bg-white/60 hover:bg-white/90 border-[#D4AF37]/30 text-gray-800'
+                        : 'bg-white/40 hover:bg-white/70 border-white/40 text-gray-600'
+                      }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 ${isActive
+                        ? 'bg-white text-[#D4AF37]'
+                        : completed
+                          ? 'bg-[#D4AF37] text-white'
+                          : 'bg-black/5 text-gray-400'
+                        }`}>
+                        {completed && !isActive ? <CheckCircle className="w-4 h-4" /> : index + 1}
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <p className={`font-semibold text-sm line-clamp-2 leading-snug ${isActive ? 'text-white' : 'text-gray-900'}`}>
+                          {chapter.title}
+                        </p>
+                        <p className={`text-[10px] mt-1 font-medium capitalize flex items-center gap-1 ${isActive ? 'text-white/80' : 'text-gray-500'}`}>
+                          {chapter.content?.type === 'video' ? <Play className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
+                          {chapter.content?.type || 'Content'}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className={`font-medium text-xs lg:text-sm ${isActive ? 'text-white' : 'text-gray-800'} truncate`}>
-                        {chapter.title}
-                      </p>
-                      <p className={`text-[10px] lg:text-xs mt-1 ${isActive ? 'text-white/75' : 'text-gray-600'}`}>
-                        {chapter.content?.type || 'Content'}
-                      </p>
-                    </div>
-                    {chapter.aiInteractionEnabled && (
-                      <Brain className={`w-3.5 h-3.5 lg:w-4 lg:h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-yellow-500'}`} />
-                    )}
-                  </div>
-                </button>
-              );
-            })}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col lg:flex-row order-1 lg:order-2">
-          {/* Content Area */}
-          <div className={`${showAIChat ? 'lg:w-1/2' : 'w-full'} transition-all duration-300`}>
-            <div className="p-4 md:p-6 lg:p-8">
-              {/* Chapter Header */}
-              <div className="mb-6 lg:mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-base lg:text-lg shadow-lg flex-shrink-0">
-                    {currentChapter + 1}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-1 break-words">
-                      {currentChapterData?.title}
-                    </h2>
-                    {currentChapterData?.description && (
-                      <p className="text-sm lg:text-base text-gray-600 break-words">
-                        {currentChapterData.description}
-                      </p>
-                    )}
-                  </div>
-                </div>
+        {/* Center Section: Content Area (Video) */}
+        <div className={`flex-1 min-w-0 transition-all duration-300 xl:max-w-none ${showAIChat && isCompleted && zunovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
+          <div className="glass-panel p-4 sm:p-6 md:p-8 shadow-sm h-full flex flex-col">
+            <div className="flex items-center gap-4 mb-6 shrink-0">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0">
+                {currentChapter + 1}
               </div>
+              <div className="min-w-0">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 truncate">
+                  {currentChapterData?.title}
+                </h2>
+                {currentChapterData?.description && (
+                  <p className="text-sm text-gray-500 line-clamp-2">
+                    {currentChapterData.description}
+                  </p>
+                )}
+              </div>
+            </div>
 
-              {/* Chapter Content */}
-              {chapterLoading ? (
-                <div className="flex justify-center py-12">
-                  <LoadingSpinner message="Loading chapter..." />
-                </div>
-              ) : (
-                <div className="mb-8">
-                  {renderChapterContent()}
-                </div>
-              )}
+            {chapterLoading ? (
+              <div className="flex-1 flex justify-center items-center py-16">
+                <LoadingSpinner message="Loading chapter..." />
+              </div>
+            ) : (
+              <div className="flex-1">
+                {renderChapterContent()}
+              </div>
+            )}
 
-              {/* Chapter Navigation */}
-              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 lg:pt-8 border-t border-gray-200">
-                <button
-                  onClick={handlePrevChapter}
-                  disabled={currentChapter === 0}
-                  className="flex items-center justify-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 glass-subtle text-gray-700 rounded-xl hover:bg-white/50 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm lg:text-base"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Previous
-                </button>
+            {/* Navigation Bar inside content area */}
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-6 border-t border-black/5 shrink-0">
+              <button
+                onClick={handlePrevChapter}
+                disabled={currentChapter === 0}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-white/50 text-gray-600 hover:bg-white/80 border border-black/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Previous
+              </button>
 
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                  {!chapterCompleted[currentChapterData?._id] && (
-                    <button
-                      onClick={completeChapter}
-                      className="flex items-center justify-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:shadow-lg transition font-semibold text-sm lg:text-base"
-                    >
-                      <CheckCircle className="w-4 h-4 lg:w-5 lg:h-5" />
-                      Mark Complete
-                    </button>
-                  )}
+              <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
+                {!isCompleted && (
+                  <button
+                    onClick={completeChapter}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#1B6B4C] to-[#0F5132] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm"
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    Mark Complete
+                  </button>
+                )}
 
-                  {currentChapter < module.chapters.length - 1 ? (
-                    <button
-                      onClick={handleNextChapter}
-                      className="flex items-center justify-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-xl hover:shadow-lg transition font-semibold text-sm lg:text-base"
-                    >
-                      Next Chapter
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => router.push('/student/dashboard')}
-                      className="flex items-center justify-center gap-2 px-4 lg:px-6 py-2.5 lg:py-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-xl hover:shadow-lg transition font-semibold text-sm lg:text-base"
-                    >
-                      <Trophy className="w-4 h-4 lg:w-5 lg:h-5" />
-                      Complete Module
-                    </button>
-                  )}
-                </div>
+                {currentChapter < module.chapters.length - 1 ? (
+                  <button
+                    onClick={handleNextChapter}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm shadow-[#D4AF37]/20"
+                  >
+                    Next Chapter
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => router.push('/student/dashboard')}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#B8952E] to-[#D4AF37] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm shadow-[#D4AF37]/20"
+                  >
+                    <Trophy className="w-4 h-4" />
+                    Complete Module
+                  </button>
+                )}
               </div>
             </div>
           </div>
+        </div>
 
-          {/* AI Chat Panel - Mobile: Full width overlay, Desktop: Side panel */}
-          {showAIChat && currentChapterData?.aiInteractionEnabled && chapterCompleted[currentChapterData._id] && (
-            <div className={`${showAIChat ? 'w-full lg:w-1/2' : 'hidden'} border-t lg:border-t-0 lg:border-l border-white/20 glass`}>
+        {/* Right Section: AI Chat Layout (Side Panel) */}
+        {showAIChat && isCompleted && zunovaAvailable && (
+          <div className="xl:w-[25%] w-full transition-all duration-300 flex-shrink-0 animate-fade-in-up">
+            <div className="h-full xl:min-h-[600px] xl:sticky xl:top-[100px]">
               <AIChatComponent
                 moduleId={moduleId}
                 chapterId={currentChapterData._id}
                 module={module}
               />
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
       </div>
     </div>
   );

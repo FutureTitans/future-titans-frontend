@@ -37,7 +37,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
         if (data.startedAt && !data.isCompleted) {
           setStartTime(new Date(data.startedAt));
         }
-        
+
         try {
           const profile = await auth.getProfile();
           const modulesProgress = profile?.modulesProgress || [];
@@ -181,191 +181,184 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const filteredMessages = messages.filter((m) => !(m.role === 'user' && m.message === AUTO_SURGE_SEED));
 
   return (
-    <div className="flex flex-col glass rounded-2xl border border-white/30 shadow-2xl overflow-hidden h-full max-h-[calc(100vh-120px)]">
+    <div className="flex flex-col glass-panel rounded-3xl border border-white/40 shadow-xl overflow-hidden h-full">
       {/* Premium Bot Header */}
-      <div className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white px-4 py-4 md:px-6 md:py-5 flex items-center justify-between relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 to-orange-600/20"></div>
+      <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] text-white px-5 py-4 flex items-center justify-between relative overflow-hidden backdrop-blur-xl shrink-0 border-b border-white/20">
+        <div className="absolute inset-0 bg-white/10"></div>
         <div className="flex items-center gap-3 relative z-10">
-          <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30 flex items-center justify-center shadow-lg">
+          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center shadow-lg transform rotate-3 transition-transform hover:rotate-0">
             <Bot className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h3 className="text-lg md:text-xl font-bold flex items-center gap-2">
-              ZUNOVA
-              <Sparkles className="w-4 h-4 animate-pulse" />
+            <h3 className="text-xl font-bold flex items-center gap-2 tracking-tight">
+              ZUNOVA AI
+              <Sparkles className="w-4 h-4 text-white/90 animate-pulse" />
             </h3>
-            <p className="text-xs md:text-sm opacity-90">Your AI Learning Partner</p>
+            <p className="text-xs font-semibold uppercase tracking-wider opacity-90">Learning Assistant</p>
           </div>
         </div>
         <button
           type="button"
           onClick={() => setTtsEnabled((v) => !v)}
-          className="relative z-10 flex items-center gap-1 text-xs bg-white/20 backdrop-blur-sm px-3 py-2 rounded-full hover:bg-white/30 transition border border-white/20"
+          className="relative z-10 flex items-center gap-1.5 text-xs bg-white/20 max-h-8 backdrop-blur-sm px-3 py-1.5 rounded-full hover:bg-white/30 transition border border-white/30 font-medium tracking-wide"
         >
           {ttsEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           <span className="hidden sm:inline">{ttsEnabled ? 'Voice On' : 'Voice Off'}</span>
         </button>
       </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 md:px-6 md:py-6 space-y-4 bg-gradient-to-b from-gray-50/50 to-white/30 min-h-0">
-        {filteredMessages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-center px-4">
-            <div className="glass-subtle p-6 rounded-2xl max-w-sm">
-              <Bot className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600 font-medium mb-1">Start your conversation</p>
-              <p className="text-sm text-gray-500">Ask questions and share your ideas with ZUNOVA</p>
-            </div>
-          </div>
-        ) : (
-          filteredMessages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
-            >
-              {msg.role === 'assistant' && (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mr-2 flex-shrink-0 shadow-md">
-                  <Bot className="w-4 h-4 text-white" />
-                </div>
-              )}
-              <div
-                className={`max-w-[85%] md:max-w-xs px-4 py-3 rounded-2xl shadow-md ${
-                  msg.role === 'user'
-                    ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-br-sm'
-                    : 'glass-subtle text-gray-800 rounded-bl-sm border border-white/30'
-                }`}
-              >
-                <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">{msg.message}</p>
-                <span className={`text-xs mt-2 block ${msg.role === 'user' ? 'text-white/70' : 'text-gray-500'}`}>
-                  {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-              {msg.role === 'user' && (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center ml-2 flex-shrink-0 shadow-md">
-                  <span className="text-white text-xs font-bold">U</span>
-                </div>
-              )}
-            </div>
-          ))
-        )}
-        {isLoading && (
-          <div className="flex justify-start animate-fade-in">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mr-2 flex-shrink-0 shadow-md">
-              <Bot className="w-4 h-4 text-white" />
-            </div>
-            <div className="glass-subtle px-4 py-3 rounded-2xl rounded-bl-sm border border-white/30">
-              <div className="flex items-center gap-2">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* SSI Score Display */}
+      {/* SSI Score Overview (if available) */}
       {ssiScore && (
-        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3">
-            <p className="text-sm font-semibold text-gray-800">
-              SSI Score: <span className="text-red-600">{ssiScore.overall}/100</span>
+        <div className="bg-white/40 border-b border-black/5 px-4 py-3 shrink-0 backdrop-blur-sm">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2.5">
+            <p className="text-xs font-bold text-gray-800 uppercase tracking-widest">
+              SSI Score: <span className="text-[#D4AF37]">{ssiScore.overall}/100</span>
             </p>
             {timeSpent > 0 && (
-              <p className="text-xs text-gray-600">
-                ⏱️ {Math.floor(timeSpent / 60)}m {timeSpent % 60}s
+              <p className="text-[10px] font-bold text-gray-400 tracking-wider">
+                ⏱️ {Math.floor(timeSpent / 60)}M {timeSpent % 60}S
               </p>
             )}
           </div>
-          <div className="grid grid-cols-5 gap-2 text-xs">
+          <div className="flex justify-between gap-1 text-[10px]">
             {[
               { label: 'S', key: 'selfAwareness', name: 'Self' },
-              { label: 'U', key: 'understandingOpportunities', name: 'Understand' },
+              { label: 'U', key: 'understandingOpportunities', name: 'UI' },
               { label: 'R', key: 'resilience', name: 'Resilience' },
               { label: 'G', key: 'growthExecution', name: 'Growth' },
-              { label: 'E', key: 'entrepreneurialLeadership', name: 'Leadership' },
+              { label: 'E', key: 'entrepreneurialLeadership', name: 'Lead' },
             ].map((item) => (
-              <div key={item.key} className="text-center">
-                <p className="text-xs font-bold text-gray-700 mb-1">{item.label}</p>
-                <div className="w-full bg-gray-200 rounded-full h-1.5 mb-1">
+              <div key={item.key} className="text-center w-full max-w-[40px]">
+                <p className="font-bold text-gray-600 mb-0.5">{item.label}</p>
+                <div className="w-full bg-black/5 rounded-full h-1 mb-0.5 overflow-hidden">
                   <div
-                    className="bg-gradient-to-r from-red-500 to-orange-500 h-1.5 rounded-full transition-all"
+                    className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-1 rounded-full transition-all"
                     style={{ width: `${ssiScore[item.key] || 0}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-600">{ssiScore[item.key] || 0}%</p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Finish Chapter Button */}
-      {!isCompleted && messages.length > 0 && (
-        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle">
-          <button
-            onClick={handleFinishChapter}
-            disabled={finishing || isLoading}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-4 py-3 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all font-semibold"
-          >
-            <CheckCircle className="w-5 h-5" />
-            {finishing ? 'Finishing...' : 'Finish Chapter & Finalize SSI'}
-          </button>
-          <p className="text-xs text-gray-600 mt-2 text-center">
-            End this chapter's AI session and record your final SSI score
-          </p>
-        </div>
-      )}
-
-      {/* All Modules Completed */}
-      {isCompleted && allModulesCompleted && (
-        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle bg-green-50/50">
-          <div className="text-center mb-3">
-            <p className="font-semibold text-green-700 mb-1">🎉 Congratulations!</p>
-            <p className="text-sm text-gray-700">You've completed all modules and chapters!</p>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto px-4 py-5 space-y-5 bg-[#FAF8F3]/60 scroll-smooth">
+        {filteredMessages.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-center px-4 animate-fade-in-up">
+            <div className="bg-white/60 p-8 rounded-3xl max-w-sm border border-white/60 shadow-sm">
+              <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Bot className="w-8 h-8 text-[#D4AF37]" />
+              </div>
+              <p className="text-gray-900 font-bold mb-2 text-lg">Hello from ZUNOVA!</p>
+              <p className="text-sm text-gray-500 font-medium leading-relaxed">I'm here to help you reflect on this module and build your SSI framework. Please say hi to get started.</p>
+            </div>
           </div>
-          <button
-            onClick={() => router.push('/student/submission')}
-            className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-3 rounded-xl hover:shadow-lg transition-all font-semibold"
-          >
-            <Trophy className="w-5 h-5" />
-            Submit Your Idea
-          </button>
-        </div>
-      )}
+        ) : (
+          filteredMessages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in-up`}
+              style={{ animationFillMode: 'both' }}
+            >
+              {msg.role === 'assistant' && (
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center mr-3 flex-shrink-0 shadow-md shadow-[#D4AF37]/20 border border-white/50 mt-1">
+                  <Bot className="w-4 h-4 text-white" />
+                </div>
+              )}
 
-      {/* Input */}
-      {!isCompleted && (
-        <form onSubmit={handleSendMessage} className="border-t border-white/20 px-3 py-3 md:px-6 md:py-4 glass-subtle">
-          <div className="flex gap-2">
+              <div
+                className={`max-w-[85%] px-5 py-3.5 shadow-sm text-sm md:text-base leading-relaxed break-words whitespace-pre-wrap ${msg.role === 'user'
+                  ? 'bg-gradient-to-br from-[#D4AF37] to-[#B8952E] text-white rounded-2xl rounded-tr-md shadow-[#D4AF37]/20'
+                  : 'bg-white text-gray-800 rounded-2xl rounded-tl-md border border-black/5'
+                  }`}
+              >
+                {msg.message}
+              </div>
+
+              {msg.role === 'user' && (
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center ml-3 flex-shrink-0 shadow-md mt-1 border border-white/10">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+              )}
+            </div>
+          ))
+        )}
+
+        {isLoading && (
+          <div className="flex justify-start animate-fade-in">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center mr-3 flex-shrink-0 shadow-md shadow-[#D4AF37]/20 border border-white/50">
+              <Bot className="w-4 h-4 text-white" />
+            </div>
+            <div className="bg-white px-5 py-4 rounded-2xl rounded-tl-md border border-black/5 shadow-sm">
+              <div className="flex gap-1.5 items-center justify-center h-4">
+                <div className="w-2 h-2 bg-[#D4AF37]/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-[#D4AF37]/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              </div>
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} className="h-4" />
+      </div>
+
+      {/* Input Area */}
+      {!isCompleted ? (
+        <div className="bg-white/80 backdrop-blur-md p-4 border-t border-black/5 shrink-0 relative">
+          <form onSubmit={handleSendMessage} className="relative z-10 flex gap-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 px-4 py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-sm md:text-base"
+              placeholder="Ask Zunova anything..."
+              className="flex-1 px-5 py-3.5 bg-white border border-black/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all text-sm md:text-base shadow-sm placeholder-gray-400 font-medium"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading || !input.trim()}
-              className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
+              className="bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white w-14 h-14 rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 disabled:opacity-50 disabled:hover:shadow-none transition-all flex items-center justify-center flex-shrink-0 border border-white/20"
             >
-              <Send className="w-5 h-5" />
+              <Send className="w-5 h-5 ml-1" />
             </button>
-          </div>
-        </form>
-      )}
+          </form>
 
-      {/* Completed Message */}
-      {isCompleted && !allModulesCompleted && (
-        <div className="border-t border-white/20 px-4 py-3 md:px-6 md:py-4 glass-subtle text-center">
-          <p className="text-sm text-gray-700">
-            ✅ This chapter's AI session is complete. Your final SSI score has been recorded.
-          </p>
+          {messages.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-black/5">
+              <button
+                onClick={handleFinishChapter}
+                disabled={finishing || isLoading}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#1A1A1A] to-[#333333] text-white px-4 py-3 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all font-semibold text-sm tracking-wide"
+              >
+                <CheckCircle className="w-4 h-4" />
+                {finishing ? 'Finishing...' : 'Submit Reflection & Finalize'}
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="bg-[#1A1A1A] text-white p-5 border-t border-black/5 shrink-0 text-center">
+          {allModulesCompleted ? (
+            <div>
+              <div className="flex justify-center mb-3">
+                <Trophy className="w-8 h-8 text-[#D4AF37]" />
+              </div>
+              <p className="font-bold text-[#F5D76E] mb-1">Modules Complete!</p>
+              <p className="text-xs text-gray-400 mb-4">You have successfully finished all chapters.</p>
+              <button
+                onClick={() => router.push('/student/submission')}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white px-4 py-3 rounded-xl hover:shadow-lg transition-all font-semibold shadow-[#D4AF37]/20 border border-white/20"
+              >
+                Submit Your Idea
+              </button>
+            </div>
+          ) : (
+            <div className="py-2">
+              <CheckCircle className="w-8 h-8 text-[#D4AF37] mx-auto mb-3" />
+              <p className="text-sm font-bold text-white mb-1">Session Complete</p>
+              <p className="text-xs text-gray-400 font-medium">Your final SSI score is logged.</p>
+            </div>
+          )}
         </div>
       )}
     </div>
