@@ -8,6 +8,35 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { setAuthToken, setRefreshToken, setUser } from '@/lib/auth';
 import { Eye, EyeOff, ArrowLeft, Sparkles } from 'lucide-react';
 
+function InputField({ label, name, type = 'text', placeholder, isPassword = false, value, onChange, error, disabled, showPw, onTogglePw }) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">{label}</label>
+      <div className="relative">
+        <input
+          type={isPassword ? (showPw ? 'text' : 'password') : type}
+          name={name}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          className={`glass-input ${error ? 'error' : ''}`}
+          disabled={disabled}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={onTogglePw}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+          >
+            {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        )}
+      </div>
+      {error && <p className="text-red-500 text-xs mt-1.5 ml-1">{error}</p>}
+    </div>
+  );
+}
+
 export default function SignupPageClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,39 +102,7 @@ export default function SignupPageClient() {
     }
   };
 
-  const InputField = ({ label, name, type = 'text', placeholder, isPassword = false }) => {
-    const showPw = name === 'password' ? showPassword : showConfirmPassword;
-    const togglePw = name === 'password'
-      ? () => setShowPassword(!showPassword)
-      : () => setShowConfirmPassword(!showConfirmPassword);
 
-    return (
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">{label}</label>
-        <div className="relative">
-          <input
-            type={isPassword ? (showPw ? 'text' : 'password') : type}
-            name={name}
-            value={formData[name]}
-            onChange={handleChange}
-            placeholder={placeholder}
-            className={`glass-input ${errors[name] ? 'error' : ''}`}
-            disabled={isLoading}
-          />
-          {isPassword && (
-            <button
-              type="button"
-              onClick={togglePw}
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
-            >
-              {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </button>
-          )}
-        </div>
-        {errors[name] && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors[name]}</p>}
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 py-12 pt-24">
@@ -153,14 +150,14 @@ export default function SignupPageClient() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid sm:grid-cols-2 gap-4">
-              <InputField label="Full Name" name="name" placeholder="John Doe" />
-              <InputField label="Email" name="email" type="email" placeholder="john@example.com" />
-              <InputField label="Phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" />
-              <InputField label="School/Institution" name="school" placeholder="Your School" />
-              <InputField label="City" name="city" placeholder="Mumbai" />
-              <InputField label="Country" name="country" placeholder="India" />
-              <InputField label="Password" name="password" placeholder="••••••••" isPassword />
-              <InputField label="Confirm Password" name="confirmPassword" placeholder="••••••••" isPassword />
+              <InputField label="Full Name" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} error={errors.name} disabled={isLoading} />
+              <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
+              <InputField label="Phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
+              <InputField label="School/Institution" name="school" placeholder="Your School" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
+              <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
+              <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />
+              <InputField label="Password" name="password" placeholder="••••••••" isPassword value={formData.password} onChange={handleChange} error={errors.password} disabled={isLoading} showPw={showPassword} onTogglePw={() => setShowPassword(!showPassword)} />
+              <InputField label="Confirm Password" name="confirmPassword" placeholder="••••••••" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} disabled={isLoading} showPw={showConfirmPassword} onTogglePw={() => setShowConfirmPassword(!showConfirmPassword)} />
             </div>
 
             {/* Submit Button */}
