@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
+import { auth } from '@/lib/api';
 import { Menu, X, LogOut, User, ChevronRight } from 'lucide-react';
 import Image from "next/image";
 
@@ -15,11 +16,23 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [profileName, setProfileName] = useState(null);
 
   useEffect(() => {
     hydrateUser();
     setMounted(true);
   }, [hydrateUser]);
+
+  // Fetch latest name from API so navbar always shows current name
+  useEffect(() => {
+    if (user && (isStudent() || isAdmin())) {
+      auth.getProfile()
+        .then((profile) => {
+          if (profile?.name) setProfileName(profile.name);
+        })
+        .catch(() => { });
+    }
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -109,7 +122,7 @@ export default function Navbar() {
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center">
                       <User className="w-3.5 h-3.5 text-white" />
                     </div>
-                    <span className="max-w-[100px] truncate">{user?.name}</span>
+                    <span className="max-w-[100px] truncate">{profileName || user?.name}</span>
                   </button>
                   <button
                     onClick={handleLogout}

@@ -6,16 +6,9 @@ import Link from 'next/link';
 import { auth, achievements } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import { ArrowLeft, User, School, MapPin, Globe2, Trophy, Palette, Save, Award, Sparkles } from 'lucide-react';
+import { ArrowLeft, User, School, MapPin, Globe2, Trophy, Save, Award, Sparkles } from 'lucide-react';
 
-const themes = [
-  { id: 'default', name: 'Default', gradient: 'from-gray-400 to-gray-600' },
-  { id: 'ocean', name: 'Ocean', gradient: 'from-blue-400 to-cyan-500' },
-  { id: 'sunset', name: 'Sunset', gradient: 'from-orange-400 to-pink-500' },
-  { id: 'forest', name: 'Forest', gradient: 'from-green-400 to-emerald-500' },
-  { id: 'cosmic', name: 'Cosmic', gradient: 'from-purple-500 to-indigo-600' },
-  { id: 'royal', name: 'Royal', gradient: 'from-yellow-400 to-orange-500' },
-];
+
 
 export default function StudentProfilePage() {
   const router = useRouter();
@@ -23,8 +16,7 @@ export default function StudentProfilePage() {
   const [achievementsData, setAchievementsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState('default');
-  const [displayName, setDisplayName] = useState('');
+  const [editName, setEditName] = useState('');
   const [bio, setBio] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePicturePreview, setProfilePicturePreview] = useState(null);
@@ -47,8 +39,7 @@ export default function StudentProfilePage() {
 
       setProfile(profileData);
       setAchievementsData(achievementsRes);
-      setSelectedTheme(profileData?.profileTheme || 'default');
-      setDisplayName(profileData?.displayName || '');
+      setEditName(profileData?.name || '');
       setBio(profileData?.bio || '');
     } catch (error) {
       console.error('Failed to load profile:', error);
@@ -61,8 +52,7 @@ export default function StudentProfilePage() {
     setSaving(true);
     try {
       const submitData = {
-        profileTheme: selectedTheme,
-        displayName: displayName || undefined,
+        name: editName || undefined,
         bio: bio || undefined,
       };
 
@@ -103,7 +93,7 @@ export default function StudentProfilePage() {
 
   const modulesProgress = profile.modulesProgress || [];
   const completedModules = modulesProgress.filter(mp => mp.completionPercentage >= 100).length;
-  const selectedThemeData = themes.find(t => t.id === selectedTheme) || themes[0];
+
 
   return (
     <div className="min-h-screen relative" style={{ zIndex: 1 }}>
@@ -125,7 +115,7 @@ export default function StudentProfilePage() {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{profile.displayName || profile.name}</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{profile.name}</h2>
               <p className="text-sm text-gray-500 mb-2">{profile.email}</p>
               {bio && <p className="text-sm text-gray-600 italic">{bio}</p>}
               <p className="text-xs text-gray-400 mt-2">
@@ -160,36 +150,23 @@ export default function StudentProfilePage() {
           ))}
         </div>
 
-        {/* Profile Customization */}
+        {/* Edit Profile */}
         <div className="card">
           <div className="flex items-center gap-2 mb-6">
-            <Palette className="w-5 h-5 text-[#D4AF37]" />
-            <h3 className="font-bold text-xl text-gray-800">Profile Customization</h3>
+            <Sparkles className="w-5 h-5 text-[#D4AF37]" />
+            <h3 className="font-bold text-xl text-gray-800">Edit Profile</h3>
           </div>
 
-          {/* Theme Selection */}
+          {/* Name */}
           <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Choose Theme</label>
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
-              {themes.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => setSelectedTheme(theme.id)}
-                  className={`relative p-3 sm:p-4 rounded-xl border-2 transition-all ${selectedTheme === theme.id
-                      ? 'border-[#D4AF37] shadow-lg scale-105'
-                      : 'border-gray-200/50 hover:border-gray-300'
-                    }`}
-                >
-                  <div className={`w-full h-12 sm:h-16 rounded-lg bg-gradient-to-br ${theme.gradient} mb-2`}></div>
-                  <p className="text-xs font-medium text-gray-600">{theme.name}</p>
-                  {selectedTheme === theme.id && (
-                    <div className="absolute top-2 right-2 w-5 h-5 bg-[#D4AF37] rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs">✓</span>
-                    </div>
-                  )}
-                </button>
-              ))}
-            </div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Name</label>
+            <input
+              type="text"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+              placeholder="Your full name"
+              className="glass-input"
+            />
           </div>
 
           {/* Profile Picture Upload */}
@@ -213,18 +190,6 @@ export default function StudentProfilePage() {
               className="glass-input"
             />
             <p className="text-xs text-gray-400 mt-1.5">Leave empty to keep your current picture. JPG, JPEG, PNG, or WebP. Max 5MB.</p>
-          </div>
-
-          {/* Display Name */}
-          <div className="mb-6">
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Display Name (Optional)</label>
-            <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder={profile.name}
-              className="glass-input"
-            />
           </div>
 
           {/* Bio */}
@@ -284,9 +249,9 @@ export default function StudentProfilePage() {
                 <div
                   key={achievement._id}
                   className={`glass-subtle p-4 rounded-xl border-2 transition-all hover:scale-105 ${achievement.rarity === 'legendary' ? 'border-[#D4AF37]/40' :
-                      achievement.rarity === 'epic' ? 'border-purple-300' :
-                        achievement.rarity === 'rare' ? 'border-blue-300' :
-                          'border-gray-200/50'
+                    achievement.rarity === 'epic' ? 'border-purple-300' :
+                      achievement.rarity === 'rare' ? 'border-blue-300' :
+                        'border-gray-200/50'
                     }`}
                 >
                   <div className={`achievement-badge achievement-${achievement.rarity} mx-auto mb-3`}></div>
@@ -294,9 +259,9 @@ export default function StudentProfilePage() {
                   <p className="text-xs text-gray-500 text-center mb-2">{achievement.description}</p>
                   <div className="flex items-center justify-center gap-1">
                     <span className={`text-xs px-2 py-1 rounded-full ${achievement.rarity === 'legendary' ? 'bg-[#D4AF37]/10 text-[#B8952E]' :
-                        achievement.rarity === 'epic' ? 'bg-purple-100 text-purple-700' :
-                          achievement.rarity === 'rare' ? 'bg-blue-100 text-blue-700' :
-                            'bg-gray-100 text-gray-600'
+                      achievement.rarity === 'epic' ? 'bg-purple-100 text-purple-700' :
+                        achievement.rarity === 'rare' ? 'bg-blue-100 text-blue-700' :
+                          'bg-gray-100 text-gray-600'
                       }`}>
                       {achievement.rarity}
                     </span>

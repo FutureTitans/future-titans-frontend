@@ -97,8 +97,8 @@ export default function StudentModulesPage() {
                 key={item.key}
                 onClick={() => setFilter(item.key)}
                 className={`px-4 py-2 rounded-full transition-all flex items-center gap-2 text-sm font-medium ${filter === item.key
-                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white shadow-md shadow-[#D4AF37]/15'
-                    : 'bg-white/50 text-gray-600 hover:bg-white/70 border border-white/40'
+                  ? 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white shadow-md shadow-[#D4AF37]/15'
+                  : 'bg-white/50 text-gray-600 hover:bg-white/70 border border-white/40'
                   }`}
               >
                 <span>{item.icon}</span>
@@ -247,20 +247,7 @@ export default function StudentModulesPage() {
           </div>
         )}
 
-        {/* Learning Path Info */}
-        {paymentStatus?.isPaid && modulesList.length > 0 && (
-          <div className="card bg-gradient-to-r from-[#0F5132] to-[#1B6B4C] text-white border-none">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-bold text-xl mb-2">🎯 Your Learning Path</h3>
-                <p className="opacity-80 text-sm">
-                  Complete modules in order to maximize your learning experience and SSI score
-                </p>
-              </div>
-              <ArrowLeft className="w-8 h-8 opacity-50 rotate-180" />
-            </div>
-          </div>
-        )}
+
       </div>
     </div>
   );

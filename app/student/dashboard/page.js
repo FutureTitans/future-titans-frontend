@@ -96,7 +96,7 @@ export default function StudentDashboard() {
           }
         },
         prefill: {
-          name: user?.name,
+          name: profile?.name || user?.name,
           email: user?.email,
         },
         theme: {
@@ -207,7 +207,7 @@ export default function StudentDashboard() {
         <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
           <div>
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-light text-gray-900 tracking-tight mb-3 sm:mb-6">
-              Welcome in, <span className="font-medium text-gray-800">{user?.name?.split(' ')[0] || 'Titan'}</span>
+              Welcome in, <span className="font-medium text-gray-800">{profile?.name?.split(' ')[0] || user?.name?.split(' ')[0] || 'Titan'}</span>
             </h1>
 
             <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm">
@@ -243,7 +243,7 @@ export default function StudentDashboard() {
               <div className="flex sm:flex-col items-center sm:items-center gap-4 sm:gap-0">
                 <div className="w-20 h-20 sm:w-32 sm:h-32 sm:mx-auto rounded-2xl sm:rounded-3xl overflow-hidden sm:mb-6 shadow-xl relative z-10 border-4 border-white/50 flex-shrink-0">
                   {profile?.profilePicture ? (
-                    <img src={profile.profilePicture} alt={user?.name} className="w-full h-full object-cover" />
+                    <img src={profile.profilePicture} alt={profile?.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-[#D4AF37]/20 to-[#F5D76E]/20 flex items-center justify-center">
                       <User className="w-12 h-12 text-[#D4AF37]" />
@@ -252,7 +252,7 @@ export default function StudentDashboard() {
                 </div>
 
                 <div className="text-left sm:text-center relative z-10 flex-1 min-w-0">
-                  <h3 className="font-bold text-lg sm:text-2xl text-gray-900 mb-1">{user?.name}</h3>
+                  <h3 className="font-bold text-lg sm:text-2xl text-gray-900 mb-1">{profile?.name || user?.name}</h3>
                   <p className="text-xs sm:text-sm text-gray-500 mb-3 sm:mb-5 font-medium">{profile?.bio || 'Innovation Student'}</p>
 
                   <div className="inline-block px-4 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-2xl text-xs sm:text-sm font-semibold shadow-xl shadow-gray-900/20">
