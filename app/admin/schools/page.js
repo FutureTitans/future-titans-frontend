@@ -167,7 +167,7 @@ export default function SchoolSlugsPage() {
                     setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })
                   }
                   className="w-full px-3 py-2 border border-neutral-border rounded-lg"
-                  placeholder="e.g. dps-indiranagar-2025"
+                  placeholder="e.g. dps-indiranagar-2026"
                 />
               </div>
             </div>

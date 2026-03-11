@@ -33,7 +33,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden bg-[#F5EDD6]">
       {/* Background Mesh Gradients — warm cream/gold */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-[#F5D76E]/20 rounded-full blur-[120px]"></div>
@@ -51,7 +51,7 @@ export default function Landing() {
               <span className="text-sm font-semibold text-gray-600 tracking-wide uppercase">The Future of Innovation</span>
             </div>
 
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-[#0F5132] mb-8 leading-[1.08]">
+            <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-gray-900 mb-8 leading-[1.08]">
               Future Titans
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#B8952E]">
@@ -92,7 +92,7 @@ export default function Landing() {
         <section className="py-20 sm:py-24 px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-[#0F5132] mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                 Why Future Titans?
               </h2>
               <p className="text-lg sm:text-xl text-gray-500">Everything you need to succeed as a young innovator</p>
@@ -135,7 +135,7 @@ export default function Landing() {
             <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
               <div>
                 <div className="inline-block px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#B8952E] text-sm font-bold mb-4 tracking-wide">METHODOLOGY</div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#0F5132] mb-6">The SURGE Framework</h2>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6">The SURGE Framework</h2>
                 <p className="text-lg sm:text-xl text-gray-500 mb-10 leading-relaxed">
                   Our proprietary 5-stage framework is designed to systematically build your entrepreneurial mindset from the ground up.
                 </p>
@@ -163,7 +163,7 @@ export default function Landing() {
 
               <div className="relative">
                 <div className="glass-panel p-2 rotate-2 hover:rotate-0 transition-transform duration-500">
-                  <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-[#0F5132] via-[#1B6B4C] to-[#0F5132] opacity-90 flex items-center justify-center relative overflow-hidden">
+                  <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay opacity-30"></div>
                     <div className="text-center text-white p-8 relative z-10">
                       <Sparkles className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-6 text-[#F5D76E] animate-pulse" />
@@ -204,14 +204,14 @@ export default function Landing() {
 
         {/* ── CTA Section ── */}
         <section className="py-24 sm:py-32 px-4 text-center">
-          <div className="container mx-auto max-w-4xl glass-panel bg-gradient-to-br from-[#0F5132] to-[#1B6B4C] p-10 sm:p-16 relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+          <div className="container mx-auto max-w-4xl bg-[#1A1A1A] rounded-[32px] p-10 sm:p-16 relative overflow-hidden shadow-2xl border border-gray-800">
+            <div className="absolute top-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-50 blur-sm"></div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
               Ready to shape the future?
             </h2>
 
-            <p className="text-lg sm:text-xl text-white/80 mb-10 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
               Join thousands of student innovators who are already building tomorrow's solutions.
             </p>
 
@@ -225,45 +225,45 @@ export default function Landing() {
         </section>
 
         {/* ── Footer ── */}
-        <footer className="bg-white/50 backdrop-blur-lg border-t border-white/30 py-12 sm:py-16 px-4">
+        <footer className="bg-[#1A1A1A] border-t border-gray-800 py-12 sm:py-16 px-4 rounded-t-[32px] mt-8">
           <div className="container mx-auto max-w-6xl">
             <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12 mb-12">
               <div className="sm:col-span-2 md:col-span-1">
-                <div className="font-bold text-2xl text-gray-900 mb-4">Future Titans</div>
+                <div className="font-bold text-2xl text-white mb-4">Future Titans</div>
                 <p className="text-gray-500 mb-4 text-sm leading-relaxed">Empowering the next generation of innovators with tools, mentorship, and community.</p>
               </div>
               <div>
-                <h4 className="font-bold text-gray-800 mb-4 text-sm tracking-wide uppercase">Platform</h4>
+                <h4 className="font-bold text-gray-300 mb-4 text-sm tracking-wide uppercase">Platform</h4>
                 <ul className="space-y-2.5">
-                  <li><Link href="/" className="text-gray-500 hover:text-[#D4AF37] transition text-sm">Modules</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#D4AF37] transition text-sm">Challenges</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#D4AF37] transition text-sm">Community</Link></li>
+                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Modules</Link></li>
+                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Challenges</Link></li>
+                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Community</Link></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold text-gray-800 mb-4 text-sm tracking-wide uppercase">Company</h4>
+                <h4 className="font-bold text-gray-300 mb-4 text-sm tracking-wide uppercase">Company</h4>
                 <ul className="space-y-2.5">
-                  <li><Link href="/" className="text-gray-500 hover:text-[#D4AF37] transition text-sm">About</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#D4AF37] transition text-sm">Contact</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#D4AF37] transition text-sm">Privacy</Link></li>
+                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">About</Link></li>
+                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Contact</Link></li>
+                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Privacy</Link></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-bold text-gray-800 mb-4 text-sm tracking-wide uppercase">Connect</h4>
+                <h4 className="font-bold text-gray-300 mb-4 text-sm tracking-wide uppercase">Connect</h4>
                 <div className="flex gap-3">
-                  <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MThlOW93dXJtYjRpeQ==" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/60 border border-white/50 flex items-center justify-center text-gray-500 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] hover:border-[#D4AF37]/20 transition cursor-pointer">
+                  <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MThlOW93dXJtYjRpeQ==" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:bg-[#D4AF37]/10 hover:text-[#F5D76E] hover:border-[#D4AF37]/20 transition cursor-pointer">
                     <Instagram className="w-4.5 h-4.5" />
                   </a>
-                  <a href="https://www.facebook.com/share/1cqPc5C3LW/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/60 border border-white/50 flex items-center justify-center text-gray-500 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] hover:border-[#D4AF37]/20 transition cursor-pointer">
+                  <a href="https://www.facebook.com/share/1cqPc5C3LW/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:bg-[#D4AF37]/10 hover:text-[#F5D76E] hover:border-[#D4AF37]/20 transition cursor-pointer">
                     <Facebook className="w-4.5 h-4.5" />
                   </a>
-                  <a href="https://www.linkedin.com/company/youngpreneurs-ai/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/60 border border-white/50 flex items-center justify-center text-gray-500 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] hover:border-[#D4AF37]/20 transition cursor-pointer">
+                  <a href="https://www.linkedin.com/company/youngpreneurs-ai/posts/?feedView=all" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:bg-[#D4AF37]/10 hover:text-[#F5D76E] hover:border-[#D4AF37]/20 transition cursor-pointer">
                     <Linkedin className="w-4.5 h-4.5" />
                   </a>
                 </div>
               </div>
             </div>
-            <div className="pt-8 border-t border-gray-200/50 text-center text-gray-400 text-sm">
+            <div className="pt-8 border-t border-gray-800 text-center text-gray-600 text-sm">
               &copy; 2025 Future Titans. All rights reserved.
             </div>
           </div>
