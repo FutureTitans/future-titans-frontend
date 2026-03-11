@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { auth, achievements } from '@/lib/api';
-import { isStudent } from '@/lib/auth';
+import { isStudent, getUser, setUser as persistUser } from '@/lib/auth';
+import { useAuthStore } from '@/store/useAuthStore';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { ArrowLeft, User, School, MapPin, Globe2, Trophy, Save, Award, Sparkles } from 'lucide-react';
 
@@ -61,6 +62,13 @@ export default function StudentProfilePage() {
       }
 
       await auth.updateProfile(submitData);
+      // Sync name to localStorage and auth store so navbar updates immediately
+      const currentUser = getUser();
+      if (currentUser && editName) {
+        const updatedUser = { ...currentUser, name: editName };
+        persistUser(updatedUser);
+        useAuthStore.getState().setUser(updatedUser);
+      }
       await loadProfile();
       alert('Profile updated successfully!');
     } catch (error) {
