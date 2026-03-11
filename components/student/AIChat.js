@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { aiChat, auth } from '@/lib/api';
-import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles } from 'lucide-react';
+import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles, User } from 'lucide-react';
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
