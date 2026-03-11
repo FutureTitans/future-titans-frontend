@@ -39,13 +39,10 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
         }
 
         try {
-          const profile = await auth.getProfile();
-          const modulesProgress = profile?.modulesProgress || [];
-          const hasModules = modulesProgress.length > 0;
-          const allCompleted = hasModules && modulesProgress.every((m) => (m.completionPercentage || 0) >= 100);
-          setAllModulesCompleted(allCompleted);
+          const completionStatus = await auth.checkCompletionStatus();
+          setAllModulesCompleted(completionStatus.allCompleted === true);
         } catch (e) {
-          console.error('Failed to check module completion:', e);
+          setAllModulesCompleted(false);
         }
 
         if (!data.conversation || data.conversation.length === 0 && !data.isCompleted) {
@@ -159,13 +156,17 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       if (response.finalSSI) {
         setSSIScore(response.finalSSI);
       }
+      // Use ONLY the dedicated completion-status endpoint as the single source of truth
+      let allDone = false;
       try {
         const completionStatus = await auth.checkCompletionStatus();
-        setAllModulesCompleted(completionStatus.allCompleted || response.allModulesCompleted);
+        allDone = completionStatus.allCompleted === true;
       } catch (e) {
-        setAllModulesCompleted(response.allModulesCompleted || false);
+        // If the endpoint fails, default to false — don't guess
+        allDone = false;
       }
-      if (response.allModulesCompleted) {
+      setAllModulesCompleted(allDone);
+      if (allDone) {
         alert('🎉 Congratulations! You\'ve completed all modules and chapters! You can now submit your idea.');
       } else {
         alert('✅ Chapter AI session completed! Your final SSI score for this chapter has been recorded.');

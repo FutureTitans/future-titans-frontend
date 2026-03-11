@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { modules, aiChat } from '@/lib/api';
+import { modules, aiChat, auth } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
 import { BookOpen, Play, MessageCircle, CheckCircle, Clock, ArrowLeft, ArrowRight, Brain, User, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -88,6 +88,23 @@ export default function ModulePlayerPage() {
     try {
       const data = await modules.getById(moduleId);
       setModule(data);
+
+      // Load completion state from user's profile so it persists across refreshes
+      try {
+        const profile = await auth.getProfile();
+        const moduleProgress = profile?.modulesProgress?.find(
+          (mp) => (mp.moduleId?._id || mp.moduleId)?.toString() === moduleId
+        );
+        if (moduleProgress?.completedChapters?.length > 0) {
+          const completed = {};
+          moduleProgress.completedChapters.forEach((id) => {
+            completed[id.toString()] = true;
+          });
+          setChapterCompleted(completed);
+        }
+      } catch (e) {
+        console.error('Failed to load completion state:', e);
+      }
     } catch (error) {
       console.error('Failed to fetch module:', error);
       router.push('/student/modules');
@@ -186,10 +203,11 @@ export default function ModulePlayerPage() {
     switch (content.type) {
       case 'text':
         return (
-          <div className="prose max-w-none">
-            <div className="text-lg leading-relaxed whitespace-pre-wrap text-gray-700">
-              {content.text}
-            </div>
+          <div className="prose prose-lg max-w-none text-gray-700">
+            <div
+              className="leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: content.text }}
+            />
           </div>
         );
 
@@ -350,9 +368,8 @@ export default function ModulePlayerPage() {
         </div>
       </div>
 
-      {/* ─── Main View ─── */}
-      <div className="w-full px-4 md:px-8 xl:px-12 max-w-[1920px] mx-auto flex-1 py-6 flex flex-col xl:flex-row gap-6">
-
+      {/* ─── Main Content Layout ─── */}
+      <div className="flex xl:flex-row flex-col max-w-[1920px] mx-auto p-4 md:p-8 xl:p-12 gap-8 flex-1 min-h-[calc(100vh-130px)] h-full w-full">
         {/* Left Section: Chapters List */}
         <div className="xl:w-[25%] w-full flex-shrink-0">
           <div className="glass-panel p-4 sm:p-5 h-full xl:min-h-[600px] xl:sticky xl:top-[100px] flex flex-col">
@@ -413,18 +430,18 @@ export default function ModulePlayerPage() {
         </div>
 
         {/* Center Section: Content Area (Video) */}
-        <div className={`flex-1 min-w-0 transition-all duration-300 xl:max-w-none ${showAIChat && isCompleted && zunovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
-          <div className="glass-panel p-4 sm:p-6 md:p-8 shadow-sm h-full flex flex-col">
+        <div className={`flex-1 min-w-0 transition-all duration-300 flex flex-col xl:max-w-none ${showAIChat && isCompleted && zunovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
+          <div className="glass-panel p-4 sm:p-6 md:p-8 shadow-sm flex flex-col flex-1 min-h-0">
             <div className="flex items-center gap-4 mb-6 shrink-0">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0">
                 {currentChapter + 1}
               </div>
               <div className="min-w-0">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1 truncate">
+                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
                   {currentChapterData?.title}
                 </h2>
                 {currentChapterData?.description && (
-                  <p className="text-sm text-gray-500 line-clamp-2">
+                  <p className="text-sm text-gray-500 mt-2">
                     {currentChapterData.description}
                   </p>
                 )}
@@ -488,7 +505,7 @@ export default function ModulePlayerPage() {
         {/* Right Section: AI Chat Layout (Side Panel) */}
         {showAIChat && isCompleted && zunovaAvailable && (
           <div className="xl:w-[25%] w-full transition-all duration-300 flex-shrink-0 animate-fade-in-up">
-            <div className="h-full xl:min-h-[600px] xl:sticky xl:top-[100px]">
+            <div className="h-full max-h-[600px] xl:max-h-[calc(100vh-160px)] xl:sticky xl:top-[120px]">
               <AIChatComponent
                 moduleId={moduleId}
                 chapterId={currentChapterData._id}
