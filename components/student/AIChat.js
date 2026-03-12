@@ -21,6 +21,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const messagesEndRef = useRef(null);
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime, setStartTime] = useState(null);
+  const [rateLimit, setRateLimit] = useState(null);
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -44,6 +45,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
         } catch (e) {
           setAllModulesCompleted(false);
         }
+
+        // Fetch rate limit status
+        try {
+          const rl = await aiChat.getRateLimitStatus();
+          setRateLimit(rl);
+        } catch (e) { /* ignore */ }
 
         if (!data.conversation || data.conversation.length === 0 && !data.isCompleted) {
           try {
@@ -120,7 +127,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!input.trim() || isCompleted) return;
+    if (!input.trim() || isCompleted || (rateLimit && rateLimit.limitReached)) return;
 
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
@@ -144,6 +151,11 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      // Refresh rate limit after sending
+      try {
+        const rl = await aiChat.getRateLimitStatus();
+        setRateLimit(rl);
+      } catch (e) { /* ignore */ }
     }
   };
 
@@ -306,18 +318,25 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       {/* Input Area */}
       {!isCompleted ? (
         <div className="bg-white/80 backdrop-blur-md p-4 border-t border-black/5 shrink-0 relative">
+          {rateLimit && (
+            <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
+              {rateLimit.limitReached
+                ? '⚠️ Daily message limit reached (200/200). Try again later.'
+                : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining today`}
+            </div>
+          )}
           <form onSubmit={handleSendMessage} className="relative z-10 flex gap-3">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask Zunova anything..."
+              placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask Zunova anything...'}
               className="flex-1 px-5 py-3.5 bg-white border border-black/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all text-sm md:text-base shadow-sm placeholder-gray-400 font-medium"
-              disabled={isLoading}
+              disabled={isLoading || rateLimit?.limitReached}
             />
             <button
               type="submit"
-              disabled={isLoading || !input.trim()}
+              disabled={isLoading || !input.trim() || rateLimit?.limitReached}
               className="bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white w-14 h-14 rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 disabled:opacity-50 disabled:hover:shadow-none transition-all flex items-center justify-center flex-shrink-0 border border-white/20"
             >
               <Send className="w-5 h-5 ml-1" />

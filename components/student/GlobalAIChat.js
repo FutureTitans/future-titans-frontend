@@ -17,6 +17,7 @@ export default function GlobalAIChat() {
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [voice, setVoice] = useState(null);
   const messagesEndRef = useRef(null);
+  const [rateLimit, setRateLimit] = useState(null);
 
   const shouldHide =
     pathname === '/' ||
@@ -33,6 +34,11 @@ export default function GlobalAIChat() {
         setEnabled(true);
         const history = await aiChat.getGlobalHistory();
         setMessages(history.conversation || []);
+        // Fetch rate limit status
+        try {
+          const rl = await aiChat.getRateLimitStatus();
+          setRateLimit(rl);
+        } catch (e) { /* ignore */ }
       } catch (error) {
         console.error('Failed to initialize global AI chat:', error);
       }
@@ -85,7 +91,7 @@ export default function GlobalAIChat() {
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    if (!input.trim() || (rateLimit && rateLimit.limitReached)) return;
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -105,6 +111,11 @@ export default function GlobalAIChat() {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      // Refresh rate limit after sending
+      try {
+        const rl = await aiChat.getRateLimitStatus();
+        setRateLimit(rl);
+      } catch (e) { /* ignore */ }
     }
   };
 
@@ -140,7 +151,7 @@ export default function GlobalAIChat() {
                   ZUNOVA
                   <Sparkles className="w-3 h-3 md:w-4 md:h-4 animate-pulse flex-shrink-0" />
                 </p>
-                <p className="text-xs opacity-90 truncate">Global AI Assistant</p>
+                <p className="text-xs opacity-90 truncate">Your AI Friend & Startup Partner</p>
               </div>
             </div>
             <div className="flex items-center gap-2 relative z-10 flex-shrink-0">
@@ -220,18 +231,25 @@ export default function GlobalAIChat() {
 
           {/* Input */}
           <form onSubmit={handleSend} className="border-t border-white/20 p-3 md:p-4 glass-subtle">
+            {rateLimit && (
+              <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
+                {rateLimit.limitReached
+                  ? '⚠️ Daily message limit reached (200/200). Try again later.'
+                  : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining today`}
+              </div>
+            )}
             <div className="flex gap-2">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask anything..."
+                placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask anything...'}
                 className="flex-1 px-3 py-2 md:px-4 md:py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs md:text-sm"
-                disabled={isLoading}
+                disabled={isLoading || rateLimit?.limitReached}
               />
               <button
                 type="submit"
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || !input.trim() || rateLimit?.limitReached}
                 className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
               >
                 <Send className="w-4 h-4 md:w-5 md:h-5" />
