@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { aiChat, payment } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
 import { MessageCircle, Send, Loader, Volume2, VolumeX, X, Bot, Sparkles } from 'lucide-react';
+import ZunovaAvatar from './ZunovaAvatar';
 
 export default function GlobalAIChat() {
   const pathname = usePathname();
@@ -116,10 +117,10 @@ export default function GlobalAIChat() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full w-14 h-14 md:w-16 md:h-16 flex items-center justify-center shadow-2xl hover:shadow-3xl hover:scale-110 transition-all z-50"
+          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 text-white rounded-full w-24 h-24 md:w-32 md:h-32 flex items-center justify-center hover:scale-110 transition-transform duration-300 z-50 hover-glow"
           title="Chat with ZUNOVA"
         >
-          <MessageCircle className="w-6 h-6 md:w-7 md:h-7" />
+          <ZunovaAvatar isTalking={false} className="w-full h-full scale-125 md:scale-150 transform origin-bottom" />
         </button>
       )}
 
@@ -130,10 +131,11 @@ export default function GlobalAIChat() {
           <div className="bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 text-white px-4 py-4 flex items-center justify-between rounded-t-2xl relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-red-600/20 to-orange-600/20"></div>
             <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/20 backdrop-blur-sm border-2 border-white/30 flex items-center justify-center shadow-lg flex-shrink-0">
-                <Bot className="w-5 h-5 md:w-6 md:h-6 text-white" />
-              </div>
-              <div className="min-w-0 flex-1">
+              <ZunovaAvatar
+                isTalking={isLoading}
+                className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 scale-125"
+              />
+              <div className="min-w-0 flex-1 ml-2">
                 <p className="font-semibold text-sm md:text-base flex items-center gap-1 truncate">
                   ZUNOVA
                   <Sparkles className="w-3 h-3 md:w-4 md:h-4 animate-pulse flex-shrink-0" />
@@ -163,8 +165,8 @@ export default function GlobalAIChat() {
           <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 bg-gradient-to-b from-gray-50/50 to-white/30 min-h-0">
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-center px-4">
-                <div className="glass-subtle p-6 rounded-2xl max-w-sm">
-                  <Bot className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                <div className="glass-subtle p-6 rounded-2xl max-w-sm pt-8">
+                  <ZunovaAvatar isTalking={false} className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 drop-shadow-lg scale-125 origin-bottom" />
                   <p className="text-gray-600 font-medium mb-1 text-sm md:text-base">Start a conversation</p>
                   <p className="text-xs md:text-sm text-gray-500">Ask anything about ideas, mindset, or SURGE</p>
                 </div>
@@ -181,11 +183,10 @@ export default function GlobalAIChat() {
                     </div>
                   )}
                   <div
-                    className={`max-w-[75%] md:max-w-[80%] px-3 py-2 md:px-4 md:py-3 rounded-2xl shadow-md ${
-                      msg.role === 'user'
-                        ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-br-sm'
-                        : 'glass-subtle text-gray-800 rounded-bl-sm border border-white/30'
-                    }`}
+                    className={`max-w-[75%] md:max-w-[80%] px-3 py-2 md:px-4 md:py-3 rounded-2xl shadow-md ${msg.role === 'user'
+                      ? 'bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-br-sm'
+                      : 'glass-subtle text-gray-800 rounded-bl-sm border border-white/30'
+                      }`}
                   >
                     <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap">{msg.message}</p>
                     <span className={`text-[10px] md:text-xs mt-1 block ${msg.role === 'user' ? 'text-white/70' : 'text-gray-500'}`}>
