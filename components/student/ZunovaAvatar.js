@@ -5,8 +5,10 @@ const FPS = 24;
 
 export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
     const [frameIndex, setFrameIndex] = useState(0);
+    const [actualIsTalking, setActualIsTalking] = useState(isTalking);
     const requestRef = useRef();
     const lastUpdateRef = useRef(0);
+    const timeoutRef = useRef(null);
 
     // idle folder only has these specific frame numbers
     const idleFrames = [
@@ -17,8 +19,22 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
     // talk folder has frames 1 through 145 continuously
     const talkFrames = Array.from({ length: 145 }, (_, i) => i + 1);
 
-    const currentFolder = isTalking ? 'talk' : 'idle';
-    const framesArray = isTalking ? talkFrames : idleFrames;
+    useEffect(() => {
+        if (isTalking) {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            setActualIsTalking(true);
+        } else {
+            timeoutRef.current = setTimeout(() => {
+                setActualIsTalking(false);
+            }, 2000); // Talk for 2 seconds longer after generation finishes
+        }
+        return () => {
+            if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        };
+    }, [isTalking]);
+
+    const currentFolder = actualIsTalking ? 'talk' : 'idle';
+    const framesArray = actualIsTalking ? talkFrames : idleFrames;
     const totalFrames = framesArray.length;
 
     useEffect(() => {
@@ -44,7 +60,7 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
     // When switching between talk and idle, reset frame to 0
     useEffect(() => {
         setFrameIndex(0);
-    }, [isTalking]);
+    }, [actualIsTalking]);
 
     const currentFrameNumber = framesArray[frameIndex] || framesArray[0];
     const frameStr = String(currentFrameNumber).padStart(5, '0');
