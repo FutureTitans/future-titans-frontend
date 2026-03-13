@@ -46,6 +46,11 @@ export default function StudentModulesPage() {
   const filteredModules = modulesList.filter(module => {
     if (filter === 'all') return true;
     return module.difficulty === filter;
+  }).sort((a, b) => {
+    const weights = { beginner: 1, intermediate: 2, advanced: 3 };
+    const weightA = weights[a.difficulty] || 4;
+    const weightB = weights[b.difficulty] || 4;
+    return weightA - weightB;
   });
 
   const getDifficultyColor = (difficulty) => {

@@ -23,7 +23,9 @@ export default function GlobalAIChat() {
     pathname === '/' ||
     pathname.startsWith('/login') ||
     pathname.startsWith('/signup') ||
-    pathname.startsWith('/admin');
+    pathname.startsWith('/admin') ||
+    pathname.startsWith('/student/modules') ||
+    pathname.startsWith('/student/submission');
 
   useEffect(() => {
     const init = async () => {

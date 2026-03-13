@@ -22,7 +22,11 @@ import {
   Circle,
   Clock,
   Video,
-  ArrowRight
+  ArrowRight,
+  Star,
+  Award,
+  Shield,
+  CheckCircle
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, YAxis } from 'recharts';
@@ -427,6 +431,72 @@ export default function StudentDashboard() {
                 )}
               </div>
             </div>
+
+            {/* --- NEW: Fun Badges Section --- */}
+            <div className="glass-panel p-4 sm:p-6 flex flex-col mt-2">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-gray-900 font-medium text-lg">Your Badges</h3>
+                  <p className="text-xs text-gray-500 mt-1">Earned by completing modules</p>
+                </div>
+                <div className="bg-[#D4AF37]/10 text-[#D4AF37] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                  <Trophy className="w-3 h-3" />
+                  {completedModules} / {modulesList.length}
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-2">
+                {modulesList.map((mod, i) => {
+                  const modProgress = profile?.modulesProgress?.find(p => (p.moduleId?._id || p.moduleId) === mod._id);
+                  const isDone = modProgress?.completionPercentage >= 100;
+                  
+                  // Vary the icons slightly based on index for "fun" variety
+                  const icons = [Trophy, Star, Award, Shield, CheckCircle];
+                  const Icon = icons[i % icons.length];
+                  
+                  return (
+                    <div 
+                      key={mod._id} 
+                      className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-300 ${
+                        isDone 
+                          ? 'border-[#D4AF37]/50 bg-gradient-to-br from-white to-[#F5D76E]/10 shadow-lg shadow-[#D4AF37]/20 hover:-translate-y-1 group' 
+                          : 'border-gray-200 bg-gray-50 opacity-60 grayscale'
+                      }`}
+                      title={mod.title}
+                    >
+                      {isDone && (
+                        <div className="absolute inset-0 bg-white/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                      )}
+                      
+                      <div className={`w-12 h-12 rounded-full mb-3 flex items-center justify-center shadow-inner ${
+                        isDone
+                          ? 'bg-gradient-to-br from-[#F5D76E] to-[#D4AF37]'
+                          : 'bg-gray-200'
+                      }`}>
+                         <Icon className={`w-6 h-6 ${isDone ? 'text-white' : 'text-gray-400'}`} />
+                      </div>
+                      
+                      <p className={`text-[10px] sm:text-xs text-center font-semibold line-clamp-2 leading-tight ${isDone ? 'text-gray-800' : 'text-gray-400'}`}>
+                        {mod.title}
+                      </p>
+                      
+                      {isDone && (
+                         <div className="absolute -top-2 -right-2 bg-white rounded-full p-0.5 shadow-sm border border-gray-100">
+                           <CheckCircle2 className="w-4 h-4 text-green-500" />
+                         </div>
+                      )}
+                    </div>
+                  );
+                })}
+                
+                {modulesList.length === 0 && (
+                  <div className="col-span-full text-center py-6 text-sm text-gray-500">
+                    No badges available yet.
+                  </div>
+                )}
+              </div>
+            </div>
+
           </div>
 
           {/* --- RIGHT COLUMN: Stats & Tasks (25%) --- */}
