@@ -123,7 +123,7 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw image scaled up roughly matching previous scale-[1.2]
-            const scaleX = 1.3; // slightly wider
+            const scaleX = 1.7; // slightly wider
             const scaleY = 1.05;  // keep vertical mostly the same
             const w = canvas.width * scaleX;
             const h = canvas.height * scaleY;
