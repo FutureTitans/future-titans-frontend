@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { aiChat, auth } from '@/lib/api';
 import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles, User } from 'lucide-react';
+import ZunovaAvatar from './ZunovaAvatar';
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
@@ -198,11 +199,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       {/* Premium Bot Header */}
       <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] text-white px-5 py-4 flex items-center justify-between relative overflow-hidden backdrop-blur-xl shrink-0 border-b border-white/20">
         <div className="absolute inset-0 bg-white/10"></div>
-        <div className="flex items-center gap-3 relative z-10">
-          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md border border-white/40 flex items-center justify-center shadow-lg transform rotate-3 transition-transform hover:rotate-0">
-            <Bot className="w-6 h-6 text-white" />
-          </div>
-          <div>
+        <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
+          <ZunovaAvatar 
+            isTalking={isLoading} 
+            className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 scale-125" 
+          />
+          <div className="min-w-0 flex-1 ml-2">
             <h3 className="text-xl font-bold flex items-center gap-2 tracking-tight">
               ZUNOVA AI
               <Sparkles className="w-4 h-4 text-white/90 animate-pulse" />
