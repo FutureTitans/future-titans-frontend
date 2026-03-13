@@ -123,8 +123,8 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw image scaled up roughly matching previous scale-[1.2]
-            const scaleX = 1.9; // wider horizontally
-            const scaleY = 1.2;  // keep vertical the same
+            const scaleX = 1.3; // slightly wider
+            const scaleY = 1.05;  // keep vertical mostly the same
             const w = canvas.width * scaleX;
             const h = canvas.height * scaleY;
             const x = (canvas.width - w) / 2;
@@ -139,8 +139,8 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
             {/* 300x300 internal canvas resolution, scaled by CSSclassName */}
             <canvas
                 ref={canvasRef}
-                width={300}
-                height={300}
+                width={450}
+                height={450}
                 className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
             />
             {/* Show a spinner until idle frames are preloaded */}

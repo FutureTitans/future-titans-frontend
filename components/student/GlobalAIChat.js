@@ -165,7 +165,7 @@ export default function GlobalAIChat() {
             <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
               <ZunovaAvatar
                 isTalking={isLoading}
-                className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 scale-125"
+                className="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 scale-110"
               />
               <div className="min-w-0 flex-1 ml-2">
                 <p className="font-semibold text-sm md:text-base flex items-center gap-1 truncate">
