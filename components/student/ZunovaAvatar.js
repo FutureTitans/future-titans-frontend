@@ -10,7 +10,7 @@ const imageCache = {
     loaded: { idle: false, talk: false },
 };
 
-const idleFrames = Array.from({ length: 20 }, (_, i) => i + 108); // 108 to 127
+const idleFrames = Array.from({ length: 105 }, (_, i) => i + 1); // 1 to 105
 const talkFrames = Array.from({ length: 145 }, (_, i) => i + 1);  // 1 to 145
 
 // Preloader utility
@@ -20,8 +20,8 @@ const preloadImages = (folder, framesArray, cacheArray, onComplete) => {
 
     framesArray.forEach((frameNum, index) => {
         const img = new Image();
-        const frameStr = String(frameNum).padStart(5, '0');
-        img.src = `/${folder}/${frameStr}.png`;
+        const frameStr = folder === 'idle' ? `0${frameNum}` : String(frameNum).padStart(5, '0');
+        img.src = `/${folder}/${frameStr}.png?v=3`;
         img.onload = () => {
             loadedCount++;
             if (loadedCount === total && onComplete) {
