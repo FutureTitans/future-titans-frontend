@@ -3,22 +3,71 @@ import { useState, useEffect, useRef } from 'react';
 
 const FPS = 24;
 
+// Global cache to avoid reloading images if the component unmounts and remounts
+const imageCache = {
+    idle: [],
+    talk: [],
+    loaded: { idle: false, talk: false },
+};
+
+const idleFrames = Array.from({ length: 20 }, (_, i) => i + 108); // 108 to 127
+const talkFrames = Array.from({ length: 145 }, (_, i) => i + 1);  // 1 to 145
+
+// Preloader utility
+const preloadImages = (folder, framesArray, cacheArray, onComplete) => {
+    let loadedCount = 0;
+    const total = framesArray.length;
+
+    framesArray.forEach((frameNum, index) => {
+        const img = new Image();
+        const frameStr = String(frameNum).padStart(5, '0');
+        img.src = `/${folder}/${frameStr}.png`;
+        img.onload = () => {
+            loadedCount++;
+            if (loadedCount === total && onComplete) {
+                onComplete();
+            }
+        };
+        img.onerror = () => {
+            loadedCount++;
+            if (loadedCount === total && onComplete) {
+                onComplete();
+            }
+        };
+        cacheArray[index] = img;
+    });
+};
+
 export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
+    const canvasRef = useRef(null);
     const [frameIndex, setFrameIndex] = useState(0);
     const [actualIsTalking, setActualIsTalking] = useState(isTalking);
+    const [imagesReady, setImagesReady] = useState(false);
+    
     const requestRef = useRef();
     const lastUpdateRef = useRef(0);
     const timeoutRef = useRef(null);
 
-    // idle folder only has these specific frame numbers
-    const idleFrames = [
-        108, 109, 110, 111, 112, 113, 114, 115, 116, 117,
-        118, 119, 120, 121, 122, 123, 124, 125, 126, 127
-    ];
+    // Initial Preload
+    useEffect(() => {
+        // Load idle frames first for immediate display
+        if (!imageCache.loaded.idle) {
+            preloadImages('idle', idleFrames, imageCache.idle, () => {
+                imageCache.loaded.idle = true;
+                setImagesReady(true); // Ready to show at least idle
+                // Then lazily preload talk frames in background
+                if (!imageCache.loaded.talk) {
+                    preloadImages('talk', talkFrames, imageCache.talk, () => {
+                        imageCache.loaded.talk = true;
+                    });
+                }
+            });
+        } else {
+            setImagesReady(true);
+        }
+    }, []);
 
-    // talk folder has frames 1 through 145 continuously
-    const talkFrames = Array.from({ length: 145 }, (_, i) => i + 1);
-
+    // Handle isTalking timeout (buffer 2s after generation finishes)
     useEffect(() => {
         if (isTalking) {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -26,55 +75,79 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
         } else {
             timeoutRef.current = setTimeout(() => {
                 setActualIsTalking(false);
-            }, 2000); // Talk for 2 seconds longer after generation finishes
+            }, 2000);
         }
         return () => {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
     }, [isTalking]);
 
-    const currentFolder = actualIsTalking ? 'talk' : 'idle';
-    const framesArray = actualIsTalking ? talkFrames : idleFrames;
-    const totalFrames = framesArray.length;
-
+    // Reset frame to 0 on state switch
     useEffect(() => {
+        setFrameIndex(0);
+    }, [actualIsTalking]);
+
+    const currentCache = actualIsTalking ? imageCache.talk : imageCache.idle;
+    const totalFrames = actualIsTalking ? talkFrames.length : idleFrames.length;
+
+    // Animation Loop
+    useEffect(() => {
+        if (!imagesReady) return;
+
         const frameInterval = 1000 / FPS;
 
         const updateFrame = (time) => {
             if (time - lastUpdateRef.current > frameInterval) {
-                setFrameIndex((prev) => {
-                    let next = prev + 1;
-                    if (next >= totalFrames) return 0;
-                    return next;
-                });
+                setFrameIndex((prev) => (prev + 1) % totalFrames);
                 lastUpdateRef.current = time;
             }
             requestRef.current = requestAnimationFrame(updateFrame);
         };
 
         requestRef.current = requestAnimationFrame(updateFrame);
-
         return () => cancelAnimationFrame(requestRef.current);
-    }, [totalFrames]);
+    }, [totalFrames, imagesReady]);
 
-    // When switching between talk and idle, reset frame to 0
+    // Draw to Canvas
     useEffect(() => {
-        setFrameIndex(0);
-    }, [actualIsTalking]);
-
-    const currentFrameNumber = framesArray[frameIndex] || framesArray[0];
-    const frameStr = String(currentFrameNumber).padStart(5, '0');
-    const src = `/${currentFolder}/${frameStr}.png`;
+        if (!imagesReady || !canvasRef.current) return;
+        
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext('2d');
+        
+        // Ensure image is actually fully loaded before drawing
+        const img = currentCache[frameIndex] || currentCache[0];
+        
+        if (img && img.complete && img.naturalHeight !== 0) {
+            // Clear previous frame
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw image scaled up roughly matching previous scale-[1.2]
+            const scale = 1.2;
+            const w = canvas.width * scale;
+            const h = canvas.height * scale;
+            const x = (canvas.width - w) / 2;
+            const y = (canvas.height - h) / 2;
+            
+            ctx.drawImage(img, x, y, w, h);
+        }
+    }, [frameIndex, currentCache, imagesReady]);
 
     return (
-        <div className={`relative overflow-hidden flex items-center justify-center ${className}`}>
-            <img
-                src={src}
-                alt="Zunova"
-                className="w-full h-full object-contain pointer-events-none select-none scale-[1.2] drop-shadow-md"
-                loading="eager"
-                decoding="sync"
+        <div className={`relative flex items-center justify-center ${className}`}>
+            {/* 300x300 internal canvas resolution, scaled by CSSclassName */}
+            <canvas
+                ref={canvasRef}
+                width={300}
+                height={300}
+                className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
             />
+            {/* Show a spinner until idle frames are preloaded */}
+            {!imagesReady && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full animate-pulse">
+                     <span className="text-[10px] text-gray-400 font-medium">syncing...</span>
+                </div>
+            )}
         </div>
     );
 }

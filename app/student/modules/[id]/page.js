@@ -22,6 +22,18 @@ export default function ModulePlayerPage() {
   const [chapterCompleted, setChapterCompleted] = useState({});
   const [showChaptersConfig, setShowChaptersConfig] = useState(true); // default open on desktop
 
+  // Time tracking heartbeat
+  useEffect(() => {
+    if (!module || !moduleId) return;
+    
+    // Heartbeat every 60 seconds
+    const interval = setInterval(() => {
+      modules.trackTime(moduleId, 60).catch(err => console.debug('Failed to track time', err));
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [module, moduleId]);
+
   useEffect(() => {
     if (!isStudent()) {
       router.push('/login');

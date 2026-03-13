@@ -128,7 +128,7 @@ export default function GlobalAIChat() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 text-white rounded-full w-24 h-24 md:w-32 md:h-32 flex items-center justify-center hover:scale-110 transition-transform duration-300 z-50 hover-glow"
+          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 text-white rounded-full w-28 h-28 md:w-36 md:h-36 flex items-center justify-center hover:scale-110 transition-transform duration-300 z-50 hover-glow"
           title="Chat with ZUNOVA"
         >
           <ZunovaAvatar isTalking={false} className="w-full h-full scale-125 md:scale-150 transform origin-bottom" />
@@ -144,7 +144,7 @@ export default function GlobalAIChat() {
             <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
               <ZunovaAvatar
                 isTalking={isLoading}
-                className="w-16 h-16 md:w-20 md:h-20 flex-shrink-0 scale-125"
+                className="w-20 h-20 md:w-24 md:h-24 flex-shrink-0 scale-125"
               />
               <div className="min-w-0 flex-1 ml-2">
                 <p className="font-semibold text-sm md:text-base flex items-center gap-1 truncate">
@@ -177,7 +177,7 @@ export default function GlobalAIChat() {
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-center px-4">
                 <div className="glass-subtle p-6 rounded-2xl max-w-sm pt-8">
-                  <ZunovaAvatar isTalking={false} className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 drop-shadow-lg scale-125 origin-bottom" />
+                  <ZunovaAvatar isTalking={false} className="w-32 h-32 md:w-40 md:h-40 mx-auto mb-4 drop-shadow-lg scale-125 origin-bottom" />
                   <p className="text-gray-600 font-medium mb-1 text-sm md:text-base">Start a conversation</p>
                   <p className="text-xs md:text-sm text-gray-500">Ask anything about ideas, mindset, or SURGE</p>
                 </div>
