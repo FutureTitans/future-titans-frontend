@@ -43,7 +43,7 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
     const [frameIndex, setFrameIndex] = useState(0);
     const [actualIsTalking, setActualIsTalking] = useState(isTalking);
     const [imagesReady, setImagesReady] = useState(false);
-    
+
     const requestRef = useRef();
     const lastUpdateRef = useRef(0);
     const timeoutRef = useRef(null);
@@ -111,24 +111,25 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
     // Draw to Canvas
     useEffect(() => {
         if (!imagesReady || !canvasRef.current) return;
-        
+
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        
+
         // Ensure image is actually fully loaded before drawing
         const img = currentCache[frameIndex] || currentCache[0];
-        
+
         if (img && img.complete && img.naturalHeight !== 0) {
             // Clear previous frame
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             // Draw image scaled up roughly matching previous scale-[1.2]
-            const scale = 1.2;
-            const w = canvas.width * scale;
-            const h = canvas.height * scale;
+            const scaleX = 1.9; // wider horizontally
+            const scaleY = 1.2;  // keep vertical the same
+            const w = canvas.width * scaleX;
+            const h = canvas.height * scaleY;
             const x = (canvas.width - w) / 2;
             const y = (canvas.height - h) / 2;
-            
+
             ctx.drawImage(img, x, y, w, h);
         }
     }, [frameIndex, currentCache, imagesReady]);
@@ -145,7 +146,7 @@ export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
             {/* Show a spinner until idle frames are preloaded */}
             {!imagesReady && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full animate-pulse">
-                     <span className="text-[10px] text-gray-400 font-medium">syncing...</span>
+                    <span className="text-[10px] text-gray-400 font-medium">syncing...</span>
                 </div>
             )}
         </div>

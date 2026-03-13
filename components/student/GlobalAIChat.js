@@ -127,23 +127,22 @@ export default function GlobalAIChat() {
       {!isOpen && (
         <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-0">
 
-          {/* Chat bubble - positioned near character's face (upper left area) */}
-          <div className="relative mb-[-20px] mr-16 md:mr-20 self-start animate-fade-in-up origin-bottom">
-            <div className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl rounded-br-sm px-4 py-3 w-48 md:w-56 border border-white/50">
-              <p className="text-[11px] md:text-xs text-gray-700 leading-relaxed">
-                <span className="font-bold text-[#B8952E]">Zunova:</span>{' '}
+          <div className="relative mb-[-20px] mr-20 md:mr-36 self-start animate-fade-in-up origin-bottom">
+            <div className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl rounded-br-sm px-4 py-3 w-52 md:w-64 border border-white/50">
+              <p className="text-xs md:text-sm text-gray-800 leading-relaxed font-semibold">
+                <span className="font-extrabold text-[#B8952E]">Zunova:</span>{' '}
                 Every great founder starts with a question. Let&apos;s find yours.
               </p>
             </div>
-            {/* Small tail pointing toward the character */}
             <div className="absolute -right-2 bottom-3 w-3 h-3 bg-white/90 rotate-45 border-r border-b border-white/50"></div>
           </div>
 
           {/* Avatar button */}
+          {/* Avatar button */}
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="text-white rounded-full w-24 h-24 md:w-32 md:h-32 flex items-center justify-center hover:scale-110 transition-transform duration-300 hover-glow flex-shrink-0"
+            className="text-white rounded-full w-40 h-28 md:w-44 md:h-40 flex items-center justify-center hover:scale-110 transition-transform duration-300 hover-glow flex-shrink-0"
             title="Chat with ZUNOVA"
           >
             <ZunovaAvatar
