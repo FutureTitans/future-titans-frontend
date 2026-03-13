@@ -1,151 +1,152 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 const FPS = 24;
-
-// Global cache to avoid reloading images if the component unmounts and remounts
-const imageCache = {
-    idle: [],
-    talk: [],
-    loaded: { idle: false, talk: false },
-};
 
 const idleFrames = Array.from({ length: 20 }, (_, i) => i + 108); // 108 to 127
 const talkFrames = Array.from({ length: 145 }, (_, i) => i + 1);  // 1 to 145
 
-// Preloader utility
-const preloadImages = (folder, framesArray, cacheArray, onComplete) => {
-    let loadedCount = 0;
-    const total = framesArray.length;
+// Global cache — lives outside the component so it survives re-mounts.
+// Populated lazily inside useEffect (browser-only) to avoid SSR crashes.
+let imageCache = null;
 
-    framesArray.forEach((frameNum, index) => {
-        const img = new Image();
-        const frameStr = String(frameNum).padStart(5, '0');
-        img.src = `/${folder}/${frameStr}.png`;
-        img.onload = () => {
-            loadedCount++;
-            if (loadedCount === total && onComplete) {
-                onComplete();
-            }
+function getCache() {
+    if (!imageCache) {
+        imageCache = {
+            idle: new Array(idleFrames.length),
+            talk: new Array(talkFrames.length),
+            loaded: { idle: false, talk: false },
         };
-        img.onerror = () => {
-            loadedCount++;
-            if (loadedCount === total && onComplete) {
-                onComplete();
-            }
-        };
-        cacheArray[index] = img;
+    }
+    return imageCache;
+}
+
+// Preloader: returns a Promise that resolves when all images in the set
+// are either loaded or errored (so the animation can always proceed).
+function preloadImages(folder, framesArray, cacheArray) {
+    return new Promise((resolve) => {
+        let loadedCount = 0;
+        const total = framesArray.length;
+
+        framesArray.forEach((frameNum, index) => {
+            const img = new window.Image();           // ← use window.Image explicitly
+            img.src = `/${folder}/${String(frameNum).padStart(5, '0')}.png`;
+            img.onload = img.onerror = () => {
+                cacheArray[index] = img;
+                loadedCount++;
+                if (loadedCount >= total) resolve();
+            };
+        });
     });
-};
+}
 
 export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
     const canvasRef = useRef(null);
-    const [frameIndex, setFrameIndex] = useState(0);
-    const [actualIsTalking, setActualIsTalking] = useState(isTalking);
+    const frameIndexRef = useRef(0);
     const [imagesReady, setImagesReady] = useState(false);
-    
+    const [actualIsTalking, setActualIsTalking] = useState(isTalking);
+
     const requestRef = useRef();
     const lastUpdateRef = useRef(0);
     const timeoutRef = useRef(null);
 
-    // Initial Preload
+    // ──── 1. Preload (browser-only) ────
     useEffect(() => {
-        // Load idle frames first for immediate display
-        if (!imageCache.loaded.idle) {
-            preloadImages('idle', idleFrames, imageCache.idle, () => {
-                imageCache.loaded.idle = true;
-                setImagesReady(true); // Ready to show at least idle
-                // Then lazily preload talk frames in background
-                if (!imageCache.loaded.talk) {
-                    preloadImages('talk', talkFrames, imageCache.talk, () => {
-                        imageCache.loaded.talk = true;
-                    });
-                }
-            });
-        } else {
+        if (typeof window === 'undefined') return;
+
+        const cache = getCache();
+
+        if (cache.loaded.idle) {
             setImagesReady(true);
+            return;
         }
+
+        let cancelled = false;
+
+        (async () => {
+            await preloadImages('idle', idleFrames, cache.idle);
+            cache.loaded.idle = true;
+            if (!cancelled) setImagesReady(true);
+
+            // Background-load talk frames
+            if (!cache.loaded.talk) {
+                await preloadImages('talk', talkFrames, cache.talk);
+                cache.loaded.talk = true;
+            }
+        })();
+
+        return () => { cancelled = true; };
     }, []);
 
-    // Handle isTalking timeout (buffer 2s after generation finishes)
+    // ──── 2. isTalking with 2 s buffer ────
     useEffect(() => {
         if (isTalking) {
             if (timeoutRef.current) clearTimeout(timeoutRef.current);
             setActualIsTalking(true);
         } else {
-            timeoutRef.current = setTimeout(() => {
-                setActualIsTalking(false);
-            }, 2000);
+            timeoutRef.current = setTimeout(() => setActualIsTalking(false), 2000);
         }
-        return () => {
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
-        };
+        return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current); };
     }, [isTalking]);
 
-    // Reset frame to 0 on state switch
-    useEffect(() => {
-        setFrameIndex(0);
+    // Reset frame on mode switch
+    useEffect(() => { frameIndexRef.current = 0; }, [actualIsTalking]);
+
+    // ──── 3. Animation loop (no React state per frame — pure refs + canvas) ────
+    const draw = useCallback(() => {
+        if (!canvasRef.current) return;
+        const cache = getCache();
+        const currentCache = actualIsTalking ? cache.talk : cache.idle;
+        const totalFrames = actualIsTalking ? talkFrames.length : idleFrames.length;
+        const idx = frameIndexRef.current % totalFrames;
+        const img = currentCache[idx];
+
+        if (img && img.complete && img.naturalHeight !== 0) {
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Scale 1.2× centred
+            const scale = 1.2;
+            const w = canvas.width * scale;
+            const h = canvas.height * scale;
+            ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+        }
     }, [actualIsTalking]);
 
-    const currentCache = actualIsTalking ? imageCache.talk : imageCache.idle;
-    const totalFrames = actualIsTalking ? talkFrames.length : idleFrames.length;
-
-    // Animation Loop
     useEffect(() => {
         if (!imagesReady) return;
 
         const frameInterval = 1000 / FPS;
 
-        const updateFrame = (time) => {
+        const tick = (time) => {
             if (time - lastUpdateRef.current > frameInterval) {
-                setFrameIndex((prev) => (prev + 1) % totalFrames);
+                const cache = getCache();
+                const totalFrames = actualIsTalking ? talkFrames.length : idleFrames.length;
+                frameIndexRef.current = (frameIndexRef.current + 1) % totalFrames;
                 lastUpdateRef.current = time;
+                draw();
             }
-            requestRef.current = requestAnimationFrame(updateFrame);
+            requestRef.current = requestAnimationFrame(tick);
         };
 
-        requestRef.current = requestAnimationFrame(updateFrame);
+        // Draw first frame immediately
+        draw();
+        requestRef.current = requestAnimationFrame(tick);
         return () => cancelAnimationFrame(requestRef.current);
-    }, [totalFrames, imagesReady]);
-
-    // Draw to Canvas
-    useEffect(() => {
-        if (!imagesReady || !canvasRef.current) return;
-        
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        
-        // Ensure image is actually fully loaded before drawing
-        const img = currentCache[frameIndex] || currentCache[0];
-        
-        if (img && img.complete && img.naturalHeight !== 0) {
-            // Clear previous frame
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw image scaled up roughly matching previous scale-[1.2]
-            const scale = 1.2;
-            const w = canvas.width * scale;
-            const h = canvas.height * scale;
-            const x = (canvas.width - w) / 2;
-            const y = (canvas.height - h) / 2;
-            
-            ctx.drawImage(img, x, y, w, h);
-        }
-    }, [frameIndex, currentCache, imagesReady]);
+    }, [imagesReady, actualIsTalking, draw]);
 
     return (
         <div className={`relative flex items-center justify-center ${className}`}>
-            {/* 300x300 internal canvas resolution, scaled by CSSclassName */}
             <canvas
                 ref={canvasRef}
                 width={300}
                 height={300}
                 className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
             />
-            {/* Show a spinner until idle frames are preloaded */}
             {!imagesReady && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full animate-pulse">
-                     <span className="text-[10px] text-gray-400 font-medium">syncing...</span>
+                    <span className="text-[10px] text-gray-400 font-medium">syncing...</span>
                 </div>
             )}
         </div>
