@@ -178,7 +178,7 @@ export default function StudentModulesPage() {
                   </div>
                   <div className="flex items-center gap-2 text-gray-500">
                     <BookOpen className="w-4 h-4" />
-                    <span>{module.chapters?.length || 0} chapters</span>
+                    <span>{module.userProgress?.completedChapters?.length || 0}/{module.chapters?.length || 0} chapters</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-500">
                     <Users className="w-4 h-4" />

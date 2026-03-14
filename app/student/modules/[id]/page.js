@@ -299,7 +299,8 @@ export default function ModulePlayerPage() {
   }
 
   const currentChapterData = module.chapters[currentChapter];
-  const progressPercentage = Math.round(((currentChapter + 1) / module.chapters.length) * 100);
+  const completedCount = Object.keys(chapterCompleted).length;
+  const progressPercentage = module.chapters.length > 0 ? Math.round((completedCount / module.chapters.length) * 100) : 0;
   const zunovaAvailable = currentChapterData?.aiInteractionEnabled;
   const isCompleted = chapterCompleted[currentChapterData?._id];
 
