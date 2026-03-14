@@ -194,10 +194,10 @@ export default function StudentModulesPage() {
                 <div className="mb-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs text-gray-500">Progress</span>
-                    <span className="text-xs font-semibold text-gray-700">0%</span>
+                    <span className="text-xs font-semibold text-gray-700">{module.userProgress?.completionPercentage || 0}%</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                    <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-2 rounded-full transition-all" style={{ width: '0%' }}></div>
+                    <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-2 rounded-full transition-all" style={{ width: `${module.userProgress?.completionPercentage || 0}%` }}></div>
                   </div>
                 </div>
 
@@ -208,7 +208,7 @@ export default function StudentModulesPage() {
                     className="w-full bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white py-3 px-4 rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/20 transition font-semibold flex items-center justify-center gap-2 group-hover:scale-[1.02]"
                   >
                     <Play className="w-4 h-4" />
-                    Start Learning
+                    {(module.userProgress?.completionPercentage || 0) > 0 ? 'Continue Learning' : 'Start Learning'}
                   </Link>
                 ) : (
                   <button
