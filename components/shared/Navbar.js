@@ -83,13 +83,13 @@ export default function Navbar() {
             {!user ? (
               <>
                 <Link href="/login" className={navLinkClass('/login')}>
-                  Sign In
+                  Log In
                 </Link>
                 <Link
                   href="/signup"
                   className="bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all duration-300 font-semibold text-sm hover:-translate-y-0.5"
                 >
-                  Get Started
+                  Sign Up
                 </Link>
               </>
             ) : (
@@ -158,7 +158,7 @@ export default function Navbar() {
                   className="flex items-center justify-between px-4 py-3 rounded-2xl text-gray-200 hover:bg-gray-700 transition font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Sign In
+                  Log In
                   <ChevronRight className="w-4 h-4 text-gray-400" />
                 </Link>
                 <Link
@@ -166,7 +166,7 @@ export default function Navbar() {
                   className="block bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white px-4 py-3 rounded-2xl hover:shadow-lg text-center transition font-semibold"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Get Started
+                  Sign Up
                 </Link>
               </>
             ) : (

@@ -287,7 +287,7 @@ export default function SchoolSlugsPage() {
       <div className="card">
         <h3 className="font-bold text-lg mb-4">Active School Slugs</h3>
         {slugs.length === 0 ? (
-          <p className="text-neutral-medium text-sm">No school slugs yet. Create one to get started.</p>
+          <p className="text-neutral-medium text-sm">No school slugs yet. Create one to Sign Up.</p>
         ) : (
           <div className="space-y-4">
             {slugs.map((slug) => (

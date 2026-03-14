@@ -55,7 +55,7 @@ export default function Landing() {
               Future Titans
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#B8952E]">
-                Innovation Challenge
+                India's First Holistic Innovation Capability Ecosystem for Schools
               </span>
             </h1>
 
@@ -69,7 +69,7 @@ export default function Landing() {
                 className="glass-button px-10 py-4 sm:py-5 text-base sm:text-lg shadow-xl shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30 group"
               >
                 <div className="flex items-center gap-2">
-                  Get Started
+                  Sign Up
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
@@ -77,7 +77,7 @@ export default function Landing() {
                 href="/login"
                 className="px-10 py-4 sm:py-5 rounded-full bg-white/40 backdrop-blur-md border border-white/50 text-gray-700 font-semibold hover:bg-white/60 transition-all hover:scale-105 hover:shadow-lg"
               >
-                Sign In
+                Log In
               </Link>
             </div>
 

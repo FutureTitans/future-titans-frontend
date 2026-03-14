@@ -64,10 +64,10 @@ export default function AdminModuleDetailPage() {
 
   const handleCreateChapter = async (e) => {
     e.preventDefault();
-    
+
     // Clear previous errors
     setFormErrors({});
-    
+
     // Validate required fields
     const errors = {};
     if (!chapterForm.title || !chapterForm.title.trim()) {
@@ -76,7 +76,7 @@ export default function AdminModuleDetailPage() {
     if (!chapterForm.aiPrompt || !chapterForm.aiPrompt.trim()) {
       errors.aiPrompt = 'Custom AI Prompt is required for all chapters';
     }
-    
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
@@ -84,7 +84,7 @@ export default function AdminModuleDetailPage() {
 
     try {
       setSaving(true);
-      
+
       const content = {
         type: chapterForm.type,
         text: chapterForm.type === 'text' ? chapterForm.text : '',
@@ -312,9 +312,8 @@ export default function AdminModuleDetailPage() {
                   setChapterForm({ ...chapterForm, title: e.target.value });
                   if (formErrors.title) setFormErrors({ ...formErrors, title: '' });
                 }}
-                className={`w-full px-3 py-2 border rounded-lg ${
-                  formErrors.title ? 'border-semantic-error' : 'border-neutral-border'
-                }`}
+                className={`w-full px-3 py-2 border rounded-lg ${formErrors.title ? 'border-semantic-error' : 'border-neutral-border'
+                  }`}
                 placeholder="Chapter title"
               />
               {formErrors.title && (
@@ -427,9 +426,8 @@ export default function AdminModuleDetailPage() {
                   setChapterForm({ ...chapterForm, aiPrompt: e.target.value });
                   if (formErrors.aiPrompt) setFormErrors({ ...formErrors, aiPrompt: '' });
                 }}
-                className={`w-full px-3 py-2 border rounded-lg h-24 ${
-                  formErrors.aiPrompt ? 'border-semantic-error' : 'border-neutral-border'
-                }`}
+                className={`w-full px-3 py-2 border rounded-lg h-24 ${formErrors.aiPrompt ? 'border-semantic-error' : 'border-neutral-border'
+                  }`}
                 placeholder="Enter a custom prompt that guides the AI for this chapter. Example: 'Help the student understand market differentiation by asking questions about their favorite products and what makes them unique.'"
                 required
               />
@@ -496,7 +494,7 @@ export default function AdminModuleDetailPage() {
         </div>
 
         {(!moduleData.chapters || moduleData.chapters.length === 0) ? (
-          <p className="text-neutral-medium text-sm">No chapters yet. Add one above to get started.</p>
+          <p className="text-neutral-medium text-sm">No chapters yet. Add one above to Sign Up.</p>
         ) : (
           <div className="space-y-3">
             {moduleData.chapters

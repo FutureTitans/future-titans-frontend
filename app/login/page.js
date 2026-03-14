@@ -72,7 +72,7 @@ export default function LoginPage() {
             <Sparkles className="w-14 h-14 text-[#F5D76E] mx-auto mb-6 animate-pulse" />
             <h2 className="text-3xl font-bold text-white mb-3">Future Titans</h2>
             <p className="text-white/70 text-lg leading-relaxed max-w-xs mx-auto">
-              Innovation starts here. Sign in to continue your journey.
+              Innovation starts here. Log In to continue your journey.
             </p>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function LoginPage() {
               Back to Home
             </Link>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-            <p className="text-gray-500">Sign in to continue your innovation journey</p>
+            <p className="text-gray-500">Log In to continue your innovation journey</p>
           </div>
 
           {errors.submit && (
@@ -143,7 +143,7 @@ export default function LoginPage() {
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
-                'Sign In'
+                'Log In'
               )}
             </button>
           </form>

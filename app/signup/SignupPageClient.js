@@ -178,7 +178,7 @@ export default function SignupPageClient() {
           <p className="text-center text-gray-500 mt-6 text-sm">
             Already have an account?{' '}
             <Link href="/login" className="text-[#D4AF37] font-semibold hover:text-[#B8952E] transition">
-              Sign In
+              Log In
             </Link>
           </p>
         </div>

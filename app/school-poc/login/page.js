@@ -102,7 +102,7 @@ export default function SchoolPocLoginPage() {
                             </>
                         ) : (
                             <>
-                                Sign In
+                                Log In
                                 <ArrowRight className="w-5 h-5" />
                             </>
                         )}

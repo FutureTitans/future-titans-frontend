@@ -428,7 +428,7 @@ export default function ModulesPage() {
 
       {modulesList.length === 0 && (
         <div className="card text-center">
-          <p className="text-neutral-medium">No modules yet. Create one to get started!</p>
+          <p className="text-neutral-medium">No modules yet. Create one to Sign Up!</p>
         </div>
       )}
     </div>
