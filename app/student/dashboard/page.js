@@ -139,6 +139,12 @@ export default function StudentDashboard() {
     })
     : [{ name: 'No Data', value: 0 }];
 
+  // Sort modules by difficulty: beginner → intermediate → advanced
+  const difficultyOrder = { beginner: 1, intermediate: 2, advanced: 3 };
+  const sortedModules = [...modulesList].sort((a, b) => {
+    return (difficultyOrder[a.difficulty] || 4) - (difficultyOrder[b.difficulty] || 4);
+  });
+
   // Build dynamic calendar from current date
   const now = new Date();
   const currentMonth = now.toLocaleString('default', { month: 'long' });
@@ -446,7 +452,7 @@ export default function StudentDashboard() {
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mt-2">
-                {modulesList.map((mod, i) => {
+                {sortedModules.map((mod, i) => {
                   const modProgress = profile?.modulesProgress?.find(p => (p.moduleId?._id || p.moduleId) === mod._id);
                   const isDone = modProgress?.completionPercentage >= 100;
                   
@@ -549,7 +555,7 @@ export default function StudentDashboard() {
               </div>
 
               <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-4 relative z-10 custom-scrollbar-dark">
-                {modulesList.map((mod, index) => {
+                {sortedModules.map((mod, index) => {
                   const modProgress = profile?.modulesProgress?.find(p => p.moduleId?._id === mod._id || p.moduleId === mod._id);
                   const isDone = modProgress?.completionPercentage >= 100;
 
