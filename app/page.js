@@ -59,9 +59,49 @@ export default function Landing() {
               </span>
             </h1>
 
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed font-light">
-              Transform your ideas into impact. Experience AI-powered mentorship and build the solutions the world needs.
-            </p>
+            <div className="relative max-w-3xl mx-auto mb-12 text-center">
+              {/* Decorative top line */}
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <span className="h-px w-12 bg-emerald-900" />
+                <span
+                  className="text-[10px] tracking-[0.35em] uppercase font-medium"
+                  style={{ color: "#166534" }}
+                >
+                  The Future of Building
+                </span>
+                <span className="h-px w-12 bg-emerald-900" />
+              </div>
+
+              {/* Main text — flat dark green, no gradients */}
+              <p
+                className="text-xl sm:text-2xl md:text-3xl leading-[1.6] font-light tracking-tight"
+                style={{ color: "#15803d" }}
+              >
+                Transform your ideas into impact.{" "}
+                <span
+                  className="font-semibold"
+                  style={{ color: "#166534" }}
+                >
+                  Experience AI-powered mentorship
+                </span>{" "}
+                and build the solutions{" "}
+                <em
+                  className="not-italic font-medium"
+                  style={{
+                    color: "#14532d",
+                    borderBottom: "1px solid #166534",
+                    paddingBottom: "2px",
+                  }}
+                >
+                  the world needs.
+                </em>
+              </p>
+
+              {/* Bottom ornament */}
+              <div className="mt-8 flex justify-center">
+                <div className="h-px w-24 bg-emerald-900" />
+              </div>
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
               <Link
