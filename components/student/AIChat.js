@@ -136,7 +136,14 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
     setIsLoading(true);
 
     try {
-      const response = await aiChat.sendMessage(moduleId, chapterId, input);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 35000);
+      let response;
+      try {
+        response = await aiChat.sendMessage(moduleId, chapterId, input);
+      } finally {
+        clearTimeout(timeoutId);
+      }
       const aiMessage = { role: 'assistant', message: response.aiMessage, timestamp: new Date() };
       setMessages((prev) => [...prev, aiMessage]);
       if (response.ssiScore) {
@@ -144,9 +151,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       }
     } catch (error) {
       console.error('Failed to send message:', error);
+      const errorText = error?.name === 'AbortError'
+        ? 'Request timed out. Please try again.'
+        : error?.error || error?.message || 'Sorry, I encountered an error. Please try again.';
       const errorMessage = {
         role: 'assistant',
-        message: error?.error || error?.message || 'Sorry, I encountered an error. Please try again.',
+        message: errorText,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -323,8 +333,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
           {rateLimit && (
             <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
               {rateLimit.limitReached
-                ? '⚠️ Daily message limit reached (200/200). Try again later.'
-                : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining today`}
+                ? `⚠️ Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
+                : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
             </div>
           )}
           <form onSubmit={handleSendMessage} className="relative z-10 flex gap-3">

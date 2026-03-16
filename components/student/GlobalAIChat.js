@@ -100,14 +100,26 @@ export default function GlobalAIChat() {
     setIsLoading(true);
 
     try {
-      const response = await aiChat.sendGlobalMessage(input);
+      const timeoutId = setTimeout(() => {}, 35000);
+      let response;
+      try {
+        response = await Promise.race([
+          aiChat.sendGlobalMessage(input),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out. Please try again.')), 35000)),
+        ]);
+      } finally {
+        clearTimeout(timeoutId);
+      }
       const aiMessage = { role: 'assistant', message: response.aiMessage, timestamp: new Date() };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
       console.error('Global AI chat error:', error);
+      const errorText = error?.name === 'AbortError' || error?.message?.includes('timed out')
+        ? 'Request timed out. Please try again.'
+        : error?.error || error?.message || 'Sorry, I encountered an error. Please try again.';
       const errorMessage = {
         role: 'assistant',
-        message: error?.error || error?.message || 'Sorry, I encountered an error. Please try again.',
+        message: errorText,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -255,8 +267,8 @@ export default function GlobalAIChat() {
             {rateLimit && (
               <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
                 {rateLimit.limitReached
-                  ? '⚠️ Daily message limit reached (200/200). Try again later.'
-                  : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining today`}
+                  ? `⚠️ Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
+                  : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
               </div>
             )}
             <div className="flex gap-2">

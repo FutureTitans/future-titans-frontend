@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { admin } from '@/lib/api';
-import { Save, Mail, CheckCircle, XCircle, Loader } from 'lucide-react';
+import { Save, Mail, CheckCircle, XCircle, Loader, MessageSquare } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function SettingsPage() {
@@ -23,8 +23,17 @@ export default function SettingsPage() {
     isActive: false
   });
 
+  // Chat settings state
+  const [chatSettings, setChatSettings] = useState({
+    chatMessageLimit: 200,
+    chatResetHours: 24,
+  });
+  const [chatSaving, setChatSaving] = useState(false);
+  const [chatSaveResult, setChatSaveResult] = useState(null);
+
   useEffect(() => {
     fetchSMTPConfig();
+    fetchChatSettings();
   }, []);
 
   const fetchSMTPConfig = async () => {
@@ -36,6 +45,15 @@ export default function SettingsPage() {
       console.error('Failed to fetch SMTP config:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchChatSettings = async () => {
+    try {
+      const settings = await admin.getChatSettings();
+      setChatSettings(settings);
+    } catch (error) {
+      console.error('Failed to fetch chat settings:', error);
     }
   };
 
@@ -93,6 +111,29 @@ export default function SettingsPage() {
     }
   };
 
+  const handleChatSettingsSave = async (e) => {
+    e.preventDefault();
+    setChatSaving(true);
+    setChatSaveResult(null);
+
+    try {
+      const result = await admin.updateChatSettings(chatSettings);
+      setChatSettings({
+        chatMessageLimit: result.chatMessageLimit,
+        chatResetHours: result.chatResetHours,
+      });
+      setChatSaveResult({ success: true, message: 'Chat settings saved successfully!' });
+    } catch (error) {
+      console.error('Failed to save chat settings:', error);
+      setChatSaveResult({
+        success: false,
+        message: error?.error || error?.message || 'Failed to save chat settings',
+      });
+    } finally {
+      setChatSaving(false);
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner message="Loading settings..." />;
   }
@@ -101,6 +142,104 @@ export default function SettingsPage() {
     <div>
       <h1 className="text-3xl font-bold mb-8 gradient-text">Settings</h1>
 
+      {/* ─── AI Chat Settings ─── */}
+      <div className="card mb-8">
+        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          <MessageSquare className="w-6 h-6" />
+          AI Chat Settings
+        </h2>
+        <p className="text-neutral-medium mb-6">
+          Configure the message limit and reset window for ZUNOVA AI chat. These settings apply to all students.
+        </p>
+
+        <form onSubmit={handleChatSettingsSave} className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-semibold mb-2">
+                Message Limit (per student)
+              </label>
+              <input
+                type="number"
+                value={chatSettings.chatMessageLimit}
+                onChange={(e) => setChatSettings(prev => ({ ...prev, chatMessageLimit: parseInt(e.target.value, 10) || 0 }))}
+                className="w-full px-4 py-2 border border-neutral-border rounded-lg focus:outline-none focus:border-primary-red"
+                min="1"
+                max="10000"
+                required
+              />
+              <p className="text-xs text-neutral-medium mt-1">
+                Maximum number of messages a student can send within the reset window (1–10,000)
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold mb-2">
+                Reset Window (hours)
+              </label>
+              <input
+                type="number"
+                value={chatSettings.chatResetHours}
+                onChange={(e) => setChatSettings(prev => ({ ...prev, chatResetHours: parseInt(e.target.value, 10) || 0 }))}
+                className="w-full px-4 py-2 border border-neutral-border rounded-lg focus:outline-none focus:border-primary-red"
+                min="1"
+                max="720"
+                required
+              />
+              <p className="text-xs text-neutral-medium mt-1">
+                Rolling window in hours after which the message count resets (1–720, i.e. up to 30 days)
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              disabled={chatSaving}
+              className="flex items-center gap-2 bg-primary-red text-white px-6 py-3 rounded-lg hover:bg-primary-darkRed transition font-semibold disabled:opacity-50"
+            >
+              {chatSaving ? (
+                <>
+                  <Loader className="w-5 h-5 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-5 h-5" />
+                  Save Chat Settings
+                </>
+              )}
+            </button>
+          </div>
+
+          {chatSaveResult && (
+            <div className={`p-4 rounded-lg flex items-center gap-3 ${
+              chatSaveResult.success 
+                ? 'bg-semantic-success bg-opacity-10 border border-semantic-success' 
+                : 'bg-semantic-error bg-opacity-10 border border-semantic-error'
+            }`}>
+              {chatSaveResult.success ? (
+                <CheckCircle className="w-5 h-5 text-semantic-success" />
+              ) : (
+                <XCircle className="w-5 h-5 text-semantic-error" />
+              )}
+              <p className={chatSaveResult.success ? 'text-semantic-success' : 'text-semantic-error'}>
+                {chatSaveResult.message}
+              </p>
+            </div>
+          )}
+        </form>
+
+        <div className="mt-6 p-4 bg-neutral-light rounded-lg">
+          <h3 className="font-semibold mb-2">💡 How it works</h3>
+          <ul className="list-disc list-inside space-y-1 text-sm text-neutral-medium">
+            <li>Each student has a rolling message counter tracked across all their AI chats.</li>
+            <li>Once they hit the limit, they must wait for the reset window to pass before sending more messages.</li>
+            <li>Changes take effect within 60 seconds (settings are cached for performance).</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* ─── SMTP Configuration ─── */}
       <div className="card">
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
           <Mail className="w-6 h-6" />
@@ -317,4 +456,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
