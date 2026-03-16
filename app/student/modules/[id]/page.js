@@ -471,6 +471,49 @@ export default function ModulePlayerPage() {
               </div>
             )}
 
+            {/* Zunova Coming Soon Cool Indicator */}
+            {!isCompleted && zunovaAvailable && (
+              <div className="mt-8 mb-2 relative overflow-hidden rounded-2xl bg-white border border-[#D4AF37]/30 shadow-lg shadow-[#D4AF37]/10 group transition-all duration-300 hover:shadow-xl hover:shadow-[#D4AF37]/20 hover:border-[#D4AF37]/50">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#D4AF37]/10 opacity-50"></div>
+                
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] group-hover:animate-[shimmer_2s_infinite]"></div>
+
+                <div className="relative p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-5">
+                    {/* Glowing Brain Icon */}
+                    <div className="relative flex-shrink-0">
+                      <div className="absolute inset-0 bg-[#D4AF37] rounded-full blur-md opacity-40 animate-pulse"></div>
+                      <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8952E] flex items-center justify-center p-3 shadow-inner">
+                        <Brain className="w-full h-full text-white" />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <h4 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#B8952E] to-[#D4AF37] bg-clip-text text-transparent flex items-center gap-3">
+                        Zunova AI is waiting...
+                        <span className="flex items-center space-x-1">
+                          <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                          <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                          <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '300ms' }}></span>
+                        </span>
+                      </h4>
+                      <p className="text-gray-600 text-sm md:text-base mt-1 font-medium max-w-lg leading-relaxed">
+                        Ready to reflect on what you&apos;ve learned? Click <span className="font-bold text-gray-800">&quot;Mark Complete&quot;</span> below to start your personalized interactive session with Zunova!
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Subtle arrow pointing down to Mark Complete */}
+                  <div className="hidden sm:flex flex-shrink-0 animate-bounce">
+                    <div className="w-10 h-10 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center shadow-sm">
+                       <ArrowRight className="w-5 h-5 text-[#B8952E] transform rotate-90" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Navigation Bar inside content area */}
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-6 border-t border-black/5 shrink-0">
               <button
