@@ -516,6 +516,95 @@ select:focus {
   background-size: cover;
 }
 
+/* ──── Floating Particles ──── */
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-8px);
+  }
+  75% {
+    transform: translateY(-25px) translateX(5px);
+  }
+}
+
+/* ──── Light sweep across SURGE card ──── */
+@keyframes sweepLight {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-sweep {
+  animation: sweepLight 4s ease-in-out infinite;
+}
+
+/* ──── Hero title entrance ──── */
+.hero-title-animate {
+  animation: heroTitleIn 1s ease-out forwards;
+}
+
+@keyframes heroTitleIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.97);
+    filter: blur(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* ──── Gradient text shimmer ──── */
+.background-animate {
+  background-size: 200% auto;
+  animation: gradientShift 4s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+/* ──── SURGE item hover connector ──── */
+.surge-item {
+  position: relative;
+  padding-left: 4px;
+}
+
+.surge-item::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 48px;
+  width: 2px;
+  height: calc(100% + 12px);
+  background: linear-gradient(to bottom, rgba(212, 175, 55, 0.2), transparent);
+  pointer-events: none;
+}
+
+.surge-item:last-child::before {
+  display: none;
+}
+
+/* ──── Tabular nums for counters ──── */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 /* ──── Smooth transition global ──── */
 * {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
