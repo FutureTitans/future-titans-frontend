@@ -120,7 +120,7 @@ export default function IdeaSubmissionPage() {
         const completionStatus = await auth.checkCompletionStatus();
         console.log('📊 Submission Page - Completion Status:', completionStatus);
         
-        if (!completionStatus.allCompleted) {
+        if (!completionStatus.canSubmit) {
           const incompleteDetails = completionStatus.details
             .filter(d => !d.isComplete)
             .map(d => {
@@ -134,7 +134,7 @@ export default function IdeaSubmissionPage() {
           
           console.log('Incomplete modules details:', completionStatus.details.filter(d => !d.isComplete));
           
-          alert(`Complete all learning modules before accessing the final submission form.\n\nIncomplete modules:\n${incompleteDetails || 'Unable to load module details'}`);
+          alert(`Complete at least one learning module before accessing the final submission form.\n\nIncomplete modules:\n${incompleteDetails || 'Unable to load module details'}`);
           router.push('/student/dashboard');
           return;
         }
@@ -143,10 +143,10 @@ export default function IdeaSubmissionPage() {
         // Fallback to old check
         const modulesProgress = profile?.modulesProgress || [];
         const hasModules = modulesProgress.length > 0;
-        const allCompleted = hasModules && modulesProgress.every((m) => (m.completionPercentage || 0) >= 100);
+        const canSubmit = hasModules && modulesProgress.some((m) => (m.completionPercentage || 0) >= 100);
 
-        if (!allCompleted) {
-          alert('Complete all learning modules before accessing the final submission form.');
+        if (!canSubmit) {
+          alert('Complete at least one learning module before accessing the final submission form.');
           router.push('/student/dashboard');
           return;
         }

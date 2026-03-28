@@ -42,7 +42,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
         try {
           const completionStatus = await auth.checkCompletionStatus();
-          setAllModulesCompleted(completionStatus.allCompleted === true);
+          const currentModuleDetail = completionStatus.details.find(d => d.moduleId === moduleId);
+          setAllModulesCompleted(currentModuleDetail ? currentModuleDetail.isComplete : false);
         } catch (e) {
           setAllModulesCompleted(false);
         }
@@ -180,17 +181,18 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
         setSSIScore(response.finalSSI);
       }
       // Use ONLY the dedicated completion-status endpoint as the single source of truth
-      let allDone = false;
+      let currentDone = false;
       try {
         const completionStatus = await auth.checkCompletionStatus();
-        allDone = completionStatus.allCompleted === true;
+        const currentModuleDetail = completionStatus.details.find(d => d.moduleId === moduleId);
+        currentDone = currentModuleDetail ? currentModuleDetail.isComplete === true : false;
       } catch (e) {
         // If the endpoint fails, default to false — don't guess
-        allDone = false;
+        currentDone = false;
       }
-      setAllModulesCompleted(allDone);
-      if (allDone) {
-        alert('🎉 Congratulations! You\'ve completed all modules and chapters! You can now submit your idea.');
+      setAllModulesCompleted(currentDone);
+      if (currentDone) {
+        alert('🎉 Congratulations! You\'ve completed this module! You can now submit your idea.');
       } else {
         alert('✅ Chapter AI session completed! Your final SSI score for this chapter has been recorded.');
       }
@@ -375,8 +377,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
               <div className="flex justify-center mb-3">
                 <Trophy className="w-8 h-8 text-[#D4AF37]" />
               </div>
-              <p className="font-bold text-[#F5D76E] mb-1">Modules Complete!</p>
-              <p className="text-xs text-gray-400 mb-4">You have successfully finished all chapters.</p>
+              <p className="font-bold text-[#F5D76E] mb-1">Module Complete!</p>
+              <p className="text-xs text-gray-400 mb-4">You have successfully finished all chapters for this module.</p>
               <button
                 onClick={() => router.push('/student/submission')}
                 className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white px-4 py-3 rounded-xl hover:shadow-lg transition-all font-semibold shadow-[#D4AF37]/20 border border-white/20"
