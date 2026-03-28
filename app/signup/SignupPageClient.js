@@ -96,7 +96,7 @@ export default function SignupPageClient() {
       setTokens(response.accessToken, response.refreshToken);
       router.push('/student/dashboard');
     } catch (error) {
-      setErrors({ submit: error.message || 'Signup failed' });
+      setErrors({ submit: error?.error || error?.message || (typeof error === 'string' ? error : 'Signup failed') });
     } finally {
       setIsLoading(false);
     }
