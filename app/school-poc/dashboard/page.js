@@ -6,7 +6,8 @@ import { schoolPoc } from '@/lib/api';
 import { getAuthToken, removeAuthToken } from '@/lib/auth';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import {
-    School, LogOut, Search, ChevronDown, ChevronUp, MapPin, Phone, Mail, Award, MonitorPlay, X, ThumbsUp, AlertCircle
+    School, LogOut, Search, ChevronDown, ChevronUp, MapPin, Phone, Mail, Award, MonitorPlay, X, ThumbsUp, AlertCircle,
+    Users, GraduationCap, TrendingUp, Target, FileText, Activity, Lightbulb
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
