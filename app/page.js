@@ -471,19 +471,10 @@ export default function Landing() {
                 <p className="text-gray-500 mb-4 text-sm leading-relaxed">Empowering the next generation of innovators with tools, mentorship, and community.</p>
               </div>
               <div>
-                <h4 className="font-bold text-gray-300 mb-4 text-sm tracking-wide uppercase">Platform</h4>
-                <ul className="space-y-2.5">
-                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Modules</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Challenges</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Community</Link></li>
-                </ul>
-              </div>
-              <div>
                 <h4 className="font-bold text-gray-300 mb-4 text-sm tracking-wide uppercase">Company</h4>
                 <ul className="space-y-2.5">
-                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">About</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Contact</Link></li>
-                  <li><Link href="/" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Privacy</Link></li>
+                  <li><a href="https://youngpreneurs.in/about-us/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">About</a></li>
+                  <li><a href="https://youngpreneurs.in/contact/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Contact</a></li>
                 </ul>
               </div>
               <div>

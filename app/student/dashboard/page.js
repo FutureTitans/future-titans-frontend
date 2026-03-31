@@ -722,7 +722,7 @@ export default function StudentDashboard() {
                     setActiveFaqTab(tab);
                     setOpenFaqIndex(null);
                   }}
-                  className={`pb-4 text-sm sm:text-base font-semibold transition-colors relative whitespace-nowrap ${
+                  className={`pb-4 text-sm sm:text-base font-semibold transition-colors relative whitespace-nowrap focus:outline-none ${
                     activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
                   }`}
                 >
