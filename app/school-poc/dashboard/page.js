@@ -79,7 +79,7 @@ export default function SchoolPocDashboardPage() {
         ?.filter(student => {
             const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 student.email.toLowerCase().includes(searchTerm.toLowerCase());
-            
+
             let matchesFilter = true;
             if (statusFilter === 'registered') matchesFilter = student.isPaid;
             if (statusFilter === 'unregistered') matchesFilter = !student.isPaid;
@@ -168,7 +168,7 @@ export default function SchoolPocDashboardPage() {
             </div>
 
             <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-4 md:px-8 xl:px-12 py-4 sm:py-6 md:py-8 relative z-10 space-y-6 sm:space-y-8">
-                
+
                 {/* Intro Title */}
                 <div className="mb-4 sm:mb-2 flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
@@ -202,13 +202,13 @@ export default function SchoolPocDashboardPage() {
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
                         <img src="/images/avg selection.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
-                            <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. Completion</span>
+                            <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-5)00">Avg. Completion</span>
                         </div>
                         <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight relative z-10">{dashboardData?.stats?.averageCompletion}%</div>
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <img src="/images/avg ssi score.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
+                        <img src="/images/avg ssi score.png" alt="" className="absolute right-2 bottom-1 w-26 h-26 sm:w-30 sm:h-30 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. SSI Score</span>
                         </div>
@@ -225,14 +225,14 @@ export default function SchoolPocDashboardPage() {
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">All Student Status <span className="opacity-60 text-sm">(Live)</span></h3>
                         </div>
                         <div className="space-y-3">
-                            <div 
+                            <div
                                 onClick={() => handleFilterToggle('registered')}
                                 className={`flex items-center justify-between px-5 py-3.5 rounded-2xl cursor-pointer transition-all duration-200 border border-white/50 ${statusFilter === 'registered' ? 'bg-white/80 shadow-md ring-1 ring-[#D4AF37]/40' : 'bg-white/30 hover:bg-white/50'}`}
                             >
                                 <div className="flex items-center gap-3"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm"></span><span className="font-medium text-gray-800">Registered</span></div>
                                 <span className="font-bold text-gray-900 text-lg">{dashboardData?.stats?.paidStudents}</span>
                             </div>
-                            <div 
+                            <div
                                 onClick={() => handleFilterToggle('unregistered')}
                                 className={`flex items-center justify-between px-5 py-3.5 rounded-2xl cursor-pointer transition-all duration-200 border border-white/50 ${statusFilter === 'unregistered' ? 'bg-white/80 shadow-md ring-1 ring-[#D4AF37]/40' : 'bg-white/30 hover:bg-white/50'}`}
                             >
@@ -249,14 +249,14 @@ export default function SchoolPocDashboardPage() {
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">Live Tracking <span className="opacity-60 text-sm">(Student)</span></h3>
                         </div>
                         <div className="space-y-3">
-                            <div 
+                            <div
                                 onClick={() => handleFilterToggle('online')}
                                 className={`flex items-center justify-between px-5 py-3.5 rounded-2xl cursor-pointer transition-all duration-200 border border-white/50 ${statusFilter === 'online' ? 'bg-white/80 shadow-md ring-1 ring-[#D4AF37]/40' : 'bg-white/30 hover:bg-white/50'}`}
                             >
                                 <div className="flex items-center gap-3"><span className="w-2.5 h-2.5 rounded-full bg-[#fcd34d] shadow-sm"></span><span className="font-medium text-gray-800">Online</span></div>
                                 <span className="font-bold text-gray-900 text-lg">{dashboardData?.stats?.liveStatus?.online || 0}</span>
                             </div>
-                            <div 
+                            <div
                                 onClick={() => handleFilterToggle('offline')}
                                 className={`flex items-center justify-between px-5 py-3.5 rounded-2xl cursor-pointer transition-all duration-200 border border-white/50 ${statusFilter === 'offline' ? 'bg-white/80 shadow-md ring-1 ring-[#D4AF37]/40' : 'bg-white/30 hover:bg-white/50'}`}
                             >
@@ -273,14 +273,14 @@ export default function SchoolPocDashboardPage() {
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">Idea Submission</h3>
                         </div>
                         <div className="space-y-3">
-                            <div 
+                            <div
                                 onClick={() => handleFilterToggle('submitted')}
                                 className={`flex items-center justify-between px-5 py-3.5 rounded-2xl cursor-pointer transition-all duration-200 border border-white/50 ${statusFilter === 'submitted' ? 'bg-white/80 shadow-md ring-1 ring-[#D4AF37]/40' : 'bg-white/30 hover:bg-white/50'}`}
                             >
                                 <div className="flex items-center gap-3"><span className="w-2.5 h-2.5 rounded-full bg-[#93c5fd] shadow-sm"></span><span className="font-medium text-gray-800">Submitted</span></div>
                                 <span className="font-bold text-gray-900 text-lg">{dashboardData?.stats?.ideaSubmissions?.submitted || 0}</span>
                             </div>
-                            <div 
+                            <div
                                 onClick={() => handleFilterToggle('pending')}
                                 className={`flex items-center justify-between px-5 py-3.5 rounded-2xl cursor-pointer transition-all duration-200 border border-white/50 ${statusFilter === 'pending' ? 'bg-white/80 shadow-md ring-1 ring-[#D4AF37]/40' : 'bg-white/30 hover:bg-white/50'}`}
                             >
@@ -468,7 +468,7 @@ export default function SchoolPocDashboardPage() {
                                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" opacity={0.5} />
                                             <XAxis dataKey="moduleTitle" tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
                                             <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
-                                            <Tooltip 
+                                            <Tooltip
                                                 contentStyle={{ borderRadius: '12px', border: '1px solid rgba(255,255,255,0.8)', boxShadow: '0 4px 15px rgba(0,0,0,0.05)', backgroundColor: 'rgba(255, 255, 255, 0.95)' }}
                                                 itemStyle={{ color: '#111827', fontWeight: 'bold' }}
                                                 cursor={{ stroke: 'rgba(212, 175, 55, 0.2)', strokeWidth: 2 }}
@@ -490,7 +490,7 @@ export default function SchoolPocDashboardPage() {
             {selectedStudent && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md animate-in fade-in cursor-default" onClick={() => setSelectedStudent(null)}>
                     <div className="bg-[#F5EDD6] border border-white/50 rounded-[32px] w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 relative" onClick={e => e.stopPropagation()}>
-                        
+
                         {/* Modal Bg Blobs */}
                         <div className="absolute inset-0 pointer-events-none overflow-hidden">
                             <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-[#FFFFFF]/80 rounded-full filter blur-[80px]"></div>
@@ -513,7 +513,7 @@ export default function SchoolPocDashboardPage() {
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
-                        
+
                         <div className="p-6 overflow-y-auto relative z-10 custom-scrollbar">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                                 <div className="space-y-4">
@@ -547,9 +547,9 @@ export default function SchoolPocDashboardPage() {
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-4 pl-1">Academic Progress</h4>
-                            
+
                             <div className="grid grid-cols-2 gap-4 mb-8">
                                 <div className="bg-white/60 backdrop-blur-sm border text-center border-white/60 shadow-sm px-4 py-8 rounded-3xl flex flex-col items-center justify-center">
                                     <div className="w-14 h-14 bg-white border border-white rounded-2xl shadow-sm flex items-center justify-center mb-4">
