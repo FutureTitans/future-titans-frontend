@@ -6,8 +6,7 @@ import { schoolPoc } from '@/lib/api';
 import { getAuthToken, removeAuthToken } from '@/lib/auth';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import {
-    School, LogOut, Search, ChevronDown, ChevronUp, MapPin, Phone, Mail, Award, MonitorPlay, X, ThumbsUp, AlertCircle,
-    Users, GraduationCap, TrendingUp, Target, FileText, Activity, Lightbulb
+    School, LogOut, Search, ChevronDown, ChevronUp, MapPin, Phone, Mail, Award, MonitorPlay, X, ThumbsUp, AlertCircle
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
@@ -185,54 +184,44 @@ export default function SchoolPocDashboardPage() {
                 {/* Top Row: 4 Metric Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <div className="flex items-start justify-between mb-4">
+                        <img src="/images/total students.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Total Students</span>
-                            <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center p-2 shadow-sm">
-                                <img src="/images/total students.png" alt="Total Students" className="w-full h-full object-contain" />
-                            </div>
                         </div>
-                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight">{dashboardData?.stats?.totalStudents}</div>
+                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight relative z-10">{dashboardData?.stats?.totalStudents}</div>
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <div className="flex items-start justify-between mb-4">
+                        <img src="/images/paid students.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Paid Students</span>
-                            <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center p-2 shadow-sm">
-                                <img src="/images/paid students.png" alt="Paid Students" className="w-full h-full object-contain" />
-                            </div>
                         </div>
-                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight">{dashboardData?.stats?.paidStudents}</div>
+                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight relative z-10">{dashboardData?.stats?.paidStudents}</div>
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <div className="flex items-start justify-between mb-4">
+                        <img src="/images/avg selection.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. Completion</span>
-                            <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center p-2 shadow-sm">
-                                <img src="/images/avg selection.png" alt="Avg Completion" className="w-full h-full object-contain" />
-                            </div>
                         </div>
-                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight">{dashboardData?.stats?.averageCompletion}%</div>
+                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight relative z-10">{dashboardData?.stats?.averageCompletion}%</div>
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <div className="flex items-start justify-between mb-4">
+                        <img src="/images/avg ssi score.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. SSI Score</span>
-                            <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center p-2 shadow-sm">
-                                <img src="/images/avg ssi score.png" alt="Avg SSI Score" className="w-full h-full object-contain" />
-                            </div>
                         </div>
-                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight">{dashboardData?.stats?.averageSSI}</div>
+                        <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight relative z-10">{dashboardData?.stats?.averageSSI}</div>
                     </div>
                 </div>
 
                 {/* Middle Row: 3 Detail Status Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                     {/* Status Container 1 */}
-                    <div className="glass-panel p-5 sm:p-6">
-                        <div className="flex items-center gap-4 mb-5 sm:mb-6">
-                            <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center p-2 shadow-sm">
-                                <img src="/images/all students.png" alt="All Student Status" className="w-full h-full object-contain" />
-                            </div>
+                    <div className="glass-panel p-5 sm:p-6 relative overflow-hidden group">
+                        <img src="/images/all students.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none" />
+                        <div className="flex items-center gap-4 mb-5 sm:mb-6 relative z-10">
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">All Student Status <span className="opacity-60 text-sm">(Live)</span></h3>
                         </div>
                         <div className="space-y-3">
@@ -254,11 +243,9 @@ export default function SchoolPocDashboardPage() {
                     </div>
 
                     {/* Status Container 2 */}
-                    <div className="glass-panel p-5 sm:p-6">
-                        <div className="flex items-center gap-4 mb-5 sm:mb-6">
-                            <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center p-2 shadow-sm">
-                                <img src="/images/live tracking students.png" alt="Live Tracking" className="w-full h-full object-contain" />
-                            </div>
+                    <div className="glass-panel p-5 sm:p-6 relative overflow-hidden group">
+                        <img src="/images/live tracking students.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none" />
+                        <div className="flex items-center gap-4 mb-5 sm:mb-6 relative z-10">
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">Live Tracking <span className="opacity-60 text-sm">(Student)</span></h3>
                         </div>
                         <div className="space-y-3">
@@ -280,11 +267,9 @@ export default function SchoolPocDashboardPage() {
                     </div>
 
                     {/* Status Container 3 */}
-                    <div className="glass-panel p-5 sm:p-6 md:col-span-2 xl:col-span-1">
-                        <div className="flex items-center gap-4 mb-5 sm:mb-6">
-                            <div className="w-12 h-12 bg-white/60 rounded-xl flex items-center justify-center p-2 shadow-sm">
-                                <img src="/images/idea submission.png" alt="Idea Submission" className="w-full h-full object-contain" />
-                            </div>
+                    <div className="glass-panel p-5 sm:p-6 md:col-span-2 xl:col-span-1 relative overflow-hidden group">
+                        <img src="/images/idea submission.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none" />
+                        <div className="flex items-center gap-4 mb-5 sm:mb-6 relative z-10">
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">Idea Submission</h3>
                         </div>
                         <div className="space-y-3">
