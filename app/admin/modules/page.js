@@ -18,6 +18,7 @@ export default function ModulesPage() {
     difficulty: 'beginner',
     estimatedCompletionTime: 60,
     aiQuestionsPerChapter: 10,
+    mentorName: '', // Instructor Name
     mentorProfilePicture: null, // File object
     mentorProfilePictureUrl: '', // Existing URL for display
     coverImage: null, // File object
@@ -62,6 +63,7 @@ export default function ModulesPage() {
         difficulty: formData.difficulty,
         estimatedCompletionTime: formData.estimatedCompletionTime,
         aiQuestionsPerChapter: formData.aiQuestionsPerChapter,
+        mentorName: formData.mentorName,
         aiInteractionEnabled: true,
       };
 
@@ -100,6 +102,7 @@ export default function ModulesPage() {
         difficulty: 'beginner',
         estimatedCompletionTime: 60,
         aiQuestionsPerChapter: 10,
+        mentorName: '',
         mentorProfilePicture: null,
         mentorProfilePictureUrl: '',
         coverImage: null,
@@ -154,6 +157,7 @@ export default function ModulesPage() {
                 difficulty: 'beginner',
                 estimatedCompletionTime: 60,
                 aiQuestionsPerChapter: 10,
+                mentorName: '',
                 mentorProfilePicture: null,
                 coverImage: null,
               });
@@ -276,7 +280,22 @@ export default function ModulesPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Mentor Name
+                  <span className="block text-xs text-neutral-medium">
+                    Name of the instructor teaching this module.
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Instructor Name"
+                  value={formData.mentorName}
+                  onChange={(e) => setFormData({ ...formData, mentorName: e.target.value })}
+                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Course Profile Picture (Cover Image)
@@ -403,6 +422,7 @@ export default function ModulesPage() {
                       typeof module.aiQuestionsPerChapter === 'number'
                         ? module.aiQuestionsPerChapter
                         : 10,
+                    mentorName: module.mentorName || '',
                     mentorProfilePicture: null,
                     mentorProfilePictureUrl: module.mentorProfilePicture || '',
                     coverImage: null,

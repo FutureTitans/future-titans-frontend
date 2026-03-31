@@ -146,7 +146,7 @@ export default function StudentModulesPage() {
                             className="w-14 h-14 rounded-full border-2 border-white object-cover shadow-md"
                             onError={(e) => { e.target.style.display = 'none'; }}
                           />
-                          <span className="text-xs text-gray-400 font-medium">{module.createdBy?.name || 'Instructor'}</span>
+                          <span className="text-xs text-gray-400 font-medium">{module.mentorName || module.createdBy?.name || 'Instructor'}</span>
                         </div>
                       )}
                       {!module.coverImage && (
