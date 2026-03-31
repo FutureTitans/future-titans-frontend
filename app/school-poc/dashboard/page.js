@@ -202,13 +202,13 @@ export default function SchoolPocDashboardPage() {
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
                         <img src="/images/avg selection.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
-                            <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-5)00">Avg. Completion</span>
+                            <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. Completion</span>
                         </div>
                         <div className="text-4xl sm:text-5xl font-light text-gray-900 tracking-tight relative z-10">{dashboardData?.stats?.averageCompletion}%</div>
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <img src="/images/avg ssi score.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
+                        <img src="/images/avg ssi score.png" alt="" className="absolute right-2 bottom-1 w-32 h-32 sm:w-36 sm:h-36 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. SSI Score</span>
                         </div>
