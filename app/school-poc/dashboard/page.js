@@ -184,7 +184,7 @@ export default function SchoolPocDashboardPage() {
                 {/* Top Row: 4 Metric Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <img src="/images/total students.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <img src="/images/total students.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Total Students</span>
                         </div>
@@ -192,7 +192,7 @@ export default function SchoolPocDashboardPage() {
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <img src="/images/paid students.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <img src="/images/paid students.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Paid Students</span>
                         </div>
@@ -200,7 +200,7 @@ export default function SchoolPocDashboardPage() {
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <img src="/images/avg selection.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <img src="/images/avg selection.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. Completion</span>
                         </div>
@@ -208,7 +208,7 @@ export default function SchoolPocDashboardPage() {
                     </div>
 
                     <div className="glass-panel p-6 flex flex-col justify-between relative overflow-hidden group hover:-translate-y-1 transition-transform duration-300">
-                        <img src="/images/avg ssi score.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-30 group-hover:opacity-40 transition-opacity pointer-events-none" />
+                        <img src="/images/avg ssi score.png" alt="" className="absolute right-2 bottom-1 w-24 h-24 sm:w-28 sm:h-28 object-contain opacity-70 group-hover:opacity-85 transition-opacity pointer-events-none" />
                         <div className="flex items-start justify-between mb-4 relative z-10">
                             <span className="font-semibold text-xs sm:text-sm tracking-widest uppercase text-gray-500">Avg. SSI Score</span>
                         </div>
@@ -220,7 +220,7 @@ export default function SchoolPocDashboardPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                     {/* Status Container 1 */}
                     <div className="glass-panel p-5 sm:p-6 relative overflow-hidden group">
-                        <img src="/images/all students.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none" />
+                        <img src="/images/all students.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-60 group-hover:opacity-75 transition-opacity pointer-events-none" />
                         <div className="flex items-center gap-4 mb-5 sm:mb-6 relative z-10">
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">All Student Status <span className="opacity-60 text-sm">(Live)</span></h3>
                         </div>
@@ -244,7 +244,7 @@ export default function SchoolPocDashboardPage() {
 
                     {/* Status Container 2 */}
                     <div className="glass-panel p-5 sm:p-6 relative overflow-hidden group">
-                        <img src="/images/live tracking students.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none" />
+                        <img src="/images/live tracking students.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-60 group-hover:opacity-75 transition-opacity pointer-events-none" />
                         <div className="flex items-center gap-4 mb-5 sm:mb-6 relative z-10">
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">Live Tracking <span className="opacity-60 text-sm">(Student)</span></h3>
                         </div>
@@ -268,7 +268,7 @@ export default function SchoolPocDashboardPage() {
 
                     {/* Status Container 3 */}
                     <div className="glass-panel p-5 sm:p-6 md:col-span-2 xl:col-span-1 relative overflow-hidden group">
-                        <img src="/images/idea submission.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-20 group-hover:opacity-30 transition-opacity pointer-events-none" />
+                        <img src="/images/idea submission.png" alt="" className="absolute right-2 top-1/2 -translate-y-1/2 w-28 h-28 sm:w-32 sm:h-32 object-contain opacity-60 group-hover:opacity-75 transition-opacity pointer-events-none" />
                         <div className="flex items-center gap-4 mb-5 sm:mb-6 relative z-10">
                             <h3 className="font-medium text-lg text-gray-900 tracking-wide">Idea Submission</h3>
                         </div>
