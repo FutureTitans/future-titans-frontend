@@ -722,13 +722,13 @@ export default function StudentDashboard() {
                     setActiveFaqTab(tab);
                     setOpenFaqIndex(null);
                   }}
-                  className={`pb-4 text-sm sm:text-base font-semibold transition-colors relative whitespace-nowrap focus:outline-none ${
+                  className={`py-4 text-lg sm:text-xl font-bold transition-colors relative whitespace-nowrap focus:outline-none block ${
                     activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
                   }`}
                 >
                   {tab === 'School' ? 'School / Principal FAQ' : `${tab} FAQ`}
                   {activeFaqTab === tab && (
-                    <div className="absolute bottom-[-1px] left-0 right-0 h-1 bg-[#D4AF37] rounded-t-full"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1 sm:h-1.5 bg-[#D4AF37] rounded-t-full"></div>
                   )}
                 </button>
               ))}
