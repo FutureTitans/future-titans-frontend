@@ -703,7 +703,7 @@ export default function StudentDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm faq-modal-overlay">
           <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl faq-modal-content border border-[#D4AF37]/20 relative overflow-hidden">
             {/* Modal Header */}
-            <div className="p-6 sm:p-8 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-[#F5EDD6]/50 to-white relative z-10">
+            <div className="p-6 sm:p-8 shrink-0 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-[#F5EDD6]/50 to-white relative z-10">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">How Can We Help?</h2>
               <button 
                 onClick={() => setShowFAQ(false)}
@@ -714,7 +714,7 @@ export default function StudentDashboard() {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-gray-100 px-6 sm:px-8 mt-4 overflow-x-auto no-scrollbar gap-8">
+            <div className="flex border-b border-gray-100 px-6 sm:px-8 pt-4 overflow-x-auto no-scrollbar gap-8 shrink-0">
               {['Students', 'Parents', 'School'].map(tab => (
                 <button
                   key={tab}
@@ -722,7 +722,7 @@ export default function StudentDashboard() {
                     setActiveFaqTab(tab);
                     setOpenFaqIndex(null);
                   }}
-                  className={`py-4 text-lg sm:text-xl font-bold transition-colors relative whitespace-nowrap focus:outline-none block ${
+                  className={`pb-4 text-base sm:text-lg font-bold transition-colors relative whitespace-nowrap focus:outline-none flex-shrink-0 ${
                     activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
                   }`}
                 >
