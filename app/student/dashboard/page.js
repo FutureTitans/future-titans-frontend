@@ -754,8 +754,10 @@ export default function StudentDashboard() {
                       </div>
                     </button>
                     <div className={`faq-answer-collapse ${openFaqIndex === idx ? 'open' : ''}`}>
-                      <div className="p-5 pt-0 text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
-                        {item.a}
+                      <div className="min-h-0">
+                        <div className="p-5 pt-0 text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                          {item.a}
+                        </div>
                       </div>
                     </div>
                   </div>
