@@ -7,9 +7,9 @@ import { getAuthToken, removeAuthToken } from '@/lib/auth';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import {
     School, Users, TrendingUp, Award, LogOut, Search,
-    ChevronDown, ChevronUp, GraduationCap, Target, Lightbulb, Activity, MonitorPlay, X, MapPin, Phone, Mail
+    ChevronDown, ChevronUp, GraduationCap, Target, Lightbulb, Activity, MonitorPlay, X, MapPin, Phone, Mail, FileText, CheckCircle2, AlertCircle, ThumbsUp, ThumbsDown
 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, BarChart, Bar } from 'recharts';
 
 export default function SchoolPocDashboardPage() {
     const router = useRouter();
@@ -113,325 +113,334 @@ export default function SchoolPocDashboardPage() {
         );
     }
 
+    const unRegisteredCount = dashboardData?.stats?.totalStudents - dashboardData?.stats?.paidStudents;
+
     return (
-        <div className="min-h-screen pb-12 bg-gray-50/30">
+        <div className="min-h-screen pb-12 bg-gray-50/50 text-gray-800 font-sans">
             {/* Header */}
-            <div className="glass-strong sticky top-0 z-50 border-b border-white/20">
-                <div className="container-lg py-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-primary-red to-accent-gold rounded-xl flex items-center justify-center shadow-md">
-                            <School className="w-5 h-5 text-white" />
+            <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200 shadow-sm">
+                <div className="container-lg py-4 flex items-center justify-between px-6">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-primary-red to-accent-gold rounded-full flex items-center justify-center shadow-lg shadow-red-200">
+                            <School className="w-6 h-6 text-white" />
                         </div>
                         <div>
-                            <h1 className="font-bold text-lg text-gray-800">{dashboardData?.school?.name}</h1>
-                            <p className="text-sm text-neutral-medium">School POC Dashboard</p>
+                            <h1 className="font-bold text-xl text-gray-900">{dashboardData?.school?.name || 'School POC Dashboard'}</h1>
+                            <p className="text-sm text-gray-500 font-medium">School POC Dashboard</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-4">
-                        <span className="text-sm text-neutral-medium hidden sm:block">
-                            Welcome, {pocUser?.name}
-                        </span>
+                    <div className="flex items-center gap-6">
+                        <div className="hidden sm:block text-right">
+                            <span className="text-sm font-semibold text-gray-900 block">Welcome, {pocUser?.name}</span>
+                        </div>
                         <button
                             onClick={handleLogout}
-                            className="flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition"
+                            className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
                         >
                             <LogOut className="w-4 h-4" />
                             Logout
                         </button>
+                        <div className="w-10 h-10 rounded-full bg-gray-200 border-2 border-white shadow-sm overflow-hidden">
+                            <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${pocUser?.name}&backgroundColor=ffffff`} alt="Avatar" />
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className="container-lg pt-8">
-                {/* Stats Cards */}
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-                    <div className="card p-5">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                                <Users className="w-5 h-5 text-blue-600" />
+            <div className="p-6 max-w-[1700px] mx-auto space-y-8">
+                {/* Top Row: 4 Metric Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6 flex items-center justify-between relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                <div className="p-2 bg-gray-50 rounded-xl"><Users className="w-5 h-5 text-gray-700" /></div>
+                                <span className="font-bold text-sm tracking-wide uppercase">Total Students</span>
                             </div>
-                            <span className="text-sm font-medium text-neutral-medium hidden lg:block xl:hidden">Total</span>
-                            <span className="text-sm font-medium text-neutral-medium block lg:hidden xl:block">Total Students</span>
+                            <div className="text-5xl font-extrabold text-gray-900 mt-2">{dashboardData?.stats?.totalStudents}</div>
                         </div>
-                        <p className="text-3xl font-bold text-gray-800">{dashboardData?.stats?.totalStudents}</p>
+                        <Users className="w-24 h-24 text-gray-50 absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform duration-500" />
                     </div>
 
-                    <div className="card p-5">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
-                                <GraduationCap className="w-5 h-5 text-green-600" />
+                    <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6 flex items-center justify-between relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                <div className="p-2 bg-gray-50 rounded-xl"><GraduationCap className="w-5 h-5 text-gray-700" /></div>
+                                <span className="font-bold text-sm tracking-wide uppercase">Paid Students</span>
                             </div>
-                            <span className="text-sm font-medium text-neutral-medium hidden lg:block xl:hidden">Paid</span>
-                            <span className="text-sm font-medium text-neutral-medium block lg:hidden xl:block">Paid Students</span>
+                            <div className="text-5xl font-extrabold text-gray-900 mt-2">{dashboardData?.stats?.paidStudents}</div>
                         </div>
-                        <p className="text-3xl font-bold text-gray-800">{dashboardData?.stats?.paidStudents}</p>
+                        <GraduationCap className="w-24 h-24 text-gray-50 absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform duration-500" />
                     </div>
 
-                    <div className="card p-5">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                                <Activity className="w-5 h-5 text-emerald-600" />
+                    <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6 flex items-center justify-between relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                <div className="p-2 bg-gray-50 rounded-xl"><TrendingUp className="w-5 h-5 text-gray-700" /></div>
+                                <span className="font-bold text-sm tracking-wide uppercase">Avg. Completion</span>
                             </div>
-                            <span className="text-sm font-medium text-neutral-medium hidden lg:block xl:hidden">Online</span>
-                            <span className="text-sm font-medium text-neutral-medium block lg:hidden xl:block">Live Now</span>
+                            <div className="text-5xl font-extrabold text-gray-900 mt-2">{dashboardData?.stats?.averageCompletion}%</div>
                         </div>
-                        <div className="flex items-end gap-2">
-                            <p className="text-3xl font-bold text-gray-800">{dashboardData?.stats?.liveStatus?.online || 0}</p>
-                            <span className="text-xs text-neutral-medium mb-1">/ {dashboardData?.stats?.totalStudents}</span>
-                        </div>
+                        <TrendingUp className="w-24 h-24 text-gray-50 absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform duration-500" />
                     </div>
 
-                    <div className="card p-5">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center">
-                                <Lightbulb className="w-5 h-5 text-indigo-600" />
+                    <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6 flex items-center justify-between relative overflow-hidden group">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-3 text-gray-600 mb-2">
+                                <div className="p-2 bg-gray-50 rounded-xl"><Target className="w-5 h-5 text-gray-700" /></div>
+                                <span className="font-bold text-sm tracking-wide uppercase">Avg. SSI Score</span>
                             </div>
-                            <span className="text-sm font-medium text-neutral-medium hidden lg:block xl:hidden">Ideas</span>
-                            <span className="text-sm font-medium text-neutral-medium block lg:hidden xl:block">Ideas Submitted</span>
+                            <div className="text-5xl font-extrabold text-gray-900 mt-2">{dashboardData?.stats?.averageSSI}</div>
                         </div>
-                        <p className="text-3xl font-bold text-gray-800">{dashboardData?.stats?.ideaSubmissions?.submitted || 0}</p>
-                    </div>
-
-                    <div className="card p-5">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
-                                <TrendingUp className="w-5 h-5 text-purple-600" />
-                            </div>
-                            <span className="text-sm font-medium text-neutral-medium hidden lg:block xl:hidden">Avg Comp</span>
-                            <span className="text-sm font-medium text-neutral-medium block lg:hidden xl:block">Avg. Completion</span>
-                        </div>
-                        <p className="text-3xl font-bold text-gray-800">{dashboardData?.stats?.averageCompletion}%</p>
-                    </div>
-
-                    <div className="card p-5">
-                        <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
-                                <Target className="w-5 h-5 text-amber-600" />
-                            </div>
-                            <span className="text-sm font-medium text-neutral-medium hidden lg:block xl:hidden">Avg SSI</span>
-                            <span className="text-sm font-medium text-neutral-medium block lg:hidden xl:block">Avg. SSI Score</span>
-                        </div>
-                        <p className="text-3xl font-bold text-gray-800">{dashboardData?.stats?.averageSSI}</p>
+                        <Target className="w-24 h-24 text-gray-50 absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform duration-500" />
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    {/* Watch Time Graph */}
-                    <div className="card p-6 flex flex-col">
-                        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                            <MonitorPlay className="w-5 h-5 text-primary-red" />
-                            Students Watch Time
-                        </h2>
-                        <div className="flex-1 min-h-[250px] w-full mt-4">
-                            {dashboardData?.stats?.watchTimeData?.length > 0 ? (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <BarChart data={dashboardData.stats.watchTimeData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                                        <XAxis dataKey="moduleTitle" tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                                        <YAxis tick={{ fontSize: 12 }} axisLine={false} tickLine={false} />
-                                        <Tooltip 
-                                            cursor={{ fill: '#F3F4F6' }}
-                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                                            formatter={(value) => [`${value} mins`, 'Total Multi-Student Watch Time']}
-                                        />
-                                        <Bar dataKey="totalTimeSpent" fill="url(#colorGd)" radius={[4, 4, 0, 0]} maxBarSize={50} />
-                                        <defs>
-                                            <linearGradient id="colorGd" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#D4AF37" stopOpacity={0.9} />
-                                                <stop offset="100%" stopColor="#A8201A" stopOpacity={0.9} />
-                                            </linearGradient>
-                                        </defs>
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            ) : (
-                                <div className="h-full flex items-center justify-center text-neutral-medium">No watch time data available</div>
-                            )}
+                {/* Middle Row: 3 Detail Status Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-100 rounded-full"><FileText className="w-5 h-5 text-gray-600" /></div>
+                                <h3 className="font-bold text-lg text-gray-800">All Student Status (Live)</h3>
+                            </div>
+                            <FileText className="w-8 h-8 text-gray-200" />
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between bg-gray-50/80 hover:bg-gray-100 transition px-5 py-3.5 rounded-2xl">
+                                <div className="flex items-center gap-3"><span className="w-3 h-3 rounded-full bg-emerald-500"></span><span className="font-semibold text-gray-700">Registered</span></div>
+                                <span className="font-extrabold text-gray-900 text-lg">{dashboardData?.stats?.paidStudents}</span>
+                            </div>
+                            <div className="flex items-center justify-between bg-gray-50/80 hover:bg-gray-100 transition px-5 py-3.5 rounded-2xl">
+                                <div className="flex items-center gap-3"><span className="w-3 h-3 rounded-full bg-gray-400"></span><span className="font-semibold text-gray-700">Unregistered</span></div>
+                                <span className="font-extrabold text-gray-900 text-lg">{unRegisteredCount}</span>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Leaderboard */}
-                    <div className="card p-6 flex flex-col">
-                        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
-                            <Award className="w-5 h-5 text-accent-gold" />
-                            Student Performance Leaderboard
-                        </h2>
-                        <div className="flex-1 overflow-y-auto pr-2 space-y-3 max-h-[280px]">
-                            {dashboardData?.stats?.leaderboard?.length > 0 ? dashboardData.stats.leaderboard.map((student, idx) => (
-                                <div key={idx} className="flex items-center justify-between p-3 rounded-xl bg-white border border-gray-100 shadow-sm hover:border-accent-gold/40 transition group">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shadow-sm ${idx === 0 ? 'bg-gradient-to-br from-yellow-300 to-yellow-500 text-white' : idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' : idx === 2 ? 'bg-gradient-to-br from-orange-300 to-orange-500 text-white' : 'bg-gray-100 text-gray-600'}`}>
-                                            #{student.rank}
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-gray-800 text-sm">{student.student}</p>
-                                            <p className="text-xs text-neutral-medium">Class: {student.class}</p>
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="font-bold text-lg text-primary-red">{student.ssiScore}</div>
-                                        <div className="text-[10px] text-neutral-medium uppercase tracking-wider font-semibold">SSI Score</div>
-                                    </div>
+                    <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-100 rounded-full"><Activity className="w-5 h-5 text-gray-600" /></div>
+                                <h3 className="font-bold text-lg text-gray-800">Live Tracking (Student)</h3>
+                            </div>
+                            <Activity className="w-8 h-8 text-gray-200" />
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between bg-gray-50/80 hover:bg-gray-100 transition px-5 py-3.5 rounded-2xl">
+                                <div className="flex items-center gap-3"><span className="w-3 h-3 rounded-full bg-blue-500"></span><span className="font-semibold text-gray-700">Online</span></div>
+                                <span className="font-extrabold text-gray-900 text-lg">{dashboardData?.stats?.liveStatus?.online || 0}</span>
+                            </div>
+                            <div className="flex items-center justify-between bg-gray-50/80 hover:bg-gray-100 transition px-5 py-3.5 rounded-2xl">
+                                <div className="flex items-center gap-3"><span className="w-3 h-3 rounded-full bg-orange-400"></span><span className="font-semibold text-gray-700">Offline</span></div>
+                                <span className="font-extrabold text-gray-900 text-lg">{dashboardData?.stats?.liveStatus?.offline || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 bg-gray-100 rounded-full"><Lightbulb className="w-5 h-5 text-gray-600" /></div>
+                                <h3 className="font-bold text-lg text-gray-800">Idea Submission</h3>
+                            </div>
+                            <Lightbulb className="w-8 h-8 text-gray-200" />
+                        </div>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between bg-gray-50/80 hover:bg-gray-100 transition px-5 py-3.5 rounded-2xl">
+                                <div className="flex items-center gap-3"><span className="w-3 h-3 rounded-full bg-indigo-500"></span><span className="font-semibold text-gray-700">Submitted</span></div>
+                                <span className="font-extrabold text-gray-900 text-lg">{dashboardData?.stats?.ideaSubmissions?.submitted || 0}</span>
+                            </div>
+                            <div className="flex items-center justify-between bg-gray-50/80 hover:bg-gray-100 transition px-5 py-3.5 rounded-2xl">
+                                <div className="flex items-center gap-3"><span className="w-3 h-3 rounded-full bg-red-400"></span><span className="font-semibold text-gray-700">Pending</span></div>
+                                <span className="font-extrabold text-gray-900 text-lg">{dashboardData?.stats?.ideaSubmissions?.pending || 0}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Section: 2 Columns */}
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                    {/* LEFT COL: Registered Students Details (8 Col) */}
+                    <div className="xl:col-span-8 flex flex-col">
+                        <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6 flex-1 flex flex-col">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                                <h2 className="text-xl font-bold text-gray-900">Registered Students (Detailed)</h2>
+                                <div className="relative">
+                                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search students..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className="pl-10 pr-5 py-2.5 bg-gray-50 border border-gray-200 rounded-full text-sm w-full sm:w-72 focus:ring-2 focus:ring-primary-red/20 focus:bg-white focus:border-primary-red transition"
+                                    />
                                 </div>
-                            )) : (
-                                <div className="h-full flex items-center justify-center text-neutral-medium">No students ranked yet</div>
+                            </div>
+
+                            {filteredStudents.length === 0 ? (
+                                <div className="flex-1 flex flex-col items-center justify-center py-12 text-center">
+                                    <Users className="w-12 h-12 text-gray-300 mb-4" />
+                                    <p className="text-gray-500 font-medium">No students found.</p>
+                                </div>
+                            ) : (
+                                <div className="overflow-x-auto -mx-2 flex-1">
+                                    <table className="w-full min-w-[900px] border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-gray-100 text-left">
+                                                <th className="px-4 py-4 text-xs font-bold text-gray-500 tracking-wider uppercase">STUDENT</th>
+                                                <th className="px-4 py-4 text-xs font-bold text-gray-500 tracking-wider uppercase cursor-pointer hover:text-gray-900 group" onClick={() => handleSort('registeredAt')}>
+                                                    <div className="flex items-center gap-1">
+                                                        REGISTERED
+                                                        {sortField === 'registeredAt' ? (sortOrder === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />) : <ChevronDown className="w-3 h-3 opacity-0 group-hover:opacity-100" />}
+                                                    </div>
+                                                </th>
+                                                <th className="px-4 py-4 text-xs font-bold text-gray-500 tracking-wider uppercase">PROGRESS</th>
+                                                <th className="px-4 py-4 text-xs font-bold text-gray-500 tracking-wider uppercase cursor-pointer hover:text-gray-900 group" onClick={() => handleSort('ssiScore')}>
+                                                    <div className="flex items-center justify-center gap-1">
+                                                        SSI SCORE
+                                                        {sortField === 'ssiScore' ? (sortOrder === 'asc' ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />) : <ChevronDown className="w-3 h-3 opacity-0 group-hover:opacity-100" />}
+                                                    </div>
+                                                </th>
+                                                <th className="px-4 py-4 text-xs font-bold text-gray-500 tracking-wider uppercase text-center">STATUS</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-gray-50">
+                                            {filteredStudents.map((student) => (
+                                                <tr key={student._id} onClick={() => setSelectedStudent(student)} className="hover:bg-gray-50 cursor-pointer transition-colors group">
+                                                    <td className="px-4 py-4">
+                                                        <div>
+                                                            <p className="font-bold text-gray-900 whitespace-nowrap">{student.name}</p>
+                                                            <p className="text-xs text-gray-500 mt-0.5">{student.email}</p>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        <span className="text-sm font-medium text-gray-700 whitespace-nowrap">
+                                                            {new Date(student.registeredAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        <div className="flex items-center gap-3 w-40">
+                                                            <div className="flex-1 h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                                                                <div className="h-full bg-accent-gold rounded-full" style={{ width: `${student.overallCompletion}%` }} />
+                                                            </div>
+                                                            <span className="text-sm font-bold text-gray-900 w-10">{student.overallCompletion}%</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <Award className={`w-5 h-5 ${student.ssiScore > 0 ? 'text-gray-400' : 'text-gray-300'}`} />
+                                                            <span className="font-bold text-gray-900">{student.ssiScore || 0}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-4 py-4">
+                                                        <div className="flex items-center justify-center gap-2">
+                                                            <span className={`px-3 py-1 rounded-md text-xs font-bold uppercase tracking-wider ${student.isPaid ? 'bg-[#F2EFE9] text-[#8C7A58]' : 'bg-gray-100 text-gray-500'}`}>
+                                                                {student.isPaid ? 'Paid' : 'Unpaid'}
+                                                            </span>
+                                                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${student.ideaSubmissionStatus === 'submitted' ? 'bg-[#5B636A] text-white' : 'bg-[#D1C9C0] text-gray-600'}`}>
+                                                                <ThumbsUp className="w-4 h-4" />
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             )}
                         </div>
                     </div>
-                </div>
 
-                {/* Students Table */}
-                <div className="card">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                        <h2 className="text-xl font-bold text-gray-800">Student Directory</h2>
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-medium" />
-                            <input
-                                type="text"
-                                placeholder="Search by name or email..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 border border-neutral-border rounded-lg text-sm w-full sm:w-64 focus:ring-2 focus:ring-primary-red/20 focus:border-primary-red bg-gray-50/50"
-                            />
+                    {/* RIGHT COL: Leaderboard & Watch Time (4 Col) */}
+                    <div className="xl:col-span-4 flex flex-col space-y-8">
+                        {/* Leaderboard */}
+                        <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6">
+                            <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                                <Award className="w-5 h-5 text-accent-gold" />
+                                Student Performance Leaderboard
+                            </h2>
+                            <div className="bg-gray-50/50 rounded-2xl p-4 overflow-hidden">
+                                <div className="grid grid-cols-12 gap-2 text-xs font-bold text-gray-500 uppercase tracking-wider pb-3 border-b border-gray-100 px-2">
+                                    <div className="col-span-2">Rank</div>
+                                    <div className="col-span-5">Student</div>
+                                    <div className="col-span-2 text-center">Class</div>
+                                    <div className="col-span-3 text-right">SSI</div>
+                                </div>
+                                <div className="mt-3 space-y-1">
+                                    {dashboardData?.stats?.leaderboard?.length > 0 ? dashboardData.stats.leaderboard.slice(0, 6).map((student, idx) => (
+                                        <div key={idx} className="grid grid-cols-12 gap-2 items-center py-2.5 px-2 hover:bg-white rounded-xl transition cursor-default">
+                                            <div className="col-span-2 flex items-center">
+                                                <div className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shadow-sm ${idx === 0 ? 'bg-[#F3E2A9] text-[#A67C00]' : idx === 1 ? 'bg-[#E0E0E0] text-[#707070]' : idx === 2 ? 'bg-[#E3C5B5] text-[#915B40]' : 'bg-[#F5F2ED] text-gray-600'}`}>
+                                                    {student.rank}
+                                                </div>
+                                            </div>
+                                            <div className="col-span-5 font-semibold text-sm text-gray-800 truncate">
+                                                {student.student}
+                                            </div>
+                                            <div className="col-span-2 text-center text-sm font-medium text-gray-600">
+                                                {student.class}
+                                            </div>
+                                            <div className="col-span-3 text-right font-bold text-gray-900">
+                                                {student.ssiScore}
+                                            </div>
+                                        </div>
+                                    )) : (
+                                        <div className="text-center py-6 text-gray-500 text-sm">No students ranked yet</div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Student Watch Time */}
+                        <div className="bg-white rounded-[24px] shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 p-6 flex-1 flex flex-col">
+                            <h2 className="text-xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+                                <MonitorPlay className="w-5 h-5 text-gray-600" />
+                                Student Watch Time
+                            </h2>
+                            <div className="flex justify-between items-end mb-6">
+                                <p className="text-sm text-gray-500">Total Minutes Watched</p>
+                                <div className="text-right">
+                                    <p className="font-bold text-gray-900">Total: {dashboardData?.stats?.watchTimeData?.reduce((acc, curr) => acc + curr.totalTimeSpent, 0) || 0} mins</p>
+                                </div>
+                            </div>
+
+                            <div className="flex-1 min-h-[220px] w-full mt-2">
+                                {dashboardData?.stats?.watchTimeData?.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <AreaChart data={dashboardData.stats.watchTimeData}>
+                                            <defs>
+                                                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#A8201A" stopOpacity={0.4} />
+                                                    <stop offset="95%" stopColor="#A8201A" stopOpacity={0} />
+                                                </linearGradient>
+                                                <linearGradient id="colorValueBg" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.4} />
+                                                    <stop offset="95%" stopColor="#D4AF37" stopOpacity={0} />
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
+                                            <XAxis dataKey="moduleTitle" tick={{ fontSize: 10, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                                            <YAxis tick={{ fontSize: 10, fill: '#6b7280' }} axisLine={false} tickLine={false} />
+                                            <Tooltip 
+                                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                                formatter={(value) => [`${value} mins`, 'Duration']}
+                                            />
+                                            {/* Using a dual tone chart mimicking the reference */}
+                                            <Area type="monotone" dataKey="totalTimeSpent" stroke="#A8201A" strokeWidth={3} fill="url(#colorValue)" />
+                                        </AreaChart>
+                                    </ResponsiveContainer>
+                                ) : (
+                                    <div className="h-full flex items-center justify-center text-gray-400 text-sm">No watch time data available</div>
+                                )}
+                            </div>
                         </div>
                     </div>
-
-                    {filteredStudents.length === 0 ? (
-                        <div className="text-center py-12">
-                            <Users className="w-12 h-12 text-neutral-medium/50 mx-auto mb-3" />
-                            <p className="text-neutral-medium">No students found matching your criteria.</p>
-                        </div>
-                    ) : (
-                        <div className="overflow-x-auto -mx-6">
-                            <table className="w-full min-w-[1000px]">
-                                <thead>
-                                    <tr className="border-b border-neutral-border bg-gray-50/50">
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-neutral-medium uppercase tracking-wide">
-                                            Student Details
-                                        </th>
-                                        <th
-                                            className="px-6 py-4 text-left text-xs font-semibold text-neutral-medium uppercase tracking-wide cursor-pointer hover:text-primary-red group"
-                                            onClick={() => handleSort('registeredAt')}
-                                        >
-                                            <div className="flex items-center gap-1">
-                                                Registration
-                                                {sortField === 'registeredAt' ? (
-                                                    sortOrder === 'asc' ? <ChevronUp className="w-3 h-3 text-primary-red" /> : <ChevronDown className="w-3 h-3 text-primary-red" />
-                                                ) : <ChevronDown className="w-3 h-3 opacity-0 group-hover:opacity-50" />}
-                                            </div>
-                                        </th>
-                                        <th
-                                            className="px-6 py-4 text-left text-xs font-semibold text-neutral-medium uppercase tracking-wide cursor-pointer hover:text-primary-red group"
-                                            onClick={() => handleSort('overallCompletion')}
-                                        >
-                                            <div className="flex items-center gap-1">
-                                                Course Progress
-                                                {sortField === 'overallCompletion' ? (
-                                                    sortOrder === 'asc' ? <ChevronUp className="w-3 h-3 text-primary-red" /> : <ChevronDown className="w-3 h-3 text-primary-red" />
-                                                ) : <ChevronDown className="w-3 h-3 opacity-0 group-hover:opacity-50" />}
-                                            </div>
-                                        </th>
-                                        <th
-                                            className="px-6 py-4 text-left text-xs font-semibold text-neutral-medium uppercase tracking-wide cursor-pointer hover:text-primary-red group"
-                                            onClick={() => handleSort('ssiScore')}
-                                        >
-                                            <div className="flex items-center gap-1">
-                                                SSI
-                                                {sortField === 'ssiScore' ? (
-                                                    sortOrder === 'asc' ? <ChevronUp className="w-3 h-3 text-primary-red" /> : <ChevronDown className="w-3 h-3 text-primary-red" />
-                                                ) : <ChevronDown className="w-3 h-3 opacity-0 group-hover:opacity-50" />}
-                                            </div>
-                                        </th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-neutral-medium uppercase tracking-wide">
-                                            Idea
-                                        </th>
-                                        <th className="px-6 py-4 text-left text-xs font-semibold text-neutral-medium uppercase tracking-wide">
-                                            Status
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-neutral-border">
-                                    {filteredStudents.map((student) => (
-                                        <tr key={student._id} onClick={() => setSelectedStudent(student)} className="hover:bg-gray-50/50 transition cursor-pointer">
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="relative">
-                                                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-gray-600 font-bold uppercase text-sm border border-white shadow-sm">
-                                                            {student.name.charAt(0)}
-                                                        </div>
-                                                        <div className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white ${student.isOnline ? 'bg-green-500' : 'bg-gray-300'}`} title={student.isOnline ? 'Online' : 'Offline'}></div>
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-bold text-gray-900">{student.name}</p>
-                                                        <div className="flex items-center gap-2 mt-0.5">
-                                                            <p className="text-xs text-neutral-medium truncate max-w-[150px]">{student.email}</p>
-                                                            <span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium">Cls: {student.class}</span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className="text-sm font-medium text-gray-700">
-                                                    {new Date(student.registeredAt).toLocaleDateString('en-IN', {
-                                                        day: 'numeric',
-                                                        month: 'short',
-                                                        year: 'numeric'
-                                                    })}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="w-32 h-2.5 bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                                                        <div
-                                                            className="h-full bg-gradient-to-r from-primary-red to-accent-gold rounded-full transition-all duration-1000 ease-out"
-                                                            style={{ width: `${student.overallCompletion}%` }}
-                                                        />
-                                                    </div>
-                                                    <span className="text-xs font-bold text-gray-700 w-8">{student.overallCompletion}%</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    <Award className={`w-4 h-4 ${student.ssiScore >= 80 ? 'text-yellow-500' :
-                                                            student.ssiScore >= 60 ? 'text-purple-500' :
-                                                                student.ssiScore >= 40 ? 'text-blue-500' :
-                                                                    'text-gray-400'
-                                                        }`} />
-                                                    <span className="font-bold text-gray-900">{student.ssiScore || 0}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${student.ideaSubmissionStatus === 'submitted'
-                                                        ? 'bg-indigo-50 text-indigo-700 border border-indigo-100'
-                                                        : 'bg-gray-50 text-gray-500 border border-gray-200'
-                                                    }`}>
-                                                    {student.ideaSubmissionStatus}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4">
-                                                {student.isPaid ? (
-                                                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
-                                                        Live (Registered)
-                                                     </span>
-                                                ) : (
-                                                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-50 text-gray-600 border border-gray-200">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-gray-400 mr-1.5"></span>
-                                                        Unregistered
-                                                    </span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
                 </div>
             </div>
 
             {/* Student Profile Modal */}
             {selectedStudent && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in cursor-default" onClick={() => setSelectedStudent(null)}>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm animate-in fade-in cursor-default" onClick={() => setSelectedStudent(null)}>
                     <div className="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50">
                             <div className="flex items-center gap-3">
