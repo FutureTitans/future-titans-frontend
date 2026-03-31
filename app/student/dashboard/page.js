@@ -26,10 +26,59 @@ import {
   Star,
   Award,
   Shield,
-  CheckCircle
+  CheckCircle,
+  X,
+  ChevronUp,
+  HelpCircle,
+  Search
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, YAxis } from 'recharts';
+
+const faqData = {
+  Students: [
+    { q: "Who can participate in Future Titans?", a: "Students from Classes 8 to 12, from any school board across India, can participate." },
+    { q: "Do I need to have an idea before joining?", a: "No. You will first go through structured learning modules (IDEA DNA™ and S.U.R.G.E.™), where you will identify a problem and develop your idea step by step." },
+    { q: "Can I participate individually or do I need a team?", a: "You can participate individually or with a co-founder. Both options are allowed, and you can choose what works best for you." },
+    { q: "Do I need any special skills to participate?", a: "No. You do not need any prior knowledge of business, startups, or technology. Everything is taught from the basics." },
+    { q: "Will there be mentors or someone to guide us?", a: "Yes. Guidance is provided through structured modules, ZUNOVA AI interactions during chapters, and expert inputs in advanced stages." },
+    { q: "Will I get a chance to try different types of ideas?", a: "Yes. During the learning journey, you will explore multiple problems before finalizing one idea for submission." },
+    { q: "How can this help me in the future?", a: "You will learn how to identify problems, build solutions, test ideas and present them skills useful for any career path." },
+    { q: "Will this actually help me build my own startup?", a: "It helps you understand how startups are built from idea to validation and presentation, giving you a strong foundation to pursue it in the future. The Youngpreneurs team is also here to guide you through the building of your entire startup journey." },
+    { q: "What are the main steps I will go through after registering?", a: "After registration, students enter a structured, progression-based learning journey designed to take them from curiosity to creation. They go through curated modules - Founder’s Mindset, Solution Seeker Index, and Entrepreneur Launch Blueprint, divided into chapters with ZUNOVA AI interactions that contribute to their Solution Seeker Index (SSI) and track their progress.\nAfter completing the modules, students develop and submit their ideas, which go through a multi-stage screening and evaluation process.\nEvery student who registers and logs in automatically becomes a part of the Future Titans Innovation Club, where community features including student interaction, knowledge bank, and projects, will be introduced soon.\nThe Top 50 students are then selected for a Bootcamp at IIT Kharagpur, where they receive advanced exposure, mentorship and opportunities to take their ideas forward." },
+    { q: "How many rounds are there in the competition?", a: "The journey includes multiple stages: idea submission, AI-based screening, video pitch with AI interaction, physical assessment and final selection." },
+    { q: "How does my idea grow from the first stage to the final stage?", a: "Your idea starts with identifying a problem, then becomes structured using frameworks, validated through early testing, and refined at each stage." },
+    { q: "When does it go from just learning to actually building something real?", a: "This shift happens during the idea submission phase, where you apply what you’ve learned to build and present your own idea." }
+  ],
+  Parents: [
+    { q: "What kind of skills will my child develop through this?", a: "Students develop problem-solving, structured thinking, creativity, communication and the ability to apply ideas in real-world contexts." },
+    { q: "How is this different from regular workshops or competitions?", a: "Future Titans is not a one-time workshop or competition, it is a multi-phase innovation ecosystem. Students first learn through structured modules, then apply their learning across progressive stages and evaluations. They also get opportunities to showcase their work through Pan-India channels in association with The Times of India. Selected students are inducted into the Future Titans Innovation Club, where they continue their journey. At its core, the program focuses on building a long-term innovation mindset." },
+    { q: "How does this prepare students for future opportunities?", a: "It builds a strong foundation in thinking, execution and communication skills essential for higher education, entrepreneurship, and careers." },
+    { q: "How is this program designed for students of this age group?", a: "The program is simplified, structured, and interactive, ensuring students from Classes 8–12 can easily understand and apply concepts. The learning journey is designed across beginner, intermediate, and advanced levels, so each student can progress at a comfortable pace while building a strong understanding of the concepts." },
+    { q: "How will this complement my child’s academic journey?", a: "It strengthens application-based and experience-based learning, helping students connect concepts with real-world problem-solving. The program is aligned with NEP and focuses on building critical thinking in the age of AI, preparing students for an AI-driven world. Students also receive a certificate upon completion." },
+    { q: "Will my child receive feedback that helps them improve?", a: "Students receive evaluation-based insights during key stages, helping them refine and strengthen their ideas." },
+    { q: "How do you ensure students stay engaged throughout the program?", a: "Through structured modules, interactive ZUNOVA AI sessions and progressive stages that require active participation." },
+    { q: "What kind of exposure will my child receive through this?", a: "Students experience real-world problem-solving, structured evaluation processes, and advanced-stage interactions at national-level platforms. With IIT Kharagpur as our knowledge partner and The Times of India as our media partner, students also gain wider exposure and visibility through these platforms." },
+    { q: "What is the sequence of stages my child will go through?", a: "Modules → idea development → idea submission → AI screening → video pitch → AI interaction → advanced selection stages." },
+    { q: "How does each phase contribute to my child’s learning?", a: "Each phase builds on the previous one - learning concepts, applying them, refining ideas and presenting them." },
+    { q: "How does my child’s learning evolve across different phases of the program?", a: "Students move from understanding concepts to applying them, improving through evaluation and strengthening execution." },
+    { q: "How does the journey balance learning, application, and evaluation?", a: "The program begins with structured learning, followed by idea application and then evaluation through multiple stages. The entire journey is built around our core framework ‘Skill Challenge Community’ which focuses on helping students develop skills, take on real challenges, and grow within a connected ecosystem." }
+  ],
+  School: [
+    { q: "What makes this experience meaningful for school students?", a: "It introduces structured problem-solving and application-based learning, helping students move beyond theoretical knowledge." },
+    { q: "What does the school gain by being a part of Future Titans?", a: "Schools gain enhanced student outcomes, national-level exposure, and association with a structured innovation program. The initiative provides an NEP-aligned innovation infrastructure that is readily available for schools.\nFuture Titans is built as a complete ecosystem across three key pillars—Skill, Showcase, and Community. Students first build skills through structured learning, then showcase their work, and become part of the Future Titans Innovation Club, where every registered student is inducted.\nThe model is fully digital and plug-and-play, requiring zero development cost for schools. Schools can also opt for a phygital (physical + digital) model, which is seamlessly integrated.\nOverall, schools get access to a complete, ready-to-deploy innovation ecosystem without any operational burden." },
+    { q: "How does this initiative support innovation within schools?", a: "It provides frameworks like IDEA DNA™ and S.U.R.G.E.™ that guide students in identifying problems and building solutions." },
+    { q: "How is the program structured from start to finish?", a: "The program follows a structured journey: modules, idea development, submission, AI screening, pitch stages and final selection." },
+    { q: "What is the overall timeline of the program?", a: "The program runs in defined phases, ensuring structured progression without disrupting academic schedules." },
+    { q: "How is communication managed between your team and the school?", a: "Through designated coordinators, structured updates and clear communication channels." },
+    { q: "What kind of support does your team provide to the school?", a: "We provide onboarding, student guidance, coordination support and regular updates throughout the program." },
+    { q: "How do you manage coordination and execution with schools?", a: "Through a defined system with clear processes, ensuring smooth execution with minimal operational load on the school." },
+    { q: "What is the structure of the multi-stage selection process?", a: "The process includes idea submission, AI screening, video pitch with AI interaction, physical assessment and final selection." },
+    { q: "What distinguishes each stage in terms of expectations and outcomes?", a: "Each stage increases in depth, from idea clarity to validation, presentation and real-world evaluation." },
+    { q: "How does the multi-phase approach support student growth?", a: "It allows students to progressively build, test, and refine their ideas at each stage." },
+    { q: "How does each phase contribute to identifying top-performing students?", a: "Each phase evaluates thinking, execution, validation, and communication, ensuring a comprehensive selection process. This is guided by our core framework ‘Skill Challenge Community’ where students build skills, apply them through real-world challenges and grow within a larger innovation community. This helps schools develop well-rounded, future-ready students." }
+  ]
+};
 
 export default function StudentDashboard() {
   const router = useRouter();
@@ -40,6 +89,21 @@ export default function StudentDashboard() {
   const [ssiScore, setSSIScore] = useState(null);
   const [achievementsData, setAchievementsData] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // New states for buttons & modals
+  const [showFAQ, setShowFAQ] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
+  const [activeFaqTab, setActiveFaqTab] = useState('Students');
+  const [openFaqIndex, setOpenFaqIndex] = useState(null);
+
+  // First-login auto-show video
+  useEffect(() => {
+    const hasSeenVideo = localStorage.getItem('ft_video_seen');
+    if (!hasSeenVideo) {
+      setShowVideo(true);
+      localStorage.setItem('ft_video_seen', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     if (!isStudent()) {
@@ -238,6 +302,27 @@ export default function StudentDashboard() {
                 Progress
               </div>
             </div>
+          </div>
+
+          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 flex-shrink-0">
+            <button 
+              onClick={() => setShowFAQ(true)}
+              className="flex items-center gap-3 px-1 py-1 pl-5 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all hover:scale-105 group"
+            >
+              <span className="text-xl">👋</span> <span className="text-sm">How Can We Help ?</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8952E] flex items-center justify-center p-2 group-hover:bg-gradient-to-br transition-all">
+                <Search className="w-5 h-5 text-white" />
+              </div>
+            </button>
+            <button 
+              onClick={() => setShowVideo(true)}
+              className="flex items-center gap-3 px-1 py-1 pl-5 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all hover:scale-105 group"
+            >
+              <span className="text-xl">🚀</span> <span className="text-sm">Click Me First</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8952E] flex items-center justify-center p-2 group-hover:bg-gradient-to-br transition-all">
+                <Video className="w-5 h-5 text-white" />
+              </div>
+            </button>
           </div>
         </div>
 
@@ -613,8 +698,117 @@ export default function StudentDashboard() {
 
       </div>
 
+      {/* FAQ Modal */}
+      {showFAQ && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm faq-modal-overlay">
+          <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl faq-modal-content border border-[#D4AF37]/20 relative overflow-hidden">
+            {/* Modal Header */}
+            <div className="p-6 sm:p-8 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-[#F5EDD6]/50 to-white relative z-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">How Can We Help?</h2>
+              <button 
+                onClick={() => setShowFAQ(false)}
+                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex border-b border-gray-100 px-6 sm:px-8 mt-4 overflow-x-auto no-scrollbar gap-8">
+              {['Students', 'Parents', 'School'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => {
+                    setActiveFaqTab(tab);
+                    setOpenFaqIndex(null);
+                  }}
+                  className={`pb-4 text-sm sm:text-base font-semibold transition-colors relative whitespace-nowrap ${
+                    activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
+                  }`}
+                >
+                  {tab === 'School' ? 'School / Principal FAQ' : `${tab} FAQ`}
+                  {activeFaqTab === tab && (
+                    <div className="absolute bottom-[-1px] left-0 right-0 h-1 bg-[#D4AF37] rounded-t-full"></div>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {/* FAQ List */}
+            <div className="p-6 sm:p-8 overflow-y-auto flex-1 custom-scrollbar relative z-10">
+              <div className="space-y-4">
+                {faqData[activeFaqTab].map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className={`border rounded-2xl overflow-hidden transition-all duration-300 ${openFaqIndex === idx ? 'border-[#D4AF37] bg-gradient-to-br from-[#F5EDD6]/20 to-white shadow-md' : 'border-gray-100 bg-white hover:border-[#D4AF37]/50'}`}
+                  >
+                    <button
+                      className="w-full text-left p-5 flex justify-between items-center gap-4 focus:outline-none"
+                      onClick={() => setOpenFaqIndex(openFaqIndex === idx ? null : idx)}
+                    >
+                      <h3 className={`font-medium text-sm sm:text-base ${openFaqIndex === idx ? 'text-[#B8952E]' : 'text-gray-800'}`}>
+                        {idx + 1}. {item.q}
+                      </h3>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-transform duration-300 ${openFaqIndex === idx ? 'bg-[#D4AF37]/20 rotate-180' : 'bg-gray-50'}`}>
+                        <ChevronDown className={`w-4 h-4 ${openFaqIndex === idx ? 'text-[#B8952E]' : 'text-gray-400'}`} />
+                      </div>
+                    </button>
+                    <div className={`faq-answer-collapse ${openFaqIndex === idx ? 'open' : ''}`}>
+                      <div className="p-5 pt-0 text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">
+                        {item.a}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Background blobs for modal */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#F5D76E]/5 rounded-full blur-3xl pointer-events-none"></div>
+          </div>
+        </div>
+      )}
+
+      {/* Video Popup Modal */}
+      {showVideo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/80 backdrop-blur-md video-modal-overlay">
+          <div className="w-full max-w-5xl aspect-video bg-black rounded-3xl relative shadow-2xl overflow-hidden video-modal-content border border-white/10">
+            <button 
+              onClick={() => setShowVideo(false)}
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white backdrop-blur-md transition-colors border border-white/20"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <video 
+              controls 
+              autoPlay 
+              className="w-full h-full object-contain"
+              src="/userjourney.mp4"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        </div>
+      )}
+
       {/* Styles for custom scrollbar in dark card */}
       <style jsx global>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(0, 0, 0, 0.02);
+          border-radius: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(212, 175, 55, 0.3);
+          border-radius: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(212, 175, 55, 0.6);
+        }
+        
         .custom-scrollbar-dark::-webkit-scrollbar {
           width: 4px;
         }
