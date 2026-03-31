@@ -33,7 +33,13 @@ export const useAuthStore = create((set) => ({
 
   setError: (error) => set({ error }),
 
-  logout: () => {
+  logout: async () => {
+    try {
+      const { auth } = await import('../lib/api');
+      await auth.logout();
+    } catch (e) {
+      console.warn('Backend logout failed:', e);
+    }
     removeAuthToken();
     set({ user: null, error: null });
   },

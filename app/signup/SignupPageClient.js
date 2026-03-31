@@ -47,6 +47,7 @@ export default function SignupPageClient() {
     email: '',
     phone: '',
     school: '',
+    class: '',
     city: '',
     country: '',
     password: '',
@@ -72,6 +73,7 @@ export default function SignupPageClient() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email';
     if (!formData.phone) newErrors.phone = 'Phone is required';
     if (!formData.school) newErrors.school = 'School is required';
+    if (!formData.class) newErrors.class = 'Class is required';
     if (!formData.city) newErrors.city = 'City is required';
     if (!formData.country) newErrors.country = 'Country is required';
     if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
@@ -154,6 +156,7 @@ export default function SignupPageClient() {
               <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
               <InputField label="Phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
               <InputField label="School/Institution" name="school" placeholder="Your School" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
+              <InputField label="Class/Grade" name="class" placeholder="10th or 1st Year" value={formData.class} onChange={handleChange} error={errors.class} disabled={isLoading} />
               <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
               <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />
               <InputField label="Password" name="password" placeholder="••••••••" isPassword value={formData.password} onChange={handleChange} error={errors.password} disabled={isLoading} showPw={showPassword} onTogglePw={() => setShowPassword(!showPassword)} />
