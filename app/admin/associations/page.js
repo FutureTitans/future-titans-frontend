@@ -20,7 +20,7 @@ export default function AdminAssociations() {
 
   const fetchAssociations = async () => {
     try {
-      const token = getToken();
+      const token = getAuthToken();
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/associations`, {
         headers: {
           Authorization: `Bearer ${token}`,
