@@ -368,7 +368,7 @@ export default function AssociationDashboard() {
           </div>
 
           {/* Middle Row (Widgets) */}
-          <div className="flex gap-6 h-[170px]">
+          <div className="flex gap-6 min-h-[190px]">
             
             {/* School Key Code Generator */}
             <div className="flex-1 bg-white/80 backdrop-blur rounded-[2rem] border border-[#D4AF37]/20 shadow-lg p-6 flex flex-col justify-between">
@@ -509,7 +509,6 @@ export default function AssociationDashboard() {
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">Registered</th>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">No. Students Registered</th>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">SSI Score</th>
-                        <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20 text-center">Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100/50">
@@ -535,19 +534,11 @@ export default function AssociationDashboard() {
                                <Medal className="w-4 h-4 text-[#D4AF37]" /> {school.ssiScore}
                              </div>
                           </td>
-                          <td className="px-6 py-4">
-                             <div className="flex items-center justify-center gap-2">
-                                <span className="bg-[#D4AF37]/20 text-[#A88020] text-[10px] uppercase tracking-wider font-extrabold px-3 py-1 rounded-full border border-[#D4AF37]/30 shadow-sm">Paid</span>
-                                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white shadow-md ${school.paidStudents > school.totalStudents / 2 ? 'bg-[#1A1A1A]' : 'bg-neutral-400'}`}>
-                                  {school.paidStudents > school.totalStudents / 2 ? <ThumbsUp className="w-4 h-4" /> : <ThumbsDown className="w-4 h-4" />}
-                                </div>
-                             </div>
-                          </td>
                         </tr>
                       ))}
                       {filteredSchools.length === 0 && (
                         <tr>
-                          <td colSpan={5} className="py-12 text-center text-neutral-400 font-semibold text-sm">
+                          <td colSpan={4} className="py-12 text-center text-neutral-400 font-semibold text-sm">
                             No schools registered or match search yet.
                           </td>
                         </tr>
