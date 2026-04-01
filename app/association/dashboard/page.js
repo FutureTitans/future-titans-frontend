@@ -36,8 +36,10 @@ export default function AssociationDashboard() {
   const [schoolNameInput, setSchoolNameInput] = useState('');
   const [schoolEmailInput, setSchoolEmailInput] = useState('');
   const [generatedCode, setGeneratedCode] = useState('');
+  const [generatedSlug, setGeneratedSlug] = useState('');
   const [generating, setGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -103,6 +105,7 @@ export default function AssociationDashboard() {
       if (!res.ok) throw new Error(data.error || 'Failed to generate code');
       
       setGeneratedCode(data.keyCode);
+      setGeneratedSlug(data.slug);
       setSchoolNameInput('');
       setSchoolEmailInput('');
       setTimeout(() => fetchDashboardData(), 1000); // refresh the school list
@@ -117,6 +120,13 @@ export default function AssociationDashboard() {
     navigator.clipboard.writeText(generatedCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const copyLink = () => {
+    const link = `${window.location.origin}/signup?school=${generatedSlug}`;
+    navigator.clipboard.writeText(link);
+    setCopiedLink(true);
+    setTimeout(() => setCopiedLink(false), 2000);
   };
 
   const downloadReport = (name) => {
@@ -322,14 +332,25 @@ export default function AssociationDashboard() {
                   />
                 </div>
                 <div className="flex flex-col gap-2 w-64 items-end">
-                   <div className="flex w-full h-[38px] items-center text-sm font-bold bg-[#FAEDCD] text-[#A88020] px-4 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
-                      <span className="truncate flex-1 mr-2 opacity-80">{generatedCode || 'No code generated'}</span>
-                      {generatedCode && (
-                        <button onClick={copyCode} className="text-[#A88020] hover:text-[#1A1A1A] transition bg-white/50 px-2 py-0.5 rounded shadow-sm text-xs flex items-center gap-1 font-bold">
-                           {copied ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                           {copied ? 'Copied' : 'Copy'}
-                        </button>
-                      )}
+                   <div className="flex flex-col gap-2 w-full">
+                     <div className="flex w-full h-[38px] items-center text-[11px] font-bold bg-[#FAEDCD] text-[#A88020] px-3 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
+                        <span className="truncate flex-1 mr-2 opacity-80">POC Pass: {generatedCode || 'None'}</span>
+                        {generatedCode && (
+                          <button onClick={copyCode} className="text-[#A88020] hover:text-[#1A1A1A] transition bg-white/50 px-2 py-0.5 rounded shadow-sm flex items-center gap-1 font-bold">
+                             {copied ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                             {copied ? 'Copied' : 'Copy'}
+                          </button>
+                        )}
+                     </div>
+                     <div className="flex w-full h-[38px] items-center text-[11px] font-bold bg-[#E6F4EA] text-[#175C36] px-3 rounded-xl border border-[#175C36]/20 justify-between overflow-hidden shadow-inner">
+                        <span className="truncate flex-1 mr-2 opacity-80">Student Link: {generatedSlug || 'None'}</span>
+                        {generatedSlug && (
+                          <button onClick={copyLink} className="text-[#175C36] hover:text-[#0A2F1A] transition bg-white/50 px-2 py-0.5 rounded shadow-sm flex items-center gap-1 font-bold">
+                             {copiedLink ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                             {copiedLink ? 'Copied' : 'Copy'}
+                          </button>
+                        )}
+                     </div>
                    </div>
                    <button 
                     onClick={generateSchoolCode}
