@@ -16,6 +16,8 @@ export default function AdminAssociations() {
     email: '',
     password: '',
     commissionPercentage: 0,
+    profilePicture: '',
+    bio: '',
   });
 
   const fetchAssociations = async () => {
@@ -59,7 +61,7 @@ export default function AdminAssociations() {
       }
 
       setShowModal(false);
-      setFormData({ name: '', email: '', password: '', commissionPercentage: 0 });
+      setFormData({ name: '', email: '', password: '', commissionPercentage: 0, profilePicture: '', bio: '' });
       fetchAssociations();
     } catch (err) {
       alert(err.message);
@@ -123,7 +125,7 @@ export default function AdminAssociations() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
-          <div className="bg-white rounded-2xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden p-6 sm:p-8 relative">
+          <div className="bg-white rounded-2xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden p-6 sm:p-8 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <h2 className="text-2xl font-bold mb-6">Create Association</h2>
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
@@ -170,6 +172,25 @@ export default function AdminAssociations() {
                   onChange={e => setFormData({ ...formData, commissionPercentage: parseFloat(e.target.value) })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none"
                   placeholder="e.g. 15"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Profile Image URL (Optional)</label>
+                <input
+                  type="url"
+                  value={formData.profilePicture}
+                  onChange={e => setFormData({ ...formData, profilePicture: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Bio / Description (Optional)</label>
+                <textarea
+                  value={formData.bio}
+                  onChange={e => setFormData({ ...formData, bio: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none resize-none h-20"
+                  placeholder="Short description about the association..."
                 />
               </div>
               

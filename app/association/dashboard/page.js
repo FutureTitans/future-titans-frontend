@@ -209,9 +209,6 @@ export default function AssociationDashboard() {
             </div>
             <h2 className="text-xl font-bold tracking-tight">{stats?.associationName || 'Director'}</h2>
             <p className="text-sm text-[#D4AF37] font-semibold mt-1">Association Director</p>
-            <button className="mt-6 flex items-center justify-center gap-2 text-sm text-neutral-600 hover:text-[#D4AF37] transition font-medium w-full">
-              <Settings className="w-4 h-4" /> Profile Setting
-            </button>
           </div>
 
           {/* Average Schools Registered Per Month */}
@@ -314,54 +311,52 @@ export default function AssociationDashboard() {
                 <h3 className="font-bold text-[#1A1A1A] text-lg tracking-tight">School Key Code Generator</h3>
               </div>
               
-              <div className="flex gap-3 items-end mt-4">
-                <div className="flex-1 flex flex-col gap-2">
+              <div className="grid grid-cols-2 gap-4 mt-4 flex-1">
+                <div className="flex flex-col gap-3 justify-end">
                   <input 
                     type="text" 
                     placeholder="School Name" 
                     value={schoolNameInput}
                     onChange={(e) => setSchoolNameInput(e.target.value)}
-                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
                   />
                   <input 
                     type="email" 
                     placeholder="School Admin Email (POC)" 
                     value={schoolEmailInput}
                     onChange={(e) => setSchoolEmailInput(e.target.value)}
-                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
                   />
                 </div>
-                <div className="flex flex-col gap-2 w-64 items-end">
-                   <div className="flex flex-col gap-2 w-full">
-                     <div className="flex w-full h-[38px] items-center text-[11px] font-bold bg-[#FAEDCD] text-[#A88020] px-3 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
-                        <span className="truncate flex-1 mr-2 opacity-80">POC Pass: {generatedCode || 'None'}</span>
-                        {generatedCode && (
-                          <button onClick={copyCode} className="text-[#A88020] hover:text-[#1A1A1A] transition bg-white/50 px-2 py-0.5 rounded shadow-sm flex items-center gap-1 font-bold">
-                             {copied ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                             {copied ? 'Copied' : 'Copy'}
-                          </button>
-                        )}
-                     </div>
-                     <div className="flex w-full h-[38px] items-center text-[11px] font-bold bg-[#E6F4EA] text-[#175C36] px-3 rounded-xl border border-[#175C36]/20 justify-between overflow-hidden shadow-inner">
-                        <span className="truncate flex-1 mr-2 opacity-80">Student Link: {generatedSlug || 'None'}</span>
-                        {generatedSlug && (
-                          <button onClick={copyLink} className="text-[#175C36] hover:text-[#0A2F1A] transition bg-white/50 px-2 py-0.5 rounded shadow-sm flex items-center gap-1 font-bold">
-                             {copiedLink ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
-                             {copiedLink ? 'Copied' : 'Copy'}
-                          </button>
-                        )}
-                     </div>
+                <div className="flex flex-col gap-3 justify-end w-full">
+                   <div className="flex w-full h-[42px] items-center text-[11px] font-bold bg-[#FAEDCD] text-[#A88020] px-3 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
+                      <span className="truncate flex-1 mr-2 opacity-80">POC Pass: {generatedCode || 'None'}</span>
+                      {generatedCode && (
+                        <button onClick={copyCode} className="text-[#A88020] hover:text-[#1A1A1A] transition bg-white/50 px-2 py-1 rounded shadow-sm flex items-center gap-1 font-bold shrink-0">
+                           {copied ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                           {copied ? 'Copied' : 'Copy'}
+                        </button>
+                      )}
+                   </div>
+                   <div className="flex w-full h-[42px] items-center text-[11px] font-bold bg-[#E6F4EA] text-[#175C36] px-3 rounded-xl border border-[#175C36]/20 justify-between overflow-hidden shadow-inner">
+                      <span className="truncate flex-1 mr-2 opacity-80">Student Link: {generatedSlug || 'None'}</span>
+                      {generatedSlug && (
+                        <button onClick={copyLink} className="text-[#175C36] hover:text-[#0A2F1A] transition bg-white/50 px-2 py-1 rounded shadow-sm flex items-center gap-1 font-bold shrink-0">
+                           {copiedLink ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                           {copiedLink ? 'Copied' : 'Copy'}
+                        </button>
+                      )}
                    </div>
                    <button 
                     onClick={generateSchoolCode}
                     disabled={generating}
-                    className="w-full bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-2 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+                    className="w-full h-[42px] bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-2 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
                   >
                     {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate New Key Code'}
                   </button>
                 </div>
               </div>
-              <p className="text-[10px] font-semibold text-neutral-400 mt-2 uppercase tracking-wide">Codes valid for 30 days & securely emailed to the POC.</p>
+              <p className="text-[10px] font-semibold text-neutral-400 mt-3 uppercase tracking-wide">Codes valid for 30 days.</p>
             </div>
 
             {/* All Student Status (Live) */}
@@ -403,13 +398,8 @@ export default function AssociationDashboard() {
                     <div className="flex items-center gap-2 text-sm font-bold text-neutral-700">
                       <CheckCircle2 className="w-4 h-4 text-green-600" /> Submitted: <span className="text-[#1A1A1A]">{stats?.ideaStatus?.submitted?.toLocaleString()}</span>
                     </div>
-                    {/* Dummy Sparkline */}
+                    {/* Removed Dummy Sparkline */}
                     <div className="w-20 h-6">
-                      <ResponsiveContainer width={100} height="100%">
-                        <LineChart data={[{v:10},{v:15},{v:12},{v:20},{v:18},{v:22}]} margin={{top:2,bottom:2,left:0,right:0}}>
-                          <Line type="monotone" dataKey="v" stroke="#1A1A1A" strokeWidth={2} dot={false} />
-                        </LineChart>
-                      </ResponsiveContainer>
                     </div>
                  </div>
                  <div className="flex justify-between items-center">
@@ -417,13 +407,8 @@ export default function AssociationDashboard() {
                       <div className="w-4 h-4 rounded-full bg-[#D4AF37]/30 flex items-center justify-center"><div className="w-2 h-2 bg-[#D4AF37] rounded-full"></div></div>
                       Pending: <span className="text-[#1A1A1A]">{stats?.ideaStatus?.offline?.toLocaleString()}</span>
                     </div>
-                    {/* Dummy Sparkline */}
+                    {/* Removed Dummy Sparkline */}
                     <div className="w-20 h-6">
-                      <ResponsiveContainer width={100} height="100%">
-                        <LineChart data={[{v:22},{v:18},{v:20},{v:12},{v:15},{v:10}]} margin={{top:2,bottom:2,left:0,right:0}}>
-                          <Line type="monotone" dataKey="v" stroke="#D4AF37" strokeWidth={2} dot={false} />
-                        </LineChart>
-                      </ResponsiveContainer>
                     </div>
                  </div>
               </div>
@@ -528,9 +513,9 @@ export default function AssociationDashboard() {
                    
                    <div className="space-y-2">
                      {[
-                       { name: 'All Registered Schools Detail Report', date: '14 Mar 2026' },
-                       { name: 'Student Registration Status Report', date: '14 Mar 2026' },
-                       { name: 'Multi-School SSI Performance', date: '13 Mar 2026' },
+                       { name: 'All Registered Schools Detail Report', date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
+                       { name: 'Student Registration Status Report', date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
+                       { name: 'Multi-School SSI Performance', date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
                      ].map((doc, idx) => (
                        <div key={idx} className="flex items-center justify-between bg-neutral-50/50 hover:bg-[#FAEDCD]/30 transition-colors p-3 rounded-xl border border-neutral-100 group shadow-sm">
                           <span className="flex-1 text-left text-xs font-bold text-[#1A1A1A] leading-tight pr-2">{doc.name} (PDF)</span>
