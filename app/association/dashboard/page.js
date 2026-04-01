@@ -7,6 +7,8 @@ import {
 } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { getAuthToken, removeAuthToken } from '@/lib/auth';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 // Helper for the gauge chart (Semi-circle gradient)
 const SemiCircleGauge = ({ value }) => {
@@ -130,7 +132,71 @@ export default function AssociationDashboard() {
   };
 
   const downloadReport = (name) => {
-    alert(`Generating ${name} PDF Report...`);
+    if (!stats) return;
+    const doc = new jsPDF();
+    const dateStr = new Date().toLocaleDateString();
+    
+    // Add Header
+    doc.setFontSize(20);
+    doc.setTextColor(26, 26, 26);
+    doc.text(name, 14, 22);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Generated on: ${dateStr}`, 14, 30);
+    doc.text(`Association: ${stats.associationName || 'Admin'}`, 14, 35);
+
+    if (name === 'Full Association' || name === 'All Registered Schools Detail Report') {
+        doc.autoTable({
+            startY: 45,
+            head: [['School Name', 'POC Email', 'Registered', 'Students', 'Paid', 'SSI Score']],
+            body: (stats.schoolDetails || []).map(s => [
+                s.schoolName,
+                s.pocEmail,
+                new Date(s.registeredDate).toLocaleDateString(),
+                s.totalStudents,
+                s.paidStudents,
+                s.ssiScore
+            ]),
+            headStyles: { fillColor: [212, 175, 55] }
+        });
+    } else if (name === 'Student Registration Status Report') {
+        doc.autoTable({
+            startY: 45,
+            head: [['School Name', 'Total Students', 'Paid Students', 'Unpaid Students', 'Registration Date']],
+            body: (stats.schoolDetails || []).map(s => [
+                s.schoolName,
+                s.totalStudents,
+                s.paidStudents,
+                s.totalStudents - s.paidStudents,
+                new Date(s.registeredDate).toLocaleDateString()
+            ]),
+            headStyles: { fillColor: [23, 92, 54] }
+        });
+    } else if (name === 'Multi-School SSI Performance') {
+        doc.autoTable({
+            startY: 45,
+            head: [['School Name', 'Total Students', 'Average SSI Score', 'Completion %']],
+            body: (stats.schoolDetails || []).map(s => [
+                s.schoolName,
+                s.totalStudents,
+                s.ssiScore || '0',
+                stats.avgCompletionRate + '%' // fallback to association avg if school specific isn't available
+            ]),
+            headStyles: { fillColor: [30, 41, 59] }
+        });
+    }
+
+    // Add Footer
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(150, 150, 150);
+        doc.text(`Future Titans Association Portal - Page ${i} of ${pageCount}`, 14, doc.internal.pageSize.height - 10);
+    }
+
+    doc.save(`${name.replace(/\s+/g, '_')}_${dateStr.replace(/\//g, '-')}.pdf`);
   };
 
   if (loading) {
