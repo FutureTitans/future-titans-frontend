@@ -28,14 +28,27 @@ export default function GlobalAIChat() {
     pathname.startsWith('/student/submission');
 
   useEffect(() => {
+    // If user is no longer a student (e.g., logged out), reset state
+    if (!isStudent()) {
+      if (enabled) {
+        setEnabled(false);
+        setMessages([]);
+      }
+      return;
+    }
+
     const init = async () => {
-      if (!isStudent()) return;
+      // Don't initialize if we're on a page where it's hidden or if already enabled
+      if (shouldHide || enabled) return;
+
       try {
         const status = await payment.getPaymentStatus();
         if (!status.isPaid) return;
+        
         setEnabled(true);
         const history = await aiChat.getGlobalHistory();
         setMessages(history.conversation || []);
+        
         // Fetch rate limit status
         try {
           const rl = await aiChat.getRateLimitStatus();
@@ -45,8 +58,9 @@ export default function GlobalAIChat() {
         console.error('Failed to initialize global AI chat:', error);
       }
     };
+
     init();
-  }, []);
+  }, [pathname, shouldHide, enabled]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
