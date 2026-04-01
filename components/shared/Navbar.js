@@ -40,7 +40,7 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (pathname?.startsWith('/school-poc')) return null;
+  if (pathname?.startsWith('/school-poc') || pathname?.startsWith('/association')) return null;
   if (!mounted) return null;
 
   const handleLogout = () => {
