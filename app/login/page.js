@@ -43,10 +43,12 @@ export default function LoginPage() {
       storeSetUser(response.user);
       setTokens(response.accessToken, response.refreshToken);
 
+      if (response.user.role === 'association') {
+        throw new Error('Please use the dedicated Association Portal (/association/login) to login.');
+      }
+
       if (response.user.role === 'admin') {
         router.push('/admin');
-      } else if (response.user.role === 'association') {
-        router.push('/association/dashboard');
       } else {
         router.push('/student/dashboard');
       }
