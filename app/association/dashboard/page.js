@@ -6,7 +6,7 @@ import {
   LogOut, Settings, Users, School, Key, Activity, FileText, Download, Target, PlayCircle, Loader2, ArrowUpRight, Copy, CheckCircle2, ThumbsUp, ThumbsDown, Search, Medal, Shield
 } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
-import { getToken, removeToken } from '@/lib/auth';
+import { getAuthToken, removeAuthToken } from '@/lib/auth';
 
 // Helper for the gauge chart (Semi-circle gradient)
 const SemiCircleGauge = ({ value }) => {
@@ -48,7 +48,7 @@ export default function AssociationDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const token = getToken();
+      const token = getAuthToken();
       if (!token) {
         router.push('/login');
         return;
@@ -60,7 +60,7 @@ export default function AssociationDashboard() {
 
       if (!res.ok) {
         if (res.status === 401 || res.status === 403) {
-          removeToken();
+          removeAuthToken();
           router.push('/login');
           return;
         }
@@ -78,7 +78,7 @@ export default function AssociationDashboard() {
   };
 
   const handleLogout = () => {
-    removeToken();
+    removeAuthToken();
     router.push('/login');
   };
 
@@ -89,7 +89,7 @@ export default function AssociationDashboard() {
     }
     setGenerating(true);
     try {
-      const token = getToken();
+      const token = getAuthToken();
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/school`, {
         method: 'POST',
         headers: {

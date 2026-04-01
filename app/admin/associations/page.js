@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { getToken } from '@/lib/auth';
+import { getAuthToken } from '@/lib/auth';
 
 export default function AdminAssociations() {
   const router = useRouter();
@@ -43,7 +43,7 @@ export default function AdminAssociations() {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const token = getToken();
+      const token = getAuthToken();
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/associations`, {
         method: 'POST',
         headers: {
