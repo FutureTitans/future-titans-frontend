@@ -77,6 +77,31 @@ export default function AssociationDashboard() {
     }
   };
 
+  // Availability Check State
+  const [checkingSchool, setCheckingSchool] = useState(false);
+  const [schoolCheckError, setSchoolCheckError] = useState(null);
+
+  const checkSchoolAvailability = async (placeId, name) => {
+    setCheckingSchool(true);
+    setSchoolCheckError(null);
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/school/check?placeId=${placeId || ''}&name=${encodeURIComponent(name || '')}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (!data.available) {
+        setSchoolCheckError(data.error);
+      }
+    } catch (e) {
+      console.error(e);
+      setSchoolCheckError('Unable to check school availability.');
+    } finally {
+      setCheckingSchool(false);
+    }
+  };
+
   // Proof Upload State
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedSchoolId, setSelectedSchoolId] = useState(null);
@@ -188,7 +213,7 @@ export default function AssociationDashboard() {
       setShowSuggestions(false);
       setTimeout(() => fetchDashboardData(), 1000); // refresh the school list
     } catch (err) {
-      alert(err.message);
+      setSchoolCheckError(err.message);
     } finally {
       setGenerating(false);
     }
@@ -464,6 +489,7 @@ export default function AssociationDashboard() {
                         setSchoolNameInput(e.target.value);
                         setGooglePlaceIdInput('');
                         setShowSuggestions(true);
+                        setSchoolCheckError(null);
                       }}
                       className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
                     />
@@ -477,6 +503,7 @@ export default function AssociationDashboard() {
                                 setSchoolNameInput(place.name);
                                 setGooglePlaceIdInput(place.placeId);
                                 setShowSuggestions(false);
+                                checkSchoolAvailability(place.placeId, place.name);
                               }}
                               className="px-4 py-3 hover:bg-[#FAEDCD]/50 cursor-pointer border-b border-gray-50 last:border-0"
                             >
@@ -492,6 +519,18 @@ export default function AssociationDashboard() {
                       </div>
                     )}
                   </div>
+                  {schoolCheckError && (
+                    <div className="bg-red-50 border border-red-200 text-red-600 text-[11px] px-3 py-2 rounded-xl flex items-start gap-2 shadow-sm relative z-10 w-[120%]">
+                      <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5 text-red-500" />
+                      <p className="font-medium whitespace-normal">{schoolCheckError}</p>
+                    </div>
+                  )}
+                  {schoolNameInput.length > 0 && !googlePlaceIdInput && !schoolCheckError && (
+                    <div className="bg-amber-50 border border-amber-200 text-amber-700 text-[11px] px-3 py-2 rounded-xl flex items-start gap-2 shadow-sm relative z-10 w-[100%]">
+                      <Shield className="w-3.5 h-3.5 shrink-0 mt-0.5 text-amber-500" />
+                      <p className="font-medium whitespace-normal">Please select your school directly from the Google dropdown list to proceed.</p>
+                    </div>
+                  )}
                   <input 
                     type="email" 
                     placeholder="School Admin Email (POC)" 
@@ -499,6 +538,13 @@ export default function AssociationDashboard() {
                     onChange={(e) => setSchoolEmailInput(e.target.value)}
                     className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
                   />
+                   <button 
+                    onClick={generateSchoolCode}
+                    disabled={generating || schoolCheckError || checkingSchool || !googlePlaceIdInput || !schoolEmailInput}
+                    className="w-full h-[42px] bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-2 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {generating || checkingSchool ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate New Key Code'}
+                  </button>
                 </div>
                 <div className="flex flex-col gap-3 justify-end w-full">
                    <div className="flex w-full h-[42px] items-center text-[11px] font-bold bg-[#FAEDCD] text-[#A88020] px-3 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
@@ -521,10 +567,10 @@ export default function AssociationDashboard() {
                    </div>
                    <button 
                     onClick={generateSchoolCode}
-                    disabled={generating}
-                    className="w-full h-[42px] bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-2 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2"
+                    disabled={generating || schoolCheckError || checkingSchool}
+                    className="w-full h-[42px] bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-2 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {generating ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate New Key Code'}
+                    {generating || checkingSchool ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate New Key Code'}
                   </button>
                 </div>
               </div>
