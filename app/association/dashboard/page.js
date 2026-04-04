@@ -444,7 +444,7 @@ export default function AssociationDashboard() {
           </div>
 
           {/* Middle Row (Widgets) */}
-          <div className="flex gap-6 min-h-[190px]">
+          <div className="flex gap-6 min-h-[190px] relative z-50">
             
             {/* School Key Code Generator */}
             <div className="flex-1 bg-white/80 backdrop-blur rounded-[2rem] border border-[#D4AF37]/20 shadow-lg p-6 flex flex-col justify-between">
