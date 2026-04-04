@@ -177,7 +177,7 @@ export default function AssociationDashboard() {
 
   const handleLogout = () => {
     removeAuthToken();
-    router.push('/login');
+    router.push('/association/login');
   };
 
   const generateSchoolCode = async () => {
