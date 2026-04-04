@@ -37,6 +37,7 @@ export default function AssociationDashboard() {
   // Key code generation state
   const [schoolNameInput, setSchoolNameInput] = useState('');
   const [schoolEmailInput, setSchoolEmailInput] = useState('');
+  const [targetStudentCountInput, setTargetStudentCountInput] = useState('');
   const [generatedCode, setGeneratedCode] = useState('');
   const [generatedSlug, setGeneratedSlug] = useState('');
   const [generating, setGenerating] = useState(false);
@@ -194,7 +195,12 @@ export default function AssociationDashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ name: schoolNameInput, email: schoolEmailInput, googlePlaceId: googlePlaceIdInput })
+        body: JSON.stringify({ 
+          name: schoolNameInput, 
+          email: schoolEmailInput, 
+          googlePlaceId: googlePlaceIdInput,
+          targetStudentCount: targetStudentCountInput 
+        })
       });
       const data = await res.json();
 
@@ -209,6 +215,7 @@ export default function AssociationDashboard() {
       setGeneratedSlug(data.slug);
       setSchoolNameInput('');
       setSchoolEmailInput('');
+      setTargetStudentCountInput('');
       setGooglePlaceIdInput('');
       setShowSuggestions(false);
       setTimeout(() => fetchDashboardData(), 1000); // refresh the school list
@@ -531,13 +538,23 @@ export default function AssociationDashboard() {
                       <p className="font-medium whitespace-normal">Please select your school directly from the Google dropdown list to proceed.</p>
                     </div>
                   )}
-                  <input 
-                    type="email" 
-                    placeholder="School Admin Email (POC)" 
-                    value={schoolEmailInput}
-                    onChange={(e) => setSchoolEmailInput(e.target.value)}
-                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
-                  />
+                  <div className="flex gap-4">
+                    <input 
+                      type="email" 
+                      placeholder="School Admin Email (POC)" 
+                      value={schoolEmailInput}
+                      onChange={(e) => setSchoolEmailInput(e.target.value)}
+                      className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                    />
+                    <input 
+                      type="number" 
+                      min="0"
+                      placeholder="Target Students" 
+                      value={targetStudentCountInput}
+                      onChange={(e) => setTargetStudentCountInput(e.target.value)}
+                      className="w-[160px] bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                    />
+                  </div>
                 </div>
                 <div className="flex flex-col gap-3 justify-end w-full">
                    <div className="flex w-full h-[42px] items-center text-[11px] font-bold bg-[#FAEDCD] text-[#A88020] px-3 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
@@ -652,7 +669,7 @@ export default function AssociationDashboard() {
                       <tr>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">School</th>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">Registered</th>
-                        <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">No. Students Registered</th>
+                        <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">Registered / Target</th>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">SSI Score</th>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20 text-right">Approval Status</th>
                       </tr>
@@ -672,8 +689,8 @@ export default function AssociationDashboard() {
                           <td className="px-6 py-4 text-xs font-bold text-neutral-600">
                              {new Date(school.registeredDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                           </td>
-                          <td className="px-6 py-4 text-sm font-black text-[#1A1A1A] pl-16">
-                             {school.totalStudents}
+                          <td className="px-6 py-4 text-sm font-black text-[#1A1A1A] pl-8">
+                             {school.totalStudents} <span className="text-neutral-400 text-xs font-bold whitespace-nowrap">/ {school.targetStudentCount}</span>
                           </td>
                           <td className="px-6 py-4">
                              <div className="flex items-center gap-1.5 text-sm font-black text-[#1A1A1A]">
