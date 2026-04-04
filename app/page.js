@@ -220,7 +220,7 @@ export default function Landing() {
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                 <div className="flex items-center gap-2 relative">
-                  Sign Up
+                  Student Sign Up
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
@@ -228,7 +228,18 @@ export default function Landing() {
                 href="/login"
                 className="px-10 py-4 sm:py-5 rounded-full bg-white/40 backdrop-blur-md border border-white/50 text-gray-700 font-semibold hover:bg-white/60 transition-all hover:scale-105 hover:shadow-lg"
               >
-                Log In
+                Student Log In
+              </Link>
+            </div>
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center text-sm mb-4">
+              <Link href="/school-poc/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm">
+                <Users className="w-4 h-4 text-[#D4AF37]" />
+                School POC Login
+              </Link>
+              <Link href="/association/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm">
+                <Target className="w-4 h-4 text-[#D4AF37]" />
+                Association Login
               </Link>
             </div>
 
