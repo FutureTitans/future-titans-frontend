@@ -113,6 +113,17 @@ export default function SchoolSlugsPage() {
     }
   };
 
+  const handleReviewProof = async (slugId, status) => {
+    if (!confirm(`Are you sure you want to ${status} this school's proof of acceptance?`)) return;
+    try {
+      await admin.reviewSchoolProof(slugId, { status });
+      await fetchSlugs();
+    } catch (error) {
+      console.error('Failed to review proof:', error);
+      alert(error?.error || 'Failed to review proof');
+    }
+  };
+
   const getRegistrationLink = (slugValue) => {
     if (typeof window === 'undefined') return '';
     return `${window.location.origin}/signup?slug=${encodeURIComponent(slugValue)}`;
@@ -310,6 +321,20 @@ export default function SchoolSlugsPage() {
                   </p>
                   {slug.description && (
                     <p className="text-sm text-neutral-medium line-clamp-2">{slug.description}</p>
+                  )}
+                  {slug.approvalStatus !== 'Approved' && (
+                    <div className="mt-2 mb-2 p-3 bg-neutral-50 border border-neutral-border rounded-lg inline-block">
+                      <p className="text-xs font-bold text-neutral-dark mb-1">Registration Status: <span className="text-primary-red">{slug.approvalStatus}</span></p>
+                      {slug.proofOfAcceptance ? (
+                        <div className="flex gap-2 items-center mt-2">
+                           <a href={slug.proofOfAcceptance} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">View Proof Document</a>
+                           <button onClick={() => handleReviewProof(slug._id, 'Approved')} className="text-xs px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Approve</button>
+                           <button onClick={() => handleReviewProof(slug._id, 'Rejected')} className="text-xs px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded">Reject</button>
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-neutral-medium">Waiting for association to upload proof of acceptance. Lock expires: {slug.lockUntil ? new Date(slug.lockUntil).toLocaleDateString() : 'N/A'}</p>
+                      )}
+                    </div>
                   )}
                   <div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-neutral-medium">
                     <span className="flex items-center gap-1">

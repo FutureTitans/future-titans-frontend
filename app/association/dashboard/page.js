@@ -46,6 +46,44 @@ export default function AssociationDashboard() {
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Proof Upload State
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [selectedSchoolId, setSelectedSchoolId] = useState(null);
+  const [proofUrlInput, setProofUrlInput] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const openUploadModal = (id) => {
+    setSelectedSchoolId(id);
+    setUploadModalOpen(true);
+    setProofUrlInput('');
+  };
+
+  const submitProof = async () => {
+    if (!proofUrlInput) return alert('Please enter a proof document URL.');
+    setUploading(true);
+    try {
+      const token = getAuthToken();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/school/upload-proof`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ schoolId: selectedSchoolId, proofUrl: proofUrlInput })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to upload proof');
+      
+      alert('Proof of acceptance uploaded successfully! Pending admin approval.');
+      setUploadModalOpen(false);
+      fetchDashboardData();
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -509,6 +547,7 @@ export default function AssociationDashboard() {
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">Registered</th>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">No. Students Registered</th>
                         <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20">SSI Score</th>
+                        <th className="px-6 py-4 uppercase border-b border-[#D4AF37]/20 text-right">Approval Status</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100/50">
@@ -533,6 +572,20 @@ export default function AssociationDashboard() {
                              <div className="flex items-center gap-1.5 text-sm font-black text-[#1A1A1A]">
                                <Medal className="w-4 h-4 text-[#D4AF37]" /> {school.ssiScore}
                              </div>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                             {school.approvalStatus === 'PendingProof' && (
+                                <button onClick={() => openUploadModal(school.id)} className="text-xs bg-[#D4AF37] hover:bg-[#A88020] transition text-white px-3 py-1.5 rounded-lg shadow-sm font-bold">Upload Proof</button>
+                             )}
+                             {school.approvalStatus === 'PendingApproval' && (
+                                <span className="text-xs text-yellow-700 font-bold bg-yellow-100 border border-yellow-200 px-3 py-1.5 rounded-lg shadow-inner">Reviewing</span>
+                             )}
+                             {school.approvalStatus === 'Rejected' && (
+                                <button onClick={() => openUploadModal(school.id)} className="text-xs bg-red-500 hover:bg-red-600 transition text-white px-3 py-1.5 rounded-lg shadow-sm font-bold">Rejected - Retry</button>
+                             )}
+                             {school.approvalStatus === 'Approved' && (
+                                <span className="text-xs text-green-800 font-bold bg-green-100 border border-green-200 px-3 py-1.5 rounded-lg shadow-inner">Approved</span>
+                             )}
                           </td>
                         </tr>
                       ))}
@@ -597,6 +650,44 @@ export default function AssociationDashboard() {
 
         </main>
       </div>
+
+      {/* Upload Proof Modal */}
+      {uploadModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-[2rem] w-full max-w-md p-8 shadow-2xl relative border border-[#D4AF37]/20 flex flex-col gap-6">
+            <h3 className="text-2xl font-black text-[#1A1A1A] tracking-tight">Upload Proof of Acceptance</h3>
+            <p className="text-sm font-semibold text-neutral-500 leading-relaxed -mt-2">
+              Please provide a Google Drive / OneDrive URL or an image link containing the written acceptance from the school administration. Our admins will review this to finalize the school allocation.
+            </p>
+            
+            <div className="flex flex-col gap-4 w-full">
+               <input 
+                 type="text" 
+                 placeholder="https://..." 
+                 value={proofUrlInput}
+                 onChange={(e) => setProofUrlInput(e.target.value)}
+                 className="w-full bg-[#FAEDCD]/30 border border-[#EAC15A]/40 rounded-xl px-4 py-3 text-sm font-bold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+               />
+
+               <div className="flex gap-4 w-full mt-2">
+                  <button 
+                    onClick={() => setUploadModalOpen(false)}
+                    className="flex-1 py-3 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 font-bold rounded-xl transition shadow-sm text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={submitProof}
+                    disabled={uploading}
+                    className="flex-1 py-3 bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:opacity-90 text-white font-bold rounded-xl shadow-lg transition flex w-full items-center justify-center text-sm"
+                  >
+                    {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Submit Proof'}
+                  </button>
+               </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style jsx global>{`
         .clip-ribbon {
