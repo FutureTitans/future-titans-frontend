@@ -538,13 +538,6 @@ export default function AssociationDashboard() {
                     onChange={(e) => setSchoolEmailInput(e.target.value)}
                     className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
                   />
-                   <button 
-                    onClick={generateSchoolCode}
-                    disabled={generating || schoolCheckError || checkingSchool || !googlePlaceIdInput || !schoolEmailInput}
-                    className="w-full h-[42px] bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-2 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {generating || checkingSchool ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate New Key Code'}
-                  </button>
                 </div>
                 <div className="flex flex-col gap-3 justify-end w-full">
                    <div className="flex w-full h-[42px] items-center text-[11px] font-bold bg-[#FAEDCD] text-[#A88020] px-3 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
@@ -567,7 +560,7 @@ export default function AssociationDashboard() {
                    </div>
                    <button 
                     onClick={generateSchoolCode}
-                    disabled={generating || schoolCheckError || checkingSchool}
+                    disabled={generating || schoolCheckError || checkingSchool || !googlePlaceIdInput || !schoolEmailInput}
                     className="w-full h-[42px] bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-2 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {generating || checkingSchool ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate New Key Code'}
