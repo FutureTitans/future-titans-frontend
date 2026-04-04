@@ -46,6 +46,37 @@ export default function AssociationDashboard() {
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Places Autocomplete State
+  const [googlePlaceIdInput, setGooglePlaceIdInput] = useState('');
+  const [placeSuggestions, setPlaceSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  // Debounce Autocomplete fetch
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (schoolNameInput && showSuggestions && !googlePlaceIdInput) {
+        fetchPlacesSuggestions(schoolNameInput);
+      } else {
+        setPlaceSuggestions([]);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [schoolNameInput, showSuggestions, googlePlaceIdInput]);
+
+  const fetchPlacesSuggestions = async (input) => {
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/places/autocomplete?input=${encodeURIComponent(input)}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok) setPlaceSuggestions(data);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // Proof Upload State
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedSchoolId, setSelectedSchoolId] = useState(null);
@@ -138,16 +169,23 @@ export default function AssociationDashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ name: schoolNameInput, email: schoolEmailInput })
+        body: JSON.stringify({ name: schoolNameInput, email: schoolEmailInput, googlePlaceId: googlePlaceIdInput })
       });
       const data = await res.json();
-      
-      if (!res.ok) throw new Error(data.error || 'Failed to generate code');
+
+      if (!res.ok) {
+         if (data.daysLeft) {
+            throw new Error(data.error);
+         }
+         throw new Error(data.error || 'Failed to generate code');
+      }
       
       setGeneratedCode(data.keyCode);
       setGeneratedSlug(data.slug);
       setSchoolNameInput('');
       setSchoolEmailInput('');
+      setGooglePlaceIdInput('');
+      setShowSuggestions(false);
       setTimeout(() => fetchDashboardData(), 1000); // refresh the school list
     } catch (err) {
       alert(err.message);
@@ -416,14 +454,44 @@ export default function AssociationDashboard() {
               </div>
               
               <div className="grid grid-cols-2 gap-4 mt-4 flex-1">
-                <div className="flex flex-col gap-3 justify-end">
-                  <input 
-                    type="text" 
-                    placeholder="School Name" 
-                    value={schoolNameInput}
-                    onChange={(e) => setSchoolNameInput(e.target.value)}
-                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
-                  />
+                <div className="flex flex-col gap-3 justify-end relative">
+                  <div className="relative w-full">
+                    <input 
+                      type="text" 
+                      placeholder="School Name" 
+                      value={schoolNameInput}
+                      onChange={(e) => {
+                        setSchoolNameInput(e.target.value);
+                        setGooglePlaceIdInput('');
+                        setShowSuggestions(true);
+                      }}
+                      className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                    />
+                    {showSuggestions && placeSuggestions.length > 0 && (
+                      <div className="absolute bottom-full mb-1 left-0 right-0 bg-white border border-[#D4AF37]/20 rounded-xl shadow-2xl overflow-hidden z-50">
+                        <div className="max-h-52 overflow-y-auto custom-scrollbar">
+                          {placeSuggestions.map(place => (
+                            <div 
+                              key={place.placeId} 
+                              onClick={() => {
+                                setSchoolNameInput(place.name);
+                                setGooglePlaceIdInput(place.placeId);
+                                setShowSuggestions(false);
+                              }}
+                              className="px-4 py-3 hover:bg-[#FAEDCD]/50 cursor-pointer border-b border-gray-50 last:border-0"
+                            >
+                              <p className="text-sm font-bold text-[#1A1A1A] truncate">{place.name}</p>
+                              <p className="text-[10px] font-semibold text-neutral-500 truncate">{place.description}</p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="bg-gray-50 px-4 py-2 border-t border-gray-100 flex items-center justify-between">
+                          <span className="text-[9px] font-bold text-neutral-400 uppercase tracking-wider">Powered by Google</span>
+                          <button onClick={() => setShowSuggestions(false)} className="text-[10px] font-bold text-red-500 hover:text-red-700 transition">Close</button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   <input 
                     type="email" 
                     placeholder="School Admin Email (POC)" 
