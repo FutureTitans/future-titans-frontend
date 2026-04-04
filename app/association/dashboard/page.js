@@ -538,23 +538,21 @@ export default function AssociationDashboard() {
                       <p className="font-medium whitespace-normal">Please select your school directly from the Google dropdown list to proceed.</p>
                     </div>
                   )}
-                  <div className="flex gap-4">
-                    <input 
-                      type="email" 
-                      placeholder="School Admin Email (POC)" 
-                      value={schoolEmailInput}
-                      onChange={(e) => setSchoolEmailInput(e.target.value)}
-                      className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
-                    />
-                    <input 
-                      type="number" 
-                      min="0"
-                      placeholder="Target Students" 
-                      value={targetStudentCountInput}
-                      onChange={(e) => setTargetStudentCountInput(e.target.value)}
-                      className="w-[160px] bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
-                    />
-                  </div>
+                  <input 
+                    type="email" 
+                    placeholder="School Admin Email (POC)" 
+                    value={schoolEmailInput}
+                    onChange={(e) => setSchoolEmailInput(e.target.value)}
+                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                  />
+                  <input 
+                    type="number" 
+                    min="0"
+                    placeholder="Target Students" 
+                    value={targetStudentCountInput}
+                    onChange={(e) => setTargetStudentCountInput(e.target.value)}
+                    className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                  />
                 </div>
                 <div className="flex flex-col gap-3 justify-end w-full">
                    <div className="flex w-full h-[42px] items-center text-[11px] font-bold bg-[#FAEDCD] text-[#A88020] px-3 rounded-xl border border-[#D4AF37]/20 justify-between overflow-hidden shadow-inner">
