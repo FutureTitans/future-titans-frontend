@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { aiChat, auth } from '@/lib/api';
 import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles, User } from 'lucide-react';
-import zunnovaAvatar from './zunnovaAvatar';
+import ZunnovaAvatar from './ZunnovaAvatar';
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
@@ -212,7 +212,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] text-white px-5 py-4 flex items-center justify-between relative overflow-hidden backdrop-blur-xl shrink-0 border-b border-white/20">
         <div className="absolute inset-0 bg-white/10"></div>
         <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
-          <zunnovaAvatar
+          <ZunnovaAvatar
             isTalking={isLoading}
             className="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 scale-110"
           />
