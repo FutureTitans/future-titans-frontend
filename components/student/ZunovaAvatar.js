@@ -38,7 +38,7 @@ const preloadImages = (folder, framesArray, cacheArray, onComplete) => {
     });
 };
 
-export default function ZunovaAvatar({ isTalking, className = "w-16 h-16" }) {
+export default function zunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
     const canvasRef = useRef(null);
     const [frameIndex, setFrameIndex] = useState(0);
     const [actualIsTalking, setActualIsTalking] = useState(isTalking);

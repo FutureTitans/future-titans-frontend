@@ -41,11 +41,11 @@ const faqData = {
     { q: "Do I need to have an idea before joining?", a: "No. You will first go through structured learning modules (IDEA DNA™ and S.U.R.G.E.™), where you will identify a problem and develop your idea step by step." },
     { q: "Can I participate individually or do I need a team?", a: "You can participate individually or with a co-founder. Both options are allowed, and you can choose what works best for you." },
     { q: "Do I need any special skills to participate?", a: "No. You do not need any prior knowledge of business, startups, or technology. Everything is taught from the basics." },
-    { q: "Will there be mentors or someone to guide us?", a: "Yes. Guidance is provided through structured modules, ZUNOVA AI interactions during chapters, and expert inputs in advanced stages." },
+    { q: "Will there be mentors or someone to guide us?", a: "Yes. Guidance is provided through structured modules, zunnova AI interactions during chapters, and expert inputs in advanced stages." },
     { q: "Will I get a chance to try different types of ideas?", a: "Yes. During the learning journey, you will explore multiple problems before finalizing one idea for submission." },
     { q: "How can this help me in the future?", a: "You will learn how to identify problems, build solutions, test ideas and present them skills useful for any career path." },
     { q: "Will this actually help me build my own startup?", a: "It helps you understand how startups are built from idea to validation and presentation, giving you a strong foundation to pursue it in the future. The Youngpreneurs team is also here to guide you through the building of your entire startup journey." },
-    { q: "What are the main steps I will go through after registering?", a: "After registration, students enter a structured, progression-based learning journey designed to take them from curiosity to creation. They go through curated modules - Founder’s Mindset, Solution Seeker Index, and Entrepreneur Launch Blueprint, divided into chapters with ZUNOVA AI interactions that contribute to their Solution Seeker Index (SSI) and track their progress.\nAfter completing the modules, students develop and submit their ideas, which go through a multi-stage screening and evaluation process.\nEvery student who registers and logs in automatically becomes a part of the Future Titans Innovation Club, where community features including student interaction, knowledge bank, and projects, will be introduced soon.\nThe Top 50 students are then selected for a Bootcamp at IIT Kharagpur, where they receive advanced exposure, mentorship and opportunities to take their ideas forward." },
+    { q: "What are the main steps I will go through after registering?", a: "After registration, students enter a structured, progression-based learning journey designed to take them from curiosity to creation. They go through curated modules - Founder’s Mindset, Solution Seeker Index, and Entrepreneur Launch Blueprint, divided into chapters with zunnova AI interactions that contribute to their Solution Seeker Index (SSI) and track their progress.\nAfter completing the modules, students develop and submit their ideas, which go through a multi-stage screening and evaluation process.\nEvery student who registers and logs in automatically becomes a part of the Future Titans Innovation Club, where community features including student interaction, knowledge bank, and projects, will be introduced soon.\nThe Top 50 students are then selected for a Bootcamp at IIT Kharagpur, where they receive advanced exposure, mentorship and opportunities to take their ideas forward." },
     { q: "How many rounds are there in the competition?", a: "The journey includes multiple stages: idea submission, AI-based screening, video pitch with AI interaction, physical assessment and final selection." },
     { q: "How does my idea grow from the first stage to the final stage?", a: "Your idea starts with identifying a problem, then becomes structured using frameworks, validated through early testing, and refined at each stage." },
     { q: "When does it go from just learning to actually building something real?", a: "This shift happens during the idea submission phase, where you apply what you’ve learned to build and present your own idea." }
@@ -57,7 +57,7 @@ const faqData = {
     { q: "How is this program designed for students of this age group?", a: "The program is simplified, structured, and interactive, ensuring students from Classes 8–12 can easily understand and apply concepts. The learning journey is designed across beginner, intermediate, and advanced levels, so each student can progress at a comfortable pace while building a strong understanding of the concepts." },
     { q: "How will this complement my child’s academic journey?", a: "It strengthens application-based and experience-based learning, helping students connect concepts with real-world problem-solving. The program is aligned with NEP and focuses on building critical thinking in the age of AI, preparing students for an AI-driven world. Students also receive a certificate upon completion." },
     { q: "Will my child receive feedback that helps them improve?", a: "Students receive evaluation-based insights during key stages, helping them refine and strengthen their ideas." },
-    { q: "How do you ensure students stay engaged throughout the program?", a: "Through structured modules, interactive ZUNOVA AI sessions and progressive stages that require active participation." },
+    { q: "How do you ensure students stay engaged throughout the program?", a: "Through structured modules, interactive zunnova AI sessions and progressive stages that require active participation." },
     { q: "What kind of exposure will my child receive through this?", a: "Students experience real-world problem-solving, structured evaluation processes, and advanced-stage interactions at national-level platforms. With IIT Kharagpur as our knowledge partner and The Times of India as our media partner, students also gain wider exposure and visibility through these platforms." },
     { q: "What is the sequence of stages my child will go through?", a: "Modules → idea development → idea submission → AI screening → video pitch → AI interaction → advanced selection stages." },
     { q: "How does each phase contribute to my child’s learning?", a: "Each phase builds on the previous one - learning concepts, applying them, refining ideas and presenting them." },
@@ -305,7 +305,7 @@ export default function StudentDashboard() {
           </div>
 
           <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 flex-shrink-0">
-            <button 
+            <button
               onClick={() => setShowFAQ(true)}
               className="flex items-center gap-3 px-1 py-1 pl-5 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all hover:scale-105 group"
             >
@@ -314,7 +314,7 @@ export default function StudentDashboard() {
                 <Search className="w-5 h-5 text-white" />
               </div>
             </button>
-            <button 
+            <button
               onClick={() => setShowVideo(true)}
               className="flex items-center gap-3 px-1 py-1 pl-5 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all hover:scale-105 group"
             >
@@ -540,46 +540,44 @@ export default function StudentDashboard() {
                 {sortedModules.map((mod, i) => {
                   const modProgress = profile?.modulesProgress?.find(p => (p.moduleId?._id || p.moduleId) === mod._id);
                   const isDone = modProgress?.completionPercentage >= 100;
-                  
+
                   // Vary the icons slightly based on index for "fun" variety
                   const icons = [Trophy, Star, Award, Shield, CheckCircle];
                   const Icon = icons[i % icons.length];
-                  
+
                   return (
-                    <div 
-                      key={mod._id} 
-                      className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-300 ${
-                        isDone 
-                          ? 'border-[#D4AF37]/50 bg-gradient-to-br from-white to-[#F5D76E]/10 shadow-lg shadow-[#D4AF37]/20 hover:-translate-y-1 group' 
+                    <div
+                      key={mod._id}
+                      className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-300 ${isDone
+                          ? 'border-[#D4AF37]/50 bg-gradient-to-br from-white to-[#F5D76E]/10 shadow-lg shadow-[#D4AF37]/20 hover:-translate-y-1 group'
                           : 'border-gray-200 bg-gray-50 opacity-60 grayscale'
-                      }`}
+                        }`}
                       title={mod.title}
                     >
                       {isDone && (
                         <div className="absolute inset-0 bg-white/40 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                       )}
-                      
-                      <div className={`w-12 h-12 rounded-full mb-3 flex items-center justify-center shadow-inner ${
-                        isDone
+
+                      <div className={`w-12 h-12 rounded-full mb-3 flex items-center justify-center shadow-inner ${isDone
                           ? 'bg-gradient-to-br from-[#F5D76E] to-[#D4AF37]'
                           : 'bg-gray-200'
-                      }`}>
-                         <Icon className={`w-6 h-6 ${isDone ? 'text-white' : 'text-gray-400'}`} />
+                        }`}>
+                        <Icon className={`w-6 h-6 ${isDone ? 'text-white' : 'text-gray-400'}`} />
                       </div>
-                      
+
                       <p className={`text-[10px] sm:text-xs text-center font-semibold line-clamp-2 leading-tight ${isDone ? 'text-gray-800' : 'text-gray-400'}`}>
                         {mod.title}
                       </p>
-                      
+
                       {isDone && (
-                         <div className="absolute -top-2 -right-2 bg-white rounded-full p-0.5 shadow-sm border border-gray-100">
-                           <CheckCircle2 className="w-4 h-4 text-green-500" />
-                         </div>
+                        <div className="absolute -top-2 -right-2 bg-white rounded-full p-0.5 shadow-sm border border-gray-100">
+                          <CheckCircle2 className="w-4 h-4 text-green-500" />
+                        </div>
                       )}
                     </div>
                   );
                 })}
-                
+
                 {modulesList.length === 0 && (
                   <div className="col-span-full text-center py-6 text-sm text-gray-500">
                     No badges available yet.
@@ -705,7 +703,7 @@ export default function StudentDashboard() {
             {/* Modal Header */}
             <div className="p-6 sm:p-8 shrink-0 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-[#F5EDD6]/50 to-white relative z-10">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">How Can We Help?</h2>
-              <button 
+              <button
                 onClick={() => setShowFAQ(false)}
                 className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
               >
@@ -722,9 +720,8 @@ export default function StudentDashboard() {
                     setActiveFaqTab(tab);
                     setOpenFaqIndex(null);
                   }}
-                  className={`pb-4 text-base sm:text-lg font-bold transition-colors relative whitespace-nowrap focus:outline-none flex-shrink-0 ${
-                    activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
-                  }`}
+                  className={`pb-4 text-base sm:text-lg font-bold transition-colors relative whitespace-nowrap focus:outline-none flex-shrink-0 ${activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
+                    }`}
                 >
                   {tab === 'School' ? 'School / Principal FAQ' : `${tab} FAQ`}
                   {activeFaqTab === tab && (
@@ -738,8 +735,8 @@ export default function StudentDashboard() {
             <div className="p-6 sm:p-8 overflow-y-auto flex-1 custom-scrollbar relative z-10">
               <div className="space-y-4">
                 {faqData[activeFaqTab].map((item, idx) => (
-                  <div 
-                    key={idx} 
+                  <div
+                    key={idx}
                     className={`border rounded-2xl overflow-hidden transition-all duration-300 ${openFaqIndex === idx ? 'border-[#D4AF37] bg-gradient-to-br from-[#F5EDD6]/20 to-white shadow-md' : 'border-gray-100 bg-white hover:border-[#D4AF37]/50'}`}
                   >
                     <button
@@ -764,7 +761,7 @@ export default function StudentDashboard() {
                 ))}
               </div>
             </div>
-            
+
             {/* Background blobs for modal */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#F5D76E]/5 rounded-full blur-3xl pointer-events-none"></div>
@@ -776,15 +773,15 @@ export default function StudentDashboard() {
       {showVideo && (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/80 backdrop-blur-md video-modal-overlay">
           <div className="w-full max-w-5xl aspect-video bg-black rounded-3xl relative shadow-2xl overflow-hidden video-modal-content border border-white/10">
-            <button 
+            <button
               onClick={() => setShowVideo(false)}
               className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white backdrop-blur-md transition-colors border border-white/20"
             >
               <X className="w-5 h-5" />
             </button>
-            <video 
-              controls 
-              autoPlay 
+            <video
+              controls
+              autoPlay
               className="w-full h-full object-contain"
               src="/userjourney.mp4"
             >

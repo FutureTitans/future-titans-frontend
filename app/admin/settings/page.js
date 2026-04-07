@@ -59,7 +59,7 @@ export default function SettingsPage() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    
+
     if (name.startsWith('auth.')) {
       const authField = name.split('.')[1];
       setFormData(prev => ({
@@ -102,9 +102,9 @@ export default function SettingsPage() {
       const result = await admin.testSMTPConfig();
       setTestResult({ success: true, message: result.message });
     } catch (error) {
-      setTestResult({ 
-        success: false, 
-        message: error?.error || error?.message || 'Test failed' 
+      setTestResult({
+        success: false,
+        message: error?.error || error?.message || 'Test failed'
       });
     } finally {
       setTesting(false);
@@ -149,7 +149,7 @@ export default function SettingsPage() {
           AI Chat Settings
         </h2>
         <p className="text-neutral-medium mb-6">
-          Configure the message limit and reset window for ZUNOVA AI chat. These settings apply to all students.
+          Configure the message limit and reset window for zunnova AI chat. These settings apply to all students.
         </p>
 
         <form onSubmit={handleChatSettingsSave} className="space-y-6">
@@ -212,11 +212,10 @@ export default function SettingsPage() {
           </div>
 
           {chatSaveResult && (
-            <div className={`p-4 rounded-lg flex items-center gap-3 ${
-              chatSaveResult.success 
-                ? 'bg-semantic-success bg-opacity-10 border border-semantic-success' 
+            <div className={`p-4 rounded-lg flex items-center gap-3 ${chatSaveResult.success
+                ? 'bg-semantic-success bg-opacity-10 border border-semantic-success'
                 : 'bg-semantic-error bg-opacity-10 border border-semantic-error'
-            }`}>
+              }`}>
               {chatSaveResult.success ? (
                 <CheckCircle className="w-5 h-5 text-semantic-success" />
               ) : (
@@ -424,11 +423,10 @@ export default function SettingsPage() {
           </div>
 
           {testResult && (
-            <div className={`p-4 rounded-lg flex items-center gap-3 ${
-              testResult.success 
-                ? 'bg-semantic-success bg-opacity-10 border border-semantic-success' 
+            <div className={`p-4 rounded-lg flex items-center gap-3 ${testResult.success
+                ? 'bg-semantic-success bg-opacity-10 border border-semantic-success'
                 : 'bg-semantic-error bg-opacity-10 border border-semantic-error'
-            }`}>
+              }`}>
               {testResult.success ? (
                 <CheckCircle className="w-5 h-5 text-semantic-success" />
               ) : (

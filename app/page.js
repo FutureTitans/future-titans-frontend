@@ -282,7 +282,7 @@ export default function Landing() {
               {[
                 {
                   icon: <Zap className="w-7 h-7 text-[#D4AF37]" />,
-                  title: 'ZUNOVA AI Mentorship',
+                  title: 'zunnova AI Mentorship',
                   description: 'Get personalized feedback and guidance from our advanced AI mentor tailored to your journey.',
                   accent: 'from-[#D4AF37]/15 to-[#F5D76E]/15',
                 },

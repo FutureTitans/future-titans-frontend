@@ -25,7 +25,7 @@ export default function ModulePlayerPage() {
   // Time tracking heartbeat
   useEffect(() => {
     if (!module || !moduleId) return;
-    
+
     // Heartbeat every 60 seconds
     const interval = setInterval(() => {
       modules.trackTime(moduleId, 60).catch(err => console.debug('Failed to track time', err));
@@ -301,7 +301,7 @@ export default function ModulePlayerPage() {
   const currentChapterData = module.chapters[currentChapter];
   const completedCount = Object.keys(chapterCompleted).length;
   const progressPercentage = module.chapters.length > 0 ? Math.round((completedCount / module.chapters.length) * 100) : 0;
-  const zunovaAvailable = currentChapterData?.aiInteractionEnabled;
+  const zunnovaAvailable = currentChapterData?.aiInteractionEnabled;
   const isCompleted = chapterCompleted[currentChapterData?._id];
 
   return (
@@ -345,7 +345,7 @@ export default function ModulePlayerPage() {
                 <div className="text-[10px] md:text-xs text-gray-500 font-semibold uppercase tracking-wider">Complete</div>
               </div>
 
-              {zunovaAvailable && (
+              {zunnovaAvailable && (
                 <button
                   onClick={async () => {
                     const nextVisible = !showAIChat;
@@ -363,7 +363,7 @@ export default function ModulePlayerPage() {
                     }`}
                 >
                   <Brain className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                  <span className="hidden sm:inline">ZUNOVA AI</span>
+                  <span className="hidden sm:inline">zunnova AI</span>
                 </button>
               )}
             </div>
@@ -443,7 +443,7 @@ export default function ModulePlayerPage() {
         </div>
 
         {/* Center Section: Content Area (Video) */}
-        <div className={`flex-1 min-w-0 transition-all duration-300 flex flex-col xl:max-w-none ${showAIChat && isCompleted && zunovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
+        <div className={`flex-1 min-w-0 transition-all duration-300 flex flex-col xl:max-w-none ${showAIChat && isCompleted && zunnovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
           <div className="glass-panel p-4 sm:p-6 md:p-8 shadow-sm flex flex-col flex-1 min-h-0">
             <div className="flex items-center gap-4 mb-6 shrink-0">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0">
@@ -471,11 +471,11 @@ export default function ModulePlayerPage() {
               </div>
             )}
 
-            {/* Zunova Coming Soon Cool Indicator */}
-            {!isCompleted && zunovaAvailable && (
+            {/* zunnova Coming Soon Cool Indicator */}
+            {!isCompleted && zunnovaAvailable && (
               <div className="mt-8 mb-2 relative overflow-hidden rounded-2xl bg-white border border-[#D4AF37]/30 shadow-lg shadow-[#D4AF37]/10 group transition-all duration-300 hover:shadow-xl hover:shadow-[#D4AF37]/20 hover:border-[#D4AF37]/50">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#D4AF37]/10 opacity-50"></div>
-                
+
                 {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] group-hover:animate-[shimmer_2s_infinite]"></div>
 
@@ -488,10 +488,10 @@ export default function ModulePlayerPage() {
                         <Brain className="w-full h-full text-white" />
                       </div>
                     </div>
-                    
+
                     <div>
                       <h4 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#B8952E] to-[#D4AF37] bg-clip-text text-transparent flex items-center gap-3">
-                        Zunova AI is waiting...
+                        zunnova AI is waiting...
                         <span className="flex items-center space-x-1">
                           <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '0ms' }}></span>
                           <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '150ms' }}></span>
@@ -499,15 +499,15 @@ export default function ModulePlayerPage() {
                         </span>
                       </h4>
                       <p className="text-gray-600 text-sm md:text-base mt-1 font-medium max-w-lg leading-relaxed">
-                        Ready to reflect on what you&apos;ve learned? Click <span className="font-bold text-gray-800">&quot;Mark Complete&quot;</span> below to start your personalized interactive session with Zunova!
+                        Ready to reflect on what you&apos;ve learned? Click <span className="font-bold text-gray-800">&quot;Mark Complete&quot;</span> below to start your personalized interactive session with zunnova!
                       </p>
                     </div>
                   </div>
-                  
+
                   {/* Subtle arrow pointing down to Mark Complete */}
                   <div className="hidden sm:flex flex-shrink-0 animate-bounce">
                     <div className="w-10 h-10 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center shadow-sm">
-                       <ArrowRight className="w-5 h-5 text-[#B8952E] transform rotate-90" />
+                      <ArrowRight className="w-5 h-5 text-[#B8952E] transform rotate-90" />
                     </div>
                   </div>
                 </div>
@@ -559,7 +559,7 @@ export default function ModulePlayerPage() {
         </div>
 
         {/* Right Section: AI Chat Layout (Side Panel) */}
-        {showAIChat && isCompleted && zunovaAvailable && (
+        {showAIChat && isCompleted && zunnovaAvailable && (
           <div className="xl:w-[25%] w-full transition-all duration-300 flex-shrink-0 animate-fade-in-up">
             <div className="h-full max-h-[600px] xl:max-h-[calc(100vh-160px)] xl:sticky xl:top-[120px]">
               <AIChatComponent

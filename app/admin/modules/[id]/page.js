@@ -417,7 +417,7 @@ export default function AdminModuleDetailPage() {
               <label className="block text-sm font-medium mb-2">
                 Custom AI Prompt (Required) *
                 <span className="block text-xs text-neutral-medium mt-1">
-                  This prompt will guide ZUNOVA for this specific chapter. It will be combined with the SURGE framework.
+                  This prompt will guide zunnova for this specific chapter. It will be combined with the SURGE framework.
                 </span>
               </label>
               <textarea

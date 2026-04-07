@@ -224,7 +224,7 @@ export default function StudentModulesPage() {
                 {module.aiInteractionEnabled && (
                   <div className="mt-3 flex items-center justify-center gap-2 text-xs text-[#B8952E] bg-[#D4AF37]/8 py-2 rounded-xl">
                     <span className="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse"></span>
-                    ZUNOVA AI Available
+                    zunnova AI Available
                   </div>
                 )}
               </div>

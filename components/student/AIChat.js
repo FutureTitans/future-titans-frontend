@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { aiChat, auth } from '@/lib/api';
 import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles, User } from 'lucide-react';
-import ZunovaAvatar from './ZunovaAvatar';
+import zunnovaAvatar from './zunnovaAvatar';
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
@@ -212,13 +212,13 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] text-white px-5 py-4 flex items-center justify-between relative overflow-hidden backdrop-blur-xl shrink-0 border-b border-white/20">
         <div className="absolute inset-0 bg-white/10"></div>
         <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
-          <ZunovaAvatar
+          <zunnovaAvatar
             isTalking={isLoading}
             className="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 scale-110"
           />
           <div className="min-w-0 flex-1 ml-2">
             <h3 className="text-xl font-bold flex items-center gap-2 tracking-tight">
-              ZUNOVA AI
+              zunnova AI
               <Sparkles className="w-4 h-4 text-white/90 animate-pulse" />
             </h3>
             <p className="text-xs font-semibold uppercase tracking-wider opacity-90">Learning Assistant</p>
@@ -277,7 +277,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
               <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Bot className="w-8 h-8 text-[#D4AF37]" />
               </div>
-              <p className="text-gray-900 font-bold mb-2 text-lg">Hello from ZUNOVA!</p>
+              <p className="text-gray-900 font-bold mb-2 text-lg">Hello from zunnova!</p>
               <p className="text-sm text-gray-500 font-medium leading-relaxed">I'm here to help you reflect on this module and build your SSI framework. Please say hi to Sign Up.</p>
             </div>
           </div>
@@ -344,7 +344,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask Zunova anything...'}
+              placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask zunnova anything...'}
               className="flex-1 px-5 py-3.5 bg-white border border-black/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all text-sm md:text-base shadow-sm placeholder-gray-400 font-medium"
               disabled={isLoading || rateLimit?.limitReached}
             />
