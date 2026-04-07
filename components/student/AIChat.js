@@ -318,10 +318,9 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
               <Bot className="w-4 h-4 text-white" />
             </div>
             <div className="bg-white px-5 py-4 rounded-2xl rounded-tl-md border border-black/5 shadow-sm">
-              <div className="flex gap-1.5 items-center justify-center h-4">
-                <div className="w-2 h-2 bg-[#D4AF37]/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-[#D4AF37]/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                <div className="w-2 h-2 bg-[#D4AF37] rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              <div className="flex items-center gap-2.5">
+                <div className="w-5 h-5 rounded-full border-[2.5px] border-dotted border-[#D4AF37] animate-spin" style={{ animationDuration: '1.2s' }}></div>
+                <span className="text-sm text-gray-500 font-medium italic">zunnova is thinking...</span>
               </div>
             </div>
           </div>

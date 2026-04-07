@@ -265,10 +265,9 @@ export default function GlobalAIChat() {
                   <Bot className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
                 </div>
                 <div className="glass-subtle px-3 py-2 md:px-4 md:py-3 rounded-2xl rounded-bl-sm border border-white/30">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-dotted border-orange-400 animate-spin" style={{ animationDuration: '1.2s' }}></div>
+                    <span className="text-xs md:text-sm text-gray-500 font-medium italic">zunnova is thinking...</span>
                   </div>
                 </div>
               </div>
