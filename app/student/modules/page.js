@@ -100,7 +100,7 @@ export default function StudentModulesPage() {
               <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
               <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-[#F5D76E]/10 rounded-full blur-2xl pointer-events-none"></div>
               <p className="text-gray-800 text-sm md:text-base leading-relaxed font-semibold relative z-10">
-                You have the freedom to start anywhere! Select <strong className="text-black bg-gradient-to-r from-[#D4AF37]/30 to-[#F5D76E]/30 px-2 py-0.5 rounded shadow-sm text-lg mx-1">ANY</strong> module that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge. The path is yours to decide!
+                You have the freedom to start anywhere! Select <strong className="text-black bg-gradient-to-r from-[#D4AF37]/30 to-[#F5D76E]/30 px-2 py-0.5 rounded shadow-sm text-lg mx-1">ANY</strong> level that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge. The path is yours to decide!
               </p>
             </div>
           </div>
