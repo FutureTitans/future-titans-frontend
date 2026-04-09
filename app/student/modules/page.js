@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { modules, payment } from '@/lib/api';
 import { isStudent, getUser } from '@/lib/auth';
-import { BookOpen, Clock, Users, Star, ArrowLeft, Lock, Play, CheckCircle, Trophy, Target, Shield, Zap } from 'lucide-react';
+import { BookOpen, Clock, Users, Star, ArrowLeft, ArrowDown, Lock, Play, CheckCircle, Trophy, Target, Shield, Zap } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function StudentModulesPage() {
@@ -84,14 +84,29 @@ export default function StudentModulesPage() {
           </div>
         )}
 
-        <div className="text-center md:mb-12 mb-8 mt-4">
+        <div className="text-center md:mb-16 mb-12 mt-4 relative">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#D4AF37]/10 to-[#F5D76E]/10 border border-[#D4AF37]/20 text-[#B8952E] font-bold text-xs uppercase tracking-widest mb-6">
              <span>🚀 Open Access</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 mb-6 tracking-tight">Choose Your Level</h1>
-          <p className="text-gray-500 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
-            You have the freedom to start anywhere! Select <strong className="text-gray-700">ANY</strong> module that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge. The path is yours to decide.
-          </p>
+          <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 mb-12 tracking-tight">Choose Your Level</h1>
+          
+          {/* Highlighted Instruction Box */}
+          <div className="relative max-w-2xl mx-auto mt-8">
+             {/* Floating animated arrow pointing down */}
+             <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center">
+                <span className="text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-widest mb-1 bg-white/80 px-2 py-0.5 rounded-full shadow-sm backdrop-blur-sm">Important</span>
+                <ArrowDown className="w-8 h-8 text-[#B8952E] drop-shadow-lg" />
+             </div>
+             
+             <div className="glass-panel bg-gradient-to-br from-white/90 to-[#F5EDD6]/90 border-2 border-[#D4AF37] p-6 md:p-8 rounded-3xl shadow-2xl shadow-[#D4AF37]/20 relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+                <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#D4AF37] to-[#F5D76E]"></div>
+                <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-[#F5D76E]/10 rounded-full blur-2xl pointer-events-none"></div>
+                <p className="text-gray-800 text-sm md:text-base leading-relaxed font-semibold relative z-10">
+                  You have the freedom to start anywhere! Select <strong className="text-black bg-gradient-to-r from-[#D4AF37]/30 to-[#F5D76E]/30 px-2 py-0.5 rounded shadow-sm text-lg mx-1">ANY</strong> module that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge. The path is yours to decide!
+                </p>
+             </div>
+          </div>
         </div>
 
         {/* 🏆 Tournament Bracket Container 🏆 */}
