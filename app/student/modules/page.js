@@ -42,11 +42,19 @@ export default function StudentModulesPage() {
     }
   };
 
+  const isPaid = user?.isPaid || paymentStatus?.isPaid;
+
   // Group modules by difficulty for the adventure zones
+  const getNormalizedDifficulty = (diff) => {
+    const normalized = (diff || '').toLowerCase();
+    if (['intermediate', 'advanced'].includes(normalized)) return normalized;
+    return 'beginner'; // Default unknown to beginner
+  };
+
   const groupedModules = {
-    beginner: modulesList.filter(m => m.difficulty === 'beginner'),
-    intermediate: modulesList.filter(m => m.difficulty === 'intermediate'),
-    advanced: modulesList.filter(m => m.difficulty === 'advanced')
+    beginner: modulesList.filter(m => getNormalizedDifficulty(m.difficulty) === 'beginner'),
+    intermediate: modulesList.filter(m => getNormalizedDifficulty(m.difficulty) === 'intermediate'),
+    advanced: modulesList.filter(m => getNormalizedDifficulty(m.difficulty) === 'advanced')
   };
 
   // Flatten keeping the order B -> I -> A to calculate continuous level numbers
@@ -96,7 +104,7 @@ export default function StudentModulesPage() {
         </div>
 
         {/* Payment Check */}
-        {!paymentStatus?.isPaid && (
+        {!isPaid && (
           <div className="glass-panel border border-[#D4AF37]/30 p-6 bg-gradient-to-r from-white/80 to-[#F5D76E]/10 mb-8 mx-auto max-w-3xl transform hover:scale-[1.02] transition-transform shadow-lg shadow-[#D4AF37]/10">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center gap-4">
@@ -170,11 +178,11 @@ export default function StudentModulesPage() {
                     const globalLevelNumber = sequencedModules.findIndex(m => m._id === module._id) + 1;
                     const completionPct = module.userProgress?.completionPercentage || 0;
                     const isCompleted = completionPct >= 100;
-                    const isLocked = !paymentStatus?.isPaid;
+                    const isLocked = !isPaid;
                     const isActive = completionPct > 0 && completionPct < 100;
                     // Auto-activate level 1 if paid and 0%
-                    const isLevel1AndPaid = globalLevelNumber === 1 && paymentStatus?.isPaid && completionPct === 0;
-                    const isPlayable = isActive || isLevel1AndPaid || (isCompleted && paymentStatus?.isPaid); // For simplicity, let them replay completed if paid
+                    const isLevel1AndPaid = globalLevelNumber === 1 && isPaid && completionPct === 0;
+                    const isPlayable = isActive || isLevel1AndPaid || (isCompleted && isPaid); // For simplicity, let them replay completed if paid
 
                     const stars = getStars(completionPct);
 
