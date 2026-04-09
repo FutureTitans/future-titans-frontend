@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { submission, payment, auth } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
+import { upload } from '@vercel/blob/client';
 import { Save, Send, Upload, FileText, Video, AlertCircle, CheckCircle, ArrowLeft } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
@@ -269,20 +270,26 @@ export default function IdeaSubmissionPage() {
     
     setSubmitting(true);
     try {
-      const submitData = new FormData();
+      // Create JSON payload instead of FormData
+      const submitData = { ...formData };
       
-      // Add form data
-      Object.keys(formData).forEach(key => {
-        if (key === 'teamMembers' || key === 'biggestCosts') {
-          submitData.append(key, JSON.stringify(formData[key]));
-        } else {
-          submitData.append(key, formData[key]);
-        }
-      });
+      // Upload PDF directly from browser to Vercel S3
+      if (files.pdfFile) {
+        const result = await upload(`submission-${Date.now()}-${files.pdfFile.name}`, files.pdfFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        submitData.pdfFile = result.url;
+      }
       
-      // Add files
-      if (files.pdfFile) submitData.append('pdfFile', files.pdfFile);
-      if (files.videoFile) submitData.append('videoFile', files.videoFile);
+      // Upload Video directly from browser to Vercel S3
+      if (files.videoFile) {
+        const result = await upload(`submission-video-${Date.now()}-${files.videoFile.name}`, files.videoFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        submitData.videoFile = result.url;
+      }
       
       await submission.submit(submitData);
       alert('🎉 Idea submitted successfully!');

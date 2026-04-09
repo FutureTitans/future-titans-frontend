@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { upload } from '@vercel/blob/client';
 import { auth, achievements } from '@/lib/api';
 import { isStudent, getUser, setUser as persistUser } from '@/lib/auth';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -58,7 +59,11 @@ export default function StudentProfilePage() {
       };
 
       if (profilePicture instanceof File) {
-        submitData.profilePicture = profilePicture;
+        const uploadResult = await upload(profilePicture.name, profilePicture, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        submitData.profilePicture = uploadResult.url;
       }
 
       await auth.updateProfile(submitData);

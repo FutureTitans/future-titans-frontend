@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { modules } from '@/lib/api';
+import { upload } from '@vercel/blob/client';
 import { Plus, Edit, Trash2, Eye, RefreshCw } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
@@ -67,16 +68,24 @@ export default function ModulesPage() {
         aiInteractionEnabled: true,
       };
 
-      // Handle mentor profile picture: if file is selected, use it; otherwise use URL if exists
+      // Handle mentor profile picture: if file is selected, upload to Vercel S3 cluster
       if (formData.mentorProfilePicture instanceof File) {
-        submitData.mentorProfilePicture = formData.mentorProfilePicture;
+        const mentorBlob = await upload(formData.mentorProfilePicture.name, formData.mentorProfilePicture, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        submitData.mentorProfilePicture = mentorBlob.url;
       } else if (formData.mentorProfilePictureUrl && formData.mentorProfilePictureUrl.trim()) {
         submitData.mentorProfilePicture = formData.mentorProfilePictureUrl.trim();
       }
 
-      // Handle cover image
+      // Handle cover image: if file is selected, upload to Vercel S3 cluster
       if (formData.coverImage instanceof File) {
-        submitData.coverImage = formData.coverImage;
+        const coverBlob = await upload(formData.coverImage.name, formData.coverImage, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        submitData.coverImage = coverBlob.url;
       } else if (formData.coverImageUrl && formData.coverImageUrl.trim()) {
         submitData.coverImage = formData.coverImageUrl.trim();
       }
