@@ -84,7 +84,7 @@ export default function StudentModulesPage() {
           </div>
         )}
 
-        <div className="text-center md:mb-16 mb-12 mt-4 relative">
+        <div className="text-center md:mb-6 mb-4 mt-4 relative">
           <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 mb-12 tracking-tight">Choose Your Level</h1>
 
           {/* Highlighted Instruction Box */}
@@ -107,12 +107,12 @@ export default function StudentModulesPage() {
         </div>
 
         {/* 🏆 Tournament Bracket Container 🏆 */}
-        <div className="relative w-full overflow-hidden mt-8 md:mt-16">
+        <div className="relative w-full overflow-hidden mt-4 md:mt-6">
           {/* Central Connecting Background Line */}
           <div className="absolute top-[40%] left-0 right-0 h-1.5 md:h-2 bg-gradient-to-r from-gray-200 via-white/80 to-gray-200 shadow-[0_0_15px_rgba(212,175,55,0.2)] -translate-y-1/2 z-0 hidden md:block"></div>
 
           {/* Horizontal Scroller */}
-          <div className="flex md:flex-row flex-col gap-12 md:gap-8 overflow-x-auto pb-16 pt-8 snap-x snap-mandatory hide-scrollbar relative z-10 px-4 md:px-12 items-center justify-start min-h-[500px]">
+          <div className="flex md:flex-row flex-col gap-12 md:gap-8 overflow-x-auto pb-16 pt-4 snap-x snap-mandatory hide-scrollbar relative z-10 px-4 md:px-12 items-center justify-start min-h-[500px]">
 
             {sortedModules.map((module, index) => {
               const isDone = (module.userProgress?.completionPercentage || 0) >= 100;
