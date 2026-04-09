@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { modules, payment } from '@/lib/api';
 import { isStudent, getUser } from '@/lib/auth';
-import { BookOpen, Clock, Users, Star, ArrowLeft, Lock, Play, CheckCircle, Filter } from 'lucide-react';
+import { BookOpen, Clock, Users, Star, ArrowLeft, Lock, Play, CheckCircle, Trophy, Target, Shield, Zap } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function StudentModulesPage() {
