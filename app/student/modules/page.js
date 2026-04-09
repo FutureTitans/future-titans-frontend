@@ -59,19 +59,6 @@ export default function StudentModulesPage() {
     }
   };
 
-  // Check if previous stage is passed
-  const isStageUnlocked = (index) => {
-    if (index === 0) return true;
-    const prevModule = sortedModules[index - 1];
-    return (prevModule.userProgress?.completionPercentage || 0) > 0; // Unlocked if previous is started, or at least 100%. Let's be lenient: unlocked if previous is at least 100%.
-  };
-
-  const isStrictlyUnlocked = (index) => {
-    if (index === 0) return true;
-    const prevModule = sortedModules[index - 1];
-    return (prevModule.userProgress?.completionPercentage || 0) >= 100;
-  };
-
   if (loading) {
     return <LoadingSpinner message="Loading modules..." />;
   }
@@ -112,8 +99,14 @@ export default function StudentModulesPage() {
             
             {sortedModules.map((module, index) => {
               const isDone = (module.userProgress?.completionPercentage || 0) >= 100;
-              const unlocked = isStrictlyUnlocked(index);
-              const isActive = unlocked && !isDone;
+              const unlocked = true;
+              
+              // Highlight only the modules that are currently started but not finished, 
+              // or the very first module if none are started.
+              const isStarted = (module.userProgress?.completionPercentage || 0) > 0 && !isDone;
+              // To avoid all 0% stages pulsing at once, let's say "isActive" is just whether you've started it.
+              // Or you can just make all non-done stages look "ready to enter".
+              const isActive = !isDone;
 
               return (
                 <div key={module._id} className="snap-center shrink-0 w-full md:w-[360px] relative group flex flex-col md:block items-center">
