@@ -85,27 +85,24 @@ export default function StudentModulesPage() {
         )}
 
         <div className="text-center md:mb-16 mb-12 mt-4 relative">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#D4AF37]/10 to-[#F5D76E]/10 border border-[#D4AF37]/20 text-[#B8952E] font-bold text-xs uppercase tracking-widest mb-6">
-             <span>🚀 Open Access</span>
-          </div>
           <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 mb-12 tracking-tight">Choose Your Level</h1>
-          
+
           {/* Highlighted Instruction Box */}
           <div className="relative max-w-2xl mx-auto mt-8">
-             {/* Floating animated arrow pointing down */}
-             <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center">
-                <span className="text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-widest mb-1 bg-white/80 px-2 py-0.5 rounded-full shadow-sm backdrop-blur-sm">Important</span>
-                <ArrowDown className="w-8 h-8 text-[#B8952E] drop-shadow-lg" />
-             </div>
-             
-             <div className="glass-panel bg-gradient-to-br from-white/90 to-[#F5EDD6]/90 border-2 border-[#D4AF37] p-6 md:p-8 rounded-3xl shadow-2xl shadow-[#D4AF37]/20 relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#D4AF37] to-[#F5D76E]"></div>
-                <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
-                <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-[#F5D76E]/10 rounded-full blur-2xl pointer-events-none"></div>
-                <p className="text-gray-800 text-sm md:text-base leading-relaxed font-semibold relative z-10">
-                  You have the freedom to start anywhere! Select <strong className="text-black bg-gradient-to-r from-[#D4AF37]/30 to-[#F5D76E]/30 px-2 py-0.5 rounded shadow-sm text-lg mx-1">ANY</strong> module that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge. The path is yours to decide!
-                </p>
-             </div>
+            {/* Floating animated arrow pointing down */}
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center">
+              <span className="text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-widest mb-1 bg-white/80 px-2 py-0.5 rounded-full shadow-sm backdrop-blur-sm">Important</span>
+              <ArrowDown className="w-8 h-8 text-[#B8952E] drop-shadow-lg" />
+            </div>
+
+            <div className="glass-panel bg-gradient-to-br from-white/90 to-[#F5EDD6]/90 border-2 border-[#D4AF37] p-6 md:p-8 rounded-3xl shadow-2xl shadow-[#D4AF37]/20 relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#D4AF37] to-[#F5D76E]"></div>
+              <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
+              <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-[#F5D76E]/10 rounded-full blur-2xl pointer-events-none"></div>
+              <p className="text-gray-800 text-sm md:text-base leading-relaxed font-semibold relative z-10">
+                You have the freedom to start anywhere! Select <strong className="text-black bg-gradient-to-r from-[#D4AF37]/30 to-[#F5D76E]/30 px-2 py-0.5 rounded shadow-sm text-lg mx-1">ANY</strong> module that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge. The path is yours to decide!
+              </p>
+            </div>
           </div>
         </div>
 
@@ -116,11 +113,11 @@ export default function StudentModulesPage() {
 
           {/* Horizontal Scroller */}
           <div className="flex md:flex-row flex-col gap-12 md:gap-8 overflow-x-auto pb-16 pt-8 snap-x snap-mandatory hide-scrollbar relative z-10 px-4 md:px-12 items-center justify-start min-h-[500px]">
-            
+
             {sortedModules.map((module, index) => {
               const isDone = (module.userProgress?.completionPercentage || 0) >= 100;
               const unlocked = true;
-              
+
               // Highlight only the modules that are currently started but not finished, 
               // or the very first module if none are started.
               const isStarted = (module.userProgress?.completionPercentage || 0) > 0 && !isDone;
@@ -130,52 +127,52 @@ export default function StudentModulesPage() {
 
               return (
                 <div key={module._id} className="snap-center shrink-0 w-full md:w-[360px] relative group flex flex-col md:block items-center">
-                  
+
                   {/* Connection Node / Dot */}
                   <div className="hidden md:flex absolute top-[40%] -left-[45px] w-full items-center -z-10 translate-y-[-50%] pointer-events-none">
-                     {index !== 0 && (
-                        <div className={`h-1.5 w-[80px] bg-gradient-to-r ${unlocked ? 'from-[#D4AF37] to-[#F5D76E]' : 'from-gray-300 to-gray-300'} transition-all duration-1000 origin-left`}></div>
-                     )}
+                    {index !== 0 && (
+                      <div className={`h-1.5 w-[80px] bg-gradient-to-r ${unlocked ? 'from-[#D4AF37] to-[#F5D76E]' : 'from-gray-300 to-gray-300'} transition-all duration-1000 origin-left`}></div>
+                    )}
                   </div>
 
                   {/* Stage Label Hovering Above */}
                   <div className={`text-center mb-4 transition-all duration-300 ${isActive ? 'scale-110 translate-y-[-5px]' : ''}`}>
                     <div className="inline-flex flex-col items-center justify-center">
-                       <span className={`text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1 ${unlocked ? 'text-[#D4AF37]' : 'text-gray-400'}`}>
-                         Level {index + 1}
-                       </span>
-                       {isDone ? (
-                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8952E] flex items-center justify-center shadow-lg shadow-[#D4AF37]/40 ring-4 ring-white">
-                           <Trophy className="w-5 h-5 text-white" />
-                         </div>
-                       ) : isActive ? (
-                         <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-xl shadow-[#D4AF37]/30 ring-4 ring-[#D4AF37] animate-pulse">
-                           <Target className="w-5 h-5 text-[#B8952E]" />
-                         </div>
-                       ) : (
-                         <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center ring-4 ring-white shadow-inner">
-                           <Shield className="w-5 h-5 text-gray-400" />
-                         </div>
-                       )}
+                      <span className={`text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1 ${unlocked ? 'text-[#D4AF37]' : 'text-gray-400'}`}>
+                        Level {index + 1}
+                      </span>
+                      {isDone ? (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8952E] flex items-center justify-center shadow-lg shadow-[#D4AF37]/40 ring-4 ring-white">
+                          <Trophy className="w-5 h-5 text-white" />
+                        </div>
+                      ) : isActive ? (
+                        <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-xl shadow-[#D4AF37]/30 ring-4 ring-[#D4AF37] animate-pulse">
+                          <Target className="w-5 h-5 text-[#B8952E]" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center ring-4 ring-white shadow-inner">
+                          <Shield className="w-5 h-5 text-gray-400" />
+                        </div>
+                      )}
                     </div>
                   </div>
 
                   {/* Boss Fight Card */}
-                  <div 
+                  <div
                     className={`card overflow-hidden p-0 w-full transition-all duration-500 border-2
-                      ${isDone ? 'border-[#D4AF37]/50 shadow-xl shadow-[#D4AF37]/20 bg-gradient-to-br from-white to-[#F5D76E]/5' : 
-                      isActive ? 'border-[#D4AF37] shadow-2xl scale-[1.02] bg-white ring-8 ring-[#D4AF37]/10' : 
-                      'border-gray-200 opacity-70 grayscale-[0.6] hover:grayscale-0 bg-gray-50/80'}
+                      ${isDone ? 'border-[#D4AF37]/50 shadow-xl shadow-[#D4AF37]/20 bg-gradient-to-br from-white to-[#F5D76E]/5' :
+                        isActive ? 'border-[#D4AF37] shadow-2xl scale-[1.02] bg-white ring-8 ring-[#D4AF37]/10' :
+                          'border-gray-200 opacity-70 grayscale-[0.6] hover:grayscale-0 bg-gray-50/80'}
                     `}
                   >
-                     {/* Lock Overlay if completely locked visually */}
-                     {!unlocked && (
-                        <div className="absolute inset-0 bg-gray-100/50 backdrop-blur-[2px] z-20 flex items-center justify-center">
-                           <div className="bg-white/90 p-3 rounded-full shadow-lg text-gray-500">
-                              <Lock className="w-6 h-6" />
-                           </div>
+                    {/* Lock Overlay if completely locked visually */}
+                    {!unlocked && (
+                      <div className="absolute inset-0 bg-gray-100/50 backdrop-blur-[2px] z-20 flex items-center justify-center">
+                        <div className="bg-white/90 p-3 rounded-full shadow-lg text-gray-500">
+                          <Lock className="w-6 h-6" />
                         </div>
-                     )}
+                      </div>
+                    )}
 
                     {/* Cover Image */}
                     {module.coverImage ? (
@@ -191,7 +188,7 @@ export default function StudentModulesPage() {
                     ) : (
                       <div className={`w-full h-24 bg-gradient-to-br flex items-center justify-center ${isActive ? 'from-[#D4AF37]/20 to-[#F5D76E]/10' : 'from-gray-200 to-gray-100'}`}>
                         <span className={`text-[10px] px-3 py-1 rounded-full uppercase tracking-wider font-bold shadow-sm  border ${isActive ? 'bg-white text-[#B8952E] border-[#D4AF37]/30' : 'bg-gray-100/50 text-gray-500 border-gray-300'}`}>
-                           {module.difficulty}
+                          {module.difficulty}
                         </span>
                       </div>
                     )}
@@ -247,8 +244,8 @@ export default function StudentModulesPage() {
                           <span className={`text-[10px] font-bold ${isDone ? 'text-green-500' : 'text-gray-700'}`}>{module.userProgress?.completionPercentage || 0}%</span>
                         </div>
                         <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                          <div className={`h-1.5 rounded-full transition-all duration-1000 ${isDone ? 'bg-green-500' : 'bg-gradient-to-r from-[#D4AF37] to-[#F5D76E]'}`} 
-                               style={{ width: `${module.userProgress?.completionPercentage || 0}%` }}></div>
+                          <div className={`h-1.5 rounded-full transition-all duration-1000 ${isDone ? 'bg-green-500' : 'bg-gradient-to-r from-[#D4AF37] to-[#F5D76E]'}`}
+                            style={{ width: `${module.userProgress?.completionPercentage || 0}%` }}></div>
                         </div>
                       </div>
 
@@ -257,18 +254,18 @@ export default function StudentModulesPage() {
                         <Link
                           href={unlocked ? `/student/modules/${module._id}` : '#'}
                           className={`w-full py-3 px-4 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all duration-300
-                            ${!unlocked 
-                               ? 'bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none'
-                               : isDone 
-                                 ? 'bg-white border-2 border-[#D4AF37] text-[#B8952E] hover:bg-[#D4AF37]/5' 
-                                 : 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white shadow-lg shadow-[#D4AF37]/30 hover:shadow-xl hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5'
+                            ${!unlocked
+                              ? 'bg-gray-100 text-gray-400 cursor-not-allowed pointer-events-none'
+                              : isDone
+                                ? 'bg-white border-2 border-[#D4AF37] text-[#B8952E] hover:bg-[#D4AF37]/5'
+                                : 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white shadow-lg shadow-[#D4AF37]/30 hover:shadow-xl hover:shadow-[#D4AF37]/40 hover:-translate-y-0.5'
                             }
                           `}
                         >
                           {!unlocked ? (
-                             <><Lock className="w-4 h-4" /> Locked</>
+                            <><Lock className="w-4 h-4" /> Locked</>
                           ) : isDone ? (
-                             <><CheckCircle className="w-4 h-4" /> Review Stage</>
+                            <><CheckCircle className="w-4 h-4" /> Review Stage</>
                           ) : (
                             <><Zap className="w-4 h-4 fill-white animate-pulse" /> Enter Stage</>
                           )}
