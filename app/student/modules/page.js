@@ -127,7 +127,7 @@ export default function StudentModulesPage() {
                   <div className={`text-center mb-4 transition-all duration-300 ${isActive ? 'scale-110 translate-y-[-5px]' : ''}`}>
                     <div className="inline-flex flex-col items-center justify-center">
                        <span className={`text-[10px] md:text-xs font-bold tracking-widest uppercase mb-1 ${unlocked ? 'text-[#D4AF37]' : 'text-gray-400'}`}>
-                         Stage {index + 1}
+                         Level {index + 1}
                        </span>
                        {isDone ? (
                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8952E] flex items-center justify-center shadow-lg shadow-[#D4AF37]/40 ring-4 ring-white">
