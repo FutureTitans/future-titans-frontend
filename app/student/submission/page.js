@@ -16,39 +16,39 @@ export default function IdeaSubmissionPage() {
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [currentSection, setCurrentSection] = useState(0);
-  
+
   const [formData, setFormData] = useState({
     // Participant Details
     teamMembers: [{ name: '', email: '', role: '' }],
-    
+
     // Project Overview
     projectTitle: '',
     primaryCategory: '',
     secondaryCategory: '',
     elevatorPitch: '',
-    
+
     // Problem Statement
     problemStatement: '',
     existingSolutions: '',
-    
+
     // Solution Overview
     solutionOverview: '',
     prototypeDescription: '',
-    
+
     // Market & Impact
     userTypes: '',
     reachStrategy: '',
     impactDescription: '',
-    
+
     // Business Model
     businessModel: '',
     biggestCosts: ['', ''],
-    
+
     // Think Like a Titan
     teamSkills: '',
     wantToLearn: '',
     improvementPlan: '',
-    
+
     // Additional Info
     inspiration: '',
     previousWork: '',
@@ -78,7 +78,7 @@ export default function IdeaSubmissionPage() {
       router.push('/login');
       return;
     }
-    
+
     checkAccess();
   }, [router]);
 
@@ -101,7 +101,7 @@ export default function IdeaSubmissionPage() {
       try {
         const completionStatus = await auth.checkCompletionStatus();
         console.log('📊 Submission Page - Completion Status:', completionStatus);
-        
+
         if (!completionStatus.canSubmit) {
           const incompleteDetails = completionStatus.details
             .filter(d => !d.isComplete)
@@ -113,9 +113,9 @@ export default function IdeaSubmissionPage() {
               return `• ${title}: ${completed}/${total} chapters (${percent}%)`;
             })
             .join('\n');
-          
+
           console.log('Incomplete modules details:', completionStatus.details.filter(d => !d.isComplete));
-          
+
           alert(`Complete at least one learning module before accessing the final submission form.\n\nIncomplete modules:\n${incompleteDetails || 'Unable to load module details'}`);
           router.push('/student/dashboard');
           return;
@@ -208,14 +208,14 @@ export default function IdeaSubmissionPage() {
 
   const validateForm = () => {
     const newErrors = {};
-    
+
     // Required fields validation
     if (!formData.projectTitle) newErrors.projectTitle = 'Project title is required';
     if (!formData.primaryCategory) newErrors.primaryCategory = 'Primary category is required';
     if (!formData.elevatorPitch) newErrors.elevatorPitch = 'Elevator pitch is required';
     if (!formData.problemStatement) newErrors.problemStatement = 'Problem statement is required';
     if (!formData.solutionOverview) newErrors.solutionOverview = 'Solution overview is required';
-    
+
     // Word limit validation
     if (formData.elevatorPitch && formData.elevatorPitch.split(' ').length > 100) {
       newErrors.elevatorPitch = 'Elevator pitch must be 100 words or less';
@@ -229,7 +229,7 @@ export default function IdeaSubmissionPage() {
     if (formData.inspiration && formData.inspiration.split(' ').length > 50) {
       newErrors.inspiration = 'Inspiration must be 50 words or less';
     }
-    
+
     // File validation
     if (!files.pdfFile) newErrors.pdfFile = 'PDF file is required';
     if (files.pdfFile && files.pdfFile.size > 10 * 1024 * 1024) {
@@ -238,7 +238,7 @@ export default function IdeaSubmissionPage() {
     if (files.videoFile && files.videoFile.size > 100 * 1024 * 1024) {
       newErrors.videoFile = 'Video file must be less than 100MB';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -248,12 +248,12 @@ export default function IdeaSubmissionPage() {
       alert('Please fix the errors before submitting');
       return;
     }
-    
+
     setSubmitting(true);
     try {
       // Create JSON payload instead of FormData
       const submitData = { ...formData };
-      
+
       // Upload PDF directly from browser to Vercel S3
       if (files.pdfFile) {
         const result = await upload(`submission-${Date.now()}-${files.pdfFile.name}`, files.pdfFile, {
@@ -262,7 +262,7 @@ export default function IdeaSubmissionPage() {
         });
         submitData.pdfFile = result.url;
       }
-      
+
       // Upload Video directly from browser to Vercel S3
       if (files.videoFile) {
         const result = await upload(`submission-video-${Date.now()}-${files.videoFile.name}`, files.videoFile, {
@@ -271,7 +271,7 @@ export default function IdeaSubmissionPage() {
         });
         submitData.videoFile = result.url;
       }
-      
+
       await submission.submit(submitData);
       alert('🎉 Idea submitted successfully!');
       router.push('/student/dashboard');
@@ -295,7 +295,7 @@ export default function IdeaSubmissionPage() {
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-bold mb-4">👥 Participant Details</h3>
-            
+
             <div>
               <label className="block text-sm font-medium mb-2">Team Members (max 3)</label>
               {formData.teamMembers.map((member, index) => (
@@ -336,7 +336,7 @@ export default function IdeaSubmissionPage() {
                   </div>
                 </div>
               ))}
-              
+
               {formData.teamMembers.length < 3 && (
                 <button
                   onClick={addTeamMember}
@@ -353,7 +353,7 @@ export default function IdeaSubmissionPage() {
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-bold mb-4">🎯 Project Overview</h3>
-            
+
             <div>
               <label className="block text-sm font-medium mb-2">Project Title *</label>
               <input
@@ -421,7 +421,7 @@ export default function IdeaSubmissionPage() {
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-bold mb-4">❓ Problem Statement</h3>
-            
+
             <div>
               <label className="block text-sm font-medium mb-2">
                 What problem are you solving? * (Max 150 words)
@@ -454,7 +454,7 @@ export default function IdeaSubmissionPage() {
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-bold mb-4">💡 Solution Overview</h3>
-            
+
             <div>
               <label className="block text-sm font-medium mb-2">
                 Your Innovation * (Max 200 words)
@@ -617,9 +617,8 @@ export default function IdeaSubmissionPage() {
               <textarea
                 value={formData.inspiration}
                 onChange={(e) => handleInputChange('inspiration', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-lg h-24 ${
-                  errors.inspiration ? 'border-semantic-error' : 'border-neutral-border'
-                }`}
+                className={`w-full px-3 py-2 border rounded-lg h-24 ${errors.inspiration ? 'border-semantic-error' : 'border-neutral-border'
+                  }`}
                 placeholder="A short story or moment that sparked this project"
               />
               {errors.inspiration && (
@@ -643,10 +642,10 @@ export default function IdeaSubmissionPage() {
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-bold mb-4">📎 File Uploads</h3>
-            
+
             <div>
               <label className="block text-sm font-medium mb-2">
-                PDF Document * (Max 5 pages, 10MB)
+                Idea Documentation PDF * (Max 5 pages, 10MB)
               </label>
               <div className="border-2 border-dashed border-neutral-border rounded-lg p-6 text-center">
                 <FileText className="w-12 h-12 text-neutral-medium mx-auto mb-4" />
@@ -747,11 +746,10 @@ export default function IdeaSubmissionPage() {
                   <button
                     key={section.id}
                     onClick={() => setCurrentSection(section.id)}
-                    className={`w-full text-left p-3 rounded-lg transition flex items-center gap-3 ${
-                      currentSection === section.id
+                    className={`w-full text-left p-3 rounded-lg transition flex items-center gap-3 ${currentSection === section.id
                         ? 'bg-primary-red text-white'
                         : 'hover:bg-neutral-light'
-                    }`}
+                      }`}
                   >
                     <span className="text-lg">{section.icon}</span>
                     <span className="text-sm font-medium">{section.title}</span>
