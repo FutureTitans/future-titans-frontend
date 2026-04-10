@@ -691,6 +691,34 @@ export default function StudentDashboard() {
               </Link>
             </div>
 
+            {/* Submit Your Idea CTA */}
+            {isUserPaid && completedModules > 0 && (
+              <div className="glass-panel p-5 sm:p-6 relative overflow-hidden group border border-[#D4AF37]/30 bg-gradient-to-br from-white to-[#F5D76E]/10">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-[150%] group-hover:translate-x-[150%] transition-transform duration-1000"></div>
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8952E] flex items-center justify-center shadow-md">
+                      <ArrowRight className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base text-gray-900">Ready to Submit?</h3>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Share your innovation idea</p>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    You&apos;ve completed {completedModules} module{completedModules > 1 ? 's' : ''}! Submit your idea to compete for the Future Titans finale.
+                  </p>
+                  <Link
+                    href="/student/submission"
+                    className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all font-semibold text-sm shadow-md"
+                  >
+                    <Trophy className="w-4 h-4" />
+                    Submit Your Idea
+                  </Link>
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
 

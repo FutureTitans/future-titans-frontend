@@ -307,6 +307,8 @@ export default function ModulePlayerPage() {
     );
   }
 
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+
   const currentChapterData = module.chapters[currentChapter];
   const completedCount = Object.keys(chapterCompleted).length;
   const progressPercentage = module.chapters.length > 0 ? Math.round((completedCount / module.chapters.length) * 100) : 0;
@@ -585,7 +587,7 @@ export default function ModulePlayerPage() {
                   </button>
                 ) : (
                   <button
-                    onClick={() => router.push('/student/dashboard')}
+                    onClick={() => setShowCompletionModal(true)}
                     className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#B8952E] to-[#D4AF37] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm shadow-[#D4AF37]/20"
                   >
                     <Trophy className="w-4 h-4" />
@@ -611,6 +613,61 @@ export default function ModulePlayerPage() {
         )}
 
       </div>
+
+      {/* ─── Module Completion Modal ─── */}
+      {showCompletionModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl w-full max-w-lg p-8 sm:p-10 shadow-2xl relative overflow-hidden border border-[#D4AF37]/20 text-center">
+            {/* Background decoration */}
+            <div className="absolute top-0 left-0 w-48 h-48 bg-[#F5D76E]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+
+            <div className="relative z-10">
+              {/* Trophy Icon */}
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5D76E] to-[#D4AF37] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-[#D4AF37]/30">
+                <Trophy className="w-10 h-10 text-white" />
+              </div>
+
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
+                🎉 Module Complete!
+              </h2>
+              <p className="text-gray-600 mb-8 text-sm sm:text-base leading-relaxed">
+                Congratulations on finishing <span className="font-semibold text-gray-800">{module.title}</span>! You&apos;re one step closer to becoming a Future Titan.
+              </p>
+
+              <div className="space-y-3">
+                {/* Submit Your Idea — Primary CTA */}
+                <button
+                  onClick={() => router.push('/student/submission')}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all font-semibold text-sm shadow-md"
+                >
+                  <ArrowRight className="w-5 h-5" />
+                  Submit Your Idea
+                </button>
+
+                {/* Back to Dashboard — Secondary */}
+                <button
+                  onClick={() => router.push('/student/dashboard')}
+                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-2xl hover:bg-gray-50 transition-all font-medium text-sm"
+                >
+                  Back to Dashboard
+                </button>
+
+                {/* Continue Learning — Tertiary */}
+                <button
+                  onClick={() => {
+                    setShowCompletionModal(false);
+                    router.push('/student/modules');
+                  }}
+                  className="w-full text-sm text-gray-500 hover:text-[#B8952E] transition-colors font-medium py-2"
+                >
+                  Continue Learning More Modules →
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
