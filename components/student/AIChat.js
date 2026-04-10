@@ -209,24 +209,24 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   return (
     <div className="flex flex-col glass-panel rounded-3xl border border-white/40 shadow-xl overflow-hidden h-full">
       {/* Premium Bot Header */}
-      <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] text-white px-5 py-4 flex items-center justify-between relative overflow-hidden backdrop-blur-xl shrink-0 border-b border-white/20">
+      <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] text-white px-4 py-3 md:px-5 md:py-4 flex items-center justify-between relative overflow-hidden backdrop-blur-xl shrink-0 border-b border-white/20">
         <div className="absolute inset-0 bg-white/10"></div>
-        <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
+        <div className="flex items-center gap-2 md:gap-3 relative z-10 flex-1 min-w-0">
           <ZunnovaAvatar
             isTalking={isLoading}
-            className="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 scale-110"
+            className="w-12 h-12 md:w-20 md:h-20 flex-shrink-0"
           />
-          <div className="min-w-0 flex-1 ml-2">
-            <h3 className="text-xl font-bold flex items-center gap-2 tracking-tight whitespace-nowrap">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-base md:text-xl font-bold tracking-tight whitespace-nowrap">
               Zunnova AI
             </h3>
-            <p className="text-xs font-semibold uppercase tracking-wider opacity-90">Learning Assistant</p>
+            <p className="text-[10px] md:text-xs font-semibold uppercase tracking-wider opacity-90">Learning Assistant</p>
           </div>
         </div>
         <button
           type="button"
           onClick={() => setTtsEnabled((v) => !v)}
-          className="relative z-10 flex items-center gap-1.5 text-xs bg-white/20 max-h-8 backdrop-blur-sm px-3 py-1.5 rounded-full hover:bg-white/30 transition border border-white/30 font-medium tracking-wide"
+          className="relative z-10 flex items-center gap-1.5 text-xs bg-white/20 max-h-8 backdrop-blur-sm px-2.5 py-1.5 rounded-full hover:bg-white/30 transition border border-white/30 font-medium tracking-wide flex-shrink-0"
         >
           {ttsEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
           <span className="hidden sm:inline">{ttsEnabled ? 'Voice On' : 'Voice Off'}</span>
