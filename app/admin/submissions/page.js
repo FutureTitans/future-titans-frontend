@@ -65,40 +65,39 @@ export default function SubmissionsPage() {
       const details = detailedSubmission || await submission.getDetails(submissionId);
       
       if (details?.pdfFile) {
-        // If it's a URL (Vercel Blob or HTTP), open directly in new tab
-        if (details.pdfFile.startsWith('http://') || details.pdfFile.startsWith('https://')) {
-          window.open(details.pdfFile, '_blank');
+        let downloadUrl = details.pdfFile;
+        // If it's a Vercel Blob URL, use the ?download=1 parameter to trigger direct download
+        if (downloadUrl.startsWith('http')) {
+          if (downloadUrl.includes('public.blob.vercel-storage.com') && !downloadUrl.includes('download=1')) {
+            downloadUrl += (downloadUrl.includes('?') ? '&' : '?') + 'download=1';
+          }
+          const a = document.createElement('a');
+          a.href = downloadUrl;
+          a.download = `submission-${submissionId}.pdf`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
         } else {
-          // Otherwise, use the download endpoint (which will redirect or download)
+          // Fallback mechanism
           const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api';
           const token = getAuthToken();
           
           const response = await fetch(`${API_URL}/submission/admin/${submissionId}/download/pdf`, {
             method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-            redirect: 'follow', // Follow redirects automatically
+            headers: { 'Authorization': `Bearer ${token}` },
+            redirect: 'follow',
           });
           
           if (response.ok) {
-            // Check if response is a PDF blob or a redirect
-            const contentType = response.headers.get('content-type');
-            if (contentType && contentType.includes('application/pdf')) {
-              // Download as blob
-              const blob = await response.blob();
-              const url = window.URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `submission-${submissionId}.pdf`;
-              document.body.appendChild(a);
-              a.click();
-              window.URL.revokeObjectURL(url);
-              document.body.removeChild(a);
-            } else {
-              // It's a redirect, open the final URL
-              window.open(response.url, '_blank');
-            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `submission-${submissionId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
           } else {
             throw new Error('Failed to download PDF');
           }
@@ -111,6 +110,41 @@ export default function SubmissionsPage() {
       alert('Failed to download PDF: ' + (error.error || error.message || 'Unknown error'));
     }
   };
+
+  const handleShortlist = async (submissionId) => {
+    if (!confirm('Are you sure you want to shortlist this submission?')) return;
+    try {
+      await submission.score(submissionId, { submissionStatus: 'shortlisted' });
+      // Update local state
+      setSubmissions(submissions.map(sub => 
+        sub._id === submissionId ? { ...sub, submissionStatus: 'shortlisted' } : sub
+      ));
+      if (detailedSubmission && selectedSubmission?._id === submissionId) {
+        setDetailedSubmission({ ...detailedSubmission, submissionStatus: 'shortlisted' });
+        setSelectedSubmission({ ...selectedSubmission, submissionStatus: 'shortlisted' });
+      }
+      alert('Submission successfully shortlisted!');
+    } catch (error) {
+      console.error('Failed to shortlist submission:', error);
+      alert('Failed to shortlist submission: ' + (error.error || error.message || 'Unknown error'));
+    }
+  };
+
+  const handleReject = async (submissionId) => {
+    if (!confirm('Are you sure you want to reject and permanently delete this submission? This action cannot be undone.')) return;
+    try {
+      await submission.reject(submissionId);
+      // Remove from lists
+      setSubmissions(submissions.filter(sub => sub._id !== submissionId));
+      setSelectedSubmission(null);
+      setDetailedSubmission(null);
+      alert('Submission successfully rejected and deleted.');
+    } catch (error) {
+      console.error('Failed to reject submission:', error);
+      alert('Failed to reject submission: ' + (error.error || error.message || 'Unknown error'));
+    }
+  };
+
 
   if (loading) return <LoadingSpinner message="Loading submissions..." />;
 
@@ -493,19 +527,14 @@ export default function SubmissionsPage() {
                   {/* Actions */}
                   <div className="flex gap-4 pt-4 border-t border-neutral-border">
                     <button 
-                      onClick={() => handleDownloadPDF(selectedSubmission._id)}
-                      disabled={!detailedSubmission?.pdfFile}
-                      className="flex items-center gap-2 bg-primary-red text-white px-6 py-2 rounded-lg hover:bg-primary-darkRed transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      onClick={() => handleReject(selectedSubmission._id)}
+                      className="flex-1 bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition font-semibold"
                     >
-                      <Download className="w-4 h-4" />
-                      Download PDF
+                      Reject
                     </button>
                     <button 
-                      onClick={() => {
-                        // TODO: Implement shortlist functionality
-                        alert('Shortlist functionality coming soon');
-                      }}
-                      className="flex-1 bg-accent-gold text-white px-4 py-2 rounded-lg hover:bg-accent-amber transition"
+                      onClick={() => handleShortlist(selectedSubmission._id)}
+                      className="flex-1 bg-accent-gold text-white px-4 py-2 rounded-lg hover:bg-accent-amber transition font-semibold"
                     >
                       Shortlist
                     </button>
@@ -514,7 +543,7 @@ export default function SubmissionsPage() {
                         setSelectedSubmission(null);
                         setDetailedSubmission(null);
                       }}
-                      className="flex-1 bg-neutral-light text-neutral-dark px-4 py-2 rounded-lg hover:bg-neutral-border transition"
+                      className="flex-1 bg-neutral-light text-neutral-dark px-4 py-2 rounded-lg hover:bg-neutral-border transition font-semibold"
                     >
                       Close
                     </button>
