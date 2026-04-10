@@ -21,6 +21,8 @@ export default function ModulePlayerPage() {
   const [chapterLoading, setChapterLoading] = useState(false);
   const [chapterCompleted, setChapterCompleted] = useState({});
   const [showChaptersConfig, setShowChaptersConfig] = useState(true); // default open on desktop
+  const [markingComplete, setMarkingComplete] = useState(false);
+  const [navigatingNext, setNavigatingNext] = useState(false);
 
   // Time tracking heartbeat
   useEffect(() => {
@@ -139,8 +141,12 @@ export default function ModulePlayerPage() {
 
   const handleNextChapter = () => {
     if (currentChapter < module.chapters.length - 1) {
-      setCurrentChapter(currentChapter + 1);
-      setShowAIChat(false);
+      setNavigatingNext(true);
+      setTimeout(() => {
+        setCurrentChapter(currentChapter + 1);
+        setShowAIChat(false);
+        setNavigatingNext(false);
+      }, 800);
     }
   };
 
@@ -152,6 +158,7 @@ export default function ModulePlayerPage() {
   };
 
   const completeChapter = async () => {
+    setMarkingComplete(true);
     try {
       const chapterId = module.chapters[currentChapter]._id;
       await aiChat.completeChapter(moduleId, chapterId);
@@ -175,6 +182,8 @@ export default function ModulePlayerPage() {
     } catch (error) {
       console.error('Failed to complete chapter:', error);
       alert('Failed to mark chapter as complete: ' + (error?.error || error?.message || 'Unknown error'));
+    } finally {
+      setMarkingComplete(false);
     }
   };
 
@@ -301,7 +310,7 @@ export default function ModulePlayerPage() {
   const currentChapterData = module.chapters[currentChapter];
   const completedCount = Object.keys(chapterCompleted).length;
   const progressPercentage = module.chapters.length > 0 ? Math.round((completedCount / module.chapters.length) * 100) : 0;
-  const zunnovaAvailable = currentChapterData?.aiInteractionEnabled;
+  const ZunnovaAvailable = currentChapterData?.aiInteractionEnabled;
   const isCompleted = chapterCompleted[currentChapterData?._id];
 
   return (
@@ -345,7 +354,7 @@ export default function ModulePlayerPage() {
                 <div className="text-[10px] md:text-xs text-gray-500 font-semibold uppercase tracking-wider">Complete</div>
               </div>
 
-              {zunnovaAvailable && (
+              {ZunnovaAvailable && (
                 <button
                   onClick={async () => {
                     const nextVisible = !showAIChat;
@@ -363,7 +372,7 @@ export default function ModulePlayerPage() {
                     }`}
                 >
                   <Brain className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                  <span className="hidden sm:inline">zunnova AI</span>
+                  <span className="hidden sm:inline">Zunnova AI</span>
                 </button>
               )}
             </div>
@@ -443,7 +452,7 @@ export default function ModulePlayerPage() {
         </div>
 
         {/* Center Section: Content Area (Video) */}
-        <div className={`flex-1 min-w-0 transition-all duration-300 flex flex-col xl:max-w-none ${showAIChat && isCompleted && zunnovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
+        <div className={`flex-1 min-w-0 transition-all duration-300 flex flex-col xl:max-w-none ${showAIChat && isCompleted && ZunnovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
           <div className="glass-panel p-4 sm:p-6 md:p-8 shadow-sm flex flex-col flex-1 min-h-0">
             <div className="flex items-center gap-4 mb-6 shrink-0">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0">
@@ -471,8 +480,8 @@ export default function ModulePlayerPage() {
               </div>
             )}
 
-            {/* zunnova Coming Soon Cool Indicator */}
-            {!isCompleted && zunnovaAvailable && (
+            {/* Zunnova Coming Soon Cool Indicator */}
+            {!isCompleted && ZunnovaAvailable && (
               <div className="mt-8 mb-2 relative overflow-hidden rounded-2xl bg-white border border-[#D4AF37]/30 shadow-lg shadow-[#D4AF37]/10 group transition-all duration-300 hover:shadow-xl hover:shadow-[#D4AF37]/20 hover:border-[#D4AF37]/50">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#D4AF37]/10 opacity-50"></div>
 
@@ -491,7 +500,7 @@ export default function ModulePlayerPage() {
 
                     <div>
                       <h4 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#B8952E] to-[#D4AF37] bg-clip-text text-transparent flex items-center gap-3">
-                        zunnova AI is waiting...
+                        Zunnova AI is waiting...
                         <span className="flex items-center space-x-1">
                           <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '0ms' }}></span>
                           <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '150ms' }}></span>
@@ -499,7 +508,7 @@ export default function ModulePlayerPage() {
                         </span>
                       </h4>
                       <p className="text-gray-600 text-sm md:text-base mt-1 font-medium max-w-lg leading-relaxed">
-                        Ready to reflect on what you&apos;ve learned? Click <span className="font-bold text-gray-800">&quot;Mark Complete&quot;</span> below to start your personalized interactive session with zunnova!
+                        Ready to reflect on what you&apos;ve learned? Click <span className="font-bold text-gray-800">&quot;Mark Complete&quot;</span> below to start your personalized interactive session with Zunnova!
                       </p>
                     </div>
                   </div>
@@ -529,20 +538,50 @@ export default function ModulePlayerPage() {
                 {!isCompleted && (
                   <button
                     onClick={completeChapter}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#1B6B4C] to-[#0F5132] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm"
+                    disabled={markingComplete}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#1B6B4C] to-[#0F5132] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm relative overflow-hidden disabled:opacity-80"
                   >
-                    <CheckCircle className="w-4 h-4" />
-                    Mark Complete
+                    {markingComplete && (
+                      <div className="absolute inset-0 bg-white/20">
+                        <div className="h-full bg-white/30 rounded-full animate-[progressBar_1.5s_ease-in-out_infinite]" />
+                      </div>
+                    )}
+                    {markingComplete ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
+                        Completing...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        Mark Complete
+                      </>
+                    )}
                   </button>
                 )}
 
                 {currentChapter < module.chapters.length - 1 ? (
                   <button
                     onClick={handleNextChapter}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm shadow-[#D4AF37]/20"
+                    disabled={navigatingNext}
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm shadow-[#D4AF37]/20 relative overflow-hidden disabled:opacity-80"
                   >
-                    Next Chapter
-                    <ArrowRight className="w-4 h-4" />
+                    {navigatingNext && (
+                      <div className="absolute inset-0 bg-white/20">
+                        <div className="h-full bg-white/30 rounded-full animate-[progressBar_0.8s_ease-in-out_forwards]" />
+                      </div>
+                    )}
+                    {navigatingNext ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      <>
+                        Next Chapter
+                        <ArrowRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 ) : (
                   <button
@@ -559,7 +598,7 @@ export default function ModulePlayerPage() {
         </div>
 
         {/* Right Section: AI Chat Layout (Side Panel) */}
-        {showAIChat && isCompleted && zunnovaAvailable && (
+        {showAIChat && isCompleted && ZunnovaAvailable && (
           <div className="xl:w-[25%] w-full transition-all duration-300 flex-shrink-0 animate-fade-in-up">
             <div className="h-full max-h-[600px] xl:max-h-[calc(100vh-160px)] xl:sticky xl:top-[120px]">
               <AIChatComponent

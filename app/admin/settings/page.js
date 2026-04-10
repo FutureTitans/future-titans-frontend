@@ -149,7 +149,7 @@ export default function SettingsPage() {
           AI Chat Settings
         </h2>
         <p className="text-neutral-medium mb-6">
-          Configure the message limit and reset window for zunnova AI chat. These settings apply to all students.
+          Configure the message limit and reset window for Zunnova AI chat. These settings apply to all students.
         </p>
 
         <form onSubmit={handleChatSettingsSave} className="space-y-6">
@@ -213,8 +213,8 @@ export default function SettingsPage() {
 
           {chatSaveResult && (
             <div className={`p-4 rounded-lg flex items-center gap-3 ${chatSaveResult.success
-                ? 'bg-semantic-success bg-opacity-10 border border-semantic-success'
-                : 'bg-semantic-error bg-opacity-10 border border-semantic-error'
+              ? 'bg-semantic-success bg-opacity-10 border border-semantic-success'
+              : 'bg-semantic-error bg-opacity-10 border border-semantic-error'
               }`}>
               {chatSaveResult.success ? (
                 <CheckCircle className="w-5 h-5 text-semantic-success" />
@@ -424,8 +424,8 @@ export default function SettingsPage() {
 
           {testResult && (
             <div className={`p-4 rounded-lg flex items-center gap-3 ${testResult.success
-                ? 'bg-semantic-success bg-opacity-10 border border-semantic-success'
-                : 'bg-semantic-error bg-opacity-10 border border-semantic-error'
+              ? 'bg-semantic-success bg-opacity-10 border border-semantic-success'
+              : 'bg-semantic-error bg-opacity-10 border border-semantic-error'
               }`}>
               {testResult.success ? (
                 <CheckCircle className="w-5 h-5 text-semantic-success" />

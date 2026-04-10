@@ -462,6 +462,15 @@ select:focus {
   }
 }
 
+@keyframes progressBar {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
 /* ──── Utility Animation Classes ──── */
 .fade-in {
   animation: fadeIn 0.6s ease-in-out;

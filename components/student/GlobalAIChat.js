@@ -158,7 +158,7 @@ export default function GlobalAIChat() {
           <div className="relative mb-[-20px] mr-20 md:mr-36 self-start animate-fade-in-up origin-bottom">
             <div className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl rounded-br-sm px-4 py-3 w-52 md:w-64 border border-white/50">
               <p className="text-xs md:text-sm text-gray-800 leading-relaxed font-semibold">
-                <span className="font-extrabold text-[#B8952E]">zunnova:</span>{' '}
+                <span className="font-extrabold text-[#B8952E]">Zunnova:</span>{' '}
                 Every great founder starts with a question. Let&apos;s find yours.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function GlobalAIChat() {
             type="button"
             onClick={() => setIsOpen(true)}
             className="text-white rounded-full w-40 h-28 md:w-44 md:h-40 flex items-center justify-center hover:scale-110 transition-transform duration-300 hover-glow flex-shrink-0"
-            title="Chat with zunnova"
+            title="Chat with Zunnova"
           >
             <ZunnovaAvatar
               isTalking={false}
@@ -195,7 +195,7 @@ export default function GlobalAIChat() {
               />
               <div className="min-w-0 flex-1 ml-2">
                 <p className="font-semibold text-sm md:text-base flex items-center gap-1 truncate">
-                  zunnova
+                  Zunnova
                   <Sparkles className="w-3 h-3 md:w-4 md:h-4 animate-pulse flex-shrink-0" />
                 </p>
                 <p className="text-xs opacity-90 truncate">Your AI Friend & Startup Partner</p>
@@ -267,7 +267,7 @@ export default function GlobalAIChat() {
                 <div className="glass-subtle px-3 py-2 md:px-4 md:py-3 rounded-2xl rounded-bl-sm border border-white/30">
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-dotted border-orange-400 animate-spin" style={{ animationDuration: '1.2s' }}></div>
-                    <span className="text-xs md:text-sm text-gray-500 font-medium italic">zunnova is thinking...</span>
+                    <span className="text-xs md:text-sm text-gray-500 font-medium italic">Zunnova is thinking...</span>
                   </div>
                 </div>
               </div>
