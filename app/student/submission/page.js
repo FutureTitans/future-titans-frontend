@@ -49,22 +49,6 @@ export default function IdeaSubmissionPage() {
     wantToLearn: '',
     improvementPlan: '',
     
-    // Impact & Feasibility
-    expectedShortTermOutcomes: '',
-    longTermVision: '',
-    successMetrics: '',
-    resourcesNeeded: '',
-    implementationTimeline: '',
-    risks: '',
-    
-    // Target Audience
-    primaryBeneficiaries: '',
-    keyStakeholders: '',
-    
-    // Sustainability & Ethics
-    sustainability: '',
-    ethicalConsiderations: '',
-    
     // Additional Info
     inspiration: '',
     previousWork: '',
@@ -85,11 +69,8 @@ export default function IdeaSubmissionPage() {
     { id: 4, title: 'Market & Impact', icon: '🌍' },
     { id: 5, title: 'Business Model', icon: '💰' },
     { id: 6, title: 'Think Like a Titan', icon: '🧠' },
-    { id: 7, title: 'Impact & Feasibility', icon: '📊' },
-    { id: 8, title: 'Target Audience', icon: '🎯' },
-    { id: 9, title: 'Sustainability & Ethics', icon: '♻️' },
-    { id: 10, title: 'Additional Info', icon: '📝' },
-    { id: 11, title: 'File Uploads', icon: '📎' },
+    { id: 7, title: 'Additional Info', icon: '📝' },
+    { id: 8, title: 'File Uploads', icon: '📎' },
   ];
 
   useEffect(() => {
@@ -620,133 +601,8 @@ export default function IdeaSubmissionPage() {
           </div>
         );
 
-      // Impact & Feasibility
-      case 7:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold mb-4">📊 Impact & Feasibility</h3>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Short-term outcomes (next 6–12 months)</label>
-              <textarea
-                value={formData.expectedShortTermOutcomes}
-                onChange={(e) => handleInputChange('expectedShortTermOutcomes', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="What realistic outcomes do you expect in the first phase of your project?"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Long-term vision (3–5 years)</label>
-              <textarea
-                value={formData.longTermVision}
-                onChange={(e) => handleInputChange('longTermVision', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="If your idea succeeds, what does the future look like?"
-              />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Key success metrics</label>
-                <textarea
-                  value={formData.successMetrics}
-                  onChange={(e) => handleInputChange('successMetrics', e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                  placeholder="How will you measure success? (users, impact, revenue, etc.)"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">Resources needed</label>
-                <textarea
-                  value={formData.resourcesNeeded}
-                  onChange={(e) => handleInputChange('resourcesNeeded', e.target.value)}
-                  className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                  placeholder="People, tools, funding, or support you’ll need"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Implementation timeline</label>
-              <textarea
-                value={formData.implementationTimeline}
-                onChange={(e) => handleInputChange('implementationTimeline', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="Rough timeline or phases for implementing your idea"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Risks and how you’ll handle them</label>
-              <textarea
-                value={formData.risks}
-                onChange={(e) => handleInputChange('risks', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="What could go wrong, and how would you respond?"
-              />
-            </div>
-          </div>
-        );
-
-      // Target Audience & Stakeholders
-      case 8:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold mb-4">🎯 Target Audience & Stakeholders</h3>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Primary beneficiaries</label>
-              <textarea
-                value={formData.primaryBeneficiaries}
-                onChange={(e) => handleInputChange('primaryBeneficiaries', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="Who benefits most directly from your solution?"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Key stakeholders (supporters, partners, etc.)</label>
-              <textarea
-                value={formData.keyStakeholders}
-                onChange={(e) => handleInputChange('keyStakeholders', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="Who else is involved or affected (schools, NGOs, companies, communities)?"
-              />
-            </div>
-          </div>
-        );
-
-      // Sustainability & Ethics
-      case 9:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold mb-4">♻️ Sustainability & Ethics</h3>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">How is your solution socially or environmentally sustainable?</label>
-              <textarea
-                value={formData.sustainability}
-                onChange={(e) => handleInputChange('sustainability', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="Explain how your idea supports people or planet in the long term"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Ethical considerations</label>
-              <textarea
-                value={formData.ethicalConsiderations}
-                onChange={(e) => handleInputChange('ethicalConsiderations', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg h-24"
-                placeholder="Any risks around fairness, privacy, bias, or unintended harm? How will you address them?"
-              />
-            </div>
-          </div>
-        );
-
       // Additional Info
-      case 10:
+      case 7:
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-bold mb-4">📝 Additional Information</h3>
@@ -783,7 +639,7 @@ export default function IdeaSubmissionPage() {
           </div>
         );
 
-      case 11: // File Uploads
+      case 8: // File Uploads
         return (
           <div className="space-y-6">
             <h3 className="text-xl font-bold mb-4">📎 File Uploads</h3>
