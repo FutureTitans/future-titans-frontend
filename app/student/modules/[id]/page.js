@@ -23,6 +23,7 @@ export default function ModulePlayerPage() {
   const [showChaptersConfig, setShowChaptersConfig] = useState(true); // default open on desktop
   const [markingComplete, setMarkingComplete] = useState(false);
   const [navigatingNext, setNavigatingNext] = useState(false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   // Time tracking heartbeat
   useEffect(() => {
@@ -306,8 +307,6 @@ export default function ModulePlayerPage() {
       </div>
     );
   }
-
-  const [showCompletionModal, setShowCompletionModal] = useState(false);
 
   const currentChapterData = module.chapters[currentChapter];
   const completedCount = Object.keys(chapterCompleted).length;
