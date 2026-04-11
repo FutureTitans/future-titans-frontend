@@ -234,16 +234,27 @@ export default function ModulePlayerPage() {
         );
 
       case 'video':
+        const isHTML5Video = content.videoUrl && (content.videoUrl.includes('amazonaws.com') || content.videoUrl.endsWith('.mp4'));
         return (
           <div className="aspect-video bg-black rounded-[24px] overflow-hidden shadow-2xl border-4 border-white/50 relative group">
-            <iframe
-              id="chapter-video-player"
-              src={getYouTubeEmbedUrl(content.videoUrl)}
-              className="w-full h-full absolute inset-0"
-              allowFullScreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              title={chapterContent.title}
-            />
+            {isHTML5Video ? (
+              <video
+                controls
+                src={content.videoUrl}
+                className="w-full h-full absolute inset-0 object-contain"
+                controlsList="nodownload"
+                onEnded={() => console.log('Video ended for chapter:', chapterContent.title)}
+              />
+            ) : (
+              <iframe
+                id="chapter-video-player"
+                src={getYouTubeEmbedUrl(content.videoUrl)}
+                className="w-full h-full absolute inset-0"
+                allowFullScreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                title={chapterContent.title}
+              />
+            )}
           </div>
         );
 
