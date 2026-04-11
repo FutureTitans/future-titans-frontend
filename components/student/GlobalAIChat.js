@@ -113,8 +113,8 @@ export default function GlobalAIChat() {
           audioRef.current = null;
         }
 
-        // Using Sarah voice, free tier compatible
-        const voiceId = "mActWQg9kibLro6Z2ouY"; 
+        // Using user provided Indian voice
+        const voiceId = "RtKOHqpmbmsUGWBJaXAM";
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
           method: 'POST',
           headers: {
@@ -140,9 +140,9 @@ export default function GlobalAIChat() {
         const url = URL.createObjectURL(blob);
         const audio = new Audio(url);
         audioRef.current = audio;
-        
+
         audio.onended = () => URL.revokeObjectURL(url);
-        
+
         await audio.play();
       } catch (error) {
         console.warn('ElevenLabs TTS failed, falling back to window.speechSynthesis:', error);

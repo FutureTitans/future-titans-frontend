@@ -135,8 +135,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
           audioRef.current = null;
         }
 
-        // Using Sarah voice, free tier compatible
-        const voiceId = "mActWQg9kibLro6Z2ouY";
+        // Using user provided Indian voice
+        const voiceId = "RtKOHqpmbmsUGWBJaXAM";
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
           method: 'POST',
           headers: {
