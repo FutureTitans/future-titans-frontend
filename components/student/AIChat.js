@@ -135,8 +135,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
           audioRef.current = null;
         }
 
-        // Using Rachel voice, can be adjusted
-        const voiceId = "21m00Tcm4TlvDq8ikWAM"; 
+        // Using Sarah voice, free tier compatible
+        const voiceId = "EXAVITQu4vr4xnSDxMaL"; 
         const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
           method: 'POST',
           headers: {
@@ -146,7 +146,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
           },
           body: JSON.stringify({
             text: last.message,
-            model_id: "eleven_monolingual_v1",
+            model_id: "eleven_turbo_v2_5",
             voice_settings: {
               stability: 0.5,
               similarity_boost: 0.5
