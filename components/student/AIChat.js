@@ -20,6 +20,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const [allModulesCompleted, setAllModulesCompleted] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const messagesEndRef = useRef(null);
+  const audioRef = useRef(null);
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [rateLimit, setRateLimit] = useState(null);
@@ -108,23 +109,83 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   }, []);
 
   useEffect(() => {
-    if (!ttsEnabled || typeof window === 'undefined' || !window.speechSynthesis) return;
+    if (typeof window === 'undefined') return;
+
+    if (!ttsEnabled) {
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+      return;
+    }
+
     const last = messages[messages.length - 1];
     if (!last || last.role !== 'assistant' || !last.message) return;
-    try {
-      const synth = window.speechSynthesis;
-      if (!synth) return;
-      synth.cancel();
-      const utterance = new SpeechSynthesisUtterance(last.message);
-      if (voice) utterance.voice = voice;
-      else utterance.lang = 'en-US';
-      utterance.rate = 1.0;
-      utterance.pitch = 1.05;
-      utterance.volume = 1.0;
-      synth.speak(utterance);
-    } catch (e) {
-      console.warn('TTS not available', e);
-    }
+
+    const playTTS = async () => {
+      try {
+        const apiKey = process.env.NEXT_PUBLIC_ELEVENLABS_API_KEY;
+        if (!apiKey) throw new Error("No API key");
+
+        // Cancel existing audio from both backends
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current = null;
+        }
+
+        // Using Rachel voice, can be adjusted
+        const voiceId = "21m00Tcm4TlvDq8ikWAM"; 
+        const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'audio/mpeg',
+            'xi-api-key': apiKey,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: last.message,
+            model_id: "eleven_monolingual_v1",
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.5
+            }
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`ElevenLabs API error: ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        
+        audio.onended = () => URL.revokeObjectURL(url);
+        
+        await audio.play();
+      } catch (error) {
+        console.warn('ElevenLabs TTS failed, falling back to window.speechSynthesis:', error);
+        try {
+          const synth = window.speechSynthesis;
+          if (!synth) return;
+          synth.cancel();
+          const utterance = new SpeechSynthesisUtterance(last.message);
+          if (voice) utterance.voice = voice;
+          else utterance.lang = 'en-US';
+          utterance.rate = 1.0;
+          utterance.pitch = 1.05;
+          utterance.volume = 1.0;
+          synth.speak(utterance);
+        } catch (e) {
+          console.warn('Fallback TTS also not available', e);
+        }
+      }
+    };
+
+    playTTS();
   }, [messages, ttsEnabled, voice]);
 
   const handleSendMessage = async (e) => {
