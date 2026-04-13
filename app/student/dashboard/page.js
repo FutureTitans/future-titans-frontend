@@ -259,9 +259,9 @@ export default function StudentDashboard() {
                 <h3 className="font-bold text-lg text-[#B8952E] mb-1">🔓 Unlock Full Access</h3>
                 <p className="text-gray-700 text-sm">
                   Complete your payment to access all modules and AI features.
-                  {paymentStatus?.price && paymentStatus.price !== 999 && (
+                  {paymentStatus?.price && paymentStatus.price !== 1500 && (
                     <span className="block mt-1 font-medium text-[#B8952E]">
-                      Special price via school link: ₹{paymentStatus.price} (standard ₹999)
+                      Special price via school link: ₹{paymentStatus.price} (standard 1500)
                     </span>
                   )}
                 </p>
@@ -271,7 +271,7 @@ export default function StudentDashboard() {
                 className="glass-button px-6 py-3 flex items-center gap-2 flex-shrink-0 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white border-0 shadow-lg shadow-[#D4AF37]/30 hover:scale-105"
               >
                 <CreditCard className="w-5 h-5" />
-                Pay ₹{paymentStatus?.price || 999}
+                Pay ₹{paymentStatus?.price || 1500}
               </button>
             </div>
           </div>

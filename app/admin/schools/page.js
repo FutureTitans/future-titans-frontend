@@ -14,7 +14,7 @@ export default function SchoolSlugsPage() {
     name: '',
     slug: '',
     description: '',
-    price: 499,
+    price: 1500,
     isActive: true,
     pocName: '',
     pocEmail: '',
@@ -48,7 +48,7 @@ export default function SchoolSlugsPage() {
       name: '',
       slug: '',
       description: '',
-      price: 499,
+      price: 1500,
       isActive: true,
       pocName: '',
       pocEmail: '',
@@ -188,7 +188,7 @@ export default function SchoolSlugsPage() {
                 <label className="block text-sm font-medium mb-2">
                   Discounted Price (₹) *
                   <span className="block text-xs text-neutral-medium">
-                    Students registering via this slug will pay this price (default is ₹999).
+                    Students registering via this slug will pay this price (default is 1500).
                   </span>
                 </label>
                 <input
@@ -317,7 +317,7 @@ export default function SchoolSlugsPage() {
                     Slug: <span className="font-mono">{slug.slug}</span>
                   </p>
                   <p className="text-sm text-neutral-medium mb-1">
-                    Price: <span className="font-semibold">₹{slug.price}</span> (default: ₹999)
+                    Price: <span className="font-semibold">₹{slug.price}</span> (default: 1500)
                   </p>
                   {slug.description && (
                     <p className="text-sm text-neutral-medium line-clamp-2">{slug.description}</p>
@@ -327,9 +327,9 @@ export default function SchoolSlugsPage() {
                       <p className="text-xs font-bold text-neutral-dark mb-1">Registration Status: <span className="text-primary-red">{slug.approvalStatus}</span></p>
                       {slug.proofOfAcceptance ? (
                         <div className="flex gap-2 items-center mt-2">
-                           <a href={slug.proofOfAcceptance} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">View Proof Document</a>
-                           <button onClick={() => handleReviewProof(slug._id, 'Approved')} className="text-xs px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Approve</button>
-                           <button onClick={() => handleReviewProof(slug._id, 'Rejected')} className="text-xs px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded">Reject</button>
+                          <a href={slug.proofOfAcceptance} target="_blank" rel="noreferrer" className="text-xs text-blue-600 underline">View Proof Document</a>
+                          <button onClick={() => handleReviewProof(slug._id, 'Approved')} className="text-xs px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded">Approve</button>
+                          <button onClick={() => handleReviewProof(slug._id, 'Rejected')} className="text-xs px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded">Reject</button>
                         </div>
                       ) : (
                         <p className="text-[10px] text-neutral-medium">Waiting for association to upload proof of acceptance. Lock expires: {slug.lockUntil ? new Date(slug.lockUntil).toLocaleDateString() : 'N/A'}</p>

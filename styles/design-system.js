@@ -8,14 +8,14 @@ export const colors = {
     darkRed: '#991B1B', // Dark red for contrast
     lightRed: '#FEE2E2', // Light red for backgrounds
   },
-  
+
   // Accent Colors
   accent: {
     gold: '#D97706', // Golden accent
     lightGold: '#FCD34D', // Light gold for highlights
     amber: '#F59E0B',
   },
-  
+
   // Neutral Colors (Apple-like)
   neutral: {
     white: '#FFFFFF',
@@ -25,7 +25,7 @@ export const colors = {
     light: '#F3F4F6', // Light gray for backgrounds
     border: '#E5E7EB', // Border color
   },
-  
+
   // Semantic Colors
   semantic: {
     success: '#10B981',
@@ -33,7 +33,7 @@ export const colors = {
     error: '#EF4444',
     info: '#3B82F6',
   },
-  
+
   // Gradients
   gradients: {
     redToGold: 'linear-gradient(135deg, #DC2626 0%, #D97706 100%)',
@@ -48,7 +48,7 @@ export const typography = {
     sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', '"Helvetica Neue"', 'Arial', 'sans-serif'],
     display: ['Sohne', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
   },
-  
+
   // Font sizes
   fontSize: {
     xs: { size: '12px', lineHeight: '16px' },
@@ -61,7 +61,7 @@ export const typography = {
     '4xl': { size: '36px', lineHeight: '40px' },
     '5xl': { size: '48px', lineHeight: '56px' },
   },
-  
+
   // Font weights
   fontWeight: {
     light: 300,
@@ -70,7 +70,7 @@ export const typography = {
     semibold: 600,
     bold: 700,
   },
-  
+
   // Letter spacing
   letterSpacing: {
     tight: '-0.02em',
@@ -155,14 +155,14 @@ export const componentStyles = {
       hover: colors.primary.lightRed,
     }
   },
-  
+
   card: {
     bg: colors.neutral.white,
     border: `1px solid ${colors.neutral.border}`,
     shadow: shadows.md,
     borderRadius: borderRadius.lg,
   },
-  
+
   input: {
     bg: colors.neutral.white,
     border: `1px solid ${colors.neutral.border}`,
