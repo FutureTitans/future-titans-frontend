@@ -484,8 +484,8 @@ export default function Landing() {
               <div>
                 <h4 className="font-bold text-gray-300 mb-4 text-sm tracking-wide uppercase">Company</h4>
                 <ul className="space-y-2.5">
-                  <li><a href="https://youngpreneurs.in/about-us/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">About</a></li>
-                  <li><a href="https://youngpreneurs.in/contact/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Contact</a></li>
+                  <li><a href="https://www,youngpreneurs.ai/about-us/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">About</a></li>
+                  <li><a href="https://www.youngpreneurs.ai/contact" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Contact</a></li>
                 </ul>
               </div>
               <div>
