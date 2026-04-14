@@ -825,7 +825,7 @@ export default function StudentDashboard() {
               controls
               autoPlay
               className="w-full h-full object-contain"
-              src="/userjourney.mp4"
+              src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
             >
               Your browser does not support the video tag.
             </video>
