@@ -26,37 +26,14 @@ function useCounter(target, duration = 2000, start = false) {
 }
 
 /* ─── Scroll‑reveal wrapper ─── */
-function RevealOnScroll({ children, className = '', delay = 0, direction = 'up' }) {
-  const ref = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.15 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  const directionStyles = {
-    up: 'translate-y-12',
-    down: '-translate-y-12',
-    left: 'translate-x-12',
-    right: '-translate-x-12',
-  };
-
+function RevealOnScroll({ children, className = '' }) {
   return (
-    <div
-      ref={ref}
-      className={`transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0 translate-x-0' : `opacity-0 ${directionStyles[direction]}`
-        } ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
+    <div className={className}>
       {children}
     </div>
   );
 }
+
 
 /* ─── Floating Particle ─── */
 function FloatingParticle({ style }) {
@@ -172,7 +149,7 @@ export default function Landing() {
 
           <div
             className="container mx-auto text-center max-w-5xl"
-            style={{ transform: `translateY(${scrollY * 0.3}px)`, opacity: Math.max(0, 1 - scrollY * 0.0018) }}
+            style={{ transform: `translateY(${scrollY * 0.3}px)` }}
           >
 
 
