@@ -147,10 +147,7 @@ export default function Landing() {
             style={{ transform: `translate(-50%, -50%) scale(${1 + scrollY * 0.0005}) rotate(${scrollY * 0.02}deg)`, opacity: Math.max(0, 1 - scrollY * 0.0015) }}
           />
 
-          <div
-            className="container mx-auto text-center max-w-5xl"
-            style={{ transform: `translateY(${scrollY * 0.3}px)` }}
-          >
+          <div className="container mx-auto text-center max-w-5xl">
 
 
             <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-gray-900 mb-8 leading-[1.08] hero-title-animate">
