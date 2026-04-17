@@ -221,7 +221,22 @@ export default function Landing() {
 
               {/* Right Column - Image */}
               <div className="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-none relative z-10 flex justify-center lg:justify-end mx-auto lg:mx-0 float mt-12 lg:-mt-16 xl:pr-8">
-                <img src="/zunnova.svg" alt="Zunnova Character" className="w-full h-auto drop-shadow-2xl" />
+
+                {/* Deep-Tech Floating Badge */}
+                <div className="absolute -left-2 sm:left-4 lg:-left-6 top-[20%] xl:top-[30%] glass-strong p-4 sm:p-5 rounded-2xl border border-white/60 flex items-start gap-4 shadow-[0_20px_50px_rgba(21,128,61,0.15)] z-20 hover:scale-[1.02] transition-transform duration-500">
+                  <div className="relative flex h-3 w-3 mt-1.5 flex-shrink-0">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#16a34a] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#15803d]"></span>
+                  </div>
+                  <div>
+                    <div className="text-base sm:text-lg font-bold text-gray-900 leading-tight">
+                      Meet Zunnova<br />
+                      <span className="text-gray-500 font-medium text-xs sm:text-sm tracking-wide">Your AI Co-Founder</span>
+                    </div>
+                  </div>
+                </div>
+
+                <img src="/zunnova.svg" alt="Zunnova Character" className="w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.4)] relative z-10" />
               </div>
             </div>
 
