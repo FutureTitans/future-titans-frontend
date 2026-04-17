@@ -67,18 +67,8 @@ export default function LoginPage() {
 
       <div className="w-full max-w-5xl relative z-10 grid md:grid-cols-2 gap-0 glass-panel overflow-hidden shadow-2xl">
         {/* Left — Brand panel (desktop only) */}
-        <div className="hidden md:flex flex-col justify-center items-center p-12 bg-gradient-to-br from-[#0F5132] to-[#1B6B4C] relative overflow-hidden" style={{ borderRadius: '24px 0 0 24px' }}>
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-10 left-10 w-40 h-40 bg-[#D4AF37] rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-32 h-32 bg-[#F5D76E] rounded-full blur-3xl"></div>
-          </div>
-          <div className="relative z-10 text-center">
-            <Sparkles className="w-14 h-14 text-[#F5D76E] mx-auto mb-6 animate-pulse" />
-            <h2 className="text-3xl font-bold text-white mb-3">Future Titans</h2>
-            <p className="text-white/70 text-lg leading-relaxed max-w-xs mx-auto">
-              Innovation starts here. Log In to continue your journey.
-            </p>
-          </div>
+        <div className="hidden md:flex relative overflow-hidden" style={{ borderRadius: '24px 0 0 24px' }}>
+          <img src="/students_login.png" alt="Indian school students" className="w-full h-full object-cover" />
         </div>
 
         {/* Right — Form panel */}
@@ -165,14 +155,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 pt-6 border-t border-gray-200/30">
-            <p className="text-[10px] text-gray-400 text-center mb-3 uppercase tracking-widest font-semibold">Demo Access</p>
-            <div className="bg-white/40 border border-white/50 p-4 rounded-2xl text-xs text-gray-500 flex flex-col items-center gap-1 backdrop-blur-sm">
-              <p>Email: <span className="font-mono text-gray-700">admin@futuretitans.com</span></p>
-              <p>Password: <span className="font-mono text-gray-700">admin123</span></p>
-            </div>
-          </div>
+
         </div>
       </div>
     </div>

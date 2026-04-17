@@ -114,18 +114,8 @@ export default function SignupPageClient() {
 
       <div className="w-full max-w-5xl relative z-10 grid md:grid-cols-5 gap-0 glass-panel overflow-hidden shadow-2xl">
         {/* Left — Brand panel (desktop only) */}
-        <div className="hidden md:flex md:col-span-2 flex-col justify-center items-center p-10 bg-gradient-to-br from-[#0F5132] to-[#1B6B4C] relative overflow-hidden" style={{ borderRadius: '24px 0 0 24px' }}>
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-10 left-10 w-40 h-40 bg-[#D4AF37] rounded-full blur-3xl"></div>
-            <div className="absolute bottom-10 right-10 w-32 h-32 bg-[#F5D76E] rounded-full blur-3xl"></div>
-          </div>
-          <div className="relative z-10 text-center">
-            <Sparkles className="w-12 h-12 text-[#F5D76E] mx-auto mb-5 animate-pulse" />
-            <h2 className="text-2xl font-bold text-white mb-3">Join Future Titans</h2>
-            <p className="text-white/70 text-base leading-relaxed max-w-[260px] mx-auto">
-              Create your account and start your innovation journey today.
-            </p>
-          </div>
+        <div className="hidden md:flex md:col-span-2 relative overflow-hidden" style={{ borderRadius: '24px 0 0 24px' }}>
+          <img src="/students_signup.png" alt="Indian high school students" className="w-full h-full object-cover" />
         </div>
 
         {/* Right — Form panel */}

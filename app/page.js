@@ -147,78 +147,86 @@ export default function Landing() {
             style={{ transform: `translate(-50%, -50%) scale(${1 + scrollY * 0.0005}) rotate(${scrollY * 0.02}deg)`, opacity: Math.max(0, 1 - scrollY * 0.0015) }}
           />
 
-          <div className="container mx-auto text-center max-w-5xl">
+          <div className="container mx-auto max-w-7xl relative z-20">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
+              {/* Left Column - Text */}
+              <div className="flex-1 text-center lg:text-left mt-10 md:mt-0 xl:pl-8">
+                <h1 className="text-5xl sm:text-6xl md:text-7xl xl:text-8xl font-bold tracking-tight text-gray-900 mb-8 leading-[1.08] hero-title-animate">
+                  Future Titans
+                  <br />
+                  <span className="block text-2xl sm:text-3xl md:text-4xl xl:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D76E] to-[#B8952E] background-animate mt-2">
+                    India's First Holistic Innovation Capability Ecosystem for Schools
+                  </span>
+                </h1>
 
+                <div className="relative max-w-3xl mx-auto lg:mx-0 mb-12 text-center lg:text-left">
+                  {/* Main tagline */}
+                  <p
+                    className="text-xl sm:text-2xl md:text-3xl leading-[1.6] font-light tracking-tight"
+                    style={{ color: '#15803d' }}
+                  >
+                    Transform your ideas into impact.{' '}
+                    <span className="font-semibold" style={{ color: '#166534' }}>
+                      Experience AI-powered mentorship
+                    </span>{' '}
+                    and build the solutions{' '}
+                    <em
+                      className="not-italic font-medium"
+                      style={{
+                        color: '#14532d',
+                        borderBottom: '1px solid #166534',
+                        paddingBottom: '2px',
+                      }}
+                    >
+                      the world needs.
+                    </em>
+                  </p>
 
-            <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-gray-900 mb-8 leading-[1.08] hero-title-animate">
-              Future Titans
-              <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D76E] to-[#B8952E] background-animate">
-                India's First Holistic Innovation Capability Ecosystem for Schools
-              </span>
-            </h1>
+                  {/* Bottom ornament */}
+                  <div className="mt-8 flex justify-center lg:justify-start">
+                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-emerald-900 to-transparent lg:from-emerald-900 lg:to-transparent" />
+                  </div>
+                </div>
 
-            <div className="relative max-w-3xl mx-auto mb-12 text-center">
-              {/* Main tagline */}
-              <p
-                className="text-xl sm:text-2xl md:text-3xl leading-[1.6] font-light tracking-tight"
-                style={{ color: '#15803d' }}
-              >
-                Transform your ideas into impact.{' '}
-                <span className="font-semibold" style={{ color: '#166534' }}>
-                  Experience AI-powered mentorship
-                </span>{' '}
-                and build the solutions{' '}
-                <em
-                  className="not-italic font-medium"
-                  style={{
-                    color: '#14532d',
-                    borderBottom: '1px solid #166534',
-                    paddingBottom: '2px',
-                  }}
-                >
-                  the world needs.
-                </em>
-              </p>
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center lg:justify-start items-center">
+                  <Link
+                    href="/signup"
+                    className="glass-button px-10 py-4 sm:py-5 text-base sm:text-lg shadow-xl shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30 group relative overflow-hidden"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                    <div className="flex items-center gap-2 relative">
+                      Student Sign Up
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="px-10 py-4 sm:py-5 rounded-full bg-white/40 backdrop-blur-md border border-white/50 text-gray-700 font-semibold hover:bg-white/60 transition-all hover:scale-105 hover:shadow-lg"
+                  >
+                    Student Log In
+                  </Link>
+                </div>
 
-              {/* Bottom ornament */}
-              <div className="mt-8 flex justify-center">
-                <div className="h-px w-24 bg-gradient-to-r from-transparent via-emerald-900 to-transparent" />
+                <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center text-sm mb-4">
+                  <Link href="/school-poc/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm">
+                    <Users className="w-4 h-4 text-[#D4AF37]" />
+                    School POC Login
+                  </Link>
+                  <Link href="/association/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm">
+                    <Target className="w-4 h-4 text-[#D4AF37]" />
+                    Association Login
+                  </Link>
+                </div>
+              </div>
+
+              {/* Right Column - Image */}
+              <div className="flex-1 w-full max-w-sm sm:max-w-md lg:max-w-none relative z-10 flex justify-center lg:justify-end mx-auto lg:mx-0 float mt-12 lg:-mt-16 xl:pr-8">
+                <img src="/zunnova.svg" alt="Zunnova Character" className="w-full h-auto drop-shadow-2xl" />
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-              <Link
-                href="/signup"
-                className="glass-button px-10 py-4 sm:py-5 text-base sm:text-lg shadow-xl shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30 group relative overflow-hidden"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                <div className="flex items-center gap-2 relative">
-                  Student Sign Up
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </Link>
-              <Link
-                href="/login"
-                className="px-10 py-4 sm:py-5 rounded-full bg-white/40 backdrop-blur-md border border-white/50 text-gray-700 font-semibold hover:bg-white/60 transition-all hover:scale-105 hover:shadow-lg"
-              >
-                Student Log In
-              </Link>
-            </div>
-
-            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center text-sm mb-4">
-              <Link href="/school-poc/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm">
-                <Users className="w-4 h-4 text-[#D4AF37]" />
-                School POC Login
-              </Link>
-              <Link href="/association/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm">
-                <Target className="w-4 h-4 text-[#D4AF37]" />
-                Association Login
-              </Link>
-            </div>
-
             {/* Scroll Indicator */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+            <div className="absolute -bottom-20 lg:-bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hidden lg:flex">
               <span className="text-xs text-gray-400 tracking-widest uppercase">Explore</span>
               <ChevronDown className="w-5 h-5 text-gray-400 animate-bounce" />
             </div>
