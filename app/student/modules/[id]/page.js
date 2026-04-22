@@ -78,7 +78,7 @@ export default function ModulePlayerPage() {
         events: {
           onStateChange: (event) => {
             if (event.data === 0) {
-              console.log('Video ended for chapter:', current.title);
+              //console.log('Video ended for chapter:', current.title);
             }
           },
         },

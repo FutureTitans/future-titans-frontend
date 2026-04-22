@@ -145,7 +145,7 @@ export default function SignupPageClient() {
               <InputField label="Full Name" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} error={errors.name} disabled={isLoading} />
               <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
               <InputField label="Phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
-              <InputField label="School/Institution" name="school" placeholder="Your School" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
+              <InputField label="School/Institution or Slug Code" name="school" placeholder="Your School or Slug Code" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
               <InputField label="Class/Grade" name="class" placeholder="10th or 1st Year" value={formData.class} onChange={handleChange} error={errors.class} disabled={isLoading} />
               <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
               <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />

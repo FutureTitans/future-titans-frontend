@@ -100,7 +100,7 @@ export default function IdeaSubmissionPage() {
       // Check module completion using dedicated endpoint for accurate check
       try {
         const completionStatus = await auth.checkCompletionStatus();
-        console.log('📊 Submission Page - Completion Status:', completionStatus);
+        //console.log('📊 Submission Page - Completion Status:', completionStatus);
 
         if (!completionStatus.canSubmit) {
           const incompleteDetails = completionStatus.details
@@ -114,7 +114,7 @@ export default function IdeaSubmissionPage() {
             })
             .join('\n');
 
-          console.log('Incomplete modules details:', completionStatus.details.filter(d => !d.isComplete));
+        //console.log('Incomplete modules details:', completionStatus.details.filter(d => !d.isComplete));
 
           alert(`Complete at least one learning module before accessing the final submission form.\n\nIncomplete modules:\n${incompleteDetails || 'Unable to load module details'}`);
           router.push('/student/dashboard');
