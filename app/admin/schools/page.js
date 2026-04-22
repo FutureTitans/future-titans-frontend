@@ -15,6 +15,7 @@ export default function SchoolSlugsPage() {
     slug: '',
     description: '',
     price: 1500,
+    requiresPayment: true,
     isActive: true,
     pocName: '',
     pocEmail: '',
@@ -49,6 +50,7 @@ export default function SchoolSlugsPage() {
       slug: '',
       description: '',
       price: 1500,
+      requiresPayment: true,
       isActive: true,
       pocName: '',
       pocEmail: '',
@@ -64,6 +66,7 @@ export default function SchoolSlugsPage() {
       slug: slug.slug,
       description: slug.description || '',
       price: slug.price,
+      requiresPayment: slug.requiresPayment !== undefined ? slug.requiresPayment : true,
       isActive: slug.isActive,
       pocName: slug.pocName || '',
       pocEmail: slug.pocEmail || '',
@@ -214,6 +217,27 @@ export default function SchoolSlugsPage() {
               </div>
             </div>
 
+            <div className="grid md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Payment Status
+                  <span className="block text-xs text-neutral-medium">
+                    Do students need to pay?
+                  </span>
+                </label>
+                <select
+                  value={formData.requiresPayment ? 'yes' : 'no'}
+                  onChange={(e) =>
+                    setFormData({ ...formData, requiresPayment: e.target.value === 'yes' })
+                  }
+                  className="w-full px-3 py-2 border border-neutral-border rounded-lg"
+                >
+                  <option value="yes">Require Payment</option>
+                  <option value="no">Free Access</option>
+                </select>
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium mb-2">Description (optional)</label>
               <textarea
@@ -318,6 +342,9 @@ export default function SchoolSlugsPage() {
                   </p>
                   <p className="text-sm text-neutral-medium mb-1">
                     Price: <span className="font-semibold">₹{slug.price}</span> (default: 1500)
+                    <span className={`ml-3 px-2 py-0.5 rounded text-[10px] font-bold ${slug.requiresPayment === false ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                      {slug.requiresPayment === false ? 'Free Access' : 'Payment Required'}
+                    </span>
                   </p>
                   {slug.description && (
                     <p className="text-sm text-neutral-medium line-clamp-2">{slug.description}</p>
