@@ -103,6 +103,13 @@ export default function FaceVerification() {
     }
   };
 
+  const stopCamera = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+  };
+
   const startAutoVerification = () => {
     if (detectIntervalRef.current) clearInterval(detectIntervalRef.current);
 
