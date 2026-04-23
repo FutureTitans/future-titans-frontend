@@ -20,7 +20,7 @@ const EXCLUDED_PATHS = [
   '/school-poc',
 ];
 
-const CHECK_INTERVAL_MS = 60000; // 1 minute
+const CHECK_INTERVAL_MS = 5000; // 1 minute
 const NO_FACE_TIMEOUT_MS = 10000; // 10 seconds
 const MAX_CONSECUTIVE_FAILURES = 2;
 
