@@ -144,11 +144,12 @@ export default function FaceMonitor() {
         video.setAttribute('playsinline', '');
         video.setAttribute('muted', '');
         video.style.position = 'fixed';
-        video.style.top = '-9999px';
-        video.style.left = '-9999px';
-        video.style.width = '1px';
-        video.style.height = '1px';
-        video.style.opacity = '0';
+        video.style.top = '0px';
+        video.style.left = '0px';
+        video.style.width = '10px';
+        video.style.height = '10px';
+        video.style.opacity = '0.01';
+        video.style.zIndex = '-1';
         video.style.pointerEvents = 'none';
         document.body.appendChild(video);
         videoRef.current = video;
@@ -187,6 +188,7 @@ export default function FaceMonitor() {
     isVerifyingRef.current = true;
 
     try {
+      console.log('[FaceMonitor] Running check...');
       const faceapi = faceapiRef.current;
 
       const detection = await faceapi
@@ -194,9 +196,12 @@ export default function FaceMonitor() {
         .withFaceLandmarks()
         .withFaceDescriptor();
 
+      console.log('[FaceMonitor] Detection result:', !!detection);
+
       if (!detection) {
         // No face detected — start no-face timer
         if (!noFaceTimerRef.current) {
+          console.warn(`[FaceMonitor] No face detected. Starting ${NO_FACE_TIMEOUT_MS}ms timer.`);
           noFaceTimerRef.current = setTimeout(() => {
             triggerFreeze();
           }, NO_FACE_TIMEOUT_MS);
@@ -216,6 +221,7 @@ export default function FaceMonitor() {
 
       if (distance < thresholdRef.current) {
         // Match — reset failures
+        console.log(`[FaceMonitor] Face match! Distance: ${distance.toFixed(3)}`);
         consecutiveFailsRef.current = 0;
       } else {
         // No match — increment failures
