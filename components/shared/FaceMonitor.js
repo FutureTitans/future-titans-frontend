@@ -21,7 +21,7 @@ const EXCLUDED_PATHS = [
 ];
 
 const CHECK_INTERVAL_MS = 60000; // 1 minute
-const NO_FACE_TIMEOUT_MS = 120000; // 2 minutes
+const NO_FACE_TIMEOUT_MS = 10000; // 10 seconds
 const MAX_CONSECUTIVE_FAILURES = 2;
 
 export default function FaceMonitor() {
