@@ -172,6 +172,11 @@ export default function FaceRegistration() {
       storedUser.faceRegistered = true;
       localStorage.setItem('future_titans_user', JSON.stringify(storedUser));
 
+      // Also set the current session as verified so FaceMonitor starts immediately
+      sessionStorage.setItem('ft_face_verified', 'true');
+      sessionStorage.setItem('ft_face_descriptor', JSON.stringify(avgDescriptor));
+      sessionStorage.setItem('ft_face_threshold', '0.5');
+
       setTimeout(() => {
         router.push('/student/dashboard');
       }, 2000);
