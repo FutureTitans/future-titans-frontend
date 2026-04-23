@@ -279,55 +279,57 @@ export default function FaceMonitor() {
     }
   };
 
-  const handleVerify = async () => {
-    // Attempt re-verification
-    if (!videoRef.current || !faceapiRef.current || !storedDescriptorRef.current) {
-      // Try to restart camera
-      await startHiddenCamera();
-    }
-
-    isVerifyingRef.current = true;
-
-    try {
-      const faceapi = faceapiRef.current;
-
-      const detection = await faceapi
-        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
-        .withFaceLandmarks()
-        .withFaceDescriptor();
-
-      if (!detection) {
-        alert('No face detected. Please ensure your face is visible to the camera.');
-        isVerifyingRef.current = false;
-        return;
+  const handleVerify = () => {
+    return new Promise(async (resolve, reject) => {
+      // Attempt re-verification
+      if (!videoRef.current || !faceapiRef.current || !storedDescriptorRef.current) {
+        // Try to restart camera
+        await startHiddenCamera();
       }
 
-      const liveDescriptor = Array.from(detection.descriptor);
-      const distance = euclideanDistance(liveDescriptor, storedDescriptorRef.current);
+      isVerifyingRef.current = true;
 
-      if (distance < thresholdRef.current) {
-        // Match! Unfreeze
-        setShowOverlay(false);
-        setFrozen(false);
-        setFaceVerified(true);
-        consecutiveFailsRef.current = 0;
+      try {
+        const faceapi = faceapiRef.current;
 
-        if (noFaceTimerRef.current) {
-          clearTimeout(noFaceTimerRef.current);
-          noFaceTimerRef.current = null;
+        const detection = await faceapi
+          .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+          .withFaceLandmarks()
+          .withFaceDescriptor();
+
+        if (!detection) {
+          isVerifyingRef.current = false;
+          return reject('No face detected. Please ensure your face is visible to the camera.');
         }
 
-        // Restart monitoring
-        startCheckInterval();
-      } else {
-        alert('Face verification failed. The detected face does not match the registered user.');
-      }
-    } catch (err) {
-      console.error('[FaceMonitor] Re-verify error:', err);
-      alert('Verification failed. Please try again.');
-    }
+        const liveDescriptor = Array.from(detection.descriptor);
+        const distance = euclideanDistance(liveDescriptor, storedDescriptorRef.current);
 
-    isVerifyingRef.current = false;
+        if (distance < thresholdRef.current) {
+          // Match! Unfreeze
+          setShowOverlay(false);
+          setFrozen(false);
+          setFaceVerified(true);
+          consecutiveFailsRef.current = 0;
+
+          if (noFaceTimerRef.current) {
+            clearTimeout(noFaceTimerRef.current);
+            noFaceTimerRef.current = null;
+          }
+
+          // Restart monitoring
+          startCheckInterval();
+          resolve(true);
+        } else {
+          reject('Face verification failed. The detected face does not match the registered user.');
+        }
+      } catch (err) {
+        console.error('[FaceMonitor] Re-verify error:', err);
+        reject('Verification failed. Please try again.');
+      }
+
+      isVerifyingRef.current = false;
+    });
   };
 
   const handleLogout = async () => {
@@ -361,6 +363,7 @@ export default function FaceMonitor() {
         <FreezeOverlay
           onVerify={handleVerify}
           onLogout={handleLogout}
+          stream={streamRef.current}
         />
       )}
     </>
