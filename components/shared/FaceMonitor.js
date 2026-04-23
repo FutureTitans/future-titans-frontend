@@ -20,8 +20,8 @@ const EXCLUDED_PATHS = [
   '/school-poc',
 ];
 
-const CHECK_INTERVAL_MS = 5000; // 1 minute
-const NO_FACE_TIMEOUT_MS = 10000; // 10 seconds
+const CHECK_INTERVAL_MS = 5000; // 5 sec
+const NO_FACE_TIMEOUT_MS = 120000; // 2 minutes
 const MAX_CONSECUTIVE_FAILURES = 2;
 
 export default function FaceMonitor() {
