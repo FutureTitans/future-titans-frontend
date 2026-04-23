@@ -56,25 +56,47 @@ export default function FaceMonitor() {
     if (typeof window === 'undefined') return false;
 
     const user = getUser();
-    if (!user) return false;
+    if (!user) {
+      console.log('[FaceMonitor-Debug] shouldMonitor: false (No user found in localStorage)');
+      return false;
+    }
 
     // Only monitor students
-    if (user.role !== 'student') return false;
+    if (user.role !== 'student') {
+      console.log(`[FaceMonitor-Debug] shouldMonitor: false (User role is ${user.role}, not student)`);
+      return false;
+    }
 
     // Check if face was verified this session
-    if (sessionStorage.getItem('ft_face_verified') !== 'true') return false;
+    const isVerified = sessionStorage.getItem('ft_face_verified');
+    if (isVerified !== 'true') {
+      console.log(`[FaceMonitor-Debug] shouldMonitor: false (ft_face_verified is ${isVerified})`);
+      return false;
+    }
 
     // Check excluded paths
     for (const excluded of EXCLUDED_PATHS) {
-      if (pathname === excluded || pathname.startsWith(excluded + '/')) return false;
+      // Exclude exact matches or paths that are subpaths (except '/')
+      if (pathname === excluded) {
+        console.log(`[FaceMonitor-Debug] shouldMonitor: false (Pathname ${pathname} exactly matches excluded ${excluded})`);
+        return false;
+      }
+      if (excluded !== '/' && pathname.startsWith(excluded + '/')) {
+         console.log(`[FaceMonitor-Debug] shouldMonitor: false (Pathname ${pathname} starts with excluded ${excluded}/)`);
+         return false;
+      }
     }
 
+    console.log(`[FaceMonitor-Debug] shouldMonitor: true (Pathname ${pathname} is valid for monitoring)`);
     return true;
   }, [pathname]);
 
   // Initialize monitor
   useEffect(() => {
+    console.log('[FaceMonitor-Debug] useEffect triggered. Pathname:', pathname);
+    
     if (!shouldMonitor()) {
+      console.log('[FaceMonitor-Debug] shouldMonitor returned false. Cleaning up.');
       cleanup();
       setIsActive(false);
       return;
@@ -85,6 +107,7 @@ export default function FaceMonitor() {
     const storedThreshold = sessionStorage.getItem('ft_face_threshold');
 
     if (!storedDesc) {
+      console.log('[FaceMonitor-Debug] ft_face_descriptor missing from sessionStorage!');
       setIsActive(false);
       return;
     }
@@ -92,15 +115,19 @@ export default function FaceMonitor() {
     try {
       storedDescriptorRef.current = JSON.parse(storedDesc);
       thresholdRef.current = parseFloat(storedThreshold) || 0.5;
-    } catch {
+      console.log(`[FaceMonitor-Debug] Extracted descriptor & threshold: ${thresholdRef.current}`);
+    } catch (e) {
+      console.error('[FaceMonitor-Debug] Failed to parse descriptor:', e);
       setIsActive(false);
       return;
     }
 
     setIsActive(true);
+    console.log('[FaceMonitor-Debug] Starting initMonitor()');
     initMonitor();
 
     return () => {
+      console.log('[FaceMonitor-Debug] useEffect unmount/cleanup');
       cleanup();
     };
   }, [pathname, shouldMonitor]);
