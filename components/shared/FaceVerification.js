@@ -16,10 +16,12 @@ export default function FaceVerification() {
   const [status, setStatus] = useState('loading'); // loading, verifying, success, failed
   const [message, setMessage] = useState('Loading face detection models...');
   const [attempts, setAttempts] = useState(0);
-  const [storedDescriptor, setStoredDescriptor] = useState(null);
-  const [threshold, setThreshold] = useState(0.5);
   const [isScanning, setIsScanning] = useState(false);
   const detectIntervalRef = useRef(null);
+  
+  // Use refs to avoid stale closures in setInterval
+  const storedDescriptorRef = useRef(null);
+  const thresholdRef = useRef(0.5);
 
   const MAX_ATTEMPTS = 3;
 
@@ -58,8 +60,8 @@ export default function FaceVerification() {
           return;
         }
 
-        setStoredDescriptor(descriptorData.faceDescriptor);
-        setThreshold(descriptorData.faceMatchThreshold || 0.5);
+        storedDescriptorRef.current = descriptorData.faceDescriptor;
+        thresholdRef.current = descriptorData.faceMatchThreshold || 0.5;
 
         setStatus('verifying');
         setMessage('Look at the camera to verify your identity.');
@@ -101,13 +103,6 @@ export default function FaceVerification() {
     }
   };
 
-  const stopCamera = () => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-  };
-
   const startAutoVerification = () => {
     if (detectIntervalRef.current) clearInterval(detectIntervalRef.current);
 
@@ -118,7 +113,7 @@ export default function FaceVerification() {
   };
 
   const attemptVerification = async () => {
-    if (!videoRef.current || !faceapiRef.current || !storedDescriptor || isScanning) return;
+    if (!videoRef.current || !faceapiRef.current || !storedDescriptorRef.current || isScanning) return;
 
     setIsScanning(true);
     const faceapi = faceapiRef.current;
@@ -136,9 +131,9 @@ export default function FaceVerification() {
       }
 
       const liveDescriptor = Array.from(detection.descriptor);
-      const distance = euclideanDistance(liveDescriptor, storedDescriptor);
+      const distance = euclideanDistance(liveDescriptor, storedDescriptorRef.current);
 
-      if (distance < threshold) {
+      if (distance < thresholdRef.current) {
         // Match!
         if (detectIntervalRef.current) clearInterval(detectIntervalRef.current);
         stopCamera();
@@ -148,8 +143,8 @@ export default function FaceVerification() {
         // Store face verified state
         sessionStorage.setItem('ft_face_verified', 'true');
         // Also store the descriptor for continuous monitoring
-        sessionStorage.setItem('ft_face_descriptor', JSON.stringify(storedDescriptor));
-        sessionStorage.setItem('ft_face_threshold', String(threshold));
+        sessionStorage.setItem('ft_face_descriptor', JSON.stringify(storedDescriptorRef.current));
+        sessionStorage.setItem('ft_face_threshold', String(thresholdRef.current));
 
         setTimeout(() => {
           const user = JSON.parse(localStorage.getItem('future_titans_user') || '{}');
@@ -160,16 +155,18 @@ export default function FaceVerification() {
           }
         }, 1500);
       } else {
-        const newAttempts = attempts + 1;
-        setAttempts(newAttempts);
-        setMessage(`Face did not match (attempt ${newAttempts}/${MAX_ATTEMPTS}). Try again.`);
-
-        if (newAttempts >= MAX_ATTEMPTS) {
-          if (detectIntervalRef.current) clearInterval(detectIntervalRef.current);
-          stopCamera();
-          setStatus('failed');
-          setMessage('Maximum verification attempts reached. Please login again.');
-        }
+        setAttempts(prev => {
+          const newAttempts = prev + 1;
+          setMessage(`Face did not match (attempt ${newAttempts}/${MAX_ATTEMPTS}). Try again.`);
+          
+          if (newAttempts >= MAX_ATTEMPTS) {
+            if (detectIntervalRef.current) clearInterval(detectIntervalRef.current);
+            stopCamera();
+            setStatus('failed');
+            setMessage('Maximum verification attempts reached. Please login again.');
+          }
+          return newAttempts;
+        });
       }
     } catch (err) {
       console.error('Verification error:', err);
