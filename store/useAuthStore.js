@@ -5,6 +5,8 @@ export const useAuthStore = create((set) => ({
   user: null,
   isLoading: false,
   error: null,
+  faceVerified: false,
+  isFrozen: false,
 
   /**
    * Hydrate user from client-side storage.
@@ -33,6 +35,10 @@ export const useAuthStore = create((set) => ({
 
   setError: (error) => set({ error }),
 
+  setFaceVerified: (verified) => set({ faceVerified: verified }),
+
+  setFrozen: (frozen) => set({ isFrozen: frozen }),
+
   logout: async () => {
     try {
       const { auth } = await import('../lib/api');
@@ -41,7 +47,12 @@ export const useAuthStore = create((set) => ({
       console.warn('Backend logout failed:', e);
     }
     removeAuthToken();
-    set({ user: null, error: null });
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('ft_face_verified');
+      sessionStorage.removeItem('ft_face_descriptor');
+      sessionStorage.removeItem('ft_face_threshold');
+    }
+    set({ user: null, error: null, faceVerified: false, isFrozen: false });
   },
 
   clearError: () => set({ error: null }),

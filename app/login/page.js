@@ -49,8 +49,16 @@ export default function LoginPage() {
 
       if (response.user.role === 'admin') {
         router.push('/admin');
+      } else if (response.user.role === 'school_poc') {
+        router.push('/school-poc');
       } else {
-        router.push('/student/dashboard');
+        // Student role — face verification flow
+        if (response.user.faceRegistered) {
+          router.push('/face-verify');
+        } else {
+          // Existing user without face data — prompt registration
+          router.push('/face-register');
+        }
       }
     } catch (error) {
       setErrors({ submit: error.message || 'Login failed' });
