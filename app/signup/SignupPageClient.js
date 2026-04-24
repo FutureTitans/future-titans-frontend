@@ -96,7 +96,7 @@ export default function SignupPageClient() {
       setRefreshToken(response.refreshToken);
       storeSetUser(response.user);
       setTokens(response.accessToken, response.refreshToken);
-      router.push('/face-register');
+      router.push('/student/dashboard');
     } catch (error) {
       setErrors({ submit: error?.error || error?.message || (typeof error === 'string' ? error : 'Signup failed') });
     } finally {

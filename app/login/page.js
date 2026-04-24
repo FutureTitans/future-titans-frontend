@@ -52,13 +52,7 @@ export default function LoginPage() {
       } else if (response.user.role === 'school_poc') {
         router.push('/school-poc');
       } else {
-        // Student role — face verification flow
-        if (response.user.faceRegistered) {
-          router.push('/face-verify');
-        } else {
-          // Existing user without face data — prompt registration
-          router.push('/face-register');
-        }
+        router.push('/student/dashboard');
       }
     } catch (error) {
       setErrors({ submit: error.message || 'Login failed' });
