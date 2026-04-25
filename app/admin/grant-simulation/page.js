@@ -14,7 +14,7 @@ import {
 const generateSimulationData = () => {
   const students = [];
   const firstNames = ['Aarav', 'Riya', 'Vihaan', 'Ananya', 'Ishaan', 'Diya', 'Arjun', 'Myra', 'Sai', 'Kavya', 'Krishna', 'Sara', 'Dhruv', 'Suhana', 'Kabir', 'Aditi', 'Rudra', 'Nysa', 'Ayan', 'Pari'];
-  const schools = ['DPS Jaipur', 'DAV Chandigarh', 'Kendriya Vidyalaya Pune', 'CMS Lucknow', 'Bhavans Kochi'];
+  const schools = ['South Point High School', 'The Heritage School', 'DPS Ruby Park', 'St. Xavier\'s Collegiate School', 'KV Ballygunge'];
 
   for (let i = 0; i < 20; i++) {
     const startSSI = 25 + Math.floor(Math.random() * 20); // 25-45
@@ -72,7 +72,7 @@ const getCohortAverages = () => {
   for (let week = 0; week <= 6; week++) {
     const sum = MOCK_DATA.reduce((acc, student) => acc + student.weeklyProgress[week], 0);
     averages.push({
-      week: \`Week \${week}\`,
+      week: `Week ${week}`,
       average: Math.round(sum / MOCK_DATA.length)
     });
   }
@@ -247,7 +247,7 @@ export default function GrantSimulationPage() {
                   {MOCK_DATA.map((student) => {
                     // Limit data based on animation frame
                     const animatedData = student.weeklyProgress.slice(0, currentAnimationWeek + 1).map((val, i) => ({
-                      week: \`Week \${i}\`,
+                      week: `Week ${i}`,
                       value: val
                     }));
                     
@@ -285,9 +285,9 @@ export default function GrantSimulationPage() {
             <div className="mt-8 flex items-center justify-between px-10">
               {[0,1,2,3,4,5,6].map(week => (
                 <div key={week} className="flex flex-col items-center gap-2">
-                  <div className={\`w-3 h-3 rounded-full transition-all duration-300 \${
+                  <div className={`w-3 h-3 rounded-full transition-all duration-300 ${
                     week <= currentAnimationWeek ? 'bg-[#D4AF37] scale-125' : 'bg-gray-200'
-                  }\`}></div>
+                  }`}></div>
                 </div>
               ))}
             </div>
@@ -295,7 +295,7 @@ export default function GrantSimulationPage() {
               <div className="w-full h-0.5 bg-gray-100">
                 <div 
                   className="h-full bg-[#D4AF37] transition-all duration-300 ease-linear" 
-                  style={{ width: \`\${(currentAnimationWeek / 6) * 100}%\` }}
+                  style={{ width: `${(currentAnimationWeek / 6) * 100}%` }}
                 ></div>
               </div>
             </div>
@@ -355,16 +355,16 @@ export default function GrantSimulationPage() {
                   <button
                     key={student.id}
                     onClick={() => setSelectedStudent(student)}
-                    className={\`w-full text-left flex items-center justify-between p-3 rounded-2xl transition-all \${
+                    className={`w-full text-left flex items-center justify-between p-3 rounded-2xl transition-all ${
                       selectedStudent.id === student.id 
                         ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md' 
                         : 'bg-white/5 hover:bg-white/10 text-gray-300'
-                    }\`}
+                    }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className={\`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold \${
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
                         selectedStudent.id === student.id ? 'bg-white/20' : 'bg-gray-800'
-                      }\`}>
+                      }`}>
                         {idx + 1}
                       </div>
                       <div>
@@ -421,7 +421,7 @@ export default function GrantSimulationPage() {
                     <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] rounded-full transition-all duration-500"
-                        style={{ width: \`\${displayValue}%\` }}
+                        style={{ width: `${displayValue}%` }}
                       ></div>
                     </div>
                   </div>
@@ -434,7 +434,7 @@ export default function GrantSimulationPage() {
       </div>
       
       {/* Global styles for custom scrollbar */}
-      <style dangerouslySetInnerHTML={{__html: \`
+      <style dangerouslySetInnerHTML={{__html: `
         .custom-scrollbar-dark::-webkit-scrollbar {
           width: 4px;
         }
@@ -449,7 +449,7 @@ export default function GrantSimulationPage() {
         .custom-scrollbar-dark::-webkit-scrollbar-thumb:hover {
           background: rgba(212, 175, 55, 0.5);
         }
-      \`}} />
+      `}} />
     </div>
   );
 }
