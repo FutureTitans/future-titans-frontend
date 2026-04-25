@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { modules, aiChat, auth } from '@/lib/api';
 import { isStudent } from '@/lib/auth';
-import { BookOpen, Play, MessageCircle, CheckCircle, Clock, ArrowLeft, ArrowRight, Brain, User, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
+import { BookOpen, Play, CheckCircle, ArrowLeft, ArrowRight, Trophy, Target, Lightbulb, Lock, Bell, Settings, LayoutDashboard, UserCircle, PlayCircle, Brain, Search } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import AIChatComponent from '@/components/student/AIChat';
 
@@ -16,24 +16,19 @@ export default function ModulePlayerPage() {
   const [module, setModule] = useState(null);
   const [currentChapter, setCurrentChapter] = useState(0);
   const [chapterContent, setChapterContent] = useState(null);
-  const [showAIChat, setShowAIChat] = useState(false);
+  const [showAIChat, setShowAIChat] = useState(true); 
   const [loading, setLoading] = useState(true);
   const [chapterLoading, setChapterLoading] = useState(false);
   const [chapterCompleted, setChapterCompleted] = useState({});
-  const [showChaptersConfig, setShowChaptersConfig] = useState(true); // default open on desktop
   const [markingComplete, setMarkingComplete] = useState(false);
   const [navigatingNext, setNavigatingNext] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
 
-  // Time tracking heartbeat
   useEffect(() => {
     if (!module || !moduleId) return;
-
-    // Heartbeat every 60 seconds
     const interval = setInterval(() => {
       modules.trackTime(moduleId, 60).catch(err => console.debug('Failed to track time', err));
     }, 60000);
-
     return () => clearInterval(interval);
   }, [module, moduleId]);
 
@@ -42,7 +37,6 @@ export default function ModulePlayerPage() {
       router.push('/login');
       return;
     }
-
     fetchModule();
   }, [router, moduleId]);
 
@@ -56,10 +50,8 @@ export default function ModulePlayerPage() {
           const history = await aiChat.getChatHistory(moduleId, chapterId);
           if (history.conversation && history.conversation.length > 0) {
             setChapterCompleted(prev => ({ ...prev, [chapterId]: true }));
-            setShowAIChat(true);
           }
         } catch (e) {
-          // Chapter not started yet
         }
       };
       checkChapterComplete();
@@ -74,12 +66,10 @@ export default function ModulePlayerPage() {
 
     const onYouTubeIframeAPIReady = () => {
       if (!window.YT || !window.YT.Player) return;
-      const player = new window.YT.Player('chapter-video-player', {
+      new window.YT.Player('chapter-video-player', {
         events: {
           onStateChange: (event) => {
-            if (event.data === 0) {
-              //console.log('Video ended for chapter:', current.title);
-            }
+            if (event.data === 0) {}
           },
         },
       });
@@ -104,7 +94,6 @@ export default function ModulePlayerPage() {
       const data = await modules.getById(moduleId);
       setModule(data);
 
-      // Load completion state from user's profile so it persists across refreshes
       try {
         const profile = await auth.getProfile();
         const moduleProgress = profile?.modulesProgress?.find(
@@ -145,7 +134,6 @@ export default function ModulePlayerPage() {
       setNavigatingNext(true);
       setTimeout(() => {
         setCurrentChapter(currentChapter + 1);
-        setShowAIChat(false);
         setNavigatingNext(false);
       }, 800);
     }
@@ -154,7 +142,6 @@ export default function ModulePlayerPage() {
   const handlePrevChapter = () => {
     if (currentChapter > 0) {
       setCurrentChapter(currentChapter - 1);
-      setShowAIChat(false);
     }
   };
 
@@ -170,15 +157,6 @@ export default function ModulePlayerPage() {
       const current = module.chapters[currentChapter];
       if (current?.aiInteractionEnabled) {
         setShowAIChat(true);
-        try {
-          await aiChat.sendMessage(
-            moduleId,
-            current._id,
-            'I have just completed this chapter. Please guide me with SURGE-style questions to reflect and improve my entrepreneurial mindset based on this module.'
-          );
-        } catch (err) {
-          console.error('Failed to auto-start AI chat after completion:', err);
-        }
       }
     } catch (error) {
       console.error('Failed to complete chapter:', error);
@@ -236,14 +214,14 @@ export default function ModulePlayerPage() {
       case 'video':
         const isHTML5Video = content.videoUrl && (content.videoUrl.includes('amazonaws.com') || content.videoUrl.endsWith('.mp4'));
         return (
-          <div className="aspect-video bg-black rounded-[24px] overflow-hidden shadow-2xl border-4 border-white/50 relative group">
+          <div className="aspect-video bg-[#111] rounded-3xl overflow-hidden shadow-sm relative group w-full max-w-[900px] border-[8px] border-black">
             {isHTML5Video ? (
               <video
                 controls
                 src={content.videoUrl}
                 className="w-full h-full absolute inset-0 object-contain"
                 controlsList="nodownload"
-                onEnded={() => console.log('Video ended for chapter:', chapterContent.title)}
+                onEnded={() => console.log('Video ended')}
               />
             ) : (
               <iframe
@@ -260,7 +238,7 @@ export default function ModulePlayerPage() {
 
       case 'audio':
         return (
-          <div className="glass-panel p-12 text-center shadow-lg border-white/40">
+          <div className="bg-gray-50 rounded-2xl p-12 text-center border border-gray-100">
             <div className="text-6xl mb-6">🎧</div>
             <audio controls className="w-full max-w-md mx-auto">
               <source src={content.audioUrl} type="audio/mpeg" />
@@ -271,14 +249,14 @@ export default function ModulePlayerPage() {
 
       case 'pdf':
         return (
-          <div className="glass-panel p-12 text-center shadow-lg border-white/40">
+          <div className="bg-gray-50 rounded-2xl p-12 text-center border border-gray-100">
             <div className="text-6xl mb-6">📄</div>
             <p className="text-lg text-gray-700 mb-6 font-medium">PDF Document provided for this chapter</p>
             <a
               href={content.pdfUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="glass-button px-8 py-3 inline-flex items-center gap-2"
+              className="px-8 py-3 inline-flex items-center gap-2 bg-[#D4AF37] text-white rounded-full font-semibold hover:bg-[#B8952E] transition-colors"
             >
               <BookOpen className="w-5 h-5" />
               Open PDF
@@ -288,7 +266,7 @@ export default function ModulePlayerPage() {
 
       default:
         return (
-          <div className="text-center py-12 glass-panel shadow-lg border-white/40">
+          <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-100">
             <p className="text-gray-600 font-medium">Content type not supported</p>
           </div>
         );
@@ -297,7 +275,7 @@ export default function ModulePlayerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
         <LoadingSpinner message="Loading module..." />
       </div>
     );
@@ -305,12 +283,12 @@ export default function ModulePlayerPage() {
 
   if (!module) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center card">
+      <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
+        <div className="text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
           <h2 className="text-2xl font-bold mb-4 text-gray-800">Module not found</h2>
           <button
             onClick={() => router.push('/student/modules')}
-            className="glass-button px-6 py-3"
+            className="px-6 py-3 bg-[#D4AF37] text-white rounded-full font-semibold"
           >
             Back to Modules
           </button>
@@ -326,101 +304,68 @@ export default function ModulePlayerPage() {
   const isCompleted = chapterCompleted[currentChapterData?._id];
 
   return (
-    <div className="min-h-screen relative overflow-x-hidden flex flex-col" style={{ zIndex: 1 }}>
-      {/* Background blobs */}
-      <div className="absolute inset-0 pointer-events-none z-[-1]">
-        <div className="absolute top-[10%] left-[10%] w-[50%] h-[50%] bg-[#F5D76E]/15 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-[#D4AF37]/10 rounded-full blur-[120px]"></div>
-      </div>
-
-      {/* ─── Top Nav Bar ─── */}
-      <div className="glass-strong border-b border-white/40 sticky top-0 z-50">
-        <div className="w-full px-4 md:px-8 xl:px-12 py-3 md:py-4 max-w-[1920px] mx-auto">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3 md:gap-4 min-w-0 flex-1">
-              <button
-                onClick={() => router.push('/student/modules')}
-                className="text-gray-600 hover:text-[#D4AF37] transition p-1.5 md:p-2 hover:bg-white/60 rounded-xl flex-shrink-0"
-              >
-                <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
-              </button>
-              {module.mentorProfilePicture && (
-                <img
-                  src={module.mentorProfilePicture}
-                  alt="Mentor"
-                  className="w-10 h-10 md:w-16 md:h-16 rounded-full border-2 border-white object-cover shadow-sm flex-shrink-0"
-                  onError={(e) => { e.target.style.display = 'none'; }}
-                />
-              )}
-              <div className="min-w-0 flex-1">
-                <h1 className="font-bold text-lg md:text-2xl text-gray-900 truncate">{module.title}</h1>
-                <p className="text-xs md:text-sm text-gray-500 mt-1 font-medium">
-                  Chapter {currentChapter + 1} of {module.chapters.length}
-                </p>
+    <div className="min-h-screen bg-[#FDFDFD] font-sans text-gray-900 pb-12 flex flex-col">
+      {/* ─── Minimal Header Breadcrumb & Progress ─── */}
+      <div className="bg-[#FDFDFD] sticky top-0 z-40 border-b border-gray-100">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => router.push('/student/modules')}
+              className="text-gray-400 hover:text-gray-700 transition"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div>
+              <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-gray-500">
+                <span className="text-[#B8952E]">MODULE {(module?.moduleNumber || 1).toString().padStart(2, '0')}</span>
+                <span className="text-gray-300">•</span>
+                <span>Chapter {currentChapter + 1} of {module.chapters.length}</span>
               </div>
-            </div>
-
-            <div className="flex items-center gap-4 md:gap-6 w-full sm:w-auto justify-between sm:justify-end">
-              <div className="text-right sm:text-left">
-                <div className="text-xs md:text-sm font-bold text-[#B8952E]">{progressPercentage}%</div>
-                <div className="text-[10px] md:text-xs text-gray-500 font-semibold uppercase tracking-wider">Complete</div>
-              </div>
-
-              {ZunnovaAvailable && (
-                <button
-                  onClick={async () => {
-                    const nextVisible = !showAIChat;
-                    if (nextVisible && isCompleted) {
-                      setShowAIChat(true);
-                    } else if (!nextVisible) {
-                      setShowAIChat(false);
-                    } else {
-                      alert('Please mark this chapter as complete first to access the AI chat.');
-                    }
-                  }}
-                  className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full transition-all font-semibold text-xs md:text-sm ${showAIChat
-                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white shadow-md shadow-[#D4AF37]/30 border border-[#D4AF37]/10'
-                    : 'bg-white/50 text-[#B8952E] hover:bg-white/80 border border-white/60'
-                    }`}
-                >
-                  <Brain className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                  <span className="hidden sm:inline">Zunnova AI</span>
-                </button>
-              )}
             </div>
           </div>
 
-          {/* Progress Bar Line */}
-          <div className="mt-3 md:mt-4">
-            <div className="w-full bg-black/5 rounded-full h-1.5 md:h-2 overflow-hidden shadow-inner">
-              <div
-                className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-1.5 md:h-2 rounded-full transition-all duration-500"
-                style={{ width: `${progressPercentage}%` }}
-              />
+          <div className="flex items-center gap-6 w-full sm:w-auto">
+            <div className="flex-1 sm:w-64 flex items-center gap-4">
+              <div className="w-full bg-gray-200 rounded-full h-1.5 flex-1">
+                <div 
+                  className="bg-[#D4AF37] h-1.5 rounded-full transition-all duration-500"
+                  style={{ width: `${progressPercentage}%` }}
+                ></div>
+              </div>
+              <div className="text-[10px] font-bold text-[#A87B1E] tracking-widest whitespace-nowrap">
+                {progressPercentage}% COMPLETE
+              </div>
             </div>
+            {ZunnovaAvailable && (
+              <button 
+                onClick={() => setShowAIChat(!showAIChat)}
+                className="hidden lg:flex items-center gap-2 bg-[#212121] text-[#D4AF37] px-4 py-2 rounded-xl text-sm font-semibold hover:bg-black transition-colors border border-black"
+              >
+                <div className="w-5 h-5 bg-[#D4AF37] rounded-md flex items-center justify-center text-[#212121]">
+                  <Brain className="w-3 h-3" />
+                </div>
+                Zunnova AI Assistant
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* ─── Main Content Layout ─── */}
-      <div className="flex xl:flex-row flex-col max-w-[1920px] mx-auto p-4 md:p-8 xl:p-12 gap-8 flex-1 min-h-[calc(100vh-130px)] h-full w-full">
-        {/* Left Section: Chapters List */}
-        <div className="xl:w-[25%] w-full flex-shrink-0">
-          <div className="glass-panel p-4 sm:p-5 h-full xl:min-h-[600px] xl:sticky xl:top-[100px] flex flex-col">
-            <div className="flex items-center gap-3 mb-5 shrink-0">
-              <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center text-[#B8952E]">
-                <BookOpen className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg text-gray-900 leading-tight">Course Chapters</h3>
-                <p className="text-xs text-gray-500 font-medium">{module.chapters.length} Total</p>
-              </div>
-            </div>
+      {/* ─── Main Content Grid ─── */}
+      <div className="max-w-[1600px] mx-auto w-full px-4 md:px-8 py-8 flex-1 flex flex-col lg:flex-row gap-8">
+        
+        {/* Left Sidebar: Chapters */}
+        <div className="w-full lg:w-[280px] flex-shrink-0 flex flex-col gap-6">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <h3 className="text-lg font-bold text-gray-900 mb-1">Course Chapters</h3>
+            <p className="text-xs text-gray-500 mb-6">Curriculum Overview</p>
 
-            <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
+            <div className="space-y-1">
               {module.chapters.map((chapter, index) => {
                 const completed = chapterCompleted[chapter._id];
                 const isActive = index === currentChapter;
+                const Icon = chapter.content?.type === 'video' ? PlayCircle : BookOpen;
 
                 return (
                   <button
@@ -429,191 +374,125 @@ export default function ModulePlayerPage() {
                       setCurrentChapter(index);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
-                    className={`w-full text-left p-3.5 rounded-2xl transition-all border ${isActive
-                      ? 'bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] shadow-lg shadow-[#D4AF37]/20 border-transparent text-white'
-                      : completed
-                        ? 'bg-white/60 hover:bg-white/90 border-[#D4AF37]/30 text-gray-800'
-                        : 'bg-white/40 hover:bg-white/70 border-white/40 text-gray-600'
-                      }`}
+                    className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-xl transition-all text-left ${
+                      isActive 
+                        ? 'bg-[#D4AF37] text-white shadow-md shadow-[#D4AF37]/20' 
+                        : 'hover:bg-gray-50 text-gray-600'
+                    }`}
                   >
-                    <div className="flex items-start gap-3">
-                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5 ${isActive
-                        ? 'bg-white text-[#D4AF37]'
-                        : completed
-                          ? 'bg-[#D4AF37] text-white'
-                          : 'bg-black/5 text-gray-400'
-                        }`}>
-                        {completed && !isActive ? <CheckCircle className="w-4 h-4" /> : index + 1}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <p className={`font-semibold text-sm line-clamp-2 leading-snug ${isActive ? 'text-white' : 'text-gray-900'}`}>
-                          {chapter.title}
-                        </p>
-                        <p className={`text-[10px] mt-1 font-medium capitalize flex items-center gap-1 ${isActive ? 'text-white/80' : 'text-gray-500'}`}>
-                          {chapter.content?.type === 'video' ? <Play className="w-3 h-3" /> : <BookOpen className="w-3 h-3" />}
-                          {chapter.content?.type || 'Content'}
-                        </p>
-                      </div>
+                    <div className={`flex items-center justify-center w-6 h-6 rounded-full shrink-0 ${
+                      isActive ? 'bg-[#212121] text-[#D4AF37]' : completed ? 'text-[#D4AF37]' : 'text-gray-400 border border-gray-200'
+                    }`}>
+                      {completed && !isActive ? (
+                        <CheckCircle className="w-4 h-4" />
+                      ) : isActive ? (
+                        <Icon className="w-3.5 h-3.5" />
+                      ) : (
+                        <Search className="w-3.5 h-3.5" />
+                      )}
                     </div>
+                    <span className={`text-sm font-medium line-clamp-1 ${isActive ? 'font-semibold' : ''}`}>
+                      {chapter.title}
+                    </span>
                   </button>
                 );
               })}
             </div>
           </div>
+
+          <div className="bg-[#FDFBF5] border border-[#F2E5C5] rounded-2xl p-5 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <h4 className="font-bold text-[#A87B1E]">Pro Tip</h4>
+            </div>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              Focus on pain points you experience personally to find high-value problems.
+            </p>
+          </div>
         </div>
 
-        {/* Center Section: Content Area (Video) */}
-        <div className={`flex-1 min-w-0 transition-all duration-300 flex flex-col xl:max-w-none ${showAIChat && isCompleted && ZunnovaAvailable ? 'xl:w-[50%]' : 'w-full'}`}>
-          <div className="glass-panel p-4 sm:p-6 md:p-8 shadow-sm flex flex-col flex-1 min-h-0">
-            <div className="flex items-center gap-4 mb-6 shrink-0">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center text-white font-bold text-xl shadow-md flex-shrink-0">
-                {currentChapter + 1}
-              </div>
-              <div className="min-w-0">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-1">
-                  {currentChapterData?.title}
-                </h2>
-                {currentChapterData?.description && (
-                  <p className="text-sm text-gray-500 mt-2">
-                    {currentChapterData.description}
-                  </p>
-                )}
-              </div>
+        {/* Center: Main Content */}
+        <div className="w-full lg:flex-1 flex flex-col min-w-0">
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-[1.1] mb-6 max-w-3xl">
+              {currentChapterData?.title}
+            </h1>
+            {currentChapterData?.description && (
+              <p className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-3xl">
+                {currentChapterData.description}
+              </p>
+            )}
+          </div>
+
+          {chapterLoading ? (
+            <div className="flex-1 flex justify-center items-center py-20 bg-gray-50 rounded-3xl border border-gray-100">
+              <LoadingSpinner message="Loading chapter..." />
             </div>
+          ) : (
+            <div className="flex-1 flex flex-col items-start w-full">
+              {renderChapterContent()}
+            </div>
+          )}
 
-            {chapterLoading ? (
-              <div className="flex-1 flex justify-center items-center py-16">
-                <LoadingSpinner message="Loading chapter..." />
-              </div>
-            ) : (
-              <div className="flex-1">
-                {renderChapterContent()}
-              </div>
-            )}
+          {/* Navigation Controls */}
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 pt-6 border-t border-gray-100">
+            <button
+              onClick={handlePrevChapter}
+              disabled={currentChapter === 0}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Previous
+            </button>
 
-            {/* Zunnova Coming Soon Cool Indicator */}
-            {!isCompleted && ZunnovaAvailable && (
-              <div className="mt-8 mb-2 relative overflow-hidden rounded-2xl bg-white border border-[#D4AF37]/30 shadow-lg shadow-[#D4AF37]/10 group transition-all duration-300 hover:shadow-xl hover:shadow-[#D4AF37]/20 hover:border-[#D4AF37]/50">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#D4AF37]/10 opacity-50"></div>
+            <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
+              {!isCompleted && (
+                <button
+                  onClick={completeChapter}
+                  disabled={markingComplete}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-900 text-white rounded-xl hover:bg-black transition-colors font-medium disabled:opacity-80 shadow-sm text-sm"
+                >
+                  {markingComplete ? (
+                    <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <CheckCircle className="w-4 h-4" />
+                  )}
+                  {markingComplete ? 'Completing...' : 'Mark Complete'}
+                </button>
+              )}
 
-                {/* Shine effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] group-hover:animate-[shimmer_2s_infinite]"></div>
-
-                <div className="relative p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-5">
-                    {/* Glowing Brain Icon */}
-                    <div className="relative flex-shrink-0">
-                      <div className="absolute inset-0 bg-[#D4AF37] rounded-full blur-md opacity-40 animate-pulse"></div>
-                      <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8952E] flex items-center justify-center p-3 shadow-inner">
-                        <Brain className="w-full h-full text-white" />
-                      </div>
-                    </div>
-
-                    <div>
-                      <h4 className="text-lg md:text-xl font-bold bg-gradient-to-r from-[#B8952E] to-[#D4AF37] bg-clip-text text-transparent flex items-center gap-3">
-                        Zunnova AI is waiting...
-                        <span className="flex items-center space-x-1">
-                          <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                          <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                          <span className="w-2 h-2 rounded-full bg-[#D4AF37] animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                        </span>
-                      </h4>
-                      <p className="text-gray-600 text-sm md:text-base mt-1 font-medium max-w-lg leading-relaxed">
-                        Ready to reflect on what you&apos;ve learned? Click <span className="font-bold text-gray-800">&quot;Mark Complete&quot;</span> below to start your personalized interactive session with Zunnova!
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Subtle arrow pointing down to Mark Complete */}
-                  <div className="hidden sm:flex flex-shrink-0 animate-bounce">
-                    <div className="w-10 h-10 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 flex items-center justify-center shadow-sm">
-                      <ArrowRight className="w-5 h-5 text-[#B8952E] transform rotate-90" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Navigation Bar inside content area */}
-            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 mt-6 border-t border-black/5 shrink-0">
-              <button
-                onClick={handlePrevChapter}
-                disabled={currentChapter === 0}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-full bg-white/50 text-gray-600 hover:bg-white/80 border border-black/5 transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Previous
-              </button>
-
-              <div className="w-full sm:w-auto flex flex-col sm:flex-row items-center gap-3">
-                {!isCompleted && (
-                  <button
-                    onClick={completeChapter}
-                    disabled={markingComplete}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#1B6B4C] to-[#0F5132] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm relative overflow-hidden disabled:opacity-80"
-                  >
-                    {markingComplete && (
-                      <div className="absolute inset-0 bg-white/20">
-                        <div className="h-full bg-white/30 rounded-full animate-[progressBar_1.5s_ease-in-out_infinite]" />
-                      </div>
-                    )}
-                    {markingComplete ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
-                        Completing...
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-4 h-4" />
-                        Mark Complete
-                      </>
-                    )}
-                  </button>
-                )}
-
-                {currentChapter < module.chapters.length - 1 ? (
-                  <button
-                    onClick={handleNextChapter}
-                    disabled={navigatingNext}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C5A028] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm shadow-[#D4AF37]/20 relative overflow-hidden disabled:opacity-80"
-                  >
-                    {navigatingNext && (
-                      <div className="absolute inset-0 bg-white/20">
-                        <div className="h-full bg-white/30 rounded-full animate-[progressBar_0.8s_ease-in-out_forwards]" />
-                      </div>
-                    )}
-                    {navigatingNext ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
-                        Loading...
-                      </>
-                    ) : (
-                      <>
-                        Next Chapter
-                        <ArrowRight className="w-4 h-4" />
-                      </>
-                    )}
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => setShowCompletionModal(true)}
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#B8952E] to-[#D4AF37] text-white rounded-full hover:shadow-lg transition-all font-semibold text-sm shadow-[#D4AF37]/20"
-                  >
-                    <Trophy className="w-4 h-4" />
-                    Complete Module
-                  </button>
-                )}
-              </div>
+              {currentChapter < module.chapters.length - 1 ? (
+                <button
+                  onClick={handleNextChapter}
+                  disabled={navigatingNext}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-[#D4AF37] text-white rounded-xl hover:bg-[#B8952E] transition-colors font-medium shadow-sm disabled:opacity-80 text-sm"
+                >
+                  {navigatingNext ? (
+                    <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      Next Chapter
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => setShowCompletionModal(true)}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-[#D4AF37] text-white rounded-xl hover:bg-[#B8952E] transition-colors font-medium shadow-sm text-sm"
+                >
+                  <Trophy className="w-4 h-4" />
+                  Complete Module
+                </button>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Right Section: AI Chat Layout (Side Panel) */}
+        {/* Right Sidebar: AI Chat */}
         {showAIChat && isCompleted && ZunnovaAvailable && (
-          <div className="xl:w-[25%] w-full transition-all duration-300 flex-shrink-0 animate-fade-in-up">
-            <div className="h-full max-h-[600px] xl:max-h-[calc(100vh-160px)] xl:sticky xl:top-[120px]">
-              <AIChatComponent
+          <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0 flex flex-col h-[600px] lg:h-[calc(100vh-140px)] sticky top-24">
+            <div className="bg-white rounded-[24px] shadow-lg border border-gray-100 flex-1 flex flex-col overflow-hidden">
+               <AIChatComponent
                 moduleId={moduleId}
                 chapterId={currentChapterData._id}
                 module={module}
@@ -621,59 +500,33 @@ export default function ModulePlayerPage() {
             </div>
           </div>
         )}
-
       </div>
 
-      {/* ─── Module Completion Modal ─── */}
+      {/* ─── Completion Modal ─── */}
       {showCompletionModal && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-3xl w-full max-w-lg p-8 sm:p-10 shadow-2xl relative overflow-hidden border border-[#D4AF37]/20 text-center">
-            {/* Background decoration */}
-            <div className="absolute top-0 left-0 w-48 h-48 bg-[#F5D76E]/20 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-48 h-48 bg-[#D4AF37]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
-
-            <div className="relative z-10">
-              {/* Trophy Icon */}
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#F5D76E] to-[#D4AF37] flex items-center justify-center mx-auto mb-6 shadow-xl shadow-[#D4AF37]/30">
-                <Trophy className="w-10 h-10 text-white" />
-              </div>
-
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">
-                🎉 Module Complete!
-              </h2>
-              <p className="text-gray-600 mb-8 text-sm sm:text-base leading-relaxed">
-                Congratulations on finishing <span className="font-semibold text-gray-800">{module.title}</span>! You&apos;re one step closer to becoming a Future Titan.
-              </p>
-
-              <div className="space-y-3">
-                {/* Submit Your Idea — Primary CTA */}
-                <button
-                  onClick={() => router.push('/student/submission')}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all font-semibold text-sm shadow-md"
-                >
-                  <ArrowRight className="w-5 h-5" />
-                  Submit Your Idea
-                </button>
-
-                {/* Back to Dashboard — Secondary */}
-                <button
-                  onClick={() => router.push('/student/dashboard')}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-2xl hover:bg-gray-50 transition-all font-medium text-sm"
-                >
-                  Back to Dashboard
-                </button>
-
-                {/* Continue Learning — Tertiary */}
-                <button
-                  onClick={() => {
-                    setShowCompletionModal(false);
-                    router.push('/student/modules');
-                  }}
-                  className="w-full text-sm text-gray-500 hover:text-[#B8952E] transition-colors font-medium py-2"
-                >
-                  Continue Learning More Modules →
-                </button>
-              </div>
+        <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-[32px] w-full max-w-md p-8 text-center shadow-2xl">
+            <div className="w-20 h-20 rounded-full bg-[#FDFBF5] border-2 border-[#F2E5C5] flex items-center justify-center mx-auto mb-6">
+              <Trophy className="w-10 h-10 text-[#D4AF37]" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Module Complete!</h2>
+            <p className="text-gray-500 mb-8 leading-relaxed">
+              Congratulations on finishing <span className="font-semibold text-gray-800">{module.title}</span>!
+            </p>
+            <div className="space-y-3">
+              <button
+                onClick={() => router.push('/student/submission')}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-[#D4AF37] text-white rounded-xl font-semibold shadow-sm hover:bg-[#B8952E] transition-colors"
+              >
+                Submit Your Idea
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => router.push('/student/dashboard')}
+                className="w-full px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
+              >
+                Back to Dashboard
+              </button>
             </div>
           </div>
         </div>

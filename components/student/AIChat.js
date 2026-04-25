@@ -14,6 +14,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [ssiScore, setSSIScore] = useState(null);
+  const [currentStage, setCurrentStage] = useState('spot');
+  const [ssiDelta, setSsiDelta] = useState(0);
   const [ttsEnabled, setTtsEnabled] = useState(false);
   const [voice, setVoice] = useState(null);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -32,6 +34,9 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
         setMessages(data.conversation || []);
         if (data.ssiScore) {
           setSSIScore(data.ssiScore);
+        }
+        if (data.currentSurgeStage) {
+          setCurrentStage(data.currentSurgeStage);
         }
         setIsCompleted(data.isCompleted || false);
         if (data.timeSpent) {
@@ -62,6 +67,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
             const seeded = await aiChat.getChatHistory(moduleId, chapterId);
             setMessages(seeded.conversation);
             if (seeded.ssiScore) setSSIScore(seeded.ssiScore);
+            if (seeded.currentSurgeStage) setCurrentStage(seeded.currentSurgeStage);
             setIsCompleted(seeded.isCompleted || false);
           } catch (e) {
             console.error('Failed to auto-start SURGE chat:', e);
@@ -209,7 +215,14 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       const aiMessage = { role: 'assistant', message: response.aiMessage, timestamp: new Date() };
       setMessages((prev) => [...prev, aiMessage]);
       if (response.ssiScore) {
+        if (ssiScore) {
+          setSsiDelta(response.ssiScore.overall - ssiScore.overall);
+          setTimeout(() => setSsiDelta(0), 3000);
+        }
         setSSIScore(response.ssiScore);
+      }
+      if (response.currentSurgeStage) {
+        setCurrentStage(response.currentSurgeStage);
       }
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -269,63 +282,45 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
   return (
     <div className="flex flex-col glass-panel rounded-3xl border border-white/40 shadow-xl overflow-hidden h-full">
-      {/* Premium Bot Header */}
-      <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] text-white px-4 py-3 md:px-5 md:py-4 flex items-center justify-between relative overflow-hidden backdrop-blur-xl shrink-0 border-b border-white/20">
-        <div className="absolute inset-0 bg-white/10"></div>
-        <div className="flex items-center gap-2 md:gap-3 relative z-10 flex-1 min-w-0">
-          <ZunnovaAvatar
-            isTalking={isLoading}
-            className="w-12 h-12 md:w-20 md:h-20 flex-shrink-0"
-          />
+      {/* Dark Premium Bot Header */}
+      <div className="bg-[#212121] text-white px-5 py-4 flex flex-col justify-center relative overflow-hidden shrink-0">
+        <div className="flex items-center gap-3 relative z-10 w-full mb-3">
+          <div className="w-10 h-10 bg-[#D4AF37] rounded-lg flex items-center justify-center text-[#212121] flex-shrink-0">
+            <Bot className="w-6 h-6" />
+          </div>
           <div className="min-w-0 flex-1">
-            <h3 className="text-base md:text-xl font-bold tracking-tight whitespace-nowrap">
+            <h3 className="text-base font-bold tracking-tight whitespace-nowrap text-white">
               Zunnova AI
             </h3>
-            <p className="text-[10px] md:text-xs font-semibold uppercase tracking-wider opacity-90">Learning Assistant</p>
+            <p className="text-[11px] text-gray-400">Mentorship Assistant</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setTtsEnabled((v) => !v)}
+            className="text-gray-400 hover:text-white transition"
+          >
+            {ttsEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+          </button>
+        </div>
+
+        {/* Score Card within header (from image) */}
+        <div className="bg-[#333333] rounded-xl p-4 w-full flex flex-col border border-[#444]">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-[10px] font-bold tracking-widest text-gray-300 uppercase">PERSONAL SCORE (SSI)</span>
+            <span className="text-xs font-bold text-[#D4AF37]">{ssiScore ? ssiScore.overall : 0}/100</span>
+          </div>
+          <div className="w-full bg-[#222] rounded-full h-1.5 overflow-hidden">
+            <div 
+              className="bg-[#D4AF37] h-1.5 rounded-full transition-all duration-1000"
+              style={{ width: `${ssiScore ? ssiScore.overall : 0}%` }}
+            />
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => setTtsEnabled((v) => !v)}
-          className="relative z-10 flex items-center gap-1.5 text-xs bg-white/20 max-h-8 backdrop-blur-sm px-2.5 py-1.5 rounded-full hover:bg-white/30 transition border border-white/30 font-medium tracking-wide flex-shrink-0"
-        >
-          {ttsEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
-          <span className="hidden sm:inline">{ttsEnabled ? 'Voice On' : 'Voice Off'}</span>
-        </button>
       </div>
 
-      {/* SSI Score Overview (if available) */}
+      {/* Removed old SSI Score Overview since we integrated it into the header block */}
       {ssiScore && (
-        <div className="bg-white/40 border-b border-black/5 px-4 py-3 shrink-0 backdrop-blur-sm">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-2.5">
-            <p className="text-xs font-bold text-gray-800 uppercase tracking-widest">
-              SSI Score: <span className="text-[#D4AF37]">{ssiScore.overall}/100</span>
-            </p>
-            {timeSpent > 0 && (
-              <p className="text-[10px] font-bold text-gray-400 tracking-wider">
-                ⏱️ {Math.floor(timeSpent / 60)}M {timeSpent % 60}S
-              </p>
-            )}
-          </div>
-          <div className="flex justify-between gap-1 text-[10px]">
-            {[
-              { label: 'S', key: 'selfAwareness', name: 'Self' },
-              { label: 'U', key: 'understandingOpportunities', name: 'UI' },
-              { label: 'R', key: 'resilience', name: 'Resilience' },
-              { label: 'G', key: 'growthExecution', name: 'Growth' },
-              { label: 'E', key: 'entrepreneurialLeadership', name: 'Lead' },
-            ].map((item) => (
-              <div key={item.key} className="text-center w-full max-w-[40px]">
-                <p className="font-bold text-gray-600 mb-0.5">{item.label}</p>
-                <div className="w-full bg-black/5 rounded-full h-1 mb-0.5 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-1 rounded-full transition-all"
-                    style={{ width: `${ssiScore[item.key] || 0}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+        <div className="hidden">
         </div>
       )}
 

@@ -56,6 +56,9 @@ export default function AdminLayout({ children }) {
             <a href="/admin/analytics" className="block px-4 py-2 rounded-lg hover:bg-primary-lightRed text-neutral-dark hover:text-primary-red transition">
               📈 Analytics
             </a>
+            <a href="/admin/grant-simulation" className="block px-4 py-2 rounded-lg hover:bg-primary-lightRed text-neutral-dark hover:text-primary-red transition font-bold bg-[#D4AF37]/10 text-[#B8952E]">
+              🚀 Grant Simulation
+            </a>
             <a href="/admin/schools" className="block px-4 py-2 rounded-lg hover:bg-primary-lightRed text-neutral-dark hover:text-primary-red transition">
               🏫 School Slugs
             </a>
