@@ -62,6 +62,7 @@ export default function FreezeOverlay({ onVerify, onLogout, stream }) {
               <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black border border-white/10 shadow-lg">
                 <video
                   ref={videoRef}
+                  autoPlay
                   muted
                   playsInline
                   className="w-full h-full object-cover"

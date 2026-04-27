@@ -1,6 +1,7 @@
 import './globals.css';
 import Navbar from '@/components/shared/Navbar';
 import GlobalAIChat from '@/components/student/GlobalAIChat';
+import FaceGuardWrapper from '@/components/shared/FaceGuardWrapper';
 
 export const metadata = {
   title: 'Future Titans Innovation Challenge',
@@ -12,11 +13,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="bg-white text-neutral-dark">
         <Navbar />
-        {children}
+        <FaceGuardWrapper>
+          {children}
+        </FaceGuardWrapper>
         {/* Global AI chat (only shows for paid students, not on landing/auth/admin) */}
         <GlobalAIChat />
       </body>
     </html>
   );
 }
-
