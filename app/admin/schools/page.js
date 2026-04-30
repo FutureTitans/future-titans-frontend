@@ -359,7 +359,11 @@ export default function SchoolSlugsPage() {
                           <button onClick={() => handleReviewProof(slug._id, 'Rejected')} className="text-xs px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded">Reject</button>
                         </div>
                       ) : (
-                        <p className="text-[10px] text-neutral-medium">Waiting for association to upload proof of acceptance. Lock expires: {slug.lockUntil ? new Date(slug.lockUntil).toLocaleDateString() : 'N/A'}</p>
+                        <div className="flex gap-2 items-center mt-2">
+                          <p className="text-[10px] text-neutral-medium">Waiting for association to upload proof. Lock expires: {slug.lockUntil ? new Date(slug.lockUntil).toLocaleDateString() : 'N/A'}</p>
+                          <button onClick={() => handleReviewProof(slug._id, 'Approved')} className="text-xs px-2 py-1 bg-green-600 hover:bg-green-700 text-white rounded whitespace-nowrap">Approve Direct</button>
+                          <button onClick={() => handleReviewProof(slug._id, 'Rejected')} className="text-xs px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded whitespace-nowrap">Reject</button>
+                        </div>
                       )}
                     </div>
                   )}
