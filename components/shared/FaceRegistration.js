@@ -101,7 +101,7 @@ export default function FaceRegistration({ onComplete, onSkip }) {
     try {
       // Detect face with landmarks and descriptor
       const detection = await faceapi
-        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.5 }))
+        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.8 }))
         .withFaceLandmarks()
         .withFaceDescriptor();
 

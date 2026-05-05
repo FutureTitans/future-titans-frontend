@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { ScanFace, CheckCircle2, AlertTriangle, Loader2, LogOut, Camera } from 'lucide-react';
 
-const EUCLIDEAN_THRESHOLD = 0.55;
+const EUCLIDEAN_THRESHOLD = 0.45;
 
 /**
  * FaceLoginVerification — shown at login for students who have a saved face descriptor.
@@ -96,7 +96,7 @@ export default function FaceLoginVerification({ savedDescriptor, onVerified, onL
 
     try {
       const detection = await faceapi
-        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.4 }))
+        .detectSingleFace(videoRef.current, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.8 }))
         .withFaceLandmarks()
         .withFaceDescriptor();
 

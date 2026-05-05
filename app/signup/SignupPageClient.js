@@ -76,7 +76,11 @@ export default function SignupPageClient() {
     if (!formData.name) newErrors.name = 'Name is required';
     if (!formData.email) newErrors.email = 'Email is required';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Invalid email';
-    if (!formData.phone) newErrors.phone = 'Phone is required';
+    if (!formData.phone) {
+      newErrors.phone = 'Phone is required';
+    } else if (!/^[6-9]\d{9}$/.test(formData.phone)) {
+      newErrors.phone = 'Enter a valid 10-digit Indian phone number';
+    }
     if (!formData.school) newErrors.school = 'School is required';
     if (!formData.class) newErrors.class = 'Class is required';
     if (!formData.city) newErrors.city = 'City is required';

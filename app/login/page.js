@@ -77,7 +77,11 @@ export default function LoginPage() {
         }
       }
     } catch (error) {
-      setErrors({ submit: error.message || 'Login failed' });
+      let errMsg = error.error || error.message || 'Incorrect credentials';
+      if (errMsg === 'Invalid credentials' || errMsg === 'Login failed') {
+        errMsg = 'Incorrect credentials';
+      }
+      setErrors({ submit: errMsg });
     } finally {
       setIsLoading(false);
     }
