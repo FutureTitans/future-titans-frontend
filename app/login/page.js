@@ -91,10 +91,13 @@ export default function LoginPage() {
   const handleFaceRegistered = async (descriptor) => {
     try {
       await auth.saveFaceDescriptor(descriptor);
+      router.push('/student/dashboard');
     } catch (err) {
       console.warn('Failed to save face descriptor:', err);
+      const errorMessage = err?.error || err?.response?.data?.error || err?.message || (typeof err === 'string' ? err : 'Failed to save face. It might already be registered.');
+      setErrors({ submit: errorMessage });
+      setShowFaceRegistration(false);
     }
-    router.push('/student/dashboard');
   };
 
   // Face verification success (returning user)

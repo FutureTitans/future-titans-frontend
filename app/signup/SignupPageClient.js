@@ -124,11 +124,14 @@ export default function SignupPageClient() {
   const handleFaceRegistered = async (descriptor) => {
     try {
       await auth.saveFaceDescriptor(descriptor);
+      // Navigate to dashboard
+      router.push('/student/dashboard');
     } catch (err) {
       console.warn('Failed to save face descriptor:', err);
+      const errorMessage = err?.error || err?.response?.data?.error || err?.message || (typeof err === 'string' ? err : 'Failed to save face. It might already be registered.');
+      setErrors({ submit: errorMessage });
+      setShowFaceRegistration(false);
     }
-    // Navigate to dashboard
-    router.push('/student/dashboard');
   };
 
   return (
