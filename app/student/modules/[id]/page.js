@@ -23,6 +23,7 @@ export default function ModulePlayerPage() {
   const [markingComplete, setMarkingComplete] = useState(false);
   const [navigatingNext, setNavigatingNext] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
 
   useEffect(() => {
     if (!module || !moduleId) return;
@@ -36,6 +37,10 @@ export default function ModulePlayerPage() {
     if (!isStudent()) {
       router.push('/login');
       return;
+    }
+    const currentUser = getUser();
+    if (currentUser?.email === 'demo@futuretitans.com') {
+      setIsDemo(true);
     }
     fetchModule();
   }, [router, moduleId]);
@@ -91,12 +96,11 @@ export default function ModulePlayerPage() {
 
   // Demo user: Auto-complete video chapters after 120 seconds
   useEffect(() => {
+    if (!isDemo || currentChapter > 0) return; // Only auto-complete the FIRST chapter
+
     if (!module || !module.chapters || module.chapters.length === 0) return;
     const current = module.chapters[currentChapter];
     if (current?.content?.type !== 'video') return;
-
-    const currentUser = getUser();
-    if (currentUser?.email !== 'demo@futuretitans.com') return;
 
     if (chapterCompleted[current._id]) return;
 
@@ -117,7 +121,7 @@ export default function ModulePlayerPage() {
     }, 120000); // 2 minutes
 
     return () => clearTimeout(timer);
-  }, [module, currentChapter, chapterCompleted, moduleId]);
+  }, [module, currentChapter, chapterCompleted, moduleId, isDemo]);
 
   const fetchModule = async () => {
     try {
@@ -395,25 +399,32 @@ export default function ModulePlayerPage() {
               {module.chapters.map((chapter, index) => {
                 const completed = chapterCompleted[chapter._id];
                 const isActive = index === currentChapter;
+                const isLockedForDemo = isDemo && index > 0;
                 const Icon = chapter.content?.type === 'video' ? PlayCircle : BookOpen;
 
                 return (
                   <button
                     key={chapter._id}
+                    disabled={isLockedForDemo}
                     onClick={() => {
-                      setCurrentChapter(index);
-                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                      if (!isLockedForDemo) {
+                        setCurrentChapter(index);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
                     }}
                     className={`w-full flex items-center gap-3 px-3 py-3.5 rounded-xl transition-all text-left ${
                       isActive 
                         ? 'bg-[#D4AF37] text-white shadow-md shadow-[#D4AF37]/20' 
+                        : isLockedForDemo ? 'opacity-60 cursor-not-allowed bg-gray-50'
                         : 'hover:bg-gray-50 text-gray-600'
                     }`}
                   >
                     <div className={`flex items-center justify-center w-6 h-6 rounded-full shrink-0 ${
-                      isActive ? 'bg-[#212121] text-[#D4AF37]' : completed ? 'text-[#D4AF37]' : 'text-gray-400 border border-gray-200'
+                      isActive ? 'bg-[#212121] text-[#D4AF37]' : isLockedForDemo ? 'bg-gray-100 text-gray-400' : completed ? 'text-[#D4AF37]' : 'text-gray-400 border border-gray-200'
                     }`}>
-                      {completed && !isActive ? (
+                      {isLockedForDemo ? (
+                        <Lock className="w-3.5 h-3.5" />
+                      ) : completed && !isActive ? (
                         <CheckCircle className="w-4 h-4" />
                       ) : isActive ? (
                         <Icon className="w-3.5 h-3.5" />
@@ -493,15 +504,15 @@ export default function ModulePlayerPage() {
               {currentChapter < module.chapters.length - 1 ? (
                 <button
                   onClick={handleNextChapter}
-                  disabled={navigatingNext}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 bg-[#D4AF37] text-white rounded-xl hover:bg-[#B8952E] transition-colors font-medium shadow-sm disabled:opacity-80 text-sm"
+                  disabled={navigatingNext || isDemo}
+                  className={`w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl transition-colors font-medium shadow-sm text-sm ${isDemo ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-[#D4AF37] text-white hover:bg-[#B8952E]'}`}
                 >
                   {navigatingNext ? (
                     <div className="w-4 h-4 border-2 border-white/80 border-t-transparent rounded-full animate-spin" />
                   ) : (
                     <>
                       Next Chapter
-                      <ArrowRight className="w-4 h-4" />
+                      {isDemo ? <Lock className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                     </>
                   )}
                 </button>
