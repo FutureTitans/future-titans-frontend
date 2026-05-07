@@ -106,6 +106,16 @@ export default function ModulePlayerPage() {
 
     const timer = setTimeout(async () => {
       try {
+        // Force pause the video player
+        const iframe = document.getElementById('chapter-video-player');
+        if (iframe && iframe.contentWindow) {
+          iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        }
+        const html5Video = document.querySelector('video');
+        if (html5Video) {
+          html5Video.pause();
+        }
+
         setMarkingComplete(true);
         await aiChat.completeChapter(moduleId, current._id);
         setChapterCompleted(prev => ({ ...prev, [current._id]: true }));
@@ -118,7 +128,7 @@ export default function ModulePlayerPage() {
       } finally {
         setMarkingComplete(false);
       }
-    }, 120000); // 2 minutes
+    }, 90000); // 1 minute 30 seconds
 
     return () => clearTimeout(timer);
   }, [module, currentChapter, chapterCompleted, moduleId, isDemo]);
@@ -220,6 +230,10 @@ export default function ModulePlayerPage() {
         const separator = baseUrl.includes('?') ? '&' : '?';
         if (!baseUrl.includes('rel=0')) {
           baseUrl = `${baseUrl}${separator}rel=0`;
+        }
+        const separator2 = baseUrl.includes('?') ? '&' : '?';
+        if (!baseUrl.includes('enablejsapi=1')) {
+          baseUrl = `${baseUrl}${separator2}enablejsapi=1`;
         }
       }
 
