@@ -65,18 +65,19 @@ export default function LoginPage() {
         } else {
           try {
             const faceData = await auth.getFaceDescriptor();
-          if (!faceData?.hasDescriptor) {
-            // No face registered yet — show registration
-            setShowFaceRegistration(true);
-          } else {
-            // Has face — verify identity before allowing in
-            setSavedDescriptor(faceData.descriptor);
-            setShowFaceVerification(true);
+            if (!faceData?.hasDescriptor) {
+              // No face registered yet — show registration
+              setShowFaceRegistration(true);
+            } else {
+              // Has face — verify identity before allowing in
+              setSavedDescriptor(faceData.descriptor);
+              setShowFaceVerification(true);
+            }
+          } catch (faceErr) {
+            // If face check fails, just let them in
+            console.warn('Face descriptor check failed:', faceErr);
+            router.push('/student/dashboard');
           }
-        } catch (faceErr) {
-          // If face check fails, just let them in
-          console.warn('Face descriptor check failed:', faceErr);
-          router.push('/student/dashboard');
         }
       }
     } catch (error) {
