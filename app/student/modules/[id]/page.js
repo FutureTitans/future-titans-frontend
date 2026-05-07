@@ -89,6 +89,36 @@ export default function ModulePlayerPage() {
     }
   }, [module, currentChapter, moduleId]);
 
+  // Demo user: Auto-complete video chapters after 120 seconds
+  useEffect(() => {
+    if (!module || !module.chapters || module.chapters.length === 0) return;
+    const current = module.chapters[currentChapter];
+    if (current?.content?.type !== 'video') return;
+
+    const currentUser = getUser();
+    if (currentUser?.email !== 'demo@futuretitans.com') return;
+
+    if (chapterCompleted[current._id]) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        setMarkingComplete(true);
+        await aiChat.completeChapter(moduleId, current._id);
+        setChapterCompleted(prev => ({ ...prev, [current._id]: true }));
+        fetchModule(); // Refresh module progress stats
+        if (current?.aiInteractionEnabled) {
+          setShowAIChat(true);
+        }
+      } catch (err) {
+        console.error('Failed to auto-complete demo chapter:', err);
+      } finally {
+        setMarkingComplete(false);
+      }
+    }, 120000); // 2 minutes
+
+    return () => clearTimeout(timer);
+  }, [module, currentChapter, chapterCompleted, moduleId]);
+
   const fetchModule = async () => {
     try {
       const data = await modules.getById(moduleId);

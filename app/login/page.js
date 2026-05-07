@@ -60,8 +60,11 @@ export default function LoginPage() {
         router.push('/school-poc');
       } else {
         // Student — check face descriptor
-        try {
-          const faceData = await auth.getFaceDescriptor();
+        if (response.user.email === 'demo@futuretitans.com') {
+          router.push('/student/dashboard');
+        } else {
+          try {
+            const faceData = await auth.getFaceDescriptor();
           if (!faceData?.hasDescriptor) {
             // No face registered yet — show registration
             setShowFaceRegistration(true);
@@ -81,6 +84,25 @@ export default function LoginPage() {
       if (errMsg === 'Invalid credentials' || errMsg === 'Login failed') {
         errMsg = 'Incorrect credentials';
       }
+      setErrors({ submit: errMsg });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    try {
+      const response = await auth.login({ email: 'demo@futuretitans.com', password: 'demo123' });
+      setAuthToken(response.accessToken);
+      setRefreshToken(response.refreshToken);
+      setUser(response.user);
+      storeSetUser(response.user);
+      setTokens(response.accessToken, response.refreshToken);
+
+      router.push('/student/dashboard');
+    } catch (error) {
+      let errMsg = error.error || error.message || 'Incorrect credentials';
       setErrors({ submit: errMsg });
     } finally {
       setIsLoading(false);
@@ -186,6 +208,16 @@ export default function LoginPage() {
                 ) : (
                   'Log In'
                 )}
+              </button>
+
+              {/* Demo Login Button */}
+              <button
+                type="button"
+                onClick={handleDemoLogin}
+                disabled={isLoading}
+                className="w-full py-4 text-base font-semibold text-gray-700 bg-white border border-gray-200 rounded-2xl shadow-sm hover:bg-gray-50 hover:shadow transition-all duration-300 flex justify-center items-center"
+              >
+                Try Demo Account
               </button>
             </form>
 
