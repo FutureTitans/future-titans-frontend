@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { modules, aiChat, auth } from '@/lib/api';
-import { isStudent } from '@/lib/auth';
+import { isStudent, getUser } from '@/lib/auth';
 import { BookOpen, Play, CheckCircle, ArrowLeft, ArrowRight, Trophy, Target, Lightbulb, Lock, Bell, Settings, LayoutDashboard, UserCircle, PlayCircle, Brain, Search } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import AIChatComponent from '@/components/student/AIChat';
