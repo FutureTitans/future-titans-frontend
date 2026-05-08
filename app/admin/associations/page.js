@@ -110,6 +110,7 @@ export default function AdminAssociations() {
           <table className="w-full text-left">
             <thead className="bg-neutral-light border-b border-neutral-border">
               <tr>
+                <th className="px-6 py-4 font-semibold text-neutral-dark w-16">Image</th>
                 <th className="px-6 py-4 font-semibold text-neutral-dark">Name</th>
                 <th className="px-6 py-4 font-semibold text-neutral-dark">Email</th>
                 <th className="px-6 py-4 font-semibold text-neutral-dark">Commission (%)</th>
@@ -119,6 +120,15 @@ export default function AdminAssociations() {
             <tbody className="divide-y divide-neutral-border">
               {associations.map((assoc) => (
                 <tr key={assoc._id} className="hover:bg-neutral-light/50 transition-colors">
+                  <td className="px-6 py-4">
+                    {assoc.profilePicture ? (
+                      <img src={assoc.profilePicture} alt={assoc.name} className="w-10 h-10 rounded-full object-cover border border-gray-200" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center border border-gray-200 text-gray-400 font-bold text-sm">
+                        {assoc.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </td>
                   <td className="px-6 py-4 font-medium">{assoc.name}</td>
                   <td className="px-6 py-4 text-neutral-medium">{assoc.email}</td>
                   <td className="px-6 py-4 text-neutral-medium">{assoc.commissionPercentage}%</td>
@@ -129,7 +139,7 @@ export default function AdminAssociations() {
               ))}
               {associations.length === 0 && (
                 <tr>
-                  <td colSpan="4" className="px-6 py-8 text-center text-neutral-medium">
+                  <td colSpan="5" className="px-6 py-8 text-center text-neutral-medium">
                     No associations found. Create one to get started.
                   </td>
                 </tr>
