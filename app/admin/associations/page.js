@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/auth';
+import { upload } from '@vercel/blob/client';
 
 export default function AdminAssociations() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function AdminAssociations() {
     email: '',
     password: '',
     commissionPercentage: 0,
-    profilePicture: '',
+    profilePicture: null,
     bio: '',
   });
 
@@ -42,17 +43,31 @@ export default function AdminAssociations() {
     fetchAssociations();
   }, []);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleCreate = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
+      let profilePictureUrl = '';
+      if (formData.profilePicture) {
+        const uploadResult = await upload(formData.profilePicture.name, formData.profilePicture, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        profilePictureUrl = uploadResult.url;
+      }
+
       const token = getAuthToken();
+      const payload = { ...formData, profilePicture: profilePictureUrl };
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/associations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
@@ -61,10 +76,12 @@ export default function AdminAssociations() {
       }
 
       setShowModal(false);
-      setFormData({ name: '', email: '', password: '', commissionPercentage: 0, profilePicture: '', bio: '' });
+      setFormData({ name: '', email: '', password: '', commissionPercentage: 0, profilePicture: null, bio: '' });
       fetchAssociations();
     } catch (err) {
       alert(err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -175,13 +192,12 @@ export default function AdminAssociations() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Profile Image URL (Optional)</label>
+                <label className="block text-sm font-medium mb-1">Profile Image (Optional)</label>
                 <input
-                  type="url"
-                  value={formData.profilePicture}
-                  onChange={e => setFormData({ ...formData, profilePicture: e.target.value })}
+                  type="file"
+                  accept="image/*"
+                  onChange={e => setFormData({ ...formData, profilePicture: e.target.files[0] })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none"
-                  placeholder="https://example.com/image.jpg"
                 />
               </div>
               <div>
@@ -204,9 +220,10 @@ export default function AdminAssociations() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition"
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition disabled:opacity-50"
                 >
-                  Create
+                  {isSubmitting ? 'Creating...' : 'Create'}
                 </button>
               </div>
             </form>
