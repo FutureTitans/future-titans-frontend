@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getAuthToken } from '@/lib/auth';
 import { upload } from '@vercel/blob/client';
+import { Eye, EyeOff } from 'lucide-react';
 
 export default function AdminAssociations() {
   const router = useRouter();
   const [associations, setAssociations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  const [showPassword, setShowPassword] = useState(false);
   
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -80,7 +83,6 @@ export default function AdminAssociations() {
         const uploadResult = await upload(uniqueFilename, formData.profilePicture, {
           access: 'public',
           handleUploadUrl: '/api/upload',
-          addRandomSuffix: true,
         });
         profilePictureUrl = uploadResult.url;
       }
@@ -223,16 +225,25 @@ export default function AdminAssociations() {
                   placeholder="admin@edugroup.in"
                 />
               </div>
-              <div>
+              <div className="relative">
                 <label className="block text-sm font-medium mb-1">Password {editMode && <span className="text-xs text-neutral-400 font-normal">(Leave blank to keep current)</span>}</label>
-                <input
-                  type="password"
-                  required={!editMode}
-                  value={formData.password}
-                  onChange={e => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none"
-                  placeholder="Min 6 characters"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    required={!editMode}
+                    value={formData.password}
+                    onChange={e => setFormData({ ...formData, password: e.target.value })}
+                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none pr-10"
+                    placeholder="Min 6 characters"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Commission Percentage (%)</label>
