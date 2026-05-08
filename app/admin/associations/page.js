@@ -76,9 +76,11 @@ export default function AdminAssociations() {
     try {
       let profilePictureUrl = undefined;
       if (formData.profilePicture) {
-        const uploadResult = await upload(formData.profilePicture.name, formData.profilePicture, {
+        const uniqueFilename = `assoc-${Date.now()}-${formData.profilePicture.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+        const uploadResult = await upload(uniqueFilename, formData.profilePicture, {
           access: 'public',
           handleUploadUrl: '/api/upload',
+          addRandomSuffix: true,
         });
         profilePictureUrl = uploadResult.url;
       }
