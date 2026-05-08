@@ -12,14 +12,18 @@ export default function AdminAssociations() {
   const [error, setError] = useState(null);
   
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({
+  const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+  
+  const initialFormState = {
     name: '',
     email: '',
     password: '',
     commissionPercentage: 0,
     profilePicture: null,
     bio: '',
-  });
+  };
+  const [formData, setFormData] = useState(initialFormState);
 
   const fetchAssociations = async () => {
     try {
@@ -45,11 +49,32 @@ export default function AdminAssociations() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleCreate = async (e) => {
+  const openCreateModal = () => {
+    setEditMode(false);
+    setEditId(null);
+    setFormData(initialFormState);
+    setShowModal(true);
+  };
+
+  const openEditModal = (assoc) => {
+    setEditMode(true);
+    setEditId(assoc._id);
+    setFormData({
+      name: assoc.name,
+      email: assoc.email,
+      password: '', // leave empty unless they want to change it
+      commissionPercentage: assoc.commissionPercentage,
+      profilePicture: null, // this will be uploaded if they select a new one, else backend keeps old
+      bio: assoc.bio || '',
+    });
+    setShowModal(true);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      let profilePictureUrl = '';
+      let profilePictureUrl = undefined;
       if (formData.profilePicture) {
         const uploadResult = await upload(formData.profilePicture.name, formData.profilePicture, {
           access: 'public',
@@ -59,10 +84,18 @@ export default function AdminAssociations() {
       }
 
       const token = getAuthToken();
-      const payload = { ...formData, profilePicture: profilePictureUrl };
+      const payload = { ...formData };
+      
+      if (profilePictureUrl !== undefined) {
+        payload.profilePicture = profilePictureUrl;
+      } else if (!editMode) {
+        payload.profilePicture = ''; // explicitly clear for new creation
+      } else {
+        delete payload.profilePicture; // omit it during edit so backend preserves old image
+      }
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/associations`, {
-        method: 'POST',
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/associations${editMode ? `/${editId}` : ''}`, {
+        method: editMode ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -72,11 +105,13 @@ export default function AdminAssociations() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Failed to create association');
+        throw new Error(data.error || `Failed to ${editMode ? 'update' : 'create'} association`);
       }
 
       setShowModal(false);
-      setFormData({ name: '', email: '', password: '', commissionPercentage: 0, profilePicture: null, bio: '' });
+      setFormData(initialFormState);
+      setEditMode(false);
+      setEditId(null);
       fetchAssociations();
     } catch (err) {
       alert(err.message);
@@ -92,7 +127,7 @@ export default function AdminAssociations() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-neutral-dark">Association Management</h1>
         <button
-          onClick={() => setShowModal(true)}
+          onClick={openCreateModal}
           className="bg-primary-red text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition"
         >
           + Create Association
@@ -115,6 +150,7 @@ export default function AdminAssociations() {
                 <th className="px-6 py-4 font-semibold text-neutral-dark">Email</th>
                 <th className="px-6 py-4 font-semibold text-neutral-dark">Commission (%)</th>
                 <th className="px-6 py-4 font-semibold text-neutral-dark">Created At</th>
+                <th className="px-6 py-4 font-semibold text-neutral-dark text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-border">
@@ -135,11 +171,19 @@ export default function AdminAssociations() {
                   <td className="px-6 py-4 text-neutral-medium">
                     {new Date(assoc.createdAt).toLocaleDateString()}
                   </td>
+                  <td className="px-6 py-4 text-right">
+                    <button 
+                      onClick={() => openEditModal(assoc)} 
+                      className="text-[#D4AF37] hover:text-[#B8952E] font-medium text-sm transition-colors"
+                    >
+                      Edit
+                    </button>
+                  </td>
                 </tr>
               ))}
               {associations.length === 0 && (
                 <tr>
-                  <td colSpan="5" className="px-6 py-8 text-center text-neutral-medium">
+                  <td colSpan="6" className="px-6 py-8 text-center text-neutral-medium">
                     No associations found. Create one to get started.
                   </td>
                 </tr>
@@ -153,8 +197,8 @@ export default function AdminAssociations() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowModal(false)} />
           <div className="bg-white rounded-2xl w-full max-w-md relative z-10 shadow-2xl overflow-hidden p-6 sm:p-8 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <h2 className="text-2xl font-bold mb-6">Create Association</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
+            <h2 className="text-2xl font-bold mb-6">{editMode ? 'Edit Association' : 'Create Association'}</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Association Name</label>
                 <input
@@ -178,10 +222,10 @@ export default function AdminAssociations() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Password</label>
+                <label className="block text-sm font-medium mb-1">Password {editMode && <span className="text-xs text-neutral-400 font-normal">(Leave blank to keep current)</span>}</label>
                 <input
                   type="password"
-                  required
+                  required={!editMode}
                   value={formData.password}
                   onChange={e => setFormData({ ...formData, password: e.target.value })}
                   className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#D4AF37] outline-none"
@@ -233,7 +277,7 @@ export default function AdminAssociations() {
                   disabled={isSubmitting}
                   className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-black transition disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Creating...' : 'Create'}
+                  {isSubmitting ? (editMode ? 'Updating...' : 'Creating...') : (editMode ? 'Update' : 'Create')}
                 </button>
               </div>
             </form>
