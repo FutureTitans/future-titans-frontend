@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { auth } from '@/lib/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { setAuthToken, setRefreshToken, setUser } from '@/lib/auth';
-import { Eye, EyeOff, ArrowLeft, Sparkles } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import FaceRegistration from '@/components/shared/FaceRegistration';
 
 function InputField({ label, name, type = 'text', placeholder, isPassword = false, value, onChange, error, disabled, showPw, onTogglePw }) {
@@ -62,7 +62,6 @@ export default function SignupPageClient() {
 
   // Face registration state
   const [showFaceRegistration, setShowFaceRegistration] = useState(false);
-  const [signupResponse, setSignupResponse] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -97,40 +96,28 @@ export default function SignupPageClient() {
       setErrors(formErrors);
       return;
     }
+    // Validate form only — show face capture before creating the account
+    setErrors({});
+    setShowFaceRegistration(true);
+  };
 
+  // Called when face registration is complete — NOW create the account
+  const handleFaceRegistered = async (descriptor) => {
     setIsLoading(true);
     try {
-      const response = await auth.signup(formData);
-      // Store tokens immediately so face registration API call works
+      const response = await auth.signup({ ...formData, faceDescriptor: descriptor });
       setAuthToken(response.accessToken);
       setRefreshToken(response.refreshToken);
       storeSetUser(response.user);
       setTokens(response.accessToken, response.refreshToken);
       setUser(response.user);
-
-      // Save signup response for after face registration
-      setSignupResponse(response);
-
-      // Show face registration for students
-      setShowFaceRegistration(true);
-    } catch (error) {
-      setErrors({ submit: error?.error || error?.message || (typeof error === 'string' ? error : 'Signup failed') });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  // Called when face registration is complete
-  const handleFaceRegistered = async (descriptor) => {
-    try {
-      await auth.saveFaceDescriptor(descriptor);
-      // Navigate to dashboard
       router.push('/student/dashboard');
     } catch (err) {
-      console.warn('Failed to save face descriptor:', err);
-      const errorMessage = err?.error || err?.response?.data?.error || err?.message || (typeof err === 'string' ? err : 'Failed to save face. It might already be registered.');
+      const errorMessage = err?.error || err?.response?.data?.error || err?.message || (typeof err === 'string' ? err : 'Signup failed. Please try again.');
       setErrors({ submit: errorMessage });
       setShowFaceRegistration(false);
+    } finally {
+      setIsLoading(false);
     }
   };
 
