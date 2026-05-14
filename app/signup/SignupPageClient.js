@@ -7,7 +7,6 @@ import { auth } from '@/lib/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { setAuthToken, setRefreshToken, setUser } from '@/lib/auth';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import FaceRegistration from '@/components/shared/FaceRegistration';
 
 function InputField({ label, name, type = 'text', placeholder, isPassword = false, value, onChange, error, disabled, showPw, onTogglePw }) {
   return (
@@ -60,8 +59,6 @@ export default function SignupPageClient() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Face registration state
-  const [showFaceRegistration, setShowFaceRegistration] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -96,16 +93,9 @@ export default function SignupPageClient() {
       setErrors(formErrors);
       return;
     }
-    // Validate form only — show face capture before creating the account
-    setErrors({});
-    setShowFaceRegistration(true);
-  };
-
-  // Called when face registration is complete — NOW create the account
-  const handleFaceRegistered = async (descriptor) => {
     setIsLoading(true);
     try {
-      const response = await auth.signup({ ...formData, faceDescriptor: descriptor });
+      const response = await auth.signup(formData);
       setAuthToken(response.accessToken);
       setRefreshToken(response.refreshToken);
       storeSetUser(response.user);
@@ -115,7 +105,6 @@ export default function SignupPageClient() {
     } catch (err) {
       const errorMessage = err?.error || err?.response?.data?.error || err?.message || (typeof err === 'string' ? err : 'Signup failed. Please try again.');
       setErrors({ submit: errorMessage });
-      setShowFaceRegistration(false);
     } finally {
       setIsLoading(false);
     }
@@ -194,12 +183,6 @@ export default function SignupPageClient() {
         </div>
       </div>
 
-      {/* Face Registration Modal — shown after successful signup */}
-      {showFaceRegistration && (
-        <FaceRegistration
-          onComplete={handleFaceRegistered}
-        />
-      )}
     </>
   );
 }

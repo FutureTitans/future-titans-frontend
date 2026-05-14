@@ -7,8 +7,6 @@ import { auth } from '@/lib/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { setAuthToken, setRefreshToken, setUser } from '@/lib/auth';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
-import FaceRegistration from '@/components/shared/FaceRegistration';
-import FaceLoginVerification from '@/components/shared/FaceLoginVerification';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,11 +15,6 @@ export default function LoginPage() {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  // Face states
-  const [showFaceRegistration, setShowFaceRegistration] = useState(false);
-  const [showFaceVerification, setShowFaceVerification] = useState(false);
-  const [savedDescriptor, setSavedDescriptor] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -59,26 +52,7 @@ export default function LoginPage() {
       } else if (response.user.role === 'school_poc') {
         router.push('/school-poc');
       } else {
-        // Student — check face descriptor
-        if (response.user.email === 'demo@futuretitans.com') {
-          router.push('/student/dashboard');
-        } else {
-          try {
-            const faceData = await auth.getFaceDescriptor();
-            if (!faceData?.hasDescriptor) {
-              // No face registered yet — show registration
-              setShowFaceRegistration(true);
-            } else {
-              // Has face — verify identity before allowing in
-              setSavedDescriptor(faceData.descriptor);
-              setShowFaceVerification(true);
-            }
-          } catch (faceErr) {
-            // If face check fails, just let them in
-            console.warn('Face descriptor check failed:', faceErr);
-            router.push('/student/dashboard');
-          }
-        }
+        router.push('/student/dashboard');
       }
     } catch (error) {
       let errMsg = error.error || error.message || 'Incorrect credentials';
@@ -110,23 +84,6 @@ export default function LoginPage() {
     }
   };
 
-  // Face registration complete (first time)
-  const handleFaceRegistered = async (descriptor) => {
-    try {
-      await auth.saveFaceDescriptor(descriptor);
-      router.push('/student/dashboard');
-    } catch (err) {
-      console.warn('Failed to save face descriptor:', err);
-      const errorMessage = err?.error || err?.response?.data?.error || err?.message || (typeof err === 'string' ? err : 'Failed to save face. It might already be registered.');
-      setErrors({ submit: errorMessage });
-      setShowFaceRegistration(false);
-    }
-  };
-
-  // Face verification success (returning user)
-  const handleFaceVerified = () => {
-    router.push('/student/dashboard');
-  };
 
   return (
     <>
@@ -238,26 +195,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Face Registration Modal — shown if student has no face descriptor */}
-      {showFaceRegistration && (
-        <FaceRegistration
-          onComplete={handleFaceRegistered}
-        />
-      )}
-
-      {/* Face Login Verification — shown if student has face descriptor */}
-      {showFaceVerification && savedDescriptor && (
-        <FaceLoginVerification
-          savedDescriptor={savedDescriptor}
-          onVerified={handleFaceVerified}
-          onLogout={async () => {
-            const store = useAuthStore.getState();
-            await store.logout();
-            setShowFaceVerification(false);
-            setSavedDescriptor(null);
-          }}
-        />
-      )}
     </>
   );
 }

@@ -7,6 +7,7 @@ import { isStudent, getUser } from '@/lib/auth';
 import { BookOpen, Play, CheckCircle, ArrowLeft, ArrowRight, Trophy, Target, Lightbulb, Lock, Bell, Settings, LayoutDashboard, UserCircle, PlayCircle, Brain, Search } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import AIChatComponent from '@/components/student/AIChat';
+import ModuleFaceGuard from '@/components/shared/ModuleFaceGuard';
 
 export default function ModulePlayerPage() {
   const router = useRouter();
@@ -352,6 +353,7 @@ export default function ModulePlayerPage() {
   const isCompleted = chapterCompleted[currentChapterData?._id];
 
   return (
+    <ModuleFaceGuard>
     <div className="min-h-screen bg-[#FDFDFD] font-sans text-gray-900 pb-12 flex flex-col">
       {/* ─── Minimal Header Breadcrumb & Progress ─── */}
       <div className="bg-[#FDFDFD] sticky top-0 z-40 border-b border-gray-100">
@@ -587,5 +589,6 @@ export default function ModulePlayerPage() {
         </div>
       )}
     </div>
+    </ModuleFaceGuard>
   );
 }
