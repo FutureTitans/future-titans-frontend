@@ -6,6 +6,9 @@ import FaceGuardWrapper from '@/components/shared/FaceGuardWrapper';
 export const metadata = {
   title: 'Future Titans Innovation Challenge',
   description: 'Empower the next generation of innovators with AI-powered learning',
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({ children }) {
