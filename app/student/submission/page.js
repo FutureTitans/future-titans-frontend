@@ -23,8 +23,7 @@ export default function IdeaSubmissionPage() {
 
     // Project Overview
     projectTitle: '',
-    primaryCategory: '',
-    secondaryCategory: '',
+    category: '',
     elevatorPitch: '',
 
     // Problem Statement
@@ -211,7 +210,7 @@ export default function IdeaSubmissionPage() {
 
     // Required fields validation
     if (!formData.projectTitle) newErrors.projectTitle = 'Project title is required';
-    if (!formData.primaryCategory) newErrors.primaryCategory = 'Primary category is required';
+    if (!formData.category) newErrors.category = 'Category is required';
     if (!formData.elevatorPitch) newErrors.elevatorPitch = 'Elevator pitch is required';
     if (!formData.problemStatement) newErrors.problemStatement = 'Problem statement is required';
     if (!formData.solutionOverview) newErrors.solutionOverview = 'Solution overview is required';
@@ -367,11 +366,11 @@ export default function IdeaSubmissionPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Primary Category *</label>
+              <label className="block text-sm font-medium mb-2">Category *</label>
               <select
-                value={formData.primaryCategory}
-                onChange={(e) => handleInputChange('primaryCategory', e.target.value)}
-                className={`w-full px-3 py-2 border rounded-lg ${errors.primaryCategory ? 'border-semantic-error' : 'border-neutral-border'}`}
+                value={formData.category}
+                onChange={(e) => handleInputChange('category', e.target.value)}
+                className={`w-full px-3 py-2 border rounded-lg ${errors.category ? 'border-semantic-error' : 'border-neutral-border'}`}
               >
                 <option value="">Select a category</option>
                 <option value="Sustainability & Climate Action">Sustainability & Climate Action</option>
@@ -379,24 +378,9 @@ export default function IdeaSubmissionPage() {
                 <option value="Social Impact & Equity">Social Impact & Equity</option>
                 <option value="Health & Wellbeing">Health & Wellbeing</option>
                 <option value="Education & Workforce Development">Education & Workforce Development</option>
+                <option value="Others">Others</option>
               </select>
-              {errors.primaryCategory && <p className="text-semantic-error text-sm mt-1">{errors.primaryCategory}</p>}
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2">Secondary Category (Optional)</label>
-              <select
-                value={formData.secondaryCategory}
-                onChange={(e) => handleInputChange('secondaryCategory', e.target.value)}
-                className="w-full px-3 py-2 border border-neutral-border rounded-lg"
-              >
-                <option value="">Select a secondary category</option>
-                <option value="Sustainability & Climate Action">Sustainability & Climate Action</option>
-                <option value="Technology & AI Innovation">Technology & AI Innovation</option>
-                <option value="Social Impact & Equity">Social Impact & Equity</option>
-                <option value="Health & Wellbeing">Health & Wellbeing</option>
-                <option value="Education & Workforce Development">Education & Workforce Development</option>
-              </select>
+              {errors.category && <p className="text-semantic-error text-sm mt-1">{errors.category}</p>}
             </div>
 
             <div>

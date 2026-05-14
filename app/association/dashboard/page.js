@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { 
-  LogOut, Settings, Users, School, Key, Activity, FileText, Download, Target, PlayCircle, Loader2, ArrowUpRight, Copy, CheckCircle2, ThumbsUp, ThumbsDown, Search, Medal, Shield
+import {
+  LogOut, Settings, Users, School, Key, Activity, FileText, Download, Target, PlayCircle, Loader2, ArrowUpRight, Copy, CheckCircle2, ThumbsUp, ThumbsDown, Search, Medal, Shield, ExternalLink, Mail, RefreshCw, Send
 } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { getAuthToken, removeAuthToken } from '@/lib/auth';
@@ -103,6 +103,22 @@ export default function AssociationDashboard() {
     }
   };
 
+  // School Outreach state
+  const [outreachForm, setOutreachForm] = useState(null);
+  const [outreachResponses, setOutreachResponses] = useState([]);
+  const [outreachLoading, setOutreachLoading] = useState(false);
+  const [generatingForm, setGeneratingForm] = useState(false);
+  const [outreachError, setOutreachError] = useState(null);
+  const [copiedFormLink, setCopiedFormLink] = useState(false);
+  const [activeEmailTab, setActiveEmailTab] = useState('yes');
+  const [emailTemplates, setEmailTemplates] = useState({
+    yes: { subject: '', body: '' },
+    no: { subject: '', body: '' },
+  });
+  const [savingTemplates, setSavingTemplates] = useState(false);
+  const [sendingEmails, setSendingEmails] = useState(new Set());
+  const [expandedResponse, setExpandedResponse] = useState(null);
+
   // Proof Upload State
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedSchoolId, setSelectedSchoolId] = useState(null);
@@ -143,6 +159,7 @@ export default function AssociationDashboard() {
 
   useEffect(() => {
     fetchDashboardData();
+    loadOutreachData();
   }, []);
 
   const fetchDashboardData = async () => {
@@ -173,6 +190,123 @@ export default function AssociationDashboard() {
       setError(err.message);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadOutreachData = async () => {
+    setOutreachLoading(true);
+    setOutreachError(null);
+    try {
+      const token = getAuthToken();
+      if (!token) return;
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/outreach/responses`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        if (res.status === 503) {
+          setOutreachError(data.error || 'Google credentials not configured');
+        }
+        return;
+      }
+      const data = await res.json();
+      setOutreachForm(data.form);
+      setOutreachResponses(data.responses || []);
+      if (data.form) {
+        setEmailTemplates({
+          yes: {
+            subject: data.form.emailYesTemplate?.subject || '',
+            body: data.form.emailYesTemplate?.body || '',
+          },
+          no: {
+            subject: data.form.emailNoTemplate?.subject || '',
+            body: data.form.emailNoTemplate?.body || '',
+          },
+        });
+      }
+    } catch (e) {
+      console.error('Outreach load error:', e);
+    } finally {
+      setOutreachLoading(false);
+    }
+  };
+
+  const generateOutreachForm = async () => {
+    setGeneratingForm(true);
+    setOutreachError(null);
+    try {
+      const token = getAuthToken();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/outreach/form`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to generate form');
+      setOutreachForm(data.form);
+      setEmailTemplates({
+        yes: { subject: data.form.emailYesTemplate?.subject || '', body: data.form.emailYesTemplate?.body || '' },
+        no: { subject: data.form.emailNoTemplate?.subject || '', body: data.form.emailNoTemplate?.body || '' },
+      });
+    } catch (e) {
+      setOutreachError(e.message);
+    } finally {
+      setGeneratingForm(false);
+    }
+  };
+
+  const copyFormLink = () => {
+    if (!outreachForm?.formUrl) return;
+    navigator.clipboard.writeText(outreachForm.formUrl);
+    setCopiedFormLink(true);
+    setTimeout(() => setCopiedFormLink(false), 2000);
+  };
+
+  const saveEmailTemplates = async () => {
+    setSavingTemplates(true);
+    try {
+      const token = getAuthToken();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/outreach/templates`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailYesTemplate: emailTemplates.yes,
+          emailNoTemplate: emailTemplates.no,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to save templates');
+      alert('Email templates saved!');
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setSavingTemplates(false);
+    }
+  };
+
+  const handleSendEmail = async (response) => {
+    setSendingEmails(prev => new Set(prev).add(response.responseId));
+    try {
+      const token = getAuthToken();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/outreach/send-email`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          responseId: response.responseId,
+          name: response.name,
+          email: response.email,
+          school: response.school,
+          interested: response.interested,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to send email');
+      setOutreachResponses(prev =>
+        prev.map(r => r.responseId === response.responseId ? { ...r, emailSent: true } : r)
+      );
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setSendingEmails(prev => { const s = new Set(prev); s.delete(response.responseId); return s; });
     }
   };
 
@@ -768,6 +902,260 @@ export default function AssociationDashboard() {
                 </div>
              </div>
 
+          </div>
+
+          {/* School Outreach Section */}
+          <div className="flex flex-col gap-6 mt-2">
+            {/* Section Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#EAC15A] to-[#C79A2B] flex items-center justify-center text-white shadow">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <h3 className="font-bold text-[#1A1A1A] text-xl tracking-tight">School Outreach</h3>
+                <span className="text-xs font-semibold text-neutral-500 bg-neutral-100 px-2 py-1 rounded-lg">Google Forms</span>
+              </div>
+              {outreachForm && (
+                <button
+                  onClick={loadOutreachData}
+                  disabled={outreachLoading}
+                  className="flex items-center gap-2 text-sm font-bold text-neutral-600 hover:text-[#1A1A1A] transition bg-white border border-neutral-200 px-3 py-1.5 rounded-xl shadow-sm"
+                >
+                  <RefreshCw className={`w-3.5 h-3.5 ${outreachLoading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </button>
+              )}
+            </div>
+
+            {outreachError && (
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-sm text-red-700 font-semibold">
+                {outreachError.includes('GOOGLE_SERVICE_ACCOUNT') || outreachError.includes('Google service') ? (
+                  <div>
+                    <p className="font-bold mb-1">Google Credentials Not Configured</p>
+                    <p className="font-normal text-red-600">Set <code className="bg-red-100 px-1 rounded">GOOGLE_SERVICE_ACCOUNT_EMAIL</code> and <code className="bg-red-100 px-1 rounded">GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY</code> in your backend <code className="bg-red-100 px-1 rounded">.env</code> file to enable this feature.</p>
+                  </div>
+                ) : outreachError}
+              </div>
+            )}
+
+            <div className="flex gap-6">
+              {/* Form Link Panel */}
+              <div className="flex-1 bg-white/80 backdrop-blur rounded-[2rem] border border-[#D4AF37]/20 shadow-lg p-6 flex flex-col gap-5">
+                <div>
+                  <h4 className="font-bold text-[#1A1A1A] text-base mb-1">Outreach Form Link</h4>
+                  <p className="text-xs text-neutral-500 font-semibold">Share this Google Form with schools to collect their details and interest.</p>
+                </div>
+
+                {outreachForm ? (
+                  <div className="flex flex-col gap-3">
+                    {/* Form URL row */}
+                    <div className="flex items-center gap-2 bg-[#FAEDCD]/40 border border-[#D4AF37]/30 rounded-xl px-4 py-2.5">
+                      <span className="flex-1 text-xs font-semibold text-[#1A1A1A] truncate">{outreachForm.formUrl}</span>
+                      <button
+                        onClick={copyFormLink}
+                        className="text-[#A88020] hover:text-[#1A1A1A] transition bg-white/70 px-2 py-1 rounded-lg shadow-sm flex items-center gap-1 font-bold text-xs shrink-0 border border-[#D4AF37]/20"
+                      >
+                        {copiedFormLink ? <CheckCircle2 className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                        {copiedFormLink ? 'Copied!' : 'Copy'}
+                      </button>
+                    </div>
+
+                    <a
+                      href={outreachForm.formUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm font-bold text-[#175C36] hover:text-[#0F4225] transition"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Open Form in Google
+                    </a>
+
+                    <div className="grid grid-cols-3 gap-3 pt-2 border-t border-[#D4AF37]/10">
+                      <div className="text-center">
+                        <p className="text-2xl font-black text-[#1A1A1A]">{outreachResponses.length}</p>
+                        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Responses</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-black text-green-600">{outreachResponses.filter(r => r.interested === 'Yes').length}</p>
+                        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Interested</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-2xl font-black text-[#D4AF37]">{outreachResponses.filter(r => r.emailSent).length}</p>
+                        <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide">Emails Sent</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : outreachLoading ? (
+                  <div className="flex items-center gap-2 text-neutral-400 text-sm font-semibold">
+                    <Loader2 className="w-4 h-4 animate-spin" /> Loading outreach data...
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    <p className="text-sm text-neutral-500 font-semibold leading-relaxed">
+                      No outreach form created yet. Click below to automatically generate a Google Form with all school outreach fields. The form link can then be shared with schools via email, WhatsApp, or any channel.
+                    </p>
+                    <div className="bg-[#FAEDCD]/30 border border-[#D4AF37]/20 rounded-xl p-3 text-xs text-neutral-600 font-semibold">
+                      <p className="font-bold text-[#A88020] mb-1">Form will include:</p>
+                      <p>Name • School • Email • Phone • No. of Students (8-12) • City • Feedback • Suggestions • Interested (Yes/No)</p>
+                    </div>
+                    <button
+                      onClick={generateOutreachForm}
+                      disabled={generatingForm}
+                      className="w-full bg-gradient-to-r from-[#175C36] to-[#0F4225] hover:from-[#0F4225] hover:to-[#0A2F1A] text-white font-bold py-3 rounded-xl text-sm border border-[#175C36]/50 shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                      {generatingForm ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
+                      {generatingForm ? 'Generating Google Form...' : 'Generate Outreach Form'}
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Email Templates Panel */}
+              <div className="w-[420px] bg-white/80 backdrop-blur rounded-[2rem] border border-[#D4AF37]/20 shadow-lg p-6 flex flex-col gap-4">
+                <div>
+                  <h4 className="font-bold text-[#1A1A1A] text-base mb-1">Email Templates</h4>
+                  <p className="text-xs text-neutral-500 font-semibold">Customize what schools receive based on their interest. Use <code className="bg-neutral-100 px-1 rounded">{'{name}'}</code> and <code className="bg-neutral-100 px-1 rounded">{'{school}'}</code> as placeholders.</p>
+                </div>
+
+                {/* Yes/No Tabs */}
+                <div className="flex bg-neutral-100 rounded-xl p-1 gap-1">
+                  <button
+                    onClick={() => setActiveEmailTab('yes')}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${activeEmailTab === 'yes' ? 'bg-green-500 text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-700'}`}
+                  >
+                    <ThumbsUp className="w-3 h-3" /> Interested (Yes)
+                  </button>
+                  <button
+                    onClick={() => setActiveEmailTab('no')}
+                    className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${activeEmailTab === 'no' ? 'bg-red-500 text-white shadow-sm' : 'text-neutral-500 hover:text-neutral-700'}`}
+                  >
+                    <ThumbsDown className="w-3 h-3" /> Not Interested (No)
+                  </button>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Email subject..."
+                  value={emailTemplates[activeEmailTab].subject}
+                  onChange={e => setEmailTemplates(prev => ({
+                    ...prev,
+                    [activeEmailTab]: { ...prev[activeEmailTab], subject: e.target.value }
+                  }))}
+                  className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all"
+                />
+
+                <textarea
+                  rows={6}
+                  placeholder="Email body..."
+                  value={emailTemplates[activeEmailTab].body}
+                  onChange={e => setEmailTemplates(prev => ({
+                    ...prev,
+                    [activeEmailTab]: { ...prev[activeEmailTab], body: e.target.value }
+                  }))}
+                  className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all resize-none"
+                />
+
+                <button
+                  onClick={saveEmailTemplates}
+                  disabled={savingTemplates || !outreachForm}
+                  className="w-full bg-gradient-to-r from-[#D4AF37] to-[#A88020] hover:opacity-90 text-white font-bold py-2.5 rounded-xl text-sm shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  {savingTemplates ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
+                  Save Templates
+                </button>
+              </div>
+            </div>
+
+            {/* Responses Table */}
+            {outreachForm && (
+              <div className="bg-white/80 backdrop-blur rounded-[2rem] border border-[#D4AF37]/20 shadow-lg p-6 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-bold text-[#1A1A1A] text-base">School Responses</h4>
+                  {outreachLoading && <Loader2 className="w-4 h-4 animate-spin text-[#D4AF37]" />}
+                </div>
+
+                {outreachResponses.length === 0 ? (
+                  <div className="text-center py-10 text-neutral-400 font-semibold text-sm">
+                    No responses yet. Share the form link with schools to start collecting data.
+                  </div>
+                ) : (
+                  <div className="overflow-auto rounded-xl border border-gray-100 shadow-inner bg-white">
+                    <table className="w-full text-left border-collapse">
+                      <thead className="bg-[#FAEDCD]/30 sticky top-0 text-xs font-black text-neutral-500 tracking-wider">
+                        <tr>
+                          <th className="px-4 py-3 uppercase border-b border-[#D4AF37]/20">Name / School</th>
+                          <th className="px-4 py-3 uppercase border-b border-[#D4AF37]/20">Contact</th>
+                          <th className="px-4 py-3 uppercase border-b border-[#D4AF37]/20">City</th>
+                          <th className="px-4 py-3 uppercase border-b border-[#D4AF37]/20">Students</th>
+                          <th className="px-4 py-3 uppercase border-b border-[#D4AF37]/20">Interested</th>
+                          <th className="px-4 py-3 uppercase border-b border-[#D4AF37]/20">Submitted</th>
+                          <th className="px-4 py-3 uppercase border-b border-[#D4AF37]/20 text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100/50">
+                        {outreachResponses.map((r) => (
+                          <React.Fragment key={r.responseId}>
+                            <tr
+                              className="hover:bg-[#FDF9EE] transition-colors cursor-pointer"
+                              onClick={() => setExpandedResponse(expandedResponse === r.responseId ? null : r.responseId)}
+                            >
+                              <td className="px-4 py-3">
+                                <p className="font-bold text-sm text-[#1A1A1A] leading-tight">{r.name}</p>
+                                <p className="text-[10px] font-semibold text-neutral-500 truncate max-w-[160px]">{r.school}</p>
+                              </td>
+                              <td className="px-4 py-3">
+                                <p className="text-xs font-bold text-[#1A1A1A]">{r.email}</p>
+                                <p className="text-[10px] font-semibold text-neutral-500">{r.phone}</p>
+                              </td>
+                              <td className="px-4 py-3 text-sm font-semibold text-neutral-700">{r.city}</td>
+                              <td className="px-4 py-3 text-sm font-black text-[#1A1A1A]">{r.studentsCount || '—'}</td>
+                              <td className="px-4 py-3">
+                                <span className={`text-xs font-bold px-2 py-1 rounded-lg ${r.interested === 'Yes' ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-50 text-red-600 border border-red-200'}`}>
+                                  {r.interested === 'Yes' ? '✓ Yes' : '✗ No'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3 text-[10px] font-semibold text-neutral-500">
+                                {r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
+                              </td>
+                              <td className="px-4 py-3 text-right">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); handleSendEmail(r); }}
+                                  disabled={sendingEmails.has(r.responseId)}
+                                  className={`text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1 ml-auto transition-all active:scale-95 disabled:opacity-50 ${r.emailSent ? 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200' : 'bg-gradient-to-r from-[#175C36] to-[#0F4225] text-white hover:opacity-90'}`}
+                                >
+                                  {sendingEmails.has(r.responseId) ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                  {r.emailSent ? 'Resend' : 'Send Email'}
+                                </button>
+                              </td>
+                            </tr>
+                            {expandedResponse === r.responseId && (r.feedback || r.suggestions) && (
+                              <tr className="bg-[#FAEDCD]/10">
+                                <td colSpan={7} className="px-6 py-4">
+                                  <div className="grid grid-cols-2 gap-4">
+                                    {r.feedback && (
+                                      <div>
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-wider mb-1">Feedback</p>
+                                        <p className="text-xs text-neutral-700 font-semibold leading-relaxed">{r.feedback}</p>
+                                      </div>
+                                    )}
+                                    {r.suggestions && (
+                                      <div>
+                                        <p className="text-[10px] font-black text-neutral-400 uppercase tracking-wider mb-1">Suggestions</p>
+                                        <p className="text-xs text-neutral-700 font-semibold leading-relaxed">{r.suggestions}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
         </main>

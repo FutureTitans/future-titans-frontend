@@ -78,7 +78,8 @@ export default function SchoolPocDashboardPage() {
     const filteredStudents = dashboardData?.students
         ?.filter(student => {
             const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                student.email.toLowerCase().includes(searchTerm.toLowerCase());
+                student.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (student.studentId || '').toLowerCase().includes(searchTerm.toLowerCase());
 
             let matchesFilter = true;
             if (statusFilter === 'registered') matchesFilter = student.isPaid;
@@ -361,6 +362,7 @@ export default function SchoolPocDashboardPage() {
                                                             <div>
                                                                 <p className="font-bold text-gray-800 whitespace-nowrap group-hover:text-amber-700 transition-colors">{student.name}</p>
                                                                 <p className="text-[11px] text-gray-500 mt-0.5 font-medium">{student.email}</p>
+                                                                {student.studentId && <p className="text-[10px] font-mono text-[#B8952E] mt-0.5 tracking-wider">{student.studentId}</p>}
                                                             </div>
                                                         </div>
                                                     </td>
@@ -503,6 +505,9 @@ export default function SchoolPocDashboardPage() {
                                 </div>
                                 <div>
                                     <h3 className="text-xl font-medium text-gray-900 tracking-wide">{selectedStudent.name}</h3>
+                                    {selectedStudent.studentId && (
+                                        <p className="text-xs font-mono font-bold text-[#B8952E] tracking-widest mt-0.5">{selectedStudent.studentId}</p>
+                                    )}
                                     <div className="flex items-center gap-2 text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">
                                         <span className={`w-2 h-2 rounded-full shadow-sm ${selectedStudent.isOnline ? 'bg-[#fcd34d]' : 'bg-gray-400'}`}></span>
                                         {selectedStudent.isOnline ? 'Active Now' : 'Offline'} • Class {selectedStudent.class}

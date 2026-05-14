@@ -129,6 +129,12 @@ export default function StudentProfilePage() {
             </div>
             <div className="flex-1 min-w-0">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-1">{profile.name}</h2>
+              {profile.studentId && (
+                <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#D4AF37]/10 to-[#F5D76E]/10 border border-[#D4AF37]/30 rounded-lg px-3 py-1 mb-2">
+                  <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">Student ID</span>
+                  <span className="text-sm font-mono font-bold text-[#B8952E] tracking-widest">{profile.studentId}</span>
+                </div>
+              )}
               <p className="text-sm text-gray-500 mb-2">{profile.email}</p>
               {bio && <p className="text-sm text-gray-600 italic">{bio}</p>}
               <p className="text-xs text-gray-400 mt-2">

@@ -48,6 +48,8 @@ export default function SignupPageClient() {
     phone: '',
     school: '',
     class: '',
+    section: '',
+    rollNumber: '',
     city: '',
     country: '',
     password: '',
@@ -151,7 +153,26 @@ export default function SignupPageClient() {
                 <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
                 <InputField label="Phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
                 <InputField label="School/Institution or Slug Code" name="school" placeholder="Your School or Slug Code" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
-                <InputField label="Class/Grade" name="class" placeholder="10th or 1st Year" value={formData.class} onChange={handleChange} error={errors.class} disabled={isLoading} />
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Class/Grade</label>
+                  <select
+                    name="class"
+                    value={formData.class}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    className={`glass-input ${errors.class ? 'error' : ''}`}
+                  >
+                    <option value="">Select your class</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                  </select>
+                  {errors.class && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.class}</p>}
+                </div>
+                <InputField label="Section" name="section" placeholder="e.g. A, B, C" value={formData.section} onChange={handleChange} error={errors.section} disabled={isLoading} />
+                <InputField label="Roll Number" name="rollNumber" placeholder="e.g. 42" value={formData.rollNumber} onChange={handleChange} error={errors.rollNumber} disabled={isLoading} />
                 <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
                 <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />
                 <InputField label="Password" name="password" placeholder="••••••••" isPassword value={formData.password} onChange={handleChange} error={errors.password} disabled={isLoading} showPw={showPassword} onTogglePw={() => setShowPassword(!showPassword)} />
