@@ -254,9 +254,15 @@ export default function AssociationDashboard() {
     }
   };
 
+  const getFormUrl = () => {
+    if (!outreachForm?.slug) return '';
+    return `${window.location.origin}/outreach/${outreachForm.slug}`;
+  };
+
   const copyFormLink = () => {
-    if (!outreachForm?.formUrl) return;
-    navigator.clipboard.writeText(outreachForm.formUrl);
+    const url = getFormUrl();
+    if (!url) return;
+    navigator.clipboard.writeText(url);
     setCopiedFormLink(true);
     setTimeout(() => setCopiedFormLink(false), 2000);
   };
@@ -284,14 +290,15 @@ export default function AssociationDashboard() {
   };
 
   const handleSendEmail = async (response) => {
-    setSendingEmails(prev => new Set(prev).add(response.responseId));
+    const id = response._id;
+    setSendingEmails(prev => new Set(prev).add(id));
     try {
       const token = getAuthToken();
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/outreach/send-email`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          responseId: response.responseId,
+          responseId: id,
           name: response.name,
           email: response.email,
           school: response.school,
@@ -301,12 +308,12 @@ export default function AssociationDashboard() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to send email');
       setOutreachResponses(prev =>
-        prev.map(r => r.responseId === response.responseId ? { ...r, emailSent: true } : r)
+        prev.map(r => r._id === id ? { ...r, emailSent: true } : r)
       );
     } catch (e) {
       alert(e.message);
     } finally {
-      setSendingEmails(prev => { const s = new Set(prev); s.delete(response.responseId); return s; });
+      setSendingEmails(prev => { const s = new Set(prev); s.delete(id); return s; });
     }
   };
 
@@ -950,7 +957,7 @@ export default function AssociationDashboard() {
                   <div className="flex flex-col gap-3">
                     {/* Form URL row */}
                     <div className="flex items-center gap-2 bg-[#FAEDCD]/40 border border-[#D4AF37]/30 rounded-xl px-4 py-2.5">
-                      <span className="flex-1 text-xs font-semibold text-[#1A1A1A] truncate">{outreachForm.formUrl}</span>
+                      <span className="flex-1 text-xs font-semibold text-[#1A1A1A] truncate">{getFormUrl()}</span>
                       <button
                         onClick={copyFormLink}
                         className="text-[#A88020] hover:text-[#1A1A1A] transition bg-white/70 px-2 py-1 rounded-lg shadow-sm flex items-center gap-1 font-bold text-xs shrink-0 border border-[#D4AF37]/20"
@@ -961,13 +968,13 @@ export default function AssociationDashboard() {
                     </div>
 
                     <a
-                      href={outreachForm.formUrl}
+                      href={`/outreach/${outreachForm.slug}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-2 text-sm font-bold text-[#175C36] hover:text-[#0F4225] transition"
                     >
                       <ExternalLink className="w-4 h-4" />
-                      Open Form in Google
+                      Preview Form
                     </a>
 
                     <div className="grid grid-cols-3 gap-3 pt-2 border-t border-[#D4AF37]/10">
@@ -1094,10 +1101,10 @@ export default function AssociationDashboard() {
                       </thead>
                       <tbody className="divide-y divide-gray-100/50">
                         {outreachResponses.map((r) => (
-                          <React.Fragment key={r.responseId}>
+                          <React.Fragment key={r._id}>
                             <tr
                               className="hover:bg-[#FDF9EE] transition-colors cursor-pointer"
-                              onClick={() => setExpandedResponse(expandedResponse === r.responseId ? null : r.responseId)}
+                              onClick={() => setExpandedResponse(expandedResponse === r._id ? null : r._id)}
                             >
                               <td className="px-4 py-3">
                                 <p className="font-bold text-sm text-[#1A1A1A] leading-tight">{r.name}</p>
@@ -1115,20 +1122,20 @@ export default function AssociationDashboard() {
                                 </span>
                               </td>
                               <td className="px-4 py-3 text-[10px] font-semibold text-neutral-500">
-                                {r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: '2-digit' }) : '—'}
+                                {r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                               </td>
                               <td className="px-4 py-3 text-right">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); handleSendEmail(r); }}
-                                  disabled={sendingEmails.has(r.responseId)}
+                                  disabled={sendingEmails.has(r._id)}
                                   className={`text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1 ml-auto transition-all active:scale-95 disabled:opacity-50 ${r.emailSent ? 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200' : 'bg-gradient-to-r from-[#175C36] to-[#0F4225] text-white hover:opacity-90'}`}
                                 >
-                                  {sendingEmails.has(r.responseId) ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                  {sendingEmails.has(r._id) ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
                                   {r.emailSent ? 'Resend' : 'Send Email'}
                                 </button>
                               </td>
                             </tr>
-                            {expandedResponse === r.responseId && (r.feedback || r.suggestions) && (
+                            {expandedResponse === r._id && (r.feedback || r.suggestions) && (
                               <tr className="bg-[#FAEDCD]/10">
                                 <td colSpan={7} className="px-6 py-4">
                                   <div className="grid grid-cols-2 gap-4">
