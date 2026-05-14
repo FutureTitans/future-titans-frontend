@@ -6,14 +6,15 @@ import FaceGuardWrapper from '@/components/shared/FaceGuardWrapper';
 export const metadata = {
   title: 'Future Titans Innovation Challenge',
   description: 'Empower the next generation of innovators with AI-powered learning',
-  icons: {
-    icon: '/favicon.ico',
-  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+      </head>
       <body className="bg-white text-neutral-dark">
         <Navbar />
         <FaceGuardWrapper>
