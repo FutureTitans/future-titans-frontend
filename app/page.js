@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, isAdmin, isStudent } from '@/lib/auth';
-import { ArrowRight, Zap, Users, Award, Sparkles, ChevronDown, Instagram, Facebook, Linkedin, Star, Rocket, Target } from 'lucide-react';
+import { ArrowRight, Zap, Users, Award, Sparkles, ChevronDown, Instagram, Facebook, Linkedin, Star, Rocket, Target, Phone } from 'lucide-react';
 
 function useCounter(target, duration = 2000, start = false) {
   const [count, setCount] = useState(0);
@@ -453,6 +453,12 @@ export default function Landing() {
                 <ul className="space-y-2.5">
                   <li><a href="https://www.youngpreneurs.ai/about-us/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">About</a></li>
                   <li><a href="https://www.youngpreneurs.ai/contact" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Contact</a></li>
+                  <li>
+                    <a href="tel:+918031338782" className="text-gray-500 hover:text-[#F5D76E] transition text-sm flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5" />
+                      +91 80313 38782
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div>
