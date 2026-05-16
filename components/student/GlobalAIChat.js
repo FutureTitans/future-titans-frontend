@@ -64,6 +64,12 @@ export default function GlobalAIChat() {
   }, [pathname, shouldHide, enabled]);
 
   useEffect(() => {
+    const handleClose = () => setIsOpen(false);
+    window.addEventListener('closeGlobalZunnova', handleClose);
+    return () => window.removeEventListener('closeGlobalZunnova', handleClose);
+  }, []);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isOpen]);
 

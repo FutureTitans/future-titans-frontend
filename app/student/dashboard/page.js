@@ -301,7 +301,12 @@ export default function StudentDashboard() {
 
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 overflow-x-auto pb-1">
             <button
-              onClick={() => setShowFAQ(true)}
+              onClick={() => {
+                setShowFAQ(true);
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('closeGlobalZunnova'));
+                }
+              }}
               className="flex items-center gap-2 sm:gap-3 px-1 py-1 pl-4 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all group flex-shrink-0"
             >
               <span className="text-sm whitespace-nowrap">👋 How Can We Help ?</span>
