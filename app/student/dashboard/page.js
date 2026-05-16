@@ -813,6 +813,9 @@ export default function StudentDashboard() {
             <video
               controls
               autoPlay
+              playsInline
+              webkit-playsinline="true"
+              preload="auto"
               className="w-full h-full object-contain"
               src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
             >
