@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
@@ -96,7 +96,6 @@ export default function StudentDashboard() {
   const [activeFaqTab, setActiveFaqTab] = useState('Students');
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const videoRef = useRef(null);
-  const [videoError, setVideoError] = useState(false);
 
   // First-login auto-show video
   useEffect(() => {
@@ -817,41 +816,16 @@ export default function StudentDashboard() {
             >
               <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-              {!videoError ? (
-                <video
-                  ref={videoRef}
-                  controls
-                  autoPlay
-                  playsInline
-                  webkit-playsinline="true"
-                  preload="metadata"
-                  className="absolute inset-0 w-full h-full object-contain"
-                  onError={() => setVideoError(true)}
-                  onStalled={() => {
-                    setTimeout(() => {
-                      if (videoRef.current && videoRef.current.readyState === 0) setVideoError(true);
-                    }, 5000);
-                  }}
-                >
-                  <source
-                    src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
-                    type="video/mp4"
-                  />
-                </video>
-              ) : (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center">
-                  <p className="text-white/70 text-sm">Video couldn't load in this browser.</p>
-                  <a
-                    href="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white font-semibold rounded-full text-sm shadow-lg"
-                  >
-                    Tap to Open Video
-                  </a>
-                </div>
-              )}
+            <div className="relative w-full aspect-video">
+              <video
+                ref={videoRef}
+                controls
+                playsInline
+                webkit-playsinline="true"
+                preload="auto"
+                className="w-full h-full object-contain rounded-lg"
+                src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click me first video final.mp4"
+              />
             </div>
           </div>
         </div>
