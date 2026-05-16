@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
@@ -95,6 +95,7 @@ export default function StudentDashboard() {
   const [showVideo, setShowVideo] = useState(false);
   const [activeFaqTab, setActiveFaqTab] = useState('Students');
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
+  const videoRef = useRef(null);
 
   // First-login auto-show video
   useEffect(() => {
@@ -104,6 +105,18 @@ export default function StudentDashboard() {
       localStorage.setItem('ft_video_seen', 'true');
     }
   }, []);
+
+  // Explicitly play video when modal opens (iOS requires this)
+  useEffect(() => {
+    if (showVideo && videoRef.current) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // Autoplay blocked — user will need to tap play manually
+        });
+      }
+    }
+  }, [showVideo]);
 
   useEffect(() => {
     if (!isStudent()) {
@@ -801,26 +814,35 @@ export default function StudentDashboard() {
 
       {/* Video Popup Modal */}
       {showVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-2 sm:px-4 bg-black/80 backdrop-blur-md video-modal-overlay" onClick={() => setShowVideo(false)}>
-          <div className="w-full max-w-5xl aspect-video bg-black rounded-2xl sm:rounded-3xl relative shadow-2xl overflow-hidden video-modal-content border border-white/10" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-sm" onClick={() => setShowVideo(false)}>
+          <div className="w-full max-w-4xl bg-black rounded-2xl relative shadow-2xl overflow-hidden border border-white/10" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setShowVideo(false)}
-              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white backdrop-blur-md transition-colors border border-white/20"
+              className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/60 hover:bg-black/80 flex items-center justify-center text-white transition-colors border border-white/20"
               aria-label="Close video"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
-            <video
-              controls
-              autoPlay
-              playsInline
-              webkit-playsinline="true"
-              preload="auto"
-              className="w-full h-full object-contain"
-              src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
-            >
-              Your browser does not support the video tag.
-            </video>
+            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+              <video
+                ref={videoRef}
+                controls
+                autoPlay
+                playsInline
+                webkit-playsinline="true"
+                preload="metadata"
+                className="absolute inset-0 w-full h-full object-contain"
+                src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
+                onLoadedData={(e) => {
+                  const playPromise = e.target.play();
+                  if (playPromise !== undefined) {
+                    playPromise.catch(() => {});
+                  }
+                }}
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
           </div>
         </div>
       )}
