@@ -106,10 +106,6 @@ export default function StudentDashboard() {
     }
   }, []);
 
-  // Reset error state when modal reopens
-  useEffect(() => {
-    if (showVideo) setVideoError(false);
-  }, [showVideo]);
 
   useEffect(() => {
     if (!isStudent()) {
