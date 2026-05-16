@@ -96,6 +96,7 @@ export default function StudentDashboard() {
   const [activeFaqTab, setActiveFaqTab] = useState('Students');
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const videoRef = useRef(null);
+  const [videoError, setVideoError] = useState(false);
 
   // First-login auto-show video
   useEffect(() => {
@@ -106,16 +107,9 @@ export default function StudentDashboard() {
     }
   }, []);
 
-  // Explicitly play video when modal opens (iOS requires this)
+  // Reset error state when modal reopens
   useEffect(() => {
-    if (showVideo && videoRef.current) {
-      const playPromise = videoRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Autoplay blocked — user will need to tap play manually
-        });
-      }
-    }
+    if (showVideo) setVideoError(false);
   }, [showVideo]);
 
   useEffect(() => {
@@ -814,7 +808,7 @@ export default function StudentDashboard() {
 
       {/* Video Popup Modal */}
       {showVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90 backdrop-blur-sm" onClick={() => setShowVideo(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/90" onClick={() => setShowVideo(false)}>
           <div className="w-full max-w-4xl bg-black rounded-2xl relative shadow-2xl overflow-hidden border border-white/10" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setShowVideo(false)}
@@ -824,24 +818,40 @@ export default function StudentDashboard() {
               <X className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
             <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-              <video
-                ref={videoRef}
-                controls
-                autoPlay
-                playsInline
-                webkit-playsinline="true"
-                preload="metadata"
-                className="absolute inset-0 w-full h-full object-contain"
-                src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
-                onLoadedData={(e) => {
-                  const playPromise = e.target.play();
-                  if (playPromise !== undefined) {
-                    playPromise.catch(() => {});
-                  }
-                }}
-              >
-                Your browser does not support the video tag.
-              </video>
+              {!videoError ? (
+                <video
+                  ref={videoRef}
+                  controls
+                  autoPlay
+                  playsInline
+                  webkit-playsinline="true"
+                  preload="metadata"
+                  className="absolute inset-0 w-full h-full object-contain"
+                  onError={() => setVideoError(true)}
+                  onStalled={() => {
+                    setTimeout(() => {
+                      if (videoRef.current && videoRef.current.readyState === 0) setVideoError(true);
+                    }, 5000);
+                  }}
+                >
+                  <source
+                    src="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+              ) : (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 px-6 text-center">
+                  <p className="text-white/70 text-sm">Video couldn't load in this browser.</p>
+                  <a
+                    href="https://videosfuturetitans.s3.amazonaws.com/dashboard/Click%20me%20first%20video%20final.mp4"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white font-semibold rounded-full text-sm shadow-lg"
+                  >
+                    Tap to Open Video
+                  </a>
+                </div>
+              )}
             </div>
           </div>
         </div>
