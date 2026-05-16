@@ -109,8 +109,8 @@ export default function StudentProfilePage() {
 
 
   return (
-    <div className="min-h-screen relative" style={{ zIndex: 1 }}>
-      <div className="container-lg py-8 space-y-6">
+    <div className="min-h-[calc(100dvh-4rem)] relative" style={{ zIndex: 1 }}>
+      <div className="container-lg py-5 sm:py-8 space-y-4 sm:space-y-6 pb-24">
         {/* Profile Header Card */}
         <div className="card">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">

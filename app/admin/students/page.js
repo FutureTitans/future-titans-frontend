@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { admin } from '@/lib/api';
-import { Search, Eye, Trash2 } from 'lucide-react';
+import { Search, Eye, Trash2, ChevronLeft, ChevronRight, Users } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
@@ -13,19 +13,18 @@ export default function StudentsPage() {
   const [search, setSearch] = useState('');
   const [schoolSlugs, setSchoolSlugs] = useState([]);
   const [selectedSlug, setSelectedSlug] = useState('');
-
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
+        setLoading(true);
         const data = await admin.getStudents({
           search,
           schoolSlug: selectedSlug || undefined,
           page: pagination.page,
           limit: 50,
         });
-        // Handle both old format (array) and new format (object with students and pagination)
         if (Array.isArray(data)) {
           setStudents(data);
         } else {
@@ -53,128 +52,166 @@ export default function StudentsPage() {
     fetchSlugs();
   }, []);
 
-  if (loading) {
+  const handleDelete = async (student) => {
+    if (!confirm(`Are you sure you want to delete ${student.name}? This will delete all their data including AI chats and submissions. This action cannot be undone.`)) return;
+    try {
+      await admin.deleteStudent(student._id);
+      setStudents(students.filter(s => s._id !== student._id));
+    } catch (error) {
+      alert('Failed to delete student: ' + (error?.error || error?.message || 'Unknown error'));
+    }
+  };
+
+  if (loading && students.length === 0) {
     return <LoadingSpinner message="Loading students..." />;
   }
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8 gradient-text">Students Management</h1>
+    <div className="space-y-5 sm:space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">Students</h1>
+          <p className="text-sm text-gray-500 mt-1">{pagination.total || students.length} registered students</p>
+        </div>
+      </div>
 
       {/* Search & Filters */}
-      <div className="card mb-6">
-        <div className="flex flex-col md:flex-row gap-4 md:items-center">
-          <div className="flex-1 flex items-center gap-2 border border-neutral-border rounded-lg px-4 py-3">
-            <Search className="w-5 h-5 text-neutral-medium" />
+      <div className="card">
+        <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+          <div className="flex-1 flex items-center gap-2 glass-input !py-2.5">
+            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
             <input
               type="text"
-              placeholder="Search students by name or email..."
+              placeholder="Search by name or email..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 outline-none bg-transparent"
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPagination(p => ({ ...p, page: 1 }));
+              }}
+              className="flex-1 outline-none bg-transparent text-sm"
             />
           </div>
-          <div className="w-full md:w-72">
-            <label className="block text-sm font-medium text-neutral-dark mb-1">
-              Filter by school slug
-            </label>
-            <select
-              value={selectedSlug}
-              onChange={(e) => setSelectedSlug(e.target.value)}
-              className="w-full px-3 py-2 border border-neutral-border rounded-lg"
-            >
-              <option value="">All schools</option>
-              {schoolSlugs.map((slug) => (
-                <option key={slug._id} value={slug.slug}>
-                  {slug.name} ({slug.slug})
-                </option>
-              ))}
-            </select>
-          </div>
+          <select
+            value={selectedSlug}
+            onChange={(e) => {
+              setSelectedSlug(e.target.value);
+              setPagination(p => ({ ...p, page: 1 }));
+            }}
+            className="glass-input !py-2.5 text-sm sm:w-56"
+          >
+            <option value="">All schools</option>
+            {schoolSlugs.map((slug) => (
+              <option key={slug._id} value={slug.slug}>
+                {slug.name} ({slug.slug})
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
       {/* Students Table */}
-      <div className="card overflow-x-auto">
-        <table className="w-full">
-          <thead className="border-b border-neutral-border">
-            <tr className="text-left text-sm font-semibold text-neutral-dark">
-              <th className="p-4">Name</th>
-              <th className="p-4">Email</th>
-              <th className="p-4">School</th>
-              <th className="p-4">Slug</th>
-              <th className="p-4">SSI Score</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.length === 0 ? (
-              <tr>
-                <td colSpan="6" className="p-4 text-center text-neutral-medium">
-                  No students found
-                </td>
+      <div className="card !p-0 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/50">
+                <th className="text-left p-4 font-semibold text-gray-600">Student</th>
+                <th className="text-left p-4 font-semibold text-gray-600 hidden md:table-cell">School</th>
+                <th className="text-left p-4 font-semibold text-gray-600 hidden lg:table-cell">Slug</th>
+                <th className="text-center p-4 font-semibold text-gray-600">SSI</th>
+                <th className="text-center p-4 font-semibold text-gray-600">Status</th>
+                <th className="text-center p-4 font-semibold text-gray-600">Actions</th>
               </tr>
-            ) : (
-              students.map((student) => (
-                <tr key={student._id} className="border-b border-neutral-border hover:bg-neutral-light transition">
-                  <td className="p-4">{student.name}</td>
-                  <td className="p-4 text-sm">{student.email}</td>
-                  <td className="p-4 text-sm">{student.school}</td>
-                  <td className="p-4 text-xs font-mono text-neutral-medium">{student.schoolSlug || '-'}</td>
-                  <td className="p-4">
-                    <span className="badge badge-red">{student.ssiScore || 0}%</span>
-                  </td>
-                  <td className="p-4">
-                    {student.isPaid ? (
-                      <span className="badge badge-success">Paid</span>
-                    ) : (
-                      <span className="badge" style={{ background: '#FEE2E2', color: '#DC2626' }}>
-                        Pending
-                      </span>
-                    )}
-                  </td>
-                  <td className="p-4">
-                    <div className="flex gap-2">
-                      <button
-                        className="text-primary-red hover:text-primary-darkRed transition"
-                        title="View details"
-                        onClick={() => router.push(`/admin/students/${student._id}`)}
-                      >
-                        <Eye className="w-5 h-5" />
-                      </button>
-                      <button
-                        className="text-semantic-error hover:text-red-700 transition"
-                        title="Delete student"
-                        onClick={async () => {
-                          if (confirm(`Are you sure you want to delete ${student.name}? This will delete all their data including AI chats and submissions. This action cannot be undone.`)) {
-                            try {
-                              await admin.deleteStudent(student._id);
-                              alert('✅ Student deleted successfully');
-                              // Refresh the list
-                              window.location.reload();
-                            } catch (error) {
-                              alert('❌ Failed to delete student: ' + (error?.error || error?.message || 'Unknown error'));
-                            }
-                          }
-                        }}
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
-                    </div>
+            </thead>
+            <tbody>
+              {students.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="p-12 text-center">
+                    <Users className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 text-sm">No students found</p>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              ) : (
+                students.map((student) => (
+                  <tr key={student._id} className="border-b border-gray-50 hover:bg-[#D4AF37]/[0.03] transition-colors">
+                    <td className="p-4">
+                      <div>
+                        <p className="font-medium text-gray-800">{student.name}</p>
+                        <p className="text-xs text-gray-500">{student.email}</p>
+                      </div>
+                    </td>
+                    <td className="p-4 text-gray-600 hidden md:table-cell">{student.school || '-'}</td>
+                    <td className="p-4 hidden lg:table-cell">
+                      <span className="text-xs font-mono bg-gray-100 px-2 py-1 rounded text-gray-500">
+                        {student.schoolSlug || '-'}
+                      </span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="inline-flex items-center justify-center min-w-[2.5rem] px-2 py-1 rounded-lg text-xs font-bold bg-gradient-to-r from-[#D4AF37]/10 to-[#F5D76E]/10 text-[#B8952E] border border-[#D4AF37]/20">
+                        {student.ssiScore || 0}
+                      </span>
+                    </td>
+                    <td className="p-4 text-center">
+                      {student.isPaid ? (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          Paid
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 border border-gray-200">
+                          Pending
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition"
+                          title="View details"
+                          onClick={() => router.push(`/admin/students/${student._id}`)}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          className="p-2 rounded-lg hover:bg-red-50 text-gray-400 hover:text-red-600 transition"
+                          title="Delete student"
+                          onClick={() => handleDelete(student)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Summary */}
-      <div className="mt-6 text-center text-neutral-medium text-sm">
-        <p>Showing {students.length} students</p>
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+            <p className="text-xs text-gray-500">
+              Page {pagination.page} of {pagination.totalPages}
+            </p>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPagination(p => ({ ...p, page: Math.max(1, p.page - 1) }))}
+                disabled={pagination.page <= 1}
+                className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setPagination(p => ({ ...p, page: Math.min(p.totalPages, p.page + 1) }))}
+                disabled={pagination.page >= pagination.totalPages}
+                className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-

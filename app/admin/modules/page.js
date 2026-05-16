@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { modules } from '@/lib/api';
 import { upload } from '@vercel/blob/client';
-import { Plus, Edit, Trash2, Eye, RefreshCw } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, RefreshCw, BookOpen, X } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function ModulesPage() {
@@ -19,11 +19,11 @@ export default function ModulesPage() {
     difficulty: 'beginner',
     estimatedCompletionTime: 60,
     aiQuestionsPerChapter: 10,
-    mentorName: '', // Instructor Name
-    mentorProfilePicture: null, // File object
-    mentorProfilePictureUrl: '', // Existing URL for display
-    coverImage: null, // File object
-    coverImageUrl: '', // Existing URL for display
+    mentorName: '',
+    mentorProfilePicture: null,
+    mentorProfilePictureUrl: '',
+    coverImage: null,
+    coverImageUrl: '',
   });
 
   useEffect(() => {
@@ -34,7 +34,6 @@ export default function ModulesPage() {
     try {
       setLoading(true);
       const data = await modules.getAll();
-      console.log('Fetched modules:', data);
       setModulesList(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to fetch modules:', error);
@@ -57,7 +56,6 @@ export default function ModulesPage() {
       return;
     }
     try {
-      // Prepare data for API call
       const submitData = {
         title: formData.title,
         description: formData.description,
@@ -68,65 +66,44 @@ export default function ModulesPage() {
         aiInteractionEnabled: true,
       };
 
-      // Handle mentor profile picture: if file is selected, upload to Vercel S3 cluster
       if (formData.mentorProfilePicture instanceof File) {
         const mentorBlob = await upload(formData.mentorProfilePicture.name, formData.mentorProfilePicture, {
           access: 'public',
           handleUploadUrl: '/api/upload',
         });
         submitData.mentorProfilePicture = mentorBlob.url;
-      } else if (formData.mentorProfilePictureUrl && formData.mentorProfilePictureUrl.trim()) {
+      } else if (formData.mentorProfilePictureUrl?.trim()) {
         submitData.mentorProfilePicture = formData.mentorProfilePictureUrl.trim();
       }
 
-      // Handle cover image: if file is selected, upload to Vercel S3 cluster
       if (formData.coverImage instanceof File) {
         const coverBlob = await upload(formData.coverImage.name, formData.coverImage, {
           access: 'public',
           handleUploadUrl: '/api/upload',
         });
         submitData.coverImage = coverBlob.url;
-      } else if (formData.coverImageUrl && formData.coverImageUrl.trim()) {
+      } else if (formData.coverImageUrl?.trim()) {
         submitData.coverImage = formData.coverImageUrl.trim();
       }
 
       if (editingModule) {
-        // Update existing module
-        console.log('Updating module with data:', submitData);
-        const result = await modules.update(editingModule._id, submitData);
-        console.log('Module updated:', result);
-        alert('✅ Module updated successfully!');
+        await modules.update(editingModule._id, submitData);
       } else {
-        // Create new module
-        console.log('Creating module with data:', submitData);
-        const result = await modules.create(submitData);
-        console.log('Module created:', result);
-        alert('✅ Module created successfully!');
+        await modules.create(submitData);
       }
 
-      // Reset form
       setFormData({
-        title: '',
-        description: '',
-        difficulty: 'beginner',
-        estimatedCompletionTime: 60,
-        aiQuestionsPerChapter: 10,
-        mentorName: '',
-        mentorProfilePicture: null,
-        mentorProfilePictureUrl: '',
-        coverImage: null,
-        coverImageUrl: '',
+        title: '', description: '', difficulty: 'beginner',
+        estimatedCompletionTime: 60, aiQuestionsPerChapter: 10,
+        mentorName: '', mentorProfilePicture: null, mentorProfilePictureUrl: '',
+        coverImage: null, coverImageUrl: '',
       });
       setEditingModule(null);
       setShowForm(false);
-
-      // Refresh modules list after a short delay to ensure DB has saved
-      setTimeout(() => {
-        fetchModules();
-      }, 1000);
+      setTimeout(() => fetchModules(), 1000);
     } catch (error) {
       console.error('Failed to save module:', error);
-      alert('❌ Failed to save module: ' + (error.message || 'Unknown error'));
+      alert('Failed to save module: ' + (error.message || 'Unknown error'));
     }
   };
 
@@ -144,227 +121,163 @@ export default function ModulesPage() {
   if (loading) return <LoadingSpinner message="Loading modules..." />;
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold gradient-text">Module Management</h1>
-        <div className="flex gap-4">
+    <div className="space-y-5 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold gradient-text">Modules</h1>
+          <p className="text-sm text-gray-500 mt-1">{modulesList.length} learning modules</p>
+        </div>
+        <div className="flex gap-2">
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 bg-neutral-light text-neutral-dark px-4 py-2 rounded-lg hover:bg-neutral-border transition disabled:opacity-50"
+            className="p-2.5 rounded-xl glass-subtle hover:bg-gray-100 transition disabled:opacity-50"
+            title="Refresh"
           >
-            <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
-            Refresh
+            <RefreshCw className={`w-4 h-4 text-gray-600 ${refreshing ? 'animate-spin' : ''}`} />
           </button>
           <button
             onClick={() => {
-              // Opening in "create" mode
               setEditingModule(null);
               setFormData({
-                title: '',
-                description: '',
-                difficulty: 'beginner',
-                estimatedCompletionTime: 60,
-                aiQuestionsPerChapter: 10,
-                mentorName: '',
-                mentorProfilePicture: null,
-                coverImage: null,
+                title: '', description: '', difficulty: 'beginner',
+                estimatedCompletionTime: 60, aiQuestionsPerChapter: 10,
+                mentorName: '', mentorProfilePicture: null, mentorProfilePictureUrl: '',
+                coverImage: null, coverImageUrl: '',
               });
               setShowForm(!showForm);
             }}
-            className="flex items-center gap-2 bg-primary-red text-white px-4 py-2 rounded-lg hover:bg-primary-darkRed transition"
+            className="glass-button flex items-center gap-2 !px-4 !py-2.5 text-sm"
           >
-            <Plus className="w-5 h-5" />
-            {editingModule ? 'Edit Module' : 'Create Module'}
+            <Plus className="w-4 h-4" />
+            Create Module
           </button>
         </div>
       </div>
 
-      {/* Create Form */}
+      {/* Create/Edit Form */}
       {showForm && (
-        <div className="card mb-8">
-          <h3 className="font-bold text-lg mb-4">
-            {editingModule ? 'Edit Module' : 'Create New Module'}
-          </h3>
+        <div className="card border-2 border-[#D4AF37]/20">
+          <div className="flex items-center justify-between mb-5">
+            <h3 className="font-bold text-lg text-gray-800">
+              {editingModule ? 'Edit Module' : 'Create New Module'}
+            </h3>
+            <button onClick={() => { setShowForm(false); setEditingModule(null); }} className="p-2 rounded-lg hover:bg-gray-100 transition">
+              <X className="w-4 h-4 text-gray-500" />
+            </button>
+          </div>
           <form onSubmit={handleCreateModule} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Module Title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-neutral-border rounded-lg"
-              required
-            />
-            <textarea
-              placeholder="Module Description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-4 py-2 border border-neutral-border rounded-lg h-24"
-              required
-            />
-            <div className="grid grid-cols-2 gap-4">
-              <select
-                value={formData.difficulty}
-                onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
-                className="px-4 py-2 border border-neutral-border rounded-lg"
-              >
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Title *</label>
               <input
-                type="number"
-                placeholder="Est. Completion Time (minutes)"
-                value={formData.estimatedCompletionTime}
-                onChange={(e) => setFormData({ ...formData, estimatedCompletionTime: parseInt(e.target.value) })}
-                className="px-4 py-2 border border-neutral-border rounded-lg"
+                type="text"
+                placeholder="Module Title"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                className="glass-input"
+                required
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Description *</label>
+              <textarea
+                placeholder="Module Description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className="glass-input resize-none h-24"
+                required
+              />
+            </div>
+            <div className="grid sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Default AI Questions per Chapter
-                  <span className="block text-xs text-neutral-medium">
-                    How many SURGE-style questions the AI should ask after each chapter (default 10).
-                  </span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Difficulty</label>
+                <select
+                  value={formData.difficulty}
+                  onChange={(e) => setFormData({ ...formData, difficulty: e.target.value })}
+                  className="glass-input"
+                >
+                  <option value="beginner">Beginner</option>
+                  <option value="intermediate">Intermediate</option>
+                  <option value="advanced">Advanced</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Duration (min)</label>
+                <input
+                  type="number"
+                  value={formData.estimatedCompletionTime}
+                  onChange={(e) => setFormData({ ...formData, estimatedCompletionTime: parseInt(e.target.value) })}
+                  className="glass-input"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">AI Questions/Chapter</label>
                 <input
                   type="number"
                   min={1}
                   max={20}
                   value={formData.aiQuestionsPerChapter}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      aiQuestionsPerChapter: parseInt(e.target.value || '10', 10),
-                    })
-                  }
-                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
+                  onChange={(e) => setFormData({ ...formData, aiQuestionsPerChapter: parseInt(e.target.value || '10', 10) })}
+                  className="glass-input"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Mentor Profile Picture
-                  <span className="block text-xs text-neutral-medium">
-                    Upload a profile picture for the mentor (optional). This will be shown in the AI chat. Max 5MB, JPG/PNG/WebP.
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  accept="image/jpeg,image/png,image/jpg,image/webp"
-                  onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      if (file.size > 5 * 1024 * 1024) {
-                        alert('File size must be less than 5MB');
-                        e.target.value = '';
-                        return;
-                      }
-                      setFormData({ ...formData, mentorProfilePicture: file, mentorProfilePictureUrl: '' });
-                    }
-                  }}
-                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
-                />
-                {formData.mentorProfilePictureUrl && !formData.mentorProfilePicture && (
-                  <div className="mt-2">
-                    <p className="text-xs text-neutral-medium mb-1">Current image:</p>
-                    <img
-                      src={formData.mentorProfilePictureUrl}
-                      alt="Mentor"
-                      className="w-20 h-20 rounded-full object-cover border border-neutral-border"
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                  </div>
-                )}
-                {formData.mentorProfilePicture && (
-                  <div className="mt-2">
-                    <p className="text-xs text-neutral-medium mb-1">New image selected:</p>
-                    <img
-                      src={URL.createObjectURL(formData.mentorProfilePicture)}
-                      alt="Mentor preview"
-                      className="w-20 h-20 rounded-full object-cover border border-neutral-border"
-                    />
-                  </div>
-                )}
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Mentor Name
-                  <span className="block text-xs text-neutral-medium">
-                    Name of the instructor teaching this module.
-                  </span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Mentor Name</label>
                 <input
                   type="text"
                   placeholder="Instructor Name"
                   value={formData.mentorName}
                   onChange={(e) => setFormData({ ...formData, mentorName: e.target.value })}
-                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
+                  className="glass-input"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Course Profile Picture (Cover Image)
-                  <span className="block text-xs text-neutral-medium">
-                    Upload a comprehensive image that represents this module. Max 5MB, JPG/PNG/WebP.
-                  </span>
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1.5">Mentor Picture</label>
                 <input
                   type="file"
                   accept="image/jpeg,image/png,image/jpg,image/webp"
                   onChange={(e) => {
                     const file = e.target.files[0];
                     if (file) {
-                      if (file.size > 5 * 1024 * 1024) {
-                        alert('File size must be less than 5MB');
-                        e.target.value = '';
-                        return;
-                      }
-                      setFormData({ ...formData, coverImage: file, coverImageUrl: '' });
+                      if (file.size > 5 * 1024 * 1024) { alert('Max 5MB'); e.target.value = ''; return; }
+                      setFormData({ ...formData, mentorProfilePicture: file, mentorProfilePictureUrl: '' });
                     }
                   }}
-                  className="w-full px-4 py-2 border border-neutral-border rounded-lg"
+                  className="glass-input"
                 />
-                {formData.coverImageUrl && !formData.coverImage && (
-                  <div className="mt-2">
-                    <p className="text-xs text-neutral-medium mb-1">Current cover image:</p>
-                    <img
-                      src={formData.coverImageUrl}
-                      alt="Cover"
-                      className="h-32 rounded-lg object-cover border border-neutral-border"
-                      onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                  </div>
-                )}
-                {formData.coverImage && (
-                  <div className="mt-2">
-                    <p className="text-xs text-neutral-medium mb-1">New cover image selected:</p>
-                    <img
-                      src={URL.createObjectURL(formData.coverImage)}
-                      alt="Cover preview"
-                      className="h-32 rounded-lg object-cover border border-neutral-border"
-                    />
-                  </div>
+                {formData.mentorProfilePictureUrl && !formData.mentorProfilePicture && (
+                  <img src={formData.mentorProfilePictureUrl} alt="Mentor" className="w-12 h-12 rounded-full object-cover mt-2 border border-gray-200" onError={(e) => { e.target.style.display = 'none'; }} />
                 )}
               </div>
             </div>
-            <div className="flex gap-4">
-              <button
-                type="submit"
-                className="flex-1 bg-primary-red text-white px-4 py-2 rounded-lg hover:bg-primary-darkRed transition"
-              >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Cover Image</label>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/jpg,image/webp"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) { alert('Max 5MB'); e.target.value = ''; return; }
+                    setFormData({ ...formData, coverImage: file, coverImageUrl: '' });
+                  }
+                }}
+                className="glass-input"
+              />
+              {formData.coverImageUrl && !formData.coverImage && (
+                <img src={formData.coverImageUrl} alt="Cover" className="h-20 rounded-lg object-cover mt-2 border border-gray-200" onError={(e) => { e.target.style.display = 'none'; }} />
+              )}
+            </div>
+            <div className="flex gap-3 pt-2">
+              <button type="submit" className="glass-button !px-6 !py-2.5 text-sm">
                 {editingModule ? 'Save Changes' : 'Create Module'}
               </button>
               <button
                 type="button"
-                onClick={() => {
-                  setShowForm(false);
-                  setEditingModule(null);
-                }}
-                className="flex-1 bg-neutral-light text-neutral-dark px-4 py-2 rounded-lg hover:bg-neutral-border transition"
+                onClick={() => { setShowForm(false); setEditingModule(null); }}
+                className="glass-button-secondary !px-6 !py-2.5 text-sm"
               >
                 Cancel
               </button>
@@ -374,93 +287,87 @@ export default function ModulesPage() {
       )}
 
       {/* Modules Grid */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {modulesList.map((module) => (
-          <div key={module._id} className="card hover:shadow-lg transition-all">
-            {module.coverImage && (
-              <img src={module.coverImage} alt={module.title} className="w-full h-40 object-cover rounded-t-xl mb-4" />
-            )}
-            <div className="p-4">
-              <div className="flex justify-between items-start mb-2">
-                <h3 className="font-bold text-lg">{module.title}</h3>
-                <span className={`badge ${module.isPublished ? 'badge-success' : 'badge-red'}`}>
-                  {module.isPublished ? 'Published' : 'Draft'}
-                </span>
-              </div>
-              <p className="text-neutral-medium text-sm mb-4">{module.description}</p>
-            </div>
+      {modulesList.length === 0 ? (
+        <div className="card text-center py-12">
+          <BookOpen className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500">No modules yet. Create one to get started.</p>
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-2 gap-5">
+          {modulesList.map((module) => (
+            <div key={module._id} className="card !p-0 overflow-hidden group hover:shadow-lg transition-all">
+              {module.coverImage ? (
+                <img src={module.coverImage} alt={module.title} className="w-full h-36 object-cover" />
+              ) : (
+                <div className="w-full h-36 bg-gradient-to-br from-[#D4AF37]/10 to-[#F5D76E]/10 flex items-center justify-center">
+                  <BookOpen className="w-10 h-10 text-[#D4AF37]/40" />
+                </div>
+              )}
+              <div className="p-5">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-bold text-gray-800 line-clamp-1">{module.title}</h3>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${module.isPublished ? 'bg-emerald-50 text-emerald-700' : 'bg-gray-100 text-gray-500'}`}>
+                    {module.isPublished ? 'Published' : 'Draft'}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 line-clamp-2 mb-4">{module.description}</p>
 
-            <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-              <div>
-                <p className="text-neutral-medium">Difficulty</p>
-                <p className="font-semibold capitalize">{module.difficulty}</p>
-              </div>
-              <div>
-                <p className="text-neutral-medium">Duration</p>
-                <p className="font-semibold">{module.estimatedCompletionTime} min</p>
-              </div>
-              <div>
-                <p className="text-neutral-medium">Chapters</p>
-                <p className="font-semibold">{module.chapters?.length || 0}</p>
-              </div>
-              <div>
-                <p className="text-neutral-medium">AI Enabled</p>
-                <p className="font-semibold">{module.aiInteractionEnabled ? '✅ Yes' : '❌ No'}</p>
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="text-center glass-subtle rounded-lg py-2">
+                    <p className="text-xs text-gray-500">Difficulty</p>
+                    <p className="text-sm font-semibold text-gray-700 capitalize">{module.difficulty}</p>
+                  </div>
+                  <div className="text-center glass-subtle rounded-lg py-2">
+                    <p className="text-xs text-gray-500">Chapters</p>
+                    <p className="text-sm font-semibold text-gray-700">{module.chapters?.length || 0}</p>
+                  </div>
+                  <div className="text-center glass-subtle rounded-lg py-2">
+                    <p className="text-xs text-gray-500">Duration</p>
+                    <p className="text-sm font-semibold text-gray-700">{module.estimatedCompletionTime}m</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-3 border-t border-gray-100">
+                  <Link
+                    href={`/admin/modules/${module._id}`}
+                    className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-[#B8952E] hover:bg-[#D4AF37]/5 py-2 rounded-lg transition"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    Chapters
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingModule(module);
+                      setFormData({
+                        title: module.title || '', description: module.description || '',
+                        difficulty: module.difficulty || 'beginner',
+                        estimatedCompletionTime: module.estimatedCompletionTime || 60,
+                        aiQuestionsPerChapter: module.aiQuestionsPerChapter ?? 10,
+                        mentorName: module.mentorName || '',
+                        mentorProfilePicture: null, mentorProfilePictureUrl: module.mentorProfilePicture || '',
+                        coverImage: null, coverImageUrl: module.coverImage || '',
+                      });
+                      setShowForm(true);
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1.5 text-sm font-medium text-gray-600 hover:bg-gray-50 py-2 rounded-lg transition"
+                  >
+                    <Edit className="w-3.5 h-3.5" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteModule(module._id)}
+                    className="p-2 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             </div>
-
-            <div className="flex gap-2 pt-4 border-t border-neutral-border">
-              <Link
-                href={`/admin/modules/${module._id}`}
-                className="flex-1 flex items-center justify-center gap-2 text-primary-red hover:bg-primary-lightRed p-2 rounded transition"
-              >
-                <Eye className="w-4 h-4" />
-                Manage Chapters
-              </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  // Open form pre-filled for editing
-                  setEditingModule(module);
-                  setFormData({
-                    title: module.title || '',
-                    description: module.description || '',
-                    difficulty: module.difficulty || 'beginner',
-                    estimatedCompletionTime: module.estimatedCompletionTime || 60,
-                    aiQuestionsPerChapter:
-                      typeof module.aiQuestionsPerChapter === 'number'
-                        ? module.aiQuestionsPerChapter
-                        : 10,
-                    mentorName: module.mentorName || '',
-                    mentorProfilePicture: null,
-                    mentorProfilePictureUrl: module.mentorProfilePicture || '',
-                    coverImage: null,
-                    coverImageUrl: module.coverImage || '',
-                  });
-                  setShowForm(true);
-                }}
-                className="flex-1 flex items-center justify-center gap-2 text-primary-red hover:bg-primary-lightRed p-2 rounded transition"
-              >
-                <Edit className="w-4 h-4" />
-                Edit
-              </button>
-              <button
-                onClick={() => handleDeleteModule(module._id)}
-                className="flex-1 flex items-center justify-center gap-2 text-semantic-error hover:bg-red-50 p-2 rounded transition"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {modulesList.length === 0 && (
-        <div className="card text-center">
-          <p className="text-neutral-medium">No modules yet. Create one to Sign Up!</p>
+          ))}
         </div>
       )}
     </div>
   );
 }
-

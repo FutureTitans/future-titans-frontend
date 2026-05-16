@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { modules, aiChat, auth } from '@/lib/api';
 import { isStudent, getUser } from '@/lib/auth';
@@ -25,6 +25,8 @@ export default function ModulePlayerPage() {
   const [navigatingNext, setNavigatingNext] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const lastFetchedChapterRef = useRef(null);
+  const completingChapterRef = useRef(false);
 
   useEffect(() => {
     if (!module || !moduleId) return;
@@ -47,21 +49,34 @@ export default function ModulePlayerPage() {
   }, [router, moduleId]);
 
   useEffect(() => {
-    if (module && module.chapters && module.chapters.length > 0) {
-      const chapterId = module.chapters[currentChapter]._id;
-      fetchChapterContent(chapterId);
+    if (!module || !module.chapters || module.chapters.length === 0) return;
+    const chapterId = module.chapters[currentChapter]._id;
+    let cancelled = false;
 
+    // Only re-fetch chapter content when the actual chapter changed, not on module data refreshes
+    if (lastFetchedChapterRef.current !== chapterId) {
+      lastFetchedChapterRef.current = chapterId;
+      fetchChapterContent(chapterId);
+    }
+
+    // Don't re-check completion from chat history if we're in the middle of marking complete
+    // (the completeChapter function handles state updates itself)
+    if (!completingChapterRef.current) {
       const checkChapterComplete = async () => {
         try {
           const history = await aiChat.getChatHistory(moduleId, chapterId);
+          if (cancelled) return;
           if (history.conversation && history.conversation.length > 0) {
             setChapterCompleted(prev => ({ ...prev, [chapterId]: true }));
           }
         } catch (e) {
+          // Silently ignore — completion state is also loaded from profile
         }
       };
       checkChapterComplete();
     }
+
+    return () => { cancelled = true; };
   }, [module, currentChapter]);
 
   useEffect(() => {
@@ -118,9 +133,10 @@ export default function ModulePlayerPage() {
         }
 
         setMarkingComplete(true);
+        completingChapterRef.current = true;
         await aiChat.completeChapter(moduleId, current._id);
         setChapterCompleted(prev => ({ ...prev, [current._id]: true }));
-        fetchModule(); // Refresh module progress stats
+        await fetchModule(current._id); // Refresh module progress stats
         if (current?.aiInteractionEnabled) {
           setShowAIChat(true);
         }
@@ -128,13 +144,14 @@ export default function ModulePlayerPage() {
         console.error('Failed to auto-complete demo chapter:', err);
       } finally {
         setMarkingComplete(false);
+        completingChapterRef.current = false;
       }
     }, 90000); // 1 minute 30 seconds
 
     return () => clearTimeout(timer);
   }, [module, currentChapter, chapterCompleted, moduleId, isDemo]);
 
-  const fetchModule = async () => {
+  const fetchModule = async (preserveChapterId) => {
     try {
       const data = await modules.getById(moduleId);
       setModule(data);
@@ -149,10 +166,21 @@ export default function ModulePlayerPage() {
           moduleProgress.completedChapters.forEach((id) => {
             completed[id.toString()] = true;
           });
+          // Preserve the just-completed chapter in case the server hasn't propagated yet
+          if (preserveChapterId) {
+            completed[preserveChapterId.toString()] = true;
+          }
           setChapterCompleted(completed);
+        } else if (preserveChapterId) {
+          // Server returned no completions yet, but we just completed one locally
+          setChapterCompleted(prev => ({ ...prev, [preserveChapterId.toString()]: true }));
         }
       } catch (e) {
         console.error('Failed to load completion state:', e);
+        // Even if profile fetch fails, preserve the local completion
+        if (preserveChapterId) {
+          setChapterCompleted(prev => ({ ...prev, [preserveChapterId.toString()]: true }));
+        }
       }
     } catch (error) {
       console.error('Failed to fetch module:', error);
@@ -191,13 +219,15 @@ export default function ModulePlayerPage() {
   };
 
   const completeChapter = async () => {
+    if (markingComplete) return; // Guard against rapid double-clicks
     setMarkingComplete(true);
+    completingChapterRef.current = true;
     try {
       const chapterId = module.chapters[currentChapter]._id;
       await aiChat.completeChapter(moduleId, chapterId);
 
       setChapterCompleted(prev => ({ ...prev, [chapterId]: true }));
-      await fetchModule();
+      await fetchModule(chapterId);
 
       const current = module.chapters[currentChapter];
       if (current?.aiInteractionEnabled) {
@@ -208,6 +238,7 @@ export default function ModulePlayerPage() {
       alert('Failed to mark chapter as complete: ' + (error?.error || error?.message || 'Unknown error'));
     } finally {
       setMarkingComplete(false);
+      completingChapterRef.current = false;
     }
   };
 
@@ -354,48 +385,44 @@ export default function ModulePlayerPage() {
 
   return (
     <ModuleFaceGuard>
-    <div className="min-h-screen bg-[#FDFDFD] font-sans text-gray-900 pb-12 flex flex-col">
-      {/* ─── Minimal Header Breadcrumb & Progress ─── */}
-      <div className="bg-[#FDFDFD] sticky top-0 z-40 border-b border-gray-100">
-        <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          
-          <div className="flex items-center gap-4">
+    <div className="min-h-[calc(100dvh-4rem)] bg-[#FDFDFD] font-sans text-gray-900 pb-12 flex flex-col">
+      <div className="bg-[#FDFDFD] sticky top-16 z-40 border-b border-gray-100">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-3 sm:py-4 flex justify-between items-center gap-3 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
             <button
               onClick={() => router.push('/student/modules')}
-              className="text-gray-400 hover:text-gray-700 transition"
+              className="text-gray-400 hover:text-gray-700 transition flex-shrink-0 p-1"
+              aria-label="Back to modules"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div>
+            <div className="min-w-0">
               <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-gray-500">
                 <span className="text-[#B8952E]">MODULE {(module?.moduleNumber || 1).toString().padStart(2, '0')}</span>
-                <span className="text-gray-300">•</span>
-                <span>Chapter {currentChapter + 1} of {module.chapters.length}</span>
+                <span className="text-gray-300 hidden xs:inline">&bull;</span>
+                <span className="hidden xs:inline">Ch. {currentChapter + 1}/{module.chapters.length}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-6 w-full sm:w-auto">
-            <div className="flex-1 sm:w-64 flex items-center gap-4">
-              <div className="w-full bg-gray-200 rounded-full h-1.5 flex-1">
-                <div 
-                  className="bg-[#D4AF37] h-1.5 rounded-full transition-all duration-500"
-                  style={{ width: `${progressPercentage}%` }}
-                ></div>
+          <div className="flex items-center gap-3 sm:gap-6 flex-shrink-0">
+            <div className="flex items-center gap-2 sm:gap-4">
+              <div className="w-16 sm:w-48 bg-gray-200 rounded-full h-1.5">
+                <div className="bg-[#D4AF37] h-1.5 rounded-full transition-all duration-500" style={{ width: `${progressPercentage}%` }} />
               </div>
               <div className="text-[10px] font-bold text-[#A87B1E] tracking-widest whitespace-nowrap">
-                {progressPercentage}% COMPLETE
+                {progressPercentage}%
               </div>
             </div>
             {ZunnovaAvailable && (
-              <button 
+              <button
                 onClick={() => setShowAIChat(!showAIChat)}
                 className="hidden lg:flex items-center gap-2 bg-[#212121] text-[#D4AF37] px-4 py-2 rounded-xl text-sm font-semibold hover:bg-black transition-colors border border-black"
               >
                 <div className="w-5 h-5 bg-[#D4AF37] rounded-md flex items-center justify-center text-[#212121]">
                   <Brain className="w-3 h-3" />
                 </div>
-                Zunnova AI Assistant
+                Zunnova AI
               </button>
             )}
           </div>
@@ -469,12 +496,12 @@ export default function ModulePlayerPage() {
 
         {/* Center: Main Content */}
         <div className="w-full lg:flex-1 flex flex-col min-w-0">
-          <div className="mb-8">
-            <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-[1.1] mb-6 max-w-3xl">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold text-gray-900 leading-[1.1] mb-3 sm:mb-6 max-w-3xl">
               {currentChapterData?.title}
             </h1>
             {currentChapterData?.description && (
-              <p className="text-gray-600 text-lg md:text-xl leading-relaxed max-w-3xl">
+              <p className="text-gray-600 text-base sm:text-lg md:text-xl leading-relaxed max-w-3xl">
                 {currentChapterData.description}
               </p>
             )}
@@ -547,15 +574,26 @@ export default function ModulePlayerPage() {
 
         {/* Right Sidebar: AI Chat */}
         {showAIChat && isCompleted && ZunnovaAvailable && (
-          <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0 flex flex-col h-[600px] lg:h-[calc(100vh-140px)] sticky top-24">
-            <div className="bg-white rounded-[24px] shadow-lg border border-gray-100 flex-1 flex flex-col overflow-hidden">
-               <AIChatComponent
+          <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0 flex flex-col h-[500px] sm:h-[600px] lg:h-[calc(100vh-180px)] lg:sticky lg:top-32">
+            <div className="bg-white rounded-3xl shadow-lg border border-gray-100 flex-1 flex flex-col overflow-hidden">
+              <AIChatComponent
                 moduleId={moduleId}
                 chapterId={currentChapterData._id}
                 module={module}
               />
             </div>
           </div>
+        )}
+
+        {/* Mobile Zunnova button */}
+        {ZunnovaAvailable && isCompleted && !showAIChat && (
+          <button
+            onClick={() => setShowAIChat(true)}
+            className="lg:hidden fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#212121] text-[#D4AF37] shadow-xl shadow-black/20 flex items-center justify-center border-2 border-[#D4AF37]/30"
+            aria-label="Open AI Assistant"
+          >
+            <Brain className="w-6 h-6" />
+          </button>
         )}
       </div>
 

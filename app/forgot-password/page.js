@@ -41,22 +41,11 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <div className="glass-strong border-b border-white/20">
-        <div className="container-lg py-5">
-          <Link href="/login" className="flex items-center gap-2 text-[#D4AF37] hover:text-[#B8952E] transition-colors text-sm font-medium">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Login
-          </Link>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center py-12 px-4">
-        <div className="w-full max-w-md">
-          <div className="card">
-            <div className="mb-8 text-center">
+    <div className="min-h-[calc(100dvh-4rem)] flex items-center justify-center px-4 py-8 sm:py-12 relative">
+      <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-[#F5D76E]/10 rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
+      <div className="w-full max-w-md relative z-10">
+        <div className="card">
+          <div className="mb-6 sm:mb-8 text-center">
               <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Mail className="w-8 h-8 text-[#D4AF37]" />
               </div>
@@ -111,11 +100,10 @@ export default function ForgotPasswordPage() {
               </button>
             </form>
 
-            <div className="mt-6 text-center">
-              <Link href="/login" className="text-sm text-[#D4AF37] hover:text-[#B8952E] transition font-medium">
-                Back to Login
-              </Link>
-            </div>
+          <div className="mt-6 text-center">
+            <Link href="/login" className="text-sm text-[#D4AF37] hover:text-[#B8952E] transition font-medium">
+              Back to Login
+            </Link>
           </div>
         </div>
       </div>

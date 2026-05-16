@@ -242,14 +242,13 @@ export default function StudentDashboard() {
   const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1).toLocaleString('default', { month: 'long' });
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F5EDD6]">
-      {/* Background blobs for warm cream glassmorphism */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 left-[-10%] w-[50%] h-[50%] bg-[#FFFFFF]/60 rounded-full filter blur-[100px]"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-[#D4AF37]/10 rounded-full filter blur-[100px]"></div>
+    <div className="min-h-[calc(100dvh-4rem)] relative overflow-hidden bg-[#F5EDD6]">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="absolute top-0 -left-[10%] w-[50%] h-[50%] bg-white/60 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-[10%] -right-[10%] w-[60%] h-[60%] bg-[#D4AF37]/10 rounded-full blur-[100px]" />
       </div>
 
-      <div className="w-full max-w-[1920px] mx-auto px-3 sm:px-4 md:px-8 xl:px-12 py-4 sm:py-6 md:py-8 relative z-10">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-8 xl:px-12 py-4 sm:py-6 md:py-8 relative z-10">
 
         {/* Payment Status Banner */}
         {!isUserPaid && (
@@ -278,49 +277,43 @@ export default function StudentDashboard() {
         )}
 
         {/* Dashboard Header */}
-        <div className="mb-6 sm:mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-6">
-          <div>
-            <h1 className="text-2xl sm:text-4xl md:text-5xl font-light text-gray-900 tracking-tight mb-3 sm:mb-6">
+        <div className="mb-5 sm:mb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-4 sm:gap-6">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 tracking-tight mb-3 sm:mb-5">
               Welcome in, <span className="font-medium text-gray-800">{profile?.name?.split(' ')[0] || user?.name?.split(' ')[0] || 'Titan'}</span>
             </h1>
 
-            <div className="flex flex-wrap items-center gap-3 sm:gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="px-4 py-1.5 bg-gray-900 text-white rounded-full text-xs font-medium">Modules</span>
-                <span className="px-4 py-1.5 bg-[#F5D76E]/30 text-gray-800 rounded-full text-xs font-semibold">{overallProgress}%</span>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm">
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <span className="px-3 sm:px-4 py-1.5 bg-gray-900 text-white rounded-full text-xs font-medium">Modules</span>
+                <span className="px-3 sm:px-4 py-1.5 bg-[#F5D76E]/30 text-gray-800 rounded-full text-xs font-semibold">{overallProgress}%</span>
               </div>
-              <div className="flex-1 min-w-[100px] sm:min-w-[200px] h-2 bg-white/50 rounded-full overflow-hidden border border-white/50">
+              <div className="flex-1 min-w-[80px] h-2 bg-white/50 rounded-full overflow-hidden border border-white/50">
                 <div
                   className="h-full bg-[repeating-linear-gradient(45deg,transparent,transparent_4px,rgba(255,255,255,0.7)_4px,rgba(255,255,255,0.7)_8px)]"
-                  style={{
-                    width: `${overallProgress}%`,
-                    backgroundColor: '#D4AF37'
-                  }}
+                  style={{ width: `${overallProgress}%`, backgroundColor: '#D4AF37' }}
                 />
-              </div>
-              <div className="hidden sm:block px-4 py-1.5 bg-white/60 text-gray-600 rounded-full text-xs border border-white/50">
-                Progress
               </div>
             </div>
           </div>
 
-          <div className="flex flex-wrap sm:flex-nowrap items-center gap-3 sm:gap-4 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0 overflow-x-auto pb-1">
             <button
               onClick={() => setShowFAQ(true)}
-              className="flex items-center gap-3 px-1 py-1 pl-5 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all hover:scale-105 group"
+              className="flex items-center gap-2 sm:gap-3 px-1 py-1 pl-4 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all group flex-shrink-0"
             >
-              <span className="text-xl">👋</span> <span className="text-sm">How Can We Help ?</span>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8952E] flex items-center justify-center p-2 group-hover:bg-gradient-to-br transition-all">
-                <Search className="w-5 h-5 text-white" />
+              <span className="text-sm whitespace-nowrap">👋 How Can We Help ?</span>
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8952E] flex items-center justify-center">
+                <Search className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
             </button>
             <button
               onClick={() => setShowVideo(true)}
-              className="flex items-center gap-3 px-1 py-1 pl-5 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all hover:scale-105 group"
+              className="flex items-center gap-2 sm:gap-3 px-1 py-1 pl-4 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all group flex-shrink-0"
             >
-              <span className="text-xl">🚀</span> <span className="text-sm">Click Me First</span>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8952E] flex items-center justify-center p-2 group-hover:bg-gradient-to-br transition-all">
-                <Video className="w-5 h-5 text-white" />
+              <span className="text-sm whitespace-nowrap">🚀 Click Me First</span>
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8952E] flex items-center justify-center">
+                <Video className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
             </button>
           </div>
@@ -740,34 +733,29 @@ export default function StudentDashboard() {
 
       {/* FAQ Modal */}
       {showFAQ && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/40 backdrop-blur-sm faq-modal-overlay">
-          <div className="bg-white rounded-3xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl faq-modal-content border border-[#D4AF37]/20 relative overflow-hidden">
-            {/* Modal Header */}
-            <div className="p-6 sm:p-8 shrink-0 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-[#F5EDD6]/50 to-white relative z-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">How Can We Help?</h2>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:px-4 bg-black/40 backdrop-blur-sm faq-modal-overlay" onClick={() => setShowFAQ(false)}>
+          <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-4xl max-h-[92vh] sm:max-h-[85vh] flex flex-col shadow-2xl faq-modal-content border border-[#D4AF37]/20 relative overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="p-4 sm:p-8 shrink-0 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-[#F5EDD6]/50 to-white relative z-10">
+              <h2 className="text-xl sm:text-3xl font-bold text-gray-900">How Can We Help?</h2>
               <button
                 onClick={() => setShowFAQ(false)}
-                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors flex-shrink-0"
+                aria-label="Close FAQ"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            {/* Tabs */}
-            <div className="flex border-b border-gray-100 px-6 sm:px-8 pt-4 overflow-x-auto no-scrollbar gap-8 shrink-0">
+            <div className="flex border-b border-gray-100 px-4 sm:px-8 pt-3 sm:pt-4 overflow-x-auto gap-4 sm:gap-8 shrink-0" style={{ scrollbarWidth: 'none' }}>
               {['Students', 'Parents', 'School'].map(tab => (
                 <button
                   key={tab}
-                  onClick={() => {
-                    setActiveFaqTab(tab);
-                    setOpenFaqIndex(null);
-                  }}
-                  className={`pb-4 text-base sm:text-lg font-bold transition-colors relative whitespace-nowrap focus:outline-none flex-shrink-0 ${activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
-                    }`}
+                  onClick={() => { setActiveFaqTab(tab); setOpenFaqIndex(null); }}
+                  className={`pb-3 sm:pb-4 text-sm sm:text-lg font-bold transition-colors relative whitespace-nowrap flex-shrink-0 ${activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'}`}
                 >
-                  {tab === 'School' ? 'School / Principal FAQ' : `${tab} FAQ`}
+                  {tab === 'School' ? 'School / Principal' : tab}
                   {activeFaqTab === tab && (
-                    <div className="absolute bottom-0 left-0 right-0 h-1 sm:h-1.5 bg-[#D4AF37] rounded-t-full"></div>
+                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-[#D4AF37] rounded-t-full" />
                   )}
                 </button>
               ))}
@@ -813,11 +801,12 @@ export default function StudentDashboard() {
 
       {/* Video Popup Modal */}
       {showVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 bg-black/80 backdrop-blur-md video-modal-overlay">
-          <div className="w-full max-w-5xl aspect-video bg-black rounded-3xl relative shadow-2xl overflow-hidden video-modal-content border border-white/10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-2 sm:px-4 bg-black/80 backdrop-blur-md video-modal-overlay" onClick={() => setShowVideo(false)}>
+          <div className="w-full max-w-5xl aspect-video bg-black rounded-2xl sm:rounded-3xl relative shadow-2xl overflow-hidden video-modal-content border border-white/10" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setShowVideo(false)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white backdrop-blur-md transition-colors border border-white/20"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 z-10 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white backdrop-blur-md transition-colors border border-white/20"
+              aria-label="Close video"
             >
               <X className="w-5 h-5" />
             </button>

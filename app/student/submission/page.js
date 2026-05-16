@@ -699,86 +699,106 @@ export default function IdeaSubmissionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-white-light">
+    <div className="min-h-[calc(100dvh-4rem)] relative">
       {/* Header */}
-      <div className="bg-white border-b border-neutral-border">
-        <div className="container-lg py-6">
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold gradient-text">Idea Submission</h1>
-              <p className="text-neutral-medium">Submit your innovation for the Future Titans Challenge</p>
+      <div className="glass-strong border-b border-white/20 sticky top-16 z-30">
+        <div className="container-lg py-3 sm:py-4">
+          <div className="flex justify-between items-center gap-4">
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl font-bold gradient-text truncate">Idea Submission</h1>
+              <p className="text-gray-500 text-xs sm:text-sm hidden xs:block">Submit your innovation for the Future Titans Challenge</p>
             </div>
             <button
               onClick={() => router.push('/student/dashboard')}
-              className="text-primary-red hover:text-primary-darkRed transition flex items-center gap-2"
+              className="text-[#D4AF37] hover:text-[#B8952E] transition flex items-center gap-1.5 text-sm font-medium flex-shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to Dashboard
+              <span className="hidden sm:inline">Dashboard</span>
             </button>
           </div>
         </div>
       </div>
 
-      <div className="container-lg py-8">
-        <div className="flex gap-8">
-          {/* Sidebar Navigation */}
-          <div className="w-80">
-            <div className="card sticky top-8">
-              <h3 className="font-bold mb-4">📋 Sections</h3>
-              <div className="space-y-2">
+      <div className="container-lg py-4 sm:py-8 pb-24">
+        {/* Mobile Section Steps */}
+        <div className="lg:hidden mb-4">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => setCurrentSection(section.id)}
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all ${
+                  currentSection === section.id
+                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md'
+                    : 'bg-white/60 text-gray-500 border border-gray-200'
+                }`}
+              >
+                <span>{section.icon}</span>
+                <span>{section.title}</span>
+              </button>
+            ))}
+          </div>
+          <div className="mt-3 flex items-center gap-3">
+            <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+              <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-1.5 rounded-full transition-all" style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }} />
+            </div>
+            <span className="text-xs font-bold text-gray-500">{currentSection + 1}/{sections.length}</span>
+          </div>
+        </div>
+
+        <div className="flex gap-6 lg:gap-8">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block w-72 flex-shrink-0">
+            <div className="card sticky top-36">
+              <h3 className="font-bold mb-4 text-gray-800">Sections</h3>
+              <div className="space-y-1">
                 {sections.map((section) => (
                   <button
                     key={section.id}
                     onClick={() => setCurrentSection(section.id)}
-                    className={`w-full text-left p-3 rounded-lg transition flex items-center gap-3 ${currentSection === section.id
-                        ? 'bg-primary-red text-white'
-                        : 'hover:bg-neutral-light'
-                      }`}
+                    className={`w-full text-left p-3 rounded-xl transition flex items-center gap-3 ${
+                      currentSection === section.id
+                        ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md'
+                        : 'hover:bg-white/60 text-gray-600'
+                    }`}
                   >
-                    <span className="text-lg">{section.icon}</span>
+                    <span className="text-base">{section.icon}</span>
                     <span className="text-sm font-medium">{section.title}</span>
                   </button>
                 ))}
               </div>
 
-              {/* Progress */}
-              <div className="mt-6 pt-6 border-t border-neutral-border">
+              <div className="mt-6 pt-6 border-t border-gray-100">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-neutral-medium">Progress</span>
-                  <span className="text-sm font-semibold">
-                    {Math.round(((currentSection + 1) / sections.length) * 100)}%
-                  </span>
+                  <span className="text-sm text-gray-500">Progress</span>
+                  <span className="text-sm font-semibold text-gray-700">{Math.round(((currentSection + 1) / sections.length) * 100)}%</span>
                 </div>
-                <div className="w-full bg-neutral-light rounded-full h-2">
-                  <div
-                    className="bg-gradient-red-gold h-2 rounded-full transition-all"
-                    style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }}
-                  />
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div className="bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] h-2 rounded-full transition-all" style={{ width: `${((currentSection + 1) / sections.length) * 100}%` }} />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="card">
               {renderSection()}
 
-              {/* Navigation Buttons */}
-              <div className="flex justify-between items-center pt-8 border-t border-neutral-border mt-8">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-6 border-t border-gray-100 mt-6">
                 <button
                   onClick={() => setCurrentSection(Math.max(0, currentSection - 1))}
                   disabled={currentSection === 0}
-                  className="px-6 py-2 bg-neutral-light text-neutral-dark rounded-lg hover:bg-neutral-border transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-5 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                 >
                   Previous
                 </button>
 
-                <div className="flex gap-4">
+                <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
                   <button
                     onClick={saveDraft}
                     disabled={saving}
-                    className="flex items-center gap-2 px-6 py-2 bg-neutral-light text-neutral-dark rounded-lg hover:bg-neutral-border transition disabled:opacity-50"
+                    className="flex items-center justify-center gap-2 px-5 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition disabled:opacity-50 text-sm font-medium"
                   >
                     <Save className="w-4 h-4" />
                     {saving ? 'Saving...' : 'Save Draft'}
@@ -787,7 +807,7 @@ export default function IdeaSubmissionPage() {
                   {currentSection < sections.length - 1 ? (
                     <button
                       onClick={() => setCurrentSection(currentSection + 1)}
-                      className="px-6 py-2 bg-primary-red text-white rounded-lg hover:bg-primary-darkRed transition"
+                      className="glass-button px-6 py-3 text-sm"
                     >
                       Next
                     </button>
@@ -795,7 +815,7 @@ export default function IdeaSubmissionPage() {
                     <button
                       onClick={handleSubmit}
                       disabled={submitting}
-                      className="flex items-center gap-2 px-6 py-2 bg-semantic-success text-white rounded-lg hover:bg-green-600 transition disabled:opacity-50"
+                      className="flex items-center justify-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition disabled:opacity-50 text-sm font-semibold"
                     >
                       <Send className="w-4 h-4" />
                       {submitting ? 'Submitting...' : 'Submit Idea'}

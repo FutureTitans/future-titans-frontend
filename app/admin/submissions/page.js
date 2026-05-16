@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { submission } from '@/lib/api';
 import { getAuthToken } from '@/lib/auth';
-import { Download, Eye, Edit } from 'lucide-react';
+import { Download, Eye, X, ChevronLeft, ChevronRight, FileText, Trophy, Ban } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function SubmissionsPage() {
@@ -17,8 +17,8 @@ export default function SubmissionsPage() {
 
   const fetchSubmissions = async () => {
     try {
+      setLoading(true);
       const data = await submission.getAll({ status: filter, page: pagination.page, limit: 50 });
-      // Handle both old format (array) and new format (object with submissions and pagination)
       if (Array.isArray(data)) {
         setSubmissions(data);
       } else {
@@ -33,7 +33,7 @@ export default function SubmissionsPage() {
   };
 
   useEffect(() => {
-    setPagination({ page: 1, totalPages: 1, total: 0 }); // Reset to page 1 when filter changes
+    setPagination({ page: 1, totalPages: 1, total: 0 });
     fetchSubmissions();
   }, [filter]);
 
@@ -61,12 +61,9 @@ export default function SubmissionsPage() {
 
   const handleDownloadPDF = async (submissionId) => {
     try {
-      // Get the submission details to access the PDF URL directly
       const details = detailedSubmission || await submission.getDetails(submissionId);
-      
       if (details?.pdfFile) {
         let downloadUrl = details.pdfFile;
-        // If it's a Vercel Blob URL, use the ?download=1 parameter to trigger direct download
         if (downloadUrl.startsWith('http')) {
           if (downloadUrl.includes('public.blob.vercel-storage.com') && !downloadUrl.includes('download=1')) {
             downloadUrl += (downloadUrl.includes('?') ? '&' : '?') + 'download=1';
@@ -78,16 +75,13 @@ export default function SubmissionsPage() {
           a.click();
           document.body.removeChild(a);
         } else {
-          // Fallback mechanism
           const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api';
           const token = getAuthToken();
-          
           const response = await fetch(`${API_URL}/submission/admin/${submissionId}/download/pdf`, {
             method: 'GET',
             headers: { 'Authorization': `Bearer ${token}` },
             redirect: 'follow',
           });
-          
           if (response.ok) {
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
@@ -112,388 +106,269 @@ export default function SubmissionsPage() {
   };
 
   const handleShortlist = async (submissionId) => {
-    if (!confirm('Are you sure you want to shortlist this submission?')) return;
+    if (!confirm('Shortlist this submission?')) return;
     try {
       await submission.score(submissionId, { submissionStatus: 'shortlisted' });
-      // Update local state
-      setSubmissions(submissions.map(sub => 
+      setSubmissions(submissions.map(sub =>
         sub._id === submissionId ? { ...sub, submissionStatus: 'shortlisted' } : sub
       ));
       if (detailedSubmission && selectedSubmission?._id === submissionId) {
         setDetailedSubmission({ ...detailedSubmission, submissionStatus: 'shortlisted' });
         setSelectedSubmission({ ...selectedSubmission, submissionStatus: 'shortlisted' });
       }
-      alert('Submission successfully shortlisted!');
     } catch (error) {
-      console.error('Failed to shortlist submission:', error);
-      alert('Failed to shortlist submission: ' + (error.error || error.message || 'Unknown error'));
+      alert('Failed to shortlist: ' + (error.error || error.message || 'Unknown error'));
     }
   };
 
   const handleReject = async (submissionId) => {
-    if (!confirm('Are you sure you want to reject and permanently delete this submission? This action cannot be undone.')) return;
+    if (!confirm('Reject and permanently delete this submission? This cannot be undone.')) return;
     try {
       await submission.reject(submissionId);
-      // Remove from lists
       setSubmissions(submissions.filter(sub => sub._id !== submissionId));
       setSelectedSubmission(null);
       setDetailedSubmission(null);
-      alert('Submission successfully rejected and deleted.');
     } catch (error) {
-      console.error('Failed to reject submission:', error);
-      alert('Failed to reject submission: ' + (error.error || error.message || 'Unknown error'));
+      alert('Failed to reject: ' + (error.error || error.message || 'Unknown error'));
     }
   };
 
+  const closeModal = () => {
+    setSelectedSubmission(null);
+    setDetailedSubmission(null);
+  };
 
-  if (loading) return <LoadingSpinner message="Loading submissions..." />;
+  if (loading && submissions.length === 0) return <LoadingSpinner message="Loading submissions..." />;
+
+  const statusColors = {
+    submitted: 'bg-amber-50 text-amber-700 border-amber-200',
+    reviewed: 'bg-blue-50 text-blue-700 border-blue-200',
+    shortlisted: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    rejected: 'bg-red-50 text-red-700 border-red-200',
+  };
 
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-8 gradient-text">Submission Management</h1>
+    <div className="space-y-5 sm:space-y-6">
+      <div>
+        <h1 className="text-2xl sm:text-3xl font-bold gradient-text">Submissions</h1>
+        <p className="text-sm text-gray-500 mt-1">Review and manage student idea submissions</p>
+      </div>
 
-      {/* Filters */}
-      <div className="card mb-6">
-        <div className="flex gap-4 flex-wrap">
-          {['submitted', 'reviewed', 'shortlisted', 'rejected'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-lg transition capitalize ${
-                filter === status
-                  ? 'bg-primary-red text-white'
-                  : 'bg-neutral-light text-neutral-dark hover:bg-neutral-border'
-              }`}
-            >
-              {status}
-            </button>
-          ))}
-        </div>
+      {/* Filter Tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
+        {['submitted', 'reviewed', 'shortlisted', 'rejected'].map((status) => (
+          <button
+            key={status}
+            onClick={() => setFilter(status)}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+              filter === status
+                ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md'
+                : 'glass-subtle text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </button>
+        ))}
       </div>
 
       {/* Submissions Table */}
-      <div className="card overflow-x-auto">
-        <table className="w-full">
-          <thead className="border-b border-neutral-border">
-            <tr className="text-left text-sm font-semibold text-neutral-dark">
-              <th className="p-4">Project Title</th>
-              <th className="p-4">Team Lead</th>
-              <th className="p-4">Category</th>
-              <th className="p-4">Email</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Score</th>
-              <th className="p-4">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {submissions.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="p-4 text-center text-neutral-medium">
-                  No submissions found
-                </td>
+      <div className="card !p-0 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-gray-50/50">
+                <th className="text-left p-4 font-semibold text-gray-600">Project</th>
+                <th className="text-left p-4 font-semibold text-gray-600 hidden md:table-cell">Student</th>
+                <th className="text-left p-4 font-semibold text-gray-600 hidden lg:table-cell">Category</th>
+                <th className="text-center p-4 font-semibold text-gray-600">Status</th>
+                <th className="text-center p-4 font-semibold text-gray-600">Score</th>
+                <th className="text-center p-4 font-semibold text-gray-600">Actions</th>
               </tr>
-            ) : (
-              submissions.map((sub) => (
-                <tr key={sub._id} className="border-b border-neutral-border hover:bg-neutral-light transition">
-                  <td className="p-4 font-semibold">{sub.projectTitle}</td>
-                  <td className="p-4">{sub.studentId?.name || 'N/A'}</td>
-                  <td className="p-4 text-sm">{sub.primaryCategory}</td>
-                  <td className="p-4 text-sm">{sub.studentId?.email}</td>
-                  <td className="p-4">
-                    <span
-                      className={`badge capitalize ${
-                        sub.submissionStatus === 'submitted'
-                          ? 'badge-red'
-                          : sub.submissionStatus === 'shortlisted'
-                          ? 'badge-success'
-                          : 'bg-neutral-light text-neutral-dark'
-                      }`}
-                    >
-                      {sub.submissionStatus}
-                    </span>
-                  </td>
-                  <td className="p-4">
-                    <span className="font-bold text-primary-red">{sub.adminScore || '-'}/100</span>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleViewDetails(sub)}
-                        className="text-primary-red hover:text-primary-darkRed transition"
-                        title="View details"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="text-primary-red hover:text-primary-darkRed transition" title="Edit score">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleDownloadPDF(sub._id)}
-                        className="text-primary-red hover:text-primary-darkRed transition" 
-                        title="Download PDF"
-                        disabled={!sub.pdfFile}
-                      >
-                        <Download className="w-4 h-4" />
-                      </button>
-                    </div>
+            </thead>
+            <tbody>
+              {submissions.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="p-12 text-center">
+                    <FileText className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500 text-sm">No {filter} submissions</p>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                submissions.map((sub) => (
+                  <tr key={sub._id} className="border-b border-gray-50 hover:bg-[#D4AF37]/[0.03] transition-colors">
+                    <td className="p-4">
+                      <p className="font-medium text-gray-800 line-clamp-1">{sub.projectTitle}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 md:hidden">{sub.studentId?.name || 'N/A'}</p>
+                    </td>
+                    <td className="p-4 hidden md:table-cell">
+                      <p className="text-gray-700">{sub.studentId?.name || 'N/A'}</p>
+                      <p className="text-xs text-gray-500">{sub.studentId?.email}</p>
+                    </td>
+                    <td className="p-4 hidden lg:table-cell">
+                      <span className="text-xs text-gray-600">{sub.primaryCategory || sub.category}</span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize border ${statusColors[sub.submissionStatus] || 'bg-gray-50 text-gray-600 border-gray-200'}`}>
+                        {sub.submissionStatus}
+                      </span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="font-bold text-[#B8952E]">{sub.adminScore || '-'}</span>
+                      <span className="text-gray-400 text-xs">/100</span>
+                    </td>
+                    <td className="p-4">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => handleViewDetails(sub)}
+                          className="p-2 rounded-lg hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition"
+                          title="View details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDownloadPDF(sub._id)}
+                          className="p-2 rounded-lg hover:bg-purple-50 text-gray-400 hover:text-purple-600 transition"
+                          title="Download PDF"
+                          disabled={!sub.pdfFile}
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        {pagination.totalPages > 1 && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
+            <p className="text-xs text-gray-500">
+              Page {pagination.page} of {pagination.totalPages}
+            </p>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPagination(p => ({ ...p, page: Math.max(1, p.page - 1) }))}
+                disabled={pagination.page <= 1}
+                className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setPagination(p => ({ ...p, page: Math.min(p.totalPages, p.page + 1) }))}
+                disabled={pagination.page >= pagination.totalPages}
+                className="p-1.5 rounded-lg hover:bg-gray-100 disabled:opacity-30 transition"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Detail View Modal */}
+      {/* Detail Modal */}
       {selectedSubmission && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" onClick={() => setSelectedSubmission(null)}>
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-6">
-                <div>
-                  <h2 className="text-2xl font-bold mb-2">{selectedSubmission.projectTitle}</h2>
-                  <div className="flex gap-2 items-center">
-                    <span className={`badge capitalize ${
-                      selectedSubmission.submissionStatus === 'submitted' ? 'badge-red' :
-                      selectedSubmission.submissionStatus === 'shortlisted' ? 'badge-success' :
-                      selectedSubmission.submissionStatus === 'reviewed' ? 'bg-blue-100 text-blue-800' :
-                      'bg-neutral-light text-neutral-dark'
-                    }`}>
-                      {selectedSubmission.submissionStatus}
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-start justify-center p-4 pt-[5vh] z-50 overflow-y-auto" onClick={closeModal}>
+          <div className="glass-strong rounded-2xl max-w-3xl w-full shadow-2xl border border-white/30 my-auto" onClick={(e) => e.stopPropagation()}>
+            {/* Modal Header */}
+            <div className="flex items-start justify-between p-5 sm:p-6 border-b border-gray-100">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xl font-bold text-gray-800 line-clamp-2">{selectedSubmission.projectTitle}</h2>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold capitalize border ${statusColors[selectedSubmission.submissionStatus] || ''}`}>
+                    {selectedSubmission.submissionStatus}
+                  </span>
+                  {selectedSubmission.adminScore && (
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-[#D4AF37]/10 text-[#B8952E] border border-[#D4AF37]/20">
+                      Score: {selectedSubmission.adminScore}/100
                     </span>
-                    {selectedSubmission.adminScore && (
-                      <span className="text-sm font-semibold text-primary-red">
-                        Score: {selectedSubmission.adminScore}/100
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </div>
-                <button
-                  onClick={() => {
-                    setSelectedSubmission(null);
-                    setDetailedSubmission(null);
-                  }}
-                  className="text-neutral-medium hover:text-neutral-dark text-2xl leading-none"
-                >
-                  ✕
-                </button>
               </div>
+              <button onClick={closeModal} className="p-2 rounded-lg hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition ml-3">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
 
+            {/* Modal Body */}
+            <div className="p-5 sm:p-6 max-h-[60vh] overflow-y-auto space-y-5">
               {loadingDetails ? (
                 <div className="flex justify-center py-12">
                   <LoadingSpinner message="Loading details..." />
                 </div>
               ) : (
-                <div className="space-y-6">
+                <>
                   {/* Student Info */}
-                  <div className="bg-neutral-light p-4 rounded-lg">
-                    <h3 className="font-semibold mb-2">Student Information</h3>
+                  <div className="glass-subtle rounded-xl p-4">
+                    <h3 className="font-semibold text-sm text-gray-700 mb-2">Student</h3>
                     <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span className="text-neutral-medium">Name:</span>{' '}
-                        <span className="font-medium">{detailedSubmission?.studentId?.name || selectedSubmission.studentId?.name || 'N/A'}</span>
-                      </div>
-                      <div>
-                        <span className="text-neutral-medium">Email:</span>{' '}
-                        <span className="font-medium">{detailedSubmission?.studentId?.email || selectedSubmission.studentId?.email || 'N/A'}</span>
-                      </div>
-                      <div>
-                        <span className="text-neutral-medium">School:</span>{' '}
-                        <span className="font-medium">{detailedSubmission?.studentId?.school || selectedSubmission.studentId?.school || 'N/A'}</span>
-                      </div>
-                      <div>
-                        <span className="text-neutral-medium">Submitted:</span>{' '}
-                        <span className="font-medium">
-                          {selectedSubmission.submittedAt 
-                            ? new Date(selectedSubmission.submittedAt).toLocaleDateString()
-                            : 'N/A'}
-                        </span>
-                      </div>
+                      <div><span className="text-gray-500">Name:</span> <span className="font-medium text-gray-800">{detailedSubmission?.studentId?.name || selectedSubmission.studentId?.name || 'N/A'}</span></div>
+                      <div><span className="text-gray-500">Email:</span> <span className="font-medium text-gray-800">{detailedSubmission?.studentId?.email || selectedSubmission.studentId?.email || 'N/A'}</span></div>
+                      <div><span className="text-gray-500">School:</span> <span className="font-medium text-gray-800">{detailedSubmission?.studentId?.school || 'N/A'}</span></div>
+                      <div><span className="text-gray-500">Submitted:</span> <span className="font-medium text-gray-800">{selectedSubmission.submittedAt ? new Date(selectedSubmission.submittedAt).toLocaleDateString() : 'N/A'}</span></div>
                     </div>
                   </div>
 
                   {/* Team Members */}
-                  {detailedSubmission?.teamMembers && detailedSubmission.teamMembers.length > 0 && (
+                  {detailedSubmission?.teamMembers?.length > 0 && (
                     <div>
-                      <h3 className="font-semibold mb-2">Team Members</h3>
+                      <h3 className="font-semibold text-sm text-gray-700 mb-2">Team Members</h3>
                       <div className="space-y-2">
                         {detailedSubmission.teamMembers.map((member, idx) => (
-                          <div key={idx} className="bg-neutral-light p-3 rounded-lg text-sm">
-                            <span className="font-medium">{member.name}</span> - {member.email} ({member.role})
+                          <div key={idx} className="glass-subtle rounded-lg p-3 text-sm">
+                            <span className="font-medium text-gray-800">{member.name}</span>
+                            <span className="text-gray-500"> — {member.email} ({member.role})</span>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Project Details */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="font-semibold mb-2">Primary Category</h3>
-                      <p className="text-neutral-medium">{detailedSubmission?.primaryCategory || selectedSubmission.primaryCategory}</p>
+                  {/* Content Sections */}
+                  {[
+                    { label: 'Elevator Pitch', value: detailedSubmission?.elevatorPitch || selectedSubmission.elevatorPitch },
+                    { label: 'Problem Statement', value: detailedSubmission?.problemStatement || selectedSubmission.problemStatement },
+                    { label: 'Existing Solutions', value: detailedSubmission?.existingSolutions },
+                    { label: 'Solution Overview', value: detailedSubmission?.solutionOverview || selectedSubmission.solutionOverview },
+                    { label: 'Prototype', value: detailedSubmission?.prototypeDescription },
+                    { label: 'Business Model', value: detailedSubmission?.businessModel },
+                    { label: 'Impact', value: detailedSubmission?.impactDescription },
+                    { label: 'User Types', value: detailedSubmission?.userTypes },
+                    { label: 'Reach Strategy', value: detailedSubmission?.reachStrategy },
+                    { label: 'Team Skills', value: detailedSubmission?.teamSkills },
+                    { label: 'Want to Learn', value: detailedSubmission?.wantToLearn },
+                    { label: 'Improvement Plan', value: detailedSubmission?.improvementPlan },
+                    { label: 'Inspiration', value: detailedSubmission?.inspiration },
+                    { label: 'Previous Work', value: detailedSubmission?.previousWork },
+                  ].filter(s => s.value).map((section, idx) => (
+                    <div key={idx}>
+                      <h3 className="font-semibold text-sm text-gray-700 mb-1.5">{section.label}</h3>
+                      <p className="text-sm text-gray-600 glass-subtle rounded-lg p-3">{section.value}</p>
                     </div>
-                    {detailedSubmission?.secondaryCategory && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Secondary Category</h3>
-                        <p className="text-neutral-medium">{detailedSubmission.secondaryCategory}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Core Content */}
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="font-semibold mb-2">Elevator Pitch</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg">{detailedSubmission?.elevatorPitch || selectedSubmission.elevatorPitch}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Problem Statement</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg">{detailedSubmission?.problemStatement || selectedSubmission.problemStatement}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Existing Solutions</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg">{detailedSubmission?.existingSolutions || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Solution Overview</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg">{detailedSubmission?.solutionOverview || selectedSubmission.solutionOverview}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Prototype Description</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg">{detailedSubmission?.prototypeDescription || 'Not provided'}</p>
-                    </div>
-                  </div>
-
-                  {/* Business & Impact */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="font-semibold mb-2">Business Model</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg">{detailedSubmission?.businessModel || selectedSubmission.businessModel || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Impact Description</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg">{detailedSubmission?.impactDescription || selectedSubmission.impactDescription || 'Not provided'}</p>
-                    </div>
-                  </div>
-
-                  {/* Additional Details */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="font-semibold mb-2">User Types</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.userTypes || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Reach Strategy</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.reachStrategy || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Team Skills</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.teamSkills || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Want to Learn</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.wantToLearn || 'Not provided'}</p>
-                    </div>
-                  </div>
+                  ))}
 
                   {/* Biggest Costs */}
-                  {detailedSubmission?.biggestCosts && detailedSubmission.biggestCosts.length > 0 && (
+                  {detailedSubmission?.biggestCosts?.filter(c => c).length > 0 && (
                     <div>
-                      <h3 className="font-semibold mb-2">Biggest Costs</h3>
-                      <ul className="list-disc list-inside space-y-1 bg-neutral-light p-3 rounded-lg">
-                        {detailedSubmission.biggestCosts.map((cost, idx) => (
-                          <li key={idx} className="text-neutral-medium text-sm">{cost}</li>
+                      <h3 className="font-semibold text-sm text-gray-700 mb-1.5">Biggest Costs</h3>
+                      <ul className="list-disc list-inside glass-subtle rounded-lg p-3 space-y-1">
+                        {detailedSubmission.biggestCosts.filter(c => c).map((cost, idx) => (
+                          <li key={idx} className="text-sm text-gray-600">{cost}</li>
                         ))}
                       </ul>
                     </div>
                   )}
 
-                  {/* Implementation & Vision */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div>
-                      <h3 className="font-semibold mb-2">Implementation Timeline</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.implementationTimeline || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Resources Needed</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.resourcesNeeded || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Expected Short-Term Outcomes</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.expectedShortTermOutcomes || 'Not provided'}</p>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold mb-2">Long-Term Vision</h3>
-                      <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission?.longTermVision || 'Not provided'}</p>
-                    </div>
-                  </div>
-
-                  {/* Additional Fields */}
-                  <div className="space-y-4">
-                    {detailedSubmission?.improvementPlan && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Improvement Plan</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.improvementPlan}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.successMetrics && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Success Metrics</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.successMetrics}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.risks && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Risks</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.risks}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.primaryBeneficiaries && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Primary Beneficiaries</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.primaryBeneficiaries}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.keyStakeholders && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Key Stakeholders</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.keyStakeholders}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.sustainability && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Sustainability</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.sustainability}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.ethicalConsiderations && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Ethical Considerations</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.ethicalConsiderations}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.inspiration && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Inspiration</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.inspiration}</p>
-                      </div>
-                    )}
-                    {detailedSubmission?.previousWork && (
-                      <div>
-                        <h3 className="font-semibold mb-2">Previous Work</h3>
-                        <p className="text-neutral-medium bg-neutral-light p-3 rounded-lg text-sm">{detailedSubmission.previousWork}</p>
-                      </div>
-                    )}
-                  </div>
-
                   {/* Files */}
-                  <div className="border-t border-neutral-border pt-4">
-                    <h3 className="font-semibold mb-3">Attachments</h3>
-                    <div className="flex gap-4">
+                  <div className="border-t border-gray-100 pt-4">
+                    <h3 className="font-semibold text-sm text-gray-700 mb-3">Attachments</h3>
+                    <div className="flex flex-wrap gap-3">
                       {detailedSubmission?.pdfFile && (
                         <button
                           onClick={() => handleDownloadPDF(selectedSubmission._id)}
-                          className="flex items-center gap-2 bg-primary-red text-white px-4 py-2 rounded-lg hover:bg-primary-darkRed transition"
+                          className="glass-button !px-4 !py-2.5 text-sm flex items-center gap-2"
                         >
                           <Download className="w-4 h-4" />
                           Download PDF
@@ -504,52 +379,43 @@ export default function SubmissionsPage() {
                           href={detailedSubmission.videoFile}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 bg-neutral-light text-neutral-dark px-4 py-2 rounded-lg hover:bg-neutral-border transition"
+                          className="glass-button-secondary !px-4 !py-2.5 text-sm flex items-center gap-2"
                         >
-                          <Download className="w-4 h-4" />
+                          <Eye className="w-4 h-4" />
                           View Video
                         </a>
                       )}
                       {!detailedSubmission?.pdfFile && !detailedSubmission?.videoFile && (
-                        <p className="text-neutral-medium text-sm">No files attached</p>
+                        <p className="text-sm text-gray-500">No files attached</p>
                       )}
                     </div>
                   </div>
-
-                  {/* Admin Notes */}
-                  {detailedSubmission?.adminNotes && (
-                    <div className="border-t border-neutral-border pt-4">
-                      <h3 className="font-semibold mb-2">Admin Notes</h3>
-                      <p className="text-neutral-medium bg-yellow-50 p-3 rounded-lg text-sm">{detailedSubmission.adminNotes}</p>
-                    </div>
-                  )}
-
-                  {/* Actions */}
-                  <div className="flex gap-4 pt-4 border-t border-neutral-border">
-                    <button 
-                      onClick={() => handleReject(selectedSubmission._id)}
-                      className="flex-1 bg-red-100 text-red-600 px-4 py-2 rounded-lg hover:bg-red-200 transition font-semibold"
-                    >
-                      Reject
-                    </button>
-                    <button 
-                      onClick={() => handleShortlist(selectedSubmission._id)}
-                      className="flex-1 bg-accent-gold text-white px-4 py-2 rounded-lg hover:bg-accent-amber transition font-semibold"
-                    >
-                      Shortlist
-                    </button>
-                    <button 
-                      onClick={() => {
-                        setSelectedSubmission(null);
-                        setDetailedSubmission(null);
-                      }}
-                      className="flex-1 bg-neutral-light text-neutral-dark px-4 py-2 rounded-lg hover:bg-neutral-border transition font-semibold"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
+                </>
               )}
+            </div>
+
+            {/* Modal Footer Actions */}
+            <div className="flex gap-3 p-5 sm:p-6 border-t border-gray-100">
+              <button
+                onClick={() => handleReject(selectedSubmission._id)}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 font-semibold text-sm transition"
+              >
+                <Ban className="w-4 h-4" />
+                Reject
+              </button>
+              <button
+                onClick={() => handleShortlist(selectedSubmission._id)}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white font-semibold text-sm shadow-md hover:shadow-lg transition"
+              >
+                <Trophy className="w-4 h-4" />
+                Shortlist
+              </button>
+              <button
+                onClick={closeModal}
+                className="flex-1 px-4 py-2.5 rounded-xl glass-subtle text-gray-700 font-semibold text-sm hover:bg-gray-100 transition"
+              >
+                Close
+              </button>
             </div>
           </div>
         </div>
@@ -557,4 +423,3 @@ export default function SubmissionsPage() {
     </div>
   );
 }
-

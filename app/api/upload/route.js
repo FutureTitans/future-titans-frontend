@@ -2,6 +2,11 @@ import { handleUpload } from '@vercel/blob/client';
 import { NextResponse } from 'next/server';
 
 export async function POST(request) {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   const body = await request.json();
 
   try {
@@ -9,13 +14,9 @@ export async function POST(request) {
       body,
       request,
       onBeforeGenerateToken: async (pathname) => {
-        // Automatically allow standard assets since we're using JWTs in other microservices.
-        // The tokenPayload string ensures the blob payload has identifiable info if needed later.
         return {
           allowedContentTypes: ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'video/mp4'],
-          tokenPayload: JSON.stringify({
-            // could insert getAuthToken() claims here if needed
-          }),
+          tokenPayload: JSON.stringify({}),
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {

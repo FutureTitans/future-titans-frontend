@@ -64,8 +64,8 @@ export default function StudentModulesPage() {
   }
 
   return (
-    <div className="min-h-screen relative" style={{ zIndex: 1 }}>
-      <div className="container-lg py-8 pb-32 space-y-6">
+    <div className="min-h-[calc(100dvh-4rem)] relative" style={{ zIndex: 1 }}>
+      <div className="container-lg py-6 sm:py-8 pb-24 sm:pb-32 space-y-6">
         {/* Payment Check */}
         {!paymentStatus?.isPaid && (
           <div className="glass-panel border-l-4 border-l-[#D4AF37] p-6 mb-8 max-w-4xl mx-auto">
@@ -84,35 +84,28 @@ export default function StudentModulesPage() {
           </div>
         )}
 
-        <div className="text-center md:mb-6 mb-4 mt-4 relative">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 mb-12 tracking-tight">Choose Your Level</h1>
+        <div className="text-center mb-4 sm:mb-6 mt-2 sm:mt-4 relative">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-gray-700 to-gray-900 mb-6 sm:mb-12 tracking-tight">Choose Your Level</h1>
 
-          {/* Highlighted Instruction Box */}
-          <div className="relative max-w-2xl mx-auto mt-8">
-            {/* Floating animated arrow pointing down */}
-            <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center">
+          <div className="relative max-w-2xl mx-auto mt-4 sm:mt-8">
+            <div className="absolute -top-10 sm:-top-12 left-1/2 -translate-x-1/2 animate-bounce flex flex-col items-center">
               <span className="text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-widest mb-1 bg-white/80 px-2 py-0.5 rounded-full shadow-sm backdrop-blur-sm">Important</span>
-              <ArrowDown className="w-8 h-8 text-[#B8952E] drop-shadow-lg" />
+              <ArrowDown className="w-6 h-6 sm:w-8 sm:h-8 text-[#B8952E] drop-shadow-lg" />
             </div>
 
-            <div className="glass-panel bg-gradient-to-br from-white/90 to-[#F5EDD6]/90 border-2 border-[#D4AF37] p-6 md:p-8 rounded-3xl shadow-2xl shadow-[#D4AF37]/20 relative overflow-hidden transform hover:scale-[1.02] transition-transform duration-300">
-              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#D4AF37] to-[#F5D76E]"></div>
-              <div className="absolute -right-12 -top-12 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl pointer-events-none"></div>
-              <div className="absolute -left-12 -bottom-12 w-32 h-32 bg-[#F5D76E]/10 rounded-full blur-2xl pointer-events-none"></div>
-              <p className="text-gray-800 text-sm md:text-base leading-relaxed font-semibold relative z-10">
-                You have the freedom to start anywhere! Select <strong className="text-black bg-gradient-to-r from-[#D4AF37]/30 to-[#F5D76E]/30 px-2 py-0.5 rounded shadow-sm text-lg mx-1">ANY</strong> level that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge. The path is yours to decide!
+            <div className="glass-panel bg-gradient-to-br from-white/90 to-[#F5EDD6]/90 border-2 border-[#D4AF37] p-5 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl shadow-2xl shadow-[#D4AF37]/20 relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#D4AF37] to-[#F5D76E]" />
+              <p className="text-gray-800 text-sm sm:text-base leading-relaxed font-semibold relative z-10">
+                You have the freedom to start anywhere! Select <strong className="text-black bg-gradient-to-r from-[#D4AF37]/30 to-[#F5D76E]/30 px-1.5 py-0.5 rounded shadow-sm sm:text-lg mx-0.5">ANY</strong> level that matches your interests or skill level. Complete a module to build your idea and become eligible to participate in the final challenge.
               </p>
             </div>
           </div>
         </div>
 
-        {/* 🏆 Tournament Bracket Container 🏆 */}
         <div className="relative w-full overflow-hidden mt-4 md:mt-6">
-          {/* Central Connecting Background Line */}
-          <div className="absolute top-[40%] left-0 right-0 h-1.5 md:h-2 bg-gradient-to-r from-gray-200 via-white/80 to-gray-200 shadow-[0_0_15px_rgba(212,175,55,0.2)] -translate-y-1/2 z-0 hidden md:block"></div>
+          <div className="absolute top-[40%] left-0 right-0 h-1.5 md:h-2 bg-gradient-to-r from-gray-200 via-white/80 to-gray-200 shadow-[0_0_15px_rgba(212,175,55,0.2)] -translate-y-1/2 z-0 hidden md:block" />
 
-          {/* Horizontal Scroller */}
-          <div className="flex md:flex-row flex-col gap-12 md:gap-8 overflow-x-auto pb-16 pt-4 snap-x snap-mandatory hide-scrollbar relative z-10 px-4 md:px-12 items-center justify-start min-h-[500px]">
+          <div className="flex md:flex-row flex-col gap-8 md:gap-8 overflow-x-auto pb-8 sm:pb-16 pt-4 snap-x snap-mandatory relative z-10 px-2 sm:px-4 md:px-12 items-center justify-start md:min-h-[500px]" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
 
             {sortedModules.map((module, index) => {
               const isDone = (module.userProgress?.completionPercentage || 0) >= 100;

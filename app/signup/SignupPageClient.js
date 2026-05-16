@@ -26,7 +26,8 @@ function InputField({ label, name, type = 'text', placeholder, isPassword = fals
           <button
             type="button"
             onClick={onTogglePw}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-gray-600 transition rounded-lg"
+            aria-label={showPw ? 'Hide password' : 'Show password'}
           >
             {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
@@ -113,97 +114,90 @@ export default function SignupPageClient() {
   };
 
   return (
-    <>
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 py-12 pt-24">
-        {/* Background blobs */}
-        <div className="absolute top-[-15%] right-[-15%] w-[55%] h-[55%] bg-[#F5D76E]/15 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute bottom-[-15%] left-[-15%] w-[55%] h-[55%] bg-[#D4AF37]/12 rounded-full blur-[120px] pointer-events-none"></div>
+    <div className="min-h-[calc(100dvh-4rem)] flex items-center justify-center relative overflow-hidden px-4 py-6 sm:py-10">
+      <div className="absolute -top-[15%] -right-[15%] w-[55%] h-[55%] bg-[#F5D76E]/15 rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
+      <div className="absolute -bottom-[15%] -left-[15%] w-[55%] h-[55%] bg-[#D4AF37]/[0.12] rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
 
-        <div className="w-full max-w-5xl relative z-10 grid md:grid-cols-5 gap-0 glass-panel overflow-hidden shadow-2xl">
-          {/* Left — Brand panel (desktop only) */}
-          <div className="hidden md:flex md:col-span-2 relative overflow-hidden" style={{ borderRadius: '24px 0 0 24px' }}>
-            <img src="/students_signup.png" alt="Indian high school students" className="w-full h-full object-cover" />
-          </div>
+      <div className="w-full max-w-5xl relative z-10 grid md:grid-cols-5 gap-0 glass-panel overflow-hidden shadow-2xl">
+        <div className="hidden md:flex md:col-span-2 relative overflow-hidden" style={{ borderRadius: '24px 0 0 24px' }}>
+          <img src="/students_signup.png" alt="Students working together on innovation projects" className="w-full h-full object-cover" />
+        </div>
 
-          {/* Right — Form panel */}
-          <div className="md:col-span-3 p-6 sm:p-8 md:p-10">
-            <div className="mb-6">
-              <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#D4AF37] transition mb-5 group text-sm">
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                Back to Home
-              </Link>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h1>
-              <p className="text-gray-500 text-sm">Join Future Titans and start your innovation journey</p>
-              {initialSlug && (
-                <div className="mt-3 inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full px-4 py-1 text-xs text-[#B8952E] font-medium">
-                  ✨ Special Offer applied via <span className="font-mono font-bold">{initialSlug}</span>
-                </div>
-              )}
-            </div>
-
-            {errors.submit && (
-              <div className="bg-red-50/80 border border-red-200/50 text-red-700 px-4 py-3 rounded-2xl mb-5 flex items-center gap-2 text-sm backdrop-blur-sm">
-                <span className="text-lg">⚠️</span> {errors.submit}
+        <div className="md:col-span-3 p-5 sm:p-8 md:p-10">
+          <div className="mb-5">
+            <Link href="/" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#D4AF37] transition mb-4 group text-sm">
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+              Back to Home
+            </Link>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h1>
+            <p className="text-gray-500 text-sm">Join Future Titans and start your innovation journey</p>
+            {initialSlug && (
+              <div className="mt-3 inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full px-4 py-1 text-xs text-[#B8952E] font-medium">
+                Special Offer applied via <span className="font-mono font-bold">{initialSlug}</span>
               </div>
             )}
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid sm:grid-cols-2 gap-4">
-                <InputField label="Full Name" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} error={errors.name} disabled={isLoading} />
-                <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
-                <InputField label="Phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
-                <InputField label="School/Institution or Slug Code" name="school" placeholder="Your School or Slug Code" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Class/Grade</label>
-                  <select
-                    name="class"
-                    value={formData.class}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    className={`glass-input ${errors.class ? 'error' : ''}`}
-                  >
-                    <option value="">Select your class</option>
-                    <option value="8">Class 8</option>
-                    <option value="9">Class 9</option>
-                    <option value="10">Class 10</option>
-                    <option value="11">Class 11</option>
-                    <option value="12">Class 12</option>
-                  </select>
-                  {errors.class && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.class}</p>}
-                </div>
-                <InputField label="Section" name="section" placeholder="e.g. A, B, C" value={formData.section} onChange={handleChange} error={errors.section} disabled={isLoading} />
-                <InputField label="Roll Number" name="rollNumber" placeholder="e.g. 42" value={formData.rollNumber} onChange={handleChange} error={errors.rollNumber} disabled={isLoading} />
-                <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
-                <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />
-                <InputField label="Password" name="password" placeholder="••••••••" isPassword value={formData.password} onChange={handleChange} error={errors.password} disabled={isLoading} showPw={showPassword} onTogglePw={() => setShowPassword(!showPassword)} />
-                <InputField label="Confirm Password" name="confirmPassword" placeholder="••••••••" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} disabled={isLoading} showPw={showConfirmPassword} onTogglePw={() => setShowConfirmPassword(!showConfirmPassword)} />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="glass-button w-full py-4 text-base shadow-xl shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30 flex justify-center items-center mt-4"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  'Create Account'
-                )}
-              </button>
-            </form>
-
-            {/* Login Link */}
-            <p className="text-center text-gray-500 mt-6 text-sm">
-              Already have an account?{' '}
-              <Link href="/login" className="text-[#D4AF37] font-semibold hover:text-[#B8952E] transition">
-                Log In
-              </Link>
-            </p>
           </div>
+
+          {errors.submit && (
+            <div className="bg-red-50/80 border border-red-200/50 text-red-700 px-4 py-3 rounded-2xl mb-5 text-sm backdrop-blur-sm" role="alert">
+              {errors.submit}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+              <InputField label="Full Name" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} error={errors.name} disabled={isLoading} />
+              <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
+              <InputField label="Phone" name="phone" type="tel" placeholder="98XXXXXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
+              <InputField label="School/Institution or Slug Code" name="school" placeholder="Your School or Slug Code" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
+              <div>
+                <label htmlFor="signup-class" className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Class/Grade</label>
+                <select
+                  id="signup-class"
+                  name="class"
+                  value={formData.class}
+                  onChange={handleChange}
+                  disabled={isLoading}
+                  className={`glass-input ${errors.class ? 'error' : ''}`}
+                >
+                  <option value="">Select your class</option>
+                  <option value="8">Class 8</option>
+                  <option value="9">Class 9</option>
+                  <option value="10">Class 10</option>
+                  <option value="11">Class 11</option>
+                  <option value="12">Class 12</option>
+                </select>
+                {errors.class && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.class}</p>}
+              </div>
+              <InputField label="Section" name="section" placeholder="e.g. A, B, C" value={formData.section} onChange={handleChange} error={errors.section} disabled={isLoading} />
+              <InputField label="Roll Number" name="rollNumber" placeholder="e.g. 42" value={formData.rollNumber} onChange={handleChange} error={errors.rollNumber} disabled={isLoading} />
+              <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
+              <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />
+              <InputField label="Password" name="password" placeholder="Min 6 characters" isPassword value={formData.password} onChange={handleChange} error={errors.password} disabled={isLoading} showPw={showPassword} onTogglePw={() => setShowPassword(!showPassword)} />
+              <InputField label="Confirm Password" name="confirmPassword" placeholder="Re-enter password" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} disabled={isLoading} showPw={showConfirmPassword} onTogglePw={() => setShowConfirmPassword(!showConfirmPassword)} />
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="glass-button w-full py-4 text-base shadow-xl shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30 disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                'Create Account'
+              )}
+            </button>
+          </form>
+
+          <p className="text-center text-gray-500 mt-5 text-sm">
+            Already have an account?{' '}
+            <Link href="/login" className="text-[#D4AF37] font-semibold hover:text-[#B8952E] transition">
+              Log In
+            </Link>
+          </p>
         </div>
       </div>
-
-    </>
+    </div>
   );
 }
