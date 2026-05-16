@@ -78,7 +78,12 @@ export default function StudentProfilePage() {
       alert('Profile updated successfully!');
     } catch (error) {
       console.error('Failed to update profile:', error);
-      alert('Failed to update profile. Please try again.');
+      const message =
+        error?.error ||
+        error?.response?.data?.error ||
+        error?.message ||
+        (typeof error === 'string' ? error : 'Unknown error');
+      alert(`Failed to update profile: ${message}`);
     } finally {
       setSaving(false);
     }
