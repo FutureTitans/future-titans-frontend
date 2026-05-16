@@ -11,6 +11,7 @@ export default function GlobalAIChat() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [enabled, setEnabled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -65,8 +66,18 @@ export default function GlobalAIChat() {
 
   useEffect(() => {
     const handleClose = () => setIsOpen(false);
+    const handleHide = () => setIsHidden(true);
+    const handleShow = () => setIsHidden(false);
+
     window.addEventListener('closeGlobalZunnova', handleClose);
-    return () => window.removeEventListener('closeGlobalZunnova', handleClose);
+    window.addEventListener('hideGlobalZunnova', handleHide);
+    window.addEventListener('showGlobalZunnova', handleShow);
+
+    return () => {
+      window.removeEventListener('closeGlobalZunnova', handleClose);
+      window.removeEventListener('hideGlobalZunnova', handleHide);
+      window.removeEventListener('showGlobalZunnova', handleShow);
+    };
   }, []);
 
   useEffect(() => {
@@ -214,7 +225,7 @@ export default function GlobalAIChat() {
     }
   };
 
-  if (shouldHide || !enabled) return null;
+  if (shouldHide || !enabled || isHidden) return null;
 
   return (
     <>

@@ -97,6 +97,13 @@ export default function StudentDashboard() {
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const videoRef = useRef(null);
 
+  const closeFaqModal = () => {
+    setShowFAQ(false);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('showGlobalZunnova'));
+    }
+  };
+
   // First-login auto-show video
   useEffect(() => {
     const hasSeenVideo = localStorage.getItem('ft_video_seen');
@@ -304,7 +311,7 @@ export default function StudentDashboard() {
               onClick={() => {
                 setShowFAQ(true);
                 if (typeof window !== 'undefined') {
-                  window.dispatchEvent(new CustomEvent('closeGlobalZunnova'));
+                  window.dispatchEvent(new CustomEvent('hideGlobalZunnova'));
                 }
               }}
               className="flex items-center gap-2 sm:gap-3 px-1 py-1 pl-4 bg-white border-2 border-[#D4AF37]/30 shadow-sm rounded-full text-gray-800 font-semibold hover:shadow-md transition-all group flex-shrink-0"
@@ -740,12 +747,12 @@ export default function StudentDashboard() {
 
       {/* FAQ Modal */}
       {showFAQ && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:px-4 bg-black/40 backdrop-blur-sm faq-modal-overlay" onClick={() => setShowFAQ(false)}>
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:px-4 bg-black/40 backdrop-blur-sm faq-modal-overlay" onClick={closeFaqModal}>
           <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full sm:max-w-4xl max-h-[92vh] sm:max-h-[85vh] flex flex-col shadow-2xl faq-modal-content border border-[#D4AF37]/20 relative overflow-hidden" onClick={e => e.stopPropagation()}>
             <div className="p-4 sm:p-8 shrink-0 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-[#F5EDD6]/50 to-white relative z-10">
               <h2 className="text-xl sm:text-3xl font-bold text-gray-900">How Can We Help?</h2>
               <button
-                onClick={() => setShowFAQ(false)}
+                onClick={closeFaqModal}
                 className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 hover:text-gray-900 transition-colors flex-shrink-0"
                 aria-label="Close FAQ"
               >
