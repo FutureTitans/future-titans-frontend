@@ -3,6 +3,7 @@ import './globals.css';
 import Navbar from '@/components/shared/Navbar';
 import GlobalAIChat from '@/components/student/GlobalAIChat';
 import FaceGuardWrapper from '@/components/shared/FaceGuardWrapper';
+import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -102,6 +103,7 @@ export default function RootLayout({ children }) {
           <main id="main-content">{children}</main>
         </FaceGuardWrapper>
         <GlobalAIChat />
+        <Analytics />
       </body>
     </html>
   );
