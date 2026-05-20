@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/api';
 import { useAuthStore } from '@/store/useAuthStore';
+import { getUser } from '@/lib/auth';
 import FaceRegistration from './FaceRegistration';
 import FaceLoginVerification from './FaceLoginVerification';
 import LoadingSpinner from './LoadingSpinner';
@@ -41,7 +42,17 @@ export default function ModuleFaceGuard({ children }) {
   const [status, setStatus] = useState('checking');
   const [savedDescriptor, setSavedDescriptor] = useState(null);
 
+  // Skip face verification entirely for demo accounts
+  const currentUser = getUser();
+  const isDemoUser = currentUser?.email === 'demo@futuretitans.com';
+
   useEffect(() => {
+    // Demo users bypass face verification completely
+    if (isDemoUser) {
+      setStatus('cleared');
+      return;
+    }
+
     if (sessionValid()) {
       setStatus('cleared');
       return;
