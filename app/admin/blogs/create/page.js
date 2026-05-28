@@ -6,9 +6,9 @@ import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 import axios from 'axios';
 import dynamic from 'next/dynamic';
-import 'react-quill/dist/quill.snow.css';
+import { upload } from '@vercel/blob/client';
 
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const RichTextEditor = dynamic(() => import('@/components/shared/RichTextEditor'), { ssr: false, loading: () => <div className="h-[400px] bg-gray-50 animate-pulse rounded-xl"></div> });
 
 export default function CreateBlogPage() {
   const router = useRouter();
@@ -19,6 +19,7 @@ export default function CreateBlogPage() {
     content: '',
     status: 'published'
   });
+  const [coverImageFile, setCoverImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -37,23 +38,26 @@ export default function CreateBlogPage() {
     setError('');
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs`, formData, { withCredentials: true });
+      let finalCoverImage = formData.coverImage;
+
+      if (coverImageFile) {
+        const result = await upload(`blog-cover-${Date.now()}-${coverImageFile.name}`, coverImageFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        finalCoverImage = result.url;
+      }
+
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs`, {
+        ...formData,
+        coverImage: finalCoverImage
+      }, { withCredentials: true });
       router.push('/admin/blogs');
     } catch (err) {
       setError(err.response?.data?.message || 'Error creating blog');
     } finally {
       setLoading(false);
     }
-  };
-
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-      [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-      ['link', 'image', 'video'],
-      ['clean']
-    ],
   };
 
   return (
@@ -98,14 +102,16 @@ export default function CreateBlogPage() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Cover Image URL</label>
-          <input 
-            type="url" 
-            value={formData.coverImage}
-            onChange={(e) => setFormData({...formData, coverImage: e.target.value})}
-            className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition-all bg-gray-50/50"
-            placeholder="https://example.com/image.jpg"
-          />
+          <label className="block text-sm font-medium text-gray-700">Cover Image</label>
+          <div className="flex items-center gap-4">
+            <input 
+              type="file" 
+              accept="image/*"
+              onChange={(e) => setCoverImageFile(e.target.files[0])}
+              className="w-full px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition-all bg-gray-50/50 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#D4AF37] hover:file:bg-[#D4AF37]/20"
+            />
+          </div>
+          {coverImageFile && <p className="text-sm text-gray-500 mt-1">Selected: {coverImageFile.name}</p>}
         </div>
 
         <div className="space-y-2">
@@ -120,15 +126,12 @@ export default function CreateBlogPage() {
           </select>
         </div>
 
-        <div className="space-y-2 pb-10">
+        <div className="space-y-2 pb-16">
           <label className="block text-sm font-medium text-gray-700">Content *</label>
-          <div className="h-[400px]">
-            <ReactQuill 
-              theme="snow"
+          <div className="h-[450px]">
+            <RichTextEditor 
               value={formData.content}
               onChange={(content) => setFormData({...formData, content})}
-              modules={modules}
-              className="h-[350px] rounded-xl"
             />
           </div>
         </div>

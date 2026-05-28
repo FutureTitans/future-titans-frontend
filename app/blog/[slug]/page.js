@@ -78,7 +78,7 @@ export default function SingleBlogPage() {
         )}
 
         <div 
-          className="prose prose-lg prose-gray max-w-none prose-headings:text-gray-900 prose-a:text-[#D4AF37] hover:prose-a:text-[#B8952E] prose-img:rounded-2xl prose-img:shadow-md"
+          className="prose prose-lg prose-gray max-w-none prose-headings:text-gray-900 prose-a:text-[#D4AF37] hover:prose-a:text-[#B8952E] prose-img:rounded-2xl prose-img:shadow-md prose-video:w-full prose-video:rounded-2xl prose-video:shadow-lg prose-video:my-8"
           dangerouslySetInnerHTML={{ __html: blog.content }}
         />
 
