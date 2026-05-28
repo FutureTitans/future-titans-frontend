@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { auth } from '@/lib/api';
-import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield } from 'lucide-react';
+import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield, Newspaper } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Navbar() {
@@ -92,6 +92,9 @@ export default function Navbar() {
             <div className="hidden md:flex items-center gap-1">
               {!user ? (
                 <div className="flex items-center gap-3">
+                  <NavLink href="/blog" active={isActive('/blog')} icon={<Newspaper className="w-4 h-4" />}>
+                    Blog
+                  </NavLink>
                   <Link
                     href="/login"
                     className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
@@ -111,6 +114,9 @@ export default function Navbar() {
                 </div>
               ) : (
                 <div className="flex items-center gap-1">
+                  <NavLink href="/blog" active={isActive('/blog')} icon={<Newspaper className="w-4 h-4" />}>
+                    Blog
+                  </NavLink>
                   {isStudent() && (
                     <>
                       <NavLink href="/student/dashboard" active={isActive('/student/dashboard')} icon={<LayoutDashboard className="w-4 h-4" />}>
@@ -179,6 +185,9 @@ export default function Navbar() {
             style={{ animation: 'slideDown 0.25s ease-out' }}
           >
             <div className="container-lg py-4 space-y-1">
+              <MobileNavLink href="/blog" onClick={closeMobileMenu} active={isActive('/blog')} icon={<Newspaper className="w-5 h-5" />}>
+                Blog
+              </MobileNavLink>
               {!user ? (
                 <>
                   <MobileNavLink href="/login" onClick={closeMobileMenu} active={isActive('/login')}>

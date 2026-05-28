@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { getUser } from '@/lib/auth';
-import { LayoutDashboard, Users, BookOpen, FileText, BarChart3, School, Building2, Settings, Rocket, Menu, X, Home } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, FileText, BarChart3, School, Building2, Settings, Rocket, Menu, X, Home, Newspaper } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -15,6 +15,7 @@ const navItems = [
   { href: '/admin/grant-simulation', label: 'Grant Sim', icon: Rocket, highlight: true },
   { href: '/admin/schools', label: 'Schools', icon: School },
   { href: '/admin/associations', label: 'Associations', icon: Building2 },
+  { href: '/admin/blogs', label: 'Blogs', icon: Newspaper },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
