@@ -1,8 +1,11 @@
 import axios from 'axios';
+import { headers } from 'next/headers';
 
 export default async function sitemap() {
-  // Use the actual production domain if environment variable is set, otherwise fallback to the vercel domain
-  const baseUrl = process.env.NEXT_PUBLIC_FRONTEND_URL || 'https://future-titans-frontend-xi.vercel.app';
+  const headersList = headers();
+  const host = headersList.get('host') || 'future-titans-frontend-xi.vercel.app';
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}`;
   
   // Define static routes
   const routes = [
