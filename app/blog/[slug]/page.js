@@ -15,7 +15,7 @@ export default function SingleBlogPage() {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs/${slug}`);
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api'}/blogs/${slug}`);
         setBlog(data);
       } catch (error) {
         console.error('Error fetching blog:', error);

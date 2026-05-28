@@ -48,7 +48,7 @@ export default function CreateBlogPage() {
         finalCoverImage = result.url;
       }
 
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api'}/blogs`, {
         ...formData,
         coverImage: finalCoverImage
       }, { withCredentials: true });

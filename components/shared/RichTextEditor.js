@@ -146,7 +146,7 @@ export default function RichTextEditor({ value, onChange }) {
     editor.insertText(range.index, 'Generating preview...', { color: '#D4AF37' });
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs/preview-link?url=${encodeURIComponent(url)}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api'}/blogs/preview-link?url=${encodeURIComponent(url)}`);
       const data = await response.json();
       
       editor.deleteText(range.index, 21);

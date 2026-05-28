@@ -12,7 +12,7 @@ export default function BlogPage() {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs?status=published`);
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api'}/blogs?status=published`);
         setBlogs(data);
       } catch (error) {
         console.error('Error fetching blogs:', error);

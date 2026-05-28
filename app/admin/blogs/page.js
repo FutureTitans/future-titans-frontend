@@ -11,7 +11,7 @@ export default function AdminBlogsPage() {
 
   const fetchBlogs = async () => {
     try {
-      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs`, { withCredentials: true });
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api'}/blogs`, { withCredentials: true });
       setBlogs(data);
     } catch (error) {
       console.error('Error fetching blogs:', error);
@@ -27,7 +27,7 @@ export default function AdminBlogsPage() {
   const handleDelete = async (id) => {
     if (!confirm('Are you sure you want to delete this blog?')) return;
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3003'}/api/blogs/${id}`, { withCredentials: true });
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5006/api'}/blogs/${id}`, { withCredentials: true });
       fetchBlogs();
     } catch (error) {
       console.error('Error deleting blog:', error);
