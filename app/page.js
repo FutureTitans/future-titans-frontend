@@ -234,10 +234,10 @@ export default function Landing() {
                         <Sparkles className="w-16 h-16 sm:w-20 sm:h-20 text-[#F5D76E]" />
                         <div className="absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 bg-[#F5D76E]/20 rounded-full blur-xl animate-pulse" />
                       </div>
-                      <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center">Innovate.</h3>
+                      <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-[#F5D76E]">Innovate.</h3>
                       <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-[#F5D76E]">Build.</h3>
-                      <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Lead.</h3>
-                      <p className="text-white/60 text-sm text-center max-w-[240px]">Your journey from idea to impact starts here</p>
+                      <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-center text-[#F5D76E]">Lead.</h3>
+                      <p className="text-white/60 text-sm text-center max-w-[240px] text-[#F5D76E]">Your journey from idea to impact starts here</p>
                     </div>
                   </div>
                 </div>
