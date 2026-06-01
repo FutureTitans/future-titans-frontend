@@ -220,17 +220,27 @@ export default function Landing() {
                   </div>
                   <div>
                     <div className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
-                      Meet Zunnova
-                      <span className="block text-gray-500 font-medium text-xs sm:text-sm tracking-wide">Your AI Co-Founder</span>
+                      AI-Powered
+                      <span className="block text-gray-500 font-medium text-xs sm:text-sm tracking-wide">Smart Mentorship</span>
                     </div>
                   </div>
                 </div>
-                <img
-                  src="/zunnova.svg"
-                  alt="Zunnova — AI mentor character that guides students through the innovation challenge"
-                  className="w-full h-auto drop-shadow-[0_30px_60px_rgba(0,0,0,0.4)] relative z-10"
-                  loading="eager"
-                />
+                <div className="w-full aspect-square max-w-[420px] relative z-10">
+                  <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] shadow-2xl overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/15 via-transparent to-[#F5D76E]/10" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-sweep" />
+                    <div className="flex flex-col items-center justify-center h-full text-white p-8 relative z-10">
+                      <div className="relative inline-block mb-6">
+                        <Sparkles className="w-16 h-16 sm:w-20 sm:h-20 text-[#F5D76E]" />
+                        <div className="absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 bg-[#F5D76E]/20 rounded-full blur-xl animate-pulse" />
+                      </div>
+                      <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center">Innovate.</h3>
+                      <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-[#F5D76E]">Build.</h3>
+                      <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Lead.</h3>
+                      <p className="text-white/60 text-sm text-center max-w-[240px]">Your journey from idea to impact starts here</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -271,8 +281,8 @@ export default function Landing() {
               {[
                 {
                   icon: <Zap className="w-6 h-6 text-[#D4AF37]" />,
-                  title: 'Zunnova AI Mentorship',
-                  description: 'Get personalized feedback and guidance from our advanced AI mentor tailored to your journey.',
+                  title: 'AI-Powered Mentorship',
+                  description: 'Get personalized feedback and guidance from our intelligent mentoring system tailored to your journey.',
                   accent: 'from-[#D4AF37]/15 to-[#F5D76E]/15',
                 },
                 {
@@ -303,72 +313,43 @@ export default function Landing() {
           </div>
         </section>
 
-        {/* ═══ SURGE FRAMEWORK ═══ */}
-        <section className="py-16 sm:py-24 lg:py-32 px-4 relative overflow-hidden" aria-labelledby="surge-heading">
+        {/* ═══ YOUR JOURNEY ═══ */}
+        <section className="py-16 sm:py-24 lg:py-32 px-4 relative overflow-hidden" aria-labelledby="journey-heading">
           <div className="absolute inset-0 -z-10 bg-white/20 backdrop-blur-sm" aria-hidden="true" />
 
           <div className="container mx-auto max-w-6xl">
-            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-              <Reveal>
-                <div>
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#B8952E] text-sm font-bold mb-4 tracking-wide">
-                    <Target className="w-4 h-4" />
-                    METHODOLOGY
-                  </div>
-                  <h2 id="surge-heading" className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
-                    The SURGE Framework
-                  </h2>
-                  <p className="text-base sm:text-lg text-gray-500 mb-8 sm:mb-10 leading-relaxed">
-                    Our proprietary 5-stage framework is designed to systematically build your entrepreneurial mindset from the ground up.
-                  </p>
-
-                  <div className="space-y-4 sm:space-y-5">
-                    {[
-                      { letter: 'S', title: 'Self Awareness', desc: 'Identify your strengths and passion' },
-                      { letter: 'U', title: 'Understanding', desc: 'Find gaps and market opportunities' },
-                      { letter: 'R', title: 'Resilience', desc: 'Learn to pivot and overcome failure' },
-                      { letter: 'G', title: 'Growth', desc: 'Scale your solution and impact' },
-                      { letter: 'E', title: 'Entrepreneurial Leadership', desc: 'Lead teams with vision' },
-                    ].map((item, idx) => (
-                      <Reveal key={idx} delay={idx * 80}>
-                        <div className="flex items-center gap-4 sm:gap-5 group surge-item">
-                          <div className="flex-shrink-0 w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] text-white flex items-center justify-center text-base sm:text-lg font-bold shadow-lg shadow-[#D4AF37]/20 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-                            {item.letter}
-                          </div>
-                          <div>
-                            <h4 className="text-base sm:text-lg font-bold text-gray-800">{item.title}</h4>
-                            <p className="text-gray-500 text-sm">{item.desc}</p>
-                          </div>
-                        </div>
-                      </Reveal>
-                    ))}
-                  </div>
+            <Reveal>
+              <div className="text-center mb-12 sm:mb-16">
+                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#B8952E] text-sm font-bold mb-4 tracking-wide">
+                  <Target className="w-4 h-4" />
+                  HOW IT WORKS
                 </div>
-              </Reveal>
+                <h2 id="journey-heading" className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
+                  Your Innovation Journey
+                </h2>
+                <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
+                  A structured path designed to take you from curiosity to creation — building real skills at every step.
+                </p>
+              </div>
+            </Reveal>
 
-              <Reveal delay={200}>
-                <div className="relative hidden sm:block">
-                  <div
-                    className="absolute -top-8 -right-8 w-40 h-40 bg-[#D4AF37]/10 rounded-full blur-[60px] pointer-events-none"
-                    style={{ transform: `translateY(${scrollY * -0.08}px)` }}
-                    aria-hidden="true"
-                  />
-                  <div className="glass-panel p-2 rotate-1 lg:rotate-2 hover:rotate-0 transition-transform duration-500 hover:shadow-2xl">
-                    <div className="aspect-[4/5] rounded-3xl bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] flex items-center justify-center relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/10 via-transparent to-[#F5D76E]/10" />
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-sweep" />
-                      <div className="text-center text-white p-8 relative z-10">
-                        <div className="relative inline-block">
-                          <Sparkles className="w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-6 text-[#F5D76E]" />
-                          <div className="absolute inset-0 w-14 h-14 sm:w-20 sm:h-20 mx-auto bg-[#F5D76E]/20 rounded-full blur-xl animate-pulse" />
-                        </div>
-                        <h3 className="text-2xl sm:text-4xl font-bold mb-2 text-white">Start Your Surge</h3>
-                        <p className="text-white/70">Join the movement today</p>
-                      </div>
-                    </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              {[
+                { step: '01', title: 'Discover', desc: 'Explore real-world challenges and find problems worth solving through guided modules.', icon: '🔍' },
+                { step: '02', title: 'Learn', desc: 'Build your entrepreneurial mindset with curated content, expert insights, and AI mentorship.', icon: '📚' },
+                { step: '03', title: 'Build', desc: 'Turn your ideas into structured solutions with frameworks, feedback, and iteration.', icon: '🛠️' },
+                { step: '04', title: 'Compete', desc: 'Submit your ideas, get evaluated by experts, and earn recognition on a national stage.', icon: '🏆' },
+              ].map((item, idx) => (
+                <Reveal key={idx} delay={idx * 100}>
+                  <div className="glass-panel p-6 sm:p-8 glass-panel-hover group relative overflow-hidden h-full text-center">
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="text-3xl sm:text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
+                    <div className="text-xs font-bold text-[#B8952E] tracking-widest uppercase mb-2">Step {item.step}</div>
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">{item.title}</h3>
+                    <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
                   </div>
-                </div>
-              </Reveal>
+                </Reveal>
+              ))}
             </div>
           </div>
         </section>

@@ -24,12 +24,12 @@ export const metadata = {
     template: '%s | Future Titans',
   },
   description:
-    'India\'s premier AI-powered innovation challenge for students. Master entrepreneurship through the SURGE framework, build real ideas, and compete nationally. Join 10,000+ student innovators.',
+    'India\'s premier AI-powered innovation challenge for students. Master entrepreneurship through structured learning modules, build real ideas, and compete nationally. Join 10,000+ student innovators.',
   keywords: [
     'innovation challenge',
     'student entrepreneurship',
     'AI learning platform',
-    'SURGE framework',
+    'innovation framework',
     'Future Titans',
     'startup competition India',
     'student innovation',
@@ -45,7 +45,7 @@ export const metadata = {
     siteName: 'Future Titans Innovation Challenge',
     title: 'Future Titans Innovation Challenge | AI-Powered Learning for Young Innovators',
     description:
-      'India\'s premier AI-powered innovation challenge for students. Master entrepreneurship through the SURGE framework and compete nationally.',
+      'India\'s premier AI-powered innovation challenge for students. Master entrepreneurship through structured learning and compete nationally.',
     images: [
       {
         url: '/og-image.png',
@@ -59,7 +59,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'Future Titans Innovation Challenge',
     description:
-      'AI-powered innovation challenge for students. Master entrepreneurship through the SURGE framework.',
+      'AI-powered innovation challenge for students. Master entrepreneurship through structured learning modules.',
     images: ['/og-image.png'],
   },
   robots: {
