@@ -117,6 +117,7 @@ export default function AssociationDashboard() {
   });
   const [savingTemplates, setSavingTemplates] = useState(false);
   const [sendingEmails, setSendingEmails] = useState(new Set());
+  const [deletingResponses, setDeletingResponses] = useState(new Set());
   const [expandedResponse, setExpandedResponse] = useState(null);
 
   // Proof Upload State
@@ -341,6 +342,29 @@ export default function AssociationDashboard() {
       alert(e.message);
     } finally {
       setSendingEmails(prev => { const s = new Set(prev); s.delete(id); return s; });
+    }
+  };
+
+  const handleDeleteResponse = async (responseId, e) => {
+    e.stopPropagation();
+    if (!confirm('Are you sure you want to delete this response?')) return;
+    
+    setDeletingResponses(prev => new Set(prev).add(responseId));
+    try {
+      const token = getAuthToken();
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/outreach/responses/${responseId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to delete response');
+      
+      setOutreachResponses(prev => prev.filter(r => r._id !== responseId));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setDeletingResponses(prev => { const s = new Set(prev); s.delete(responseId); return s; });
     }
   };
 
@@ -1257,14 +1281,24 @@ export default function AssociationDashboard() {
                                 {r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                               </td>
                               <td className="px-4 py-3 text-right">
-                                <button
-                                  onClick={(e) => { e.stopPropagation(); handleSendEmail(r); }}
-                                  disabled={sendingEmails.has(r._id)}
-                                  className={`text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1 ml-auto transition-all active:scale-95 disabled:opacity-50 ${r.emailSent ? 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200' : 'bg-gradient-to-r from-[#175C36] to-[#0F4225] text-white hover:opacity-90'}`}
-                                >
-                                  {sendingEmails.has(r._id) ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
-                                  {r.emailSent ? 'Resend' : 'Send Email'}
-                                </button>
+                                <div className="flex items-center justify-end gap-2">
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); handleSendEmail(r); }}
+                                    disabled={sendingEmails.has(r._id)}
+                                    className={`text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm flex items-center gap-1 transition-all active:scale-95 disabled:opacity-50 ${r.emailSent ? 'bg-neutral-100 text-neutral-600 border border-neutral-200 hover:bg-neutral-200' : 'bg-gradient-to-r from-[#175C36] to-[#0F4225] text-white hover:opacity-90'}`}
+                                  >
+                                    {sendingEmails.has(r._id) ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                                    {r.emailSent ? 'Resend' : 'Send Email'}
+                                  </button>
+                                  <button
+                                    onClick={(e) => handleDeleteResponse(r._id, e)}
+                                    disabled={deletingResponses.has(r._id)}
+                                    className="text-neutral-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-colors disabled:opacity-50"
+                                    title="Delete Response"
+                                  >
+                                    {deletingResponses.has(r._id) ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                             {expandedResponse === r._id && (r.feedback || r.suggestions) && (
