@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  LogOut, Settings, Users, School, Key, Activity, FileText, Download, Target, PlayCircle, Loader2, ArrowUpRight, Copy, CheckCircle2, ThumbsUp, ThumbsDown, Search, Medal, Shield, ExternalLink, Mail, RefreshCw, Send
+  LogOut, Settings, Users, School, Key, Activity, FileText, Download, Target, PlayCircle, Loader2, ArrowUpRight, Copy, CheckCircle2, ThumbsUp, ThumbsDown, Search, Medal, Shield, ExternalLink, Mail, RefreshCw, Send, Paperclip, X
 } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer } from 'recharts';
 import { getAuthToken, removeAuthToken } from '@/lib/auth';
@@ -112,8 +112,8 @@ export default function AssociationDashboard() {
   const [copiedFormLink, setCopiedFormLink] = useState(false);
   const [activeEmailTab, setActiveEmailTab] = useState('yes');
   const [emailTemplates, setEmailTemplates] = useState({
-    yes: { subject: '', body: '' },
-    no: { subject: '', body: '' },
+    yes: { subject: '', body: '', attachmentUrl: '', attachmentName: '', file: null, removeAttachment: false },
+    no: { subject: '', body: '', attachmentUrl: '', attachmentName: '', file: null, removeAttachment: false },
   });
   const [savingTemplates, setSavingTemplates] = useState(false);
   const [sendingEmails, setSendingEmails] = useState(new Set());
@@ -217,10 +217,18 @@ export default function AssociationDashboard() {
           yes: {
             subject: data.form.emailYesTemplate?.subject || '',
             body: data.form.emailYesTemplate?.body || '',
+            attachmentUrl: data.form.emailYesTemplate?.attachmentUrl || '',
+            attachmentName: data.form.emailYesTemplate?.attachmentName || '',
+            file: null,
+            removeAttachment: false,
           },
           no: {
             subject: data.form.emailNoTemplate?.subject || '',
             body: data.form.emailNoTemplate?.body || '',
+            attachmentUrl: data.form.emailNoTemplate?.attachmentUrl || '',
+            attachmentName: data.form.emailNoTemplate?.attachmentName || '',
+            file: null,
+            removeAttachment: false,
           },
         });
       }
@@ -244,8 +252,8 @@ export default function AssociationDashboard() {
       if (!res.ok) throw new Error(data.error || 'Failed to generate form');
       setOutreachForm(data.form);
       setEmailTemplates({
-        yes: { subject: data.form.emailYesTemplate?.subject || '', body: data.form.emailYesTemplate?.body || '' },
-        no: { subject: data.form.emailNoTemplate?.subject || '', body: data.form.emailNoTemplate?.body || '' },
+        yes: { subject: data.form.emailYesTemplate?.subject || '', body: data.form.emailYesTemplate?.body || '', attachmentUrl: data.form.emailYesTemplate?.attachmentUrl || '', attachmentName: data.form.emailYesTemplate?.attachmentName || '', file: null, removeAttachment: false },
+        no: { subject: data.form.emailNoTemplate?.subject || '', body: data.form.emailNoTemplate?.body || '', attachmentUrl: data.form.emailNoTemplate?.attachmentUrl || '', attachmentName: data.form.emailNoTemplate?.attachmentName || '', file: null, removeAttachment: false },
       });
     } catch (e) {
       setOutreachError(e.message);
@@ -271,16 +279,35 @@ export default function AssociationDashboard() {
     setSavingTemplates(true);
     try {
       const token = getAuthToken();
+      const formData = new FormData();
+      formData.append('emailYesTemplate', JSON.stringify({
+        subject: emailTemplates.yes.subject,
+        body: emailTemplates.yes.body,
+        removeAttachment: emailTemplates.yes.removeAttachment,
+      }));
+      formData.append('emailNoTemplate', JSON.stringify({
+        subject: emailTemplates.no.subject,
+        body: emailTemplates.no.body,
+        removeAttachment: emailTemplates.no.removeAttachment,
+      }));
+      
+      if (emailTemplates.yes.file) formData.append('yesAttachment', emailTemplates.yes.file);
+      if (emailTemplates.no.file) formData.append('noAttachment', emailTemplates.no.file);
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/association/outreach/templates`, {
         method: 'PUT',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          emailYesTemplate: emailTemplates.yes,
-          emailNoTemplate: emailTemplates.no,
-        }),
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to save templates');
+      
+      if (data.form) {
+        setEmailTemplates({
+          yes: { subject: data.form.emailYesTemplate?.subject || '', body: data.form.emailYesTemplate?.body || '', attachmentUrl: data.form.emailYesTemplate?.attachmentUrl || '', attachmentName: data.form.emailYesTemplate?.attachmentName || '', file: null, removeAttachment: false },
+          no: { subject: data.form.emailNoTemplate?.subject || '', body: data.form.emailNoTemplate?.body || '', attachmentUrl: data.form.emailNoTemplate?.attachmentUrl || '', attachmentName: data.form.emailNoTemplate?.attachmentName || '', file: null, removeAttachment: false },
+        });
+      }
       alert('Email templates saved!');
     } catch (e) {
       alert(e.message);
@@ -446,6 +473,54 @@ export default function AssociationDashboard() {
     }
 
     doc.save(`${name.replace(/\s+/g, '_')}_${dateStr.replace(/\//g, '-')}.pdf`);
+  };
+
+  const downloadOutreachCSV = () => {
+    if (!outreachResponses || outreachResponses.length === 0) return;
+
+    const headers = [
+      'Name',
+      'School',
+      'Contact Email',
+      'Phone',
+      'City',
+      'Students Count',
+      'Interested',
+      'Submitted At',
+      'Email Sent',
+      'Feedback',
+      'Suggestions'
+    ];
+
+    const escapeCsv = (val) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val);
+      return `"${str.replace(/"/g, '""')}"`;
+    };
+
+    const rows = outreachResponses.map(r => [
+      escapeCsv(r.name),
+      escapeCsv(r.school),
+      escapeCsv(r.email),
+      escapeCsv(r.phone),
+      escapeCsv(r.city),
+      escapeCsv(r.studentsCount),
+      escapeCsv(r.interested),
+      escapeCsv(r.submittedAt ? new Date(r.submittedAt).toLocaleDateString('en-GB') : ''),
+      escapeCsv(r.emailSent ? 'Yes' : 'No'),
+      escapeCsv(r.feedback),
+      escapeCsv(r.suggestions)
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `outreach_responses_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (loading) {
@@ -1062,6 +1137,53 @@ export default function AssociationDashboard() {
                   className="w-full bg-[#FAEDCD]/50 border border-[#EAC15A]/40 rounded-xl px-4 py-2.5 text-sm font-semibold text-[#1A1A1A] placeholder-[#1A1A1A]/40 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] transition-all resize-none"
                 />
 
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <label className="cursor-pointer flex items-center gap-1.5 bg-[#FAEDCD]/50 border border-[#D4AF37]/30 hover:bg-[#FAEDCD] transition-colors text-xs font-bold text-[#A88020] px-3 py-1.5 rounded-lg shadow-sm">
+                      <Paperclip className="w-3.5 h-3.5" />
+                      Add Attachment
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        accept=".pdf,.png,.jpg,.jpeg,.zip"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file && file.size > 20 * 1024 * 1024) {
+                            alert("File size exceeds 20MB limit.");
+                            return;
+                          }
+                          setEmailTemplates(prev => ({
+                            ...prev,
+                            [activeEmailTab]: { ...prev[activeEmailTab], file, removeAttachment: false }
+                          }));
+                        }}
+                      />
+                    </label>
+                    <span className="text-[10px] text-neutral-400 font-semibold">(Max 20MB)</span>
+                  </div>
+
+                  {/* Show Current File */}
+                  {(emailTemplates[activeEmailTab].file || (emailTemplates[activeEmailTab].attachmentName && !emailTemplates[activeEmailTab].removeAttachment)) && (
+                    <div className="flex items-center justify-between bg-white border border-[#D4AF37]/20 rounded-lg px-3 py-2 shadow-sm">
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <FileText className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                        <span className="text-xs font-bold text-[#1A1A1A] truncate max-w-[200px]">
+                          {emailTemplates[activeEmailTab].file ? emailTemplates[activeEmailTab].file.name : emailTemplates[activeEmailTab].attachmentName}
+                        </span>
+                      </div>
+                      <button 
+                        onClick={() => setEmailTemplates(prev => ({
+                          ...prev,
+                          [activeEmailTab]: { ...prev[activeEmailTab], file: null, removeAttachment: true }
+                        }))}
+                        className="text-neutral-400 hover:text-red-500 transition-colors p-1"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 <button
                   onClick={saveEmailTemplates}
                   disabled={savingTemplates || !outreachForm}
@@ -1078,7 +1200,17 @@ export default function AssociationDashboard() {
               <div className="bg-white/80 backdrop-blur rounded-[2rem] border border-[#D4AF37]/20 shadow-lg p-6 flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <h4 className="font-bold text-[#1A1A1A] text-base">School Responses</h4>
-                  {outreachLoading && <Loader2 className="w-4 h-4 animate-spin text-[#D4AF37]" />}
+                  <div className="flex items-center gap-3">
+                    {outreachLoading && <Loader2 className="w-4 h-4 animate-spin text-[#D4AF37]" />}
+                    <button
+                      onClick={downloadOutreachCSV}
+                      disabled={outreachResponses.length === 0}
+                      className="flex items-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-[#D4AF37] to-[#A88020] hover:opacity-90 transition px-3 py-1.5 rounded-lg shadow-sm disabled:opacity-50"
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                      Download CSV
+                    </button>
+                  </div>
                 </div>
 
                 {outreachResponses.length === 0 ? (
