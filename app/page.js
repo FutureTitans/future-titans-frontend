@@ -252,14 +252,14 @@ export default function Landing() {
     { q: 'What is Future Titans?', a: 'Future Titans is India\'s biggest entrepreneurial hunt for students aged 12–19, designed to nurture innovation, creativity, and leadership skills through a structured capability-building journey.' },
     { q: 'Who can join?', a: 'Students aged 12–19 from across India can participate in Youngpreneurs programs and the Future Titans competition.' },
     { q: 'How much time does it take?', a: 'The program is designed to fit around school schedules, requiring just 2-3 hours per week.' },
-    { q: 'Is it safe for my child?', a: 'Absolutely. We maintain strict safety protocols, verified mentors, and age-appropriate content throughout the journey.' },
+    { q: 'Will this affect my child\'s board exam preparation?', a: 'Not at all. The program is designed to complement — not compete with — academics. Sessions are flexible and only require 2–3 hours per week. Many of our top-performing students are board exam toppers who credit the program for improving their critical thinking and time management.' },
   ];
 
   const faqsRight = [
-    { q: 'How is SSI data used?', a: 'SSI (Solution Seeking Index) data tracks your child\'s growth across key skill dimensions — confidence, creativity, leadership, communication, and problem solving — and provides personalized recommendations.' },
-    { q: 'What does the fee include?', a: 'The ₹1,500/yr fee covers all learning modules, AI mentorship, competition entry, certificates, and access to expert sessions.' },
-    { q: 'Will my child get a certificate?', a: 'Yes, all participants receive a completion certificate. Top performers get additional recognition and awards.' },
-    { q: 'How are students selected?', a: 'Selection is based on participation, idea quality, and growth demonstrated through the SSI framework across the SURGE stages.' },
+    { q: 'Is it safe for my child?', a: 'Absolutely. We maintain strict safety protocols, verified mentors, and age-appropriate content throughout the journey.' },
+    { q: 'What does the ₹1,500/yr fee include?', a: 'Everything — all learning modules, AI mentorship access, competition entry, certificates, expert sessions, and access to the national finale. No hidden charges.' },
+    { q: 'Will my child get a certificate?', a: 'Yes, all participants receive a completion certificate. Top performers get additional recognition, awards, and incubation opportunities.' },
+    { q: 'What if my child doesn\'t make it past Phase 1?', a: 'Every participant completes the full workshop series regardless of competition results. The real value is in the capability-building journey — the competition is a bonus. Your child gains skills, certificates, and confidence no matter what.' },
   ];
 
 
@@ -323,7 +323,7 @@ export default function Landing() {
                 href="/signup"
                 className="px-5 py-2.5 rounded-full bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5"
               >
-                Enroll Now — ₹1,500/yr
+                See If Your Child Qualifies
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -366,7 +366,7 @@ export default function Landing() {
                     className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Enroll Now — ₹1,500/yr
+                    See If Your Child Qualifies
                   </Link>
                 </div>
               </div>
@@ -386,33 +386,39 @@ export default function Landing() {
                 solutions.
               </h1>
 
-              <p className="text-[#C8960C] font-semibold text-sm mb-4">
+              <p className="text-[#C8960C] font-semibold text-sm mb-3">
                 For students aged 12–19 | Across India
               </p>
 
-              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-6 max-w-lg">
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-4 max-w-lg">
                 Youngpreneurs builds confident, creative, future-ready students through India&apos;s most powerful <span className="font-semibold text-[#1B2A4A]">innovation platform.</span>
               </p>
 
-              <div className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg shadow-sm border border-gray-100 w-fit mb-8">
+              {/* Prize Money — Big & Bold */}
+              <div className="flex items-center gap-2 mb-4">
+                <Trophy className="w-5 h-5 text-[#C8960C]" />
+                <span className="text-lg sm:text-xl font-bold text-[#1B2A4A]">Compete for <span className="text-[#C8960C]">₹10 Lakhs+</span> in prizes, incubation & mentorship</span>
+              </div>
+
+              {/* Board Exam Reassurance */}
+              <p className="text-gray-500 text-xs sm:text-sm mb-5 flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-green-600 shrink-0" />
+                Designed to complement — not compete with — your child&apos;s academic schedule. Just 2–3 hrs/week.
+              </p>
+
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg shadow-sm border border-gray-100 w-fit mb-6">
                 <img src="/images/yp/iit-kharagpur.svg" alt="IIT Kharagpur" className="h-8 w-8 object-contain" />
                 <span className="text-sm font-bold text-[#1B2A4A]">Knowledge Partner: IIT Kharagpur</span>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
                 <Link
                   href="/signup"
                   className="px-6 py-3.5 rounded-full bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center gap-2 shadow-lg shadow-[#C8960C]/20"
                 >
-                  Enroll for Future Titans — ₹1,500/yr
+                  Check Eligibility & Enroll — ₹1,500/yr
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                {/* <button className="flex items-center gap-2 text-[#1B2A4A] font-medium text-sm hover:text-[#C8960C] transition-colors">
-                  <div className="w-10 h-10 rounded-full border-2 border-[#1B2A4A] flex items-center justify-center">
-                    <Play className="w-4 h-4 ml-0.5" />
-                  </div>
-                  Watch Stories
-                </button> */}
               </div>
 
               <div className="flex items-center gap-3">
@@ -456,6 +462,31 @@ export default function Landing() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ═══ GUIDED BY GLOBAL FACULTY ═══ */}
+      <section className="py-10 lg:py-12 bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <p className="text-center text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-6">Guided By Global Faculty</p>
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-4xl mx-auto">
+              {[
+                { name: 'Prof. Fred Katz', title: 'Johns Hopkins Business School', image: '/images/yp/fred.jpeg' },
+                { name: 'Dr. Partha Ghosh', title: 'Former Senior Partner, McKinsey', image: '/images/yp/partha.jpg' },
+                { name: 'Suman Bose', title: 'Former CEO & MD, Siemens', image: '/images/yp/suman.jpg' },
+                { name: 'Sandipan Chattopadhyay', title: 'Former CTO, Justdial', image: '/images/yp/sandipan.jpeg' },
+              ].map((mentor, idx) => (
+                <div key={idx} className="flex flex-col items-center text-center group">
+                  <img src={mentor.image} alt={mentor.name} className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-[#C8960C]/20 mb-2 group-hover:border-[#C8960C]/60 transition-all" />
+                  <h4 className="text-xs sm:text-sm font-bold text-[#1B2A4A] leading-tight">{mentor.name}</h4>
+                  <p className="text-[10px] sm:text-xs text-gray-500 leading-tight mt-0.5">{mentor.title}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -571,6 +602,36 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ═══ STUDENT SUCCESS STORIES ═══ */}
+      <section className="py-16 lg:py-20 bg-[#FFFBF0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2A4A] text-center mb-3`}>
+              Hear It From Our Students
+            </h2>
+            <p className="text-gray-500 text-sm sm:text-base text-center mb-10">Real students. Real outcomes. Real confidence.</p>
+          </Reveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              { name: 'Kshitij, Class 10', location: 'Kolkata', quote: 'Before Youngpreneurs, I had ideas but no clue how to build them. Now I\'ve built a working prototype and pitched it to real mentors. My confidence has gone through the roof.', avatar: '🧑‍💻' },
+              { name: 'Naisha, Class 9', location: 'Delhi', quote: 'I used to be terrified of public speaking. After the workshops, I presented my solution in front of 150 people — and loved it. My parents couldn\'t believe the change.', avatar: '👩‍🎓' },
+              { name: 'Shivay, Class 11', location: 'Bangalore', quote: 'The SURGE framework taught me to think like an entrepreneur. I now look at every problem as an opportunity. It\'s completely changed how I approach challenges.', avatar: '🎯' },
+            ].map((student, idx) => (
+              <Reveal key={idx} delay={idx * 100}>
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#C8960C]/30 transition-all h-full">
+                  <div className="text-3xl mb-3">{student.avatar}</div>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4">&ldquo;{student.quote}&rdquo;</p>
+                  <div className="border-t border-gray-100 pt-3">
+                    <div className="font-semibold text-sm text-[#1B2A4A]">{student.name}</div>
+                    <div className="text-xs text-gray-500">{student.location}</div>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══ PARENT TESTIMONIALS ═══ */}
       <section className="py-16 lg:py-20 bg-[#FAFAFA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -629,7 +690,7 @@ export default function Landing() {
                     href="/signup"
                     className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#C8960C] text-white font-bold text-sm hover:bg-white hover:text-[#1B2A4A] transition-all"
                   >
-                    Register Now
+                    Check Eligibility & Fees
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                   <Link
@@ -762,7 +823,7 @@ export default function Landing() {
                 href="/signup"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#C8960C] text-white font-bold text-sm tracking-wider hover:bg-[#b5870b] transition-all shadow-lg shadow-[#C8960C]/20"
               >
-                Register for Future Titans — ₹1,500/yr
+                Check Eligibility & Enroll — ₹1,500/yr
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
