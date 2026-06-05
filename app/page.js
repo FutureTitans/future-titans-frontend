@@ -4,19 +4,32 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, isAdmin, isStudent } from '@/lib/auth';
-import { ArrowRight, Zap, Users, Award, Sparkles, ChevronDown, Instagram, Facebook, Linkedin, Star, Rocket, Target, Phone } from 'lucide-react';
+import {
+  ArrowRight, ChevronDown, ChevronLeft, ChevronRight, Play, Plus, Minus,
+  Users, Award, Lightbulb, MessageCircle, Globe, Crown,
+  Search, Trophy, Flag, Megaphone, Briefcase, CheckCircle2, Star,
+  Phone, Mail, Menu, X, Instagram, Facebook, Linkedin, Youtube, Twitter,
+  Calendar, GraduationCap, Target, Zap, Shield, Rocket
+} from 'lucide-react';
+import { Playfair_Display } from 'next/font/google';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '700', '800'],
+  style: ['normal', 'italic'],
+});
 
 function useCounter(target, duration = 2000, start = false) {
   const [count, setCount] = useState(0);
   useEffect(() => {
     if (!start) return;
     let startTime = null;
-    const numericTarget = parseInt(target.replace(/[^0-9]/g, ''));
     const step = (timestamp) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * numericTarget));
+      setCount(Math.floor(eased * target));
       if (progress < 1) requestAnimationFrame(step);
     };
     requestAnimationFrame(step);
@@ -27,7 +40,6 @@ function useCounter(target, duration = 2000, start = false) {
 function Reveal({ children, className = '', delay = 0 }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
-
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -38,7 +50,6 @@ function Reveal({ children, className = '', delay = 0 }) {
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
-
   return (
     <div
       ref={ref}
@@ -54,29 +65,127 @@ function Reveal({ children, className = '', delay = 0 }) {
   );
 }
 
-function FloatingParticle({ style }) {
+function ProgressBar({ label, value, delay = 0 }) {
+  const ref = useRef(null);
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.unobserve(el); } },
+      { threshold: 0.3 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   return (
-    <div
-      className="absolute rounded-full pointer-events-none"
-      style={{
-        width: style.size,
-        height: style.size,
-        left: style.left,
-        top: style.top,
-        background: `radial-gradient(circle, ${style.color} 0%, transparent 70%)`,
-        animation: `floatParticle ${style.duration}s ease-in-out infinite`,
-        animationDelay: `${style.delay}s`,
-        opacity: style.opacity,
-      }}
-    />
+    <div ref={ref} className="flex items-center gap-3">
+      <span className="text-sm text-[#1B2A4A] font-medium w-32 shrink-0">{label}</span>
+      <div className="flex-1 h-2.5 bg-gray-100 rounded-full overflow-hidden">
+        <div
+          className="h-full bg-[#C8960C] rounded-full transition-all duration-1000 ease-out"
+          style={{
+            width: visible ? `${Math.min(value * 1.5, 100)}%` : '0%',
+            transitionDelay: `${delay}ms`,
+          }}
+        />
+      </div>
+      <span className="text-sm font-bold text-[#C8960C] w-10 text-right">+{value}%</span>
+    </div>
+  );
+}
+
+function ParentCarousel({ testimonials }) {
+  const [current, setCurrent] = useState(0);
+  const timerRef = useRef(null);
+
+  const resetTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % testimonials.length);
+    }, 5000);
+  };
+
+  useEffect(() => {
+    resetTimer();
+    return () => clearInterval(timerRef.current);
+  }, [testimonials.length]);
+
+  const go = (dir) => {
+    setCurrent((prev) => (prev + dir + testimonials.length) % testimonials.length);
+    resetTimer();
+  };
+
+  return (
+    <div className="relative">
+      <div className="overflow-hidden">
+        <div
+          className="flex transition-transform duration-500 ease-out"
+          style={{ transform: `translateX(-${current * 100}%)` }}
+        >
+          {testimonials.map((t, idx) => (
+            <div key={idx} className="w-full shrink-0 px-2">
+              <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-8 shadow-sm max-w-3xl mx-auto">
+                <div className="flex items-start gap-4">
+                  <div className="text-4xl text-[#C8960C]/30 font-serif leading-none shrink-0">&ldquo;</div>
+                  <div>
+                    <p className={`${playfair.className} text-base sm:text-lg text-[#1B2A4A] leading-relaxed mb-4`}>
+                      {t.quote}
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-[#FFF8E7] flex items-center justify-center text-[#C8960C]">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm text-[#1B2A4A]">{t.name}</div>
+                        <div className="text-xs text-gray-500">{t.location}</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-center gap-3 mt-6">
+        <button
+          onClick={() => go(-1)}
+          className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+          aria-label="Previous testimonial"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        <div className="flex gap-1.5">
+          {testimonials.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => { setCurrent(idx); resetTimer(); }}
+              className={`w-2 h-2 rounded-full transition-all ${idx === current ? 'bg-[#C8960C] w-6' : 'bg-gray-300'}`}
+              aria-label={`Go to testimonial ${idx + 1}`}
+            />
+          ))}
+        </div>
+        <button
+          onClick={() => go(1)}
+          className="w-9 h-9 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors"
+          aria-label="Next testimonial"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
   );
 }
 
 export default function Landing() {
   const router = useRouter();
-  const [scrollY, setScrollY] = useState(0);
-  const [statsVisible, setStatsVisible] = useState(false);
-  const statsRef = useRef(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [openFaq, setOpenFaq] = useState(null);
+
+
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -86,390 +195,744 @@ export default function Landing() {
   }, [router]);
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setStatsVisible(true); },
-      { threshold: 0.3 }
-    );
-    if (statsRef.current) observer.observe(statsRef.current);
-    return () => observer.disconnect();
-  }, []);
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
 
-  const stat1 = useCounter('10000', 2200, statsVisible);
-  const stat2 = useCounter('50', 1800, statsVisible);
-  const stat3 = useCounter('1000000', 2400, statsVisible);
-  const stat4 = useCounter('95', 2000, statsVisible);
 
-  const particles = [
-    { size: '6px', left: '10%', top: '20%', color: 'rgba(212,175,55,0.3)', duration: 6, delay: 0, opacity: 0.6 },
-    { size: '4px', left: '80%', top: '15%', color: 'rgba(245,215,110,0.4)', duration: 8, delay: 1, opacity: 0.5 },
-    { size: '8px', left: '60%', top: '70%', color: 'rgba(212,175,55,0.2)', duration: 7, delay: 2, opacity: 0.4 },
-    { size: '5px', left: '25%', top: '80%', color: 'rgba(245,215,110,0.35)', duration: 9, delay: 0.5, opacity: 0.5 },
-    { size: '3px', left: '90%', top: '45%', color: 'rgba(212,175,55,0.4)', duration: 5, delay: 1.5, opacity: 0.6 },
-    { size: '7px', left: '45%', top: '30%', color: 'rgba(240,232,212,0.3)', duration: 10, delay: 3, opacity: 0.3 },
+  const navLinks = [
+    // { label: 'Programs', href: '#', hasDropdown: true },
+    { label: 'Future Titans', href: '/future-titans' },
+    { label: 'For Parents', href: '/for-parents' },
+    { label: 'For Schools', href: '/for-schools' },
+    { label: 'Success Stories', href: '/success-stories' },
+    { label: 'About Us', href: '/about-us' },
+  ];
+
+  const skills = [
+    { icon: <Target className="w-7 h-7" />, title: 'Confidence', desc: 'Speak up, lead fearlessly' },
+    { icon: <Crown className="w-7 h-7" />, title: 'Leadership', desc: 'Inspire & take initiative' },
+    { icon: <MessageCircle className="w-7 h-7" />, title: 'Communication', desc: 'Express ideas with impact' },
+    { icon: <Lightbulb className="w-7 h-7" />, title: 'Creativity', desc: 'Think differently, build solutions' },
+    { icon: <Search className="w-7 h-7" />, title: 'Problem Solving', desc: 'Tackle real-world challenges' },
+    { icon: <Globe className="w-7 h-7" />, title: 'Future Readiness', desc: 'AI-ready, life-ready' },
+  ];
+
+
+  const parentTestimonials = [
+    {
+      quote: 'My daughter went from being shy to presenting her idea in front of 200 people. Youngpreneurs changed her life.',
+      name: 'Priya Sharma, Parent',
+      location: 'Mumbai',
+    },
+    {
+      quote: 'The mentors are world-class. My son now thinks about problems like an entrepreneur — at age 15.',
+      name: 'Rajan Mehta, Parent',
+      location: 'Delhi',
+    },
+    {
+      quote: 'Best investment we made in our child\'s education. The confidence boost is visible every single day.',
+      name: 'Anita Nair, Parent',
+      location: 'Bangalore',
+    },
+    {
+      quote: 'Unlike any other program — structured, inspiring, and results-driven. Couldn\'t recommend it more.',
+      name: 'Suresh Pillai, Parent',
+      location: 'Hyderabad',
+    },
+  ];
+
+  const faqsLeft = [
+    { q: 'What is Future Titans?', a: 'Future Titans is India\'s biggest entrepreneurial hunt for students aged 12–19, designed to nurture innovation, creativity, and leadership skills through a structured capability-building journey.' },
+    { q: 'Who can join?', a: 'Students aged 12–19 from across India can participate in Youngpreneurs programs and the Future Titans competition.' },
+    { q: 'How much time does it take?', a: 'The program is designed to fit around school schedules, requiring just 2-3 hours per week.' },
+    { q: 'Is it safe for my child?', a: 'Absolutely. We maintain strict safety protocols, verified mentors, and age-appropriate content throughout the journey.' },
+  ];
+
+  const faqsRight = [
+    { q: 'How is SSI data used?', a: 'SSI (Solution Seeking Index) data tracks your child\'s growth across key skill dimensions — confidence, creativity, leadership, communication, and problem solving — and provides personalized recommendations.' },
+    { q: 'What does the fee include?', a: 'The ₹1,500/yr fee covers all learning modules, AI mentorship, competition entry, certificates, and access to expert sessions.' },
+    { q: 'Will my child get a certificate?', a: 'Yes, all participants receive a completion certificate. Top performers get additional recognition and awards.' },
+    { q: 'How are students selected?', a: 'Selection is based on participation, idea quality, and growth demonstrated through the SSI framework across the SURGE stages.' },
+  ];
+
+
+  const competitionFeatures = [
+    { icon: <Trophy className="w-6 h-6" />, label: '₹10 LAKHS+', sub: 'Prize Pool' },
+    { icon: <GraduationCap className="w-6 h-6" />, label: 'Top Mentors', sub: '& Judges' },
+    { icon: <Megaphone className="w-6 h-6" />, label: 'Media', sub: 'Recognition' },
+    { icon: <Briefcase className="w-6 h-6" />, label: 'Investor', sub: 'Access' },
+    { icon: <Globe className="w-6 h-6" />, label: 'National', sub: 'Finale' },
+    { icon: <Award className="w-6 h-6" />, label: 'Certificates', sub: 'for All' },
   ];
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F5EDD6]">
-      {/* Background Mesh */}
-      <div className="fixed inset-0 z-0 pointer-events-none" aria-hidden="true">
-        <div
-          className="absolute -top-[10%] -left-[10%] w-[60%] h-[60%] bg-[#F5D76E]/20 rounded-full blur-[120px]"
-          style={{ transform: `translateY(${scrollY * 0.08}px)` }}
-        />
-        <div
-          className="absolute -bottom-[10%] -right-[10%] w-[60%] h-[60%] bg-[#D4AF37]/15 rounded-full blur-[120px]"
-          style={{ transform: `translateY(${scrollY * -0.06}px)` }}
-        />
-        <div
-          className="absolute top-[40%] left-[40%] w-[40%] h-[40%] bg-[#F0E8D4]/30 rounded-full blur-[100px]"
-          style={{ transform: `translateY(${scrollY * 0.04}px)` }}
-        />
-      </div>
+    <div className="min-h-screen bg-white overflow-x-hidden">
+      {/* ═══ FLOATING WHATSAPP BUTTON ═══ */}
+      <a
+        href="https://wa.me/919038428532"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white pl-4 pr-5 py-3 rounded-full shadow-lg shadow-[#25D366]/30 hover:shadow-xl hover:shadow-[#25D366]/40 hover:-translate-y-0.5 transition-all group"
+        aria-label="Chat with us on WhatsApp"
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+        </svg>
+        <span className="text-sm font-semibold">Chat with Us</span>
+      </a>
 
-      {/* Floating Particles */}
-      <div className="fixed inset-0 z-[1] pointer-events-none overflow-hidden hidden sm:block" aria-hidden="true">
-        {particles.map((p, i) => <FloatingParticle key={i} style={p} />)}
-      </div>
+      {/* ═══ NAVBAR ═══ */}
+      <nav
+        className={`sticky top-0 z-50 transition-all duration-300 bg-white ${scrolled ? 'shadow-md' : 'shadow-sm'
+          }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-[72px]">
+            <Link href="/" className="shrink-0">
+              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-10 sm:h-12 w-auto object-contain" />
+            </Link>
 
-      <div className="relative z-10">
+            <div className="hidden lg:flex items-center gap-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] transition-colors"
+                >
+                  {link.label}
+                  {link.hasDropdown && <ChevronDown className="w-3.5 h-3.5" />}
+                </a>
+              ))}
+            </div>
 
-        {/* ═══ HERO ═══ */}
-        <section className="min-h-[calc(100dvh-4rem)] flex items-center pt-8 sm:pt-16 pb-12 sm:pb-16 px-4 relative">
-          {/* Decorative rings — hidden on mobile for performance */}
-          <div className="hidden lg:block" aria-hidden="true">
-            <div
-              className="absolute w-[500px] h-[500px] rounded-full border border-[#D4AF37]/10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ transform: `translate(-50%, -50%) scale(${1 + scrollY * 0.0003})`, opacity: Math.max(0, 1 - scrollY * 0.002) }}
-            />
-            <div
-              className="absolute w-[700px] h-[700px] rounded-full border border-[#F5D76E]/[0.08] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ transform: `translate(-50%, -50%) scale(${1 + scrollY * 0.0005}) rotate(${scrollY * 0.02}deg)`, opacity: Math.max(0, 1 - scrollY * 0.0015) }}
-            />
+            <div className="hidden lg:flex items-center gap-3">
+              <Link
+                href="/login"
+                className="px-5 py-2 rounded-full border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="px-5 py-2.5 rounded-full bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5"
+              >
+                Enroll Now — ₹1,500/yr
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            <button
+              className="lg:hidden p-2 text-[#1B2A4A]"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
+        </div>
 
-          <div className="container mx-auto max-w-7xl relative z-20">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
-              {/* Text Column */}
-              <div className="flex-1 text-center lg:text-left">
-                <h1 className="text-4xl xs:text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-bold tracking-tight text-gray-900 mb-6 sm:mb-8 leading-[1.08] hero-title-animate">
-                  Future Titans
-                  <span className="block text-xl xs:text-2xl sm:text-3xl lg:text-4xl xl:text-5xl text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] via-[#F5D76E] to-[#B8952E] background-animate mt-2 sm:mt-3">
-                    India&apos;s First Holistic Innovation Capability Ecosystem for Schools
-                  </span>
-                </h1>
-
-                <div className="max-w-3xl mx-auto lg:mx-0 mb-8 sm:mb-12">
-                  <p className="text-lg sm:text-xl lg:text-2xl leading-relaxed font-light tracking-tight text-[#15803d]">
-                    Transform your ideas into impact.{' '}
-                    <span className="font-semibold text-[#166534]">Experience AI-powered mentorship</span>{' '}
-                    and build the solutions{' '}
-                    <em className="not-italic font-medium text-[#14532d] border-b border-[#166534] pb-[2px]">
-                      the world needs.
-                    </em>
-                  </p>
-                  <div className="mt-6 flex justify-center lg:justify-start">
-                    <div className="h-px w-24 bg-gradient-to-r from-transparent via-emerald-900/40 to-transparent lg:from-emerald-900/40 lg:to-transparent" />
-                  </div>
-                </div>
-
-                {/* Primary CTAs */}
-                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start items-center">
-                  <Link
-                    href="/signup"
-                    className="glass-button w-full sm:w-auto px-8 sm:px-10 py-4 text-base shadow-xl shadow-[#D4AF37]/20 hover:shadow-[#D4AF37]/30 group relative overflow-hidden"
+        {mobileMenuOpen && (
+          <div className="lg:hidden fixed inset-0 top-16 z-40">
+            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileMenuOpen(false)} />
+            <div className="relative bg-white border-t border-gray-100 shadow-xl max-h-[80vh] overflow-y-auto">
+              <div className="px-4 py-4 space-y-1">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="block px-4 py-3 text-[#1B2A4A] font-medium rounded-xl hover:bg-gray-50"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                    <span className="relative flex items-center gap-2">
-                      Student Sign Up
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                    </span>
-                  </Link>
+                    {link.label}
+                  </a>
+                ))}
+                <div className="pt-3 space-y-2">
                   <Link
                     href="/login"
-                    className="w-full sm:w-auto px-8 sm:px-10 py-4 rounded-full bg-white/40 backdrop-blur-md border border-white/50 text-gray-700 font-semibold text-center hover:bg-white/60 transition-all hover:shadow-lg active:scale-[0.98]"
+                    className="block w-full text-center px-4 py-3 rounded-xl border border-[#1B2A4A] text-[#1B2A4A] font-semibold"
+                    onClick={() => setMobileMenuOpen(false)}
                   >
-                    Student Log In
+                    Login
                   </Link>
-                </div>
-
-                {/* Secondary Links */}
-                <div className="mt-6 flex flex-col xs:flex-row gap-3 justify-center lg:justify-start items-center text-sm">
-                  <Link href="/school-poc/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm w-full xs:w-auto justify-center">
-                    <Users className="w-4 h-4 text-[#D4AF37]" />
-                    School POC Login
-                  </Link>
-                  <Link href="/association/login" className="flex items-center gap-2 text-gray-600 hover:text-[#1A1A1A] font-semibold px-5 py-2.5 bg-white/50 rounded-full border border-[#D4AF37]/30 hover:border-[#D4AF37]/60 hover:bg-white transition-all shadow-sm w-full xs:w-auto justify-center">
-                    <Target className="w-4 h-4 text-[#D4AF37]" />
-                    Association Login
+                  <Link
+                    href="/signup"
+                    className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Enroll Now — ₹1,500/yr
                   </Link>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+      </nav>
 
-              {/* Image Column */}
-              <div className="flex-1 w-full max-w-xs sm:max-w-sm lg:max-w-none relative z-10 flex justify-center lg:justify-end mx-auto lg:mx-0 float mt-8 lg:mt-0">
-                <div className="absolute -left-2 sm:left-4 lg:-left-6 top-[20%] xl:top-[30%] glass-strong p-3 sm:p-4 rounded-2xl border border-white/60 flex items-start gap-3 shadow-[0_20px_50px_rgba(21,128,61,0.15)] z-20">
-                  <div className="relative flex h-3 w-3 mt-1 flex-shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#16a34a] opacity-75" />
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#15803d]" />
+      {/* ═══ HERO ═══ */}
+      <section className="bg-[#FFFBF0] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-12 lg:pt-0 lg:pb-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="-mt-12 lg:-mt-20">
+              <h1 className={`${playfair.className} text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-bold text-[#1B2A4A] leading-[1.1] mb-4`}>
+                Raise a child<br />
+                who <span className="text-[#C8960C]">creates</span><br />
+                solutions.
+              </h1>
+
+              <p className="text-[#C8960C] font-semibold text-sm mb-4">
+                For students aged 12–19 | Across India
+              </p>
+
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-6 max-w-lg">
+                Youngpreneurs builds confident, creative, future-ready students through India&apos;s most powerful <span className="font-semibold text-[#1B2A4A]">innovation platform.</span>
+              </p>
+
+              <div className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg shadow-sm border border-gray-100 w-fit mb-8">
+                <img src="/images/yp/iit-kharagpur.svg" alt="IIT Kharagpur" className="h-8 w-8 object-contain" />
+                <span className="text-sm font-bold text-[#1B2A4A]">Knowledge Partner: IIT Kharagpur</span>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-8">
+                <Link
+                  href="/signup"
+                  className="px-6 py-3.5 rounded-full bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center gap-2 shadow-lg shadow-[#C8960C]/20"
+                >
+                  Enroll for Future Titans — ₹1,500/yr
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                {/* <button className="flex items-center gap-2 text-[#1B2A4A] font-medium text-sm hover:text-[#C8960C] transition-colors">
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1B2A4A] flex items-center justify-center">
+                    <Play className="w-4 h-4 ml-0.5" />
                   </div>
-                  <div>
-                    <div className="text-sm sm:text-base font-bold text-gray-900 leading-tight">
-                      AI-Powered
-                      <span className="block text-gray-500 font-medium text-xs sm:text-sm tracking-wide">Smart Mentorship</span>
-                    </div>
-                  </div>
+                  Watch Stories
+                </button> */}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {['/images/yp/devika.jpg', '/images/yp/partha.jpg', '/images/yp/sachin.jpeg', '/images/yp/pankaj.jpg'].map((src, i) => (
+                    <img key={i} src={src} alt="" className="w-8 h-8 rounded-full border-2 border-white object-cover" />
+                  ))}
                 </div>
-                <div className="w-full aspect-square max-w-[420px] relative z-10">
-                  <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-[#1A1A1A] via-[#2A2A2A] to-[#1A1A1A] shadow-2xl overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/15 via-transparent to-[#F5D76E]/10" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full animate-sweep" />
-                    <div className="flex flex-col items-center justify-center h-full text-white p-8 relative z-10">
-                      <div className="relative inline-block mb-6">
-                        <Sparkles className="w-16 h-16 sm:w-20 sm:h-20 text-[#F5D76E]" />
-                        <div className="absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 bg-[#F5D76E]/20 rounded-full blur-xl animate-pulse" />
-                      </div>
-                      <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-[#F5D76E]">Innovate.</h3>
-                      <h3 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-[#F5D76E]">Build.</h3>
-                      <h3 className="text-2xl sm:text-3xl font-bold mb-4 text-center text-[#F5D76E]">Lead.</h3>
-                      <p className="text-white/60 text-sm text-center max-w-[240px] text-[#F5D76E]">Your journey from idea to impact starts here</p>
-                    </div>
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-[#C8960C] text-[#C8960C]" />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600"><span className="font-bold text-[#1B2A4A]">4.8/5</span> · Trusted by 10,000+ families</span>
+              </div>
+            </div>
+
+            <div className="relative lg:-mr-16 xl:-mr-24">
+              <div className="relative w-full lg:w-[120%] xl:w-[130%] aspect-[3/4] sm:aspect-[4/4] lg:aspect-[4/3]">
+                <img
+                  src="/images/yp/hero-students.jpg"
+                  alt="Real students at Youngpreneurs"
+                  className="w-full h-full object-cover scale-110"
+                  style={{
+                    maskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%)',
+                    maskComposite: 'intersect',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%)',
+                    WebkitMaskComposite: 'source-in',
+                  }}
+                />
+              </div>
+              <div className="flex justify-center sm:justify-end -mt-4 relative z-10 px-4">
+                <div className="bg-[#1B2A4A] text-white rounded-xl p-4 sm:p-5 w-full sm:w-56 shadow-xl">
+                  <div className="text-[#C8960C] font-bold text-lg sm:text-xl tracking-wider mb-1">FUTURE TITANS</div>
+                  <p className="text-xs text-gray-300 mb-3">India&apos;s Biggest Entrepreneurial Hunt for Students</p>
+                  <div className="border-t border-white/20 pt-2">
+                    <div className="text-xs text-gray-400">Prize Pool</div>
+                    <div className="text-[#C8960C] font-bold text-lg">₹10 LAKHS+</div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Scroll Indicator */}
-            <div className="hidden lg:flex absolute -bottom-16 left-1/2 -translate-x-1/2 flex-col items-center gap-2">
-              <span className="text-xs text-gray-400 tracking-widest uppercase">Explore</span>
-              <ChevronDown className="w-5 h-5 text-gray-400 animate-bounce" />
+      {/* ═══ WHAT YOUR CHILD WILL GAIN ═══ */}
+      <section className="py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12 lg:mb-16">
+              <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2A4A] mb-3`}>
+                What Your Child Will Gain
+              </h2>
+              <p className="text-gray-500 text-sm sm:text-base">Ages 12–19 · Building skills classrooms don&apos;t teach</p>
             </div>
+          </Reveal>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 lg:gap-10 max-w-4xl mx-auto">
+            {skills.map((skill, idx) => (
+              <Reveal key={idx} delay={idx * 80}>
+                <div className="flex flex-col items-center text-center group">
+                  <div className="w-16 h-16 rounded-2xl bg-[#FFF8E7] flex items-center justify-center text-[#C8960C] mb-3 group-hover:scale-110 group-hover:bg-[#C8960C] group-hover:text-white transition-all duration-300">
+                    {skill.icon}
+                  </div>
+                  <h3 className="text-sm font-bold text-[#1B2A4A] mb-1">{skill.title}</h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">{skill.desc}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══ FEATURES ═══ */}
-        <section className="py-16 sm:py-24 lg:py-32 px-4 relative" aria-labelledby="features-heading">
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{ transform: `translateY(${scrollY * -0.05}px)` }}
-            aria-hidden="true"
-          >
-            <div className="absolute top-[10%] right-[-5%] w-[300px] h-[300px] bg-[#D4AF37]/[0.08] rounded-full blur-[80px]" />
-            <div className="absolute bottom-[10%] left-[-5%] w-[250px] h-[250px] bg-[#F5D76E]/10 rounded-full blur-[60px]" />
-          </div>
-
-          <div className="container mx-auto max-w-6xl relative">
+      {/* ═══ REAL GROWTH / SSI SECTION ═══ */}
+      <section className="py-16 lg:py-20 bg-[#FAFAFA]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-10 items-start">
             <Reveal>
-              <div className="text-center mb-12 sm:mb-16">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#B8952E] text-xs font-bold mb-4 tracking-widest uppercase">
-                  <Star className="w-3.5 h-3.5" />
-                  Why Choose Us
-                </div>
-                <h2 id="features-heading" className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                  Why Future Titans?
+              <div>
+                <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-[2.5rem] font-bold text-[#1B2A4A] leading-tight mb-6`}>
+                  Real Growth.<br />
+                  Real Numbers.
                 </h2>
-                <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto">Everything you need to succeed as a young innovator</p>
-              </div>
-            </Reveal>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {[
-                {
-                  icon: <Zap className="w-6 h-6 text-[#D4AF37]" />,
-                  title: 'AI-Powered Mentorship',
-                  description: 'Get personalized feedback and guidance from our intelligent mentoring system tailored to your journey.',
-                  accent: 'from-[#D4AF37]/15 to-[#F5D76E]/15',
-                },
-                {
-                  icon: <Users className="w-6 h-6 text-[#D4AF37]" />,
-                  title: 'Collaborative Learning',
-                  description: 'Connect with peers, form teams, and solve problems together in a global community.',
-                  accent: 'from-[#F5D76E]/15 to-[#D4AF37]/10',
-                },
-                {
-                  icon: <Award className="w-6 h-6 text-[#D4AF37]" />,
-                  title: 'Global Recognition',
-                  description: 'Submit your projects, get evaluated by experts, and win prestige and prizes.',
-                  accent: 'from-[#B8952E]/15 to-[#D4AF37]/15',
-                },
-              ].map((feature, idx) => (
-                <Reveal key={idx} delay={idx * 120}>
-                  <div className="glass-panel p-6 sm:p-8 glass-panel-hover group relative overflow-hidden h-full">
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br ${feature.accent} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 border border-[#D4AF37]/10`}>
-                      {feature.icon}
-                    </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">{feature.title}</h3>
-                    <p className="text-gray-500 text-sm sm:text-base leading-relaxed">{feature.description}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══ YOUR JOURNEY ═══ */}
-        <section className="py-16 sm:py-24 lg:py-32 px-4 relative overflow-hidden" aria-labelledby="journey-heading">
-          <div className="absolute inset-0 -z-10 bg-white/20 backdrop-blur-sm" aria-hidden="true" />
-
-          <div className="container mx-auto max-w-6xl">
-            <Reveal>
-              <div className="text-center mb-12 sm:mb-16">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#D4AF37]/10 text-[#B8952E] text-sm font-bold mb-4 tracking-wide">
-                  <Target className="w-4 h-4" />
-                  HOW IT WORKS
-                </div>
-                <h2 id="journey-heading" className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4 sm:mb-6">
-                  Your Innovation Journey
-                </h2>
-                <p className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
-                  A structured path designed to take you from curiosity to creation — building real skills at every step.
+                <p className="text-gray-600 text-sm mb-6">
+                  Our proprietary SSI (Solution Seeking Index) measures 21st century skills that classrooms can&apos;t.
                 </p>
+                <ul className="space-y-3">
+                  {[
+                    'AI-powered assessment',
+                    'Personalized growth roadmap',
+                    'Track progress over time',
+                    'Skills that colleges & future employers value',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700">
+                      <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </Reveal>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-              {[
-                { step: '01', title: 'Discover', desc: 'Explore real-world challenges and find problems worth solving through guided modules.', icon: '🔍' },
-                { step: '02', title: 'Learn', desc: 'Build your entrepreneurial mindset with curated content, expert insights, and AI mentorship.', icon: '📚' },
-                { step: '03', title: 'Build', desc: 'Turn your ideas into structured solutions with frameworks, feedback, and iteration.', icon: '🛠️' },
-                { step: '04', title: 'Compete', desc: 'Submit your ideas, get evaluated by experts, and earn recognition on a national stage.', icon: '🏆' },
-              ].map((item, idx) => (
-                <Reveal key={idx} delay={idx * 100}>
-                  <div className="glass-panel p-6 sm:p-8 glass-panel-hover group relative overflow-hidden h-full text-center">
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <div className="text-3xl sm:text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">{item.icon}</div>
-                    <div className="text-xs font-bold text-[#B8952E] tracking-widest uppercase mb-2">Step {item.step}</div>
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">{item.title}</h3>
-                    <p className="text-gray-500 text-sm leading-relaxed">{item.desc}</p>
+            <Reveal delay={150}>
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <h3 className="font-bold text-[#1B2A4A] text-lg mb-1">Average improvement in 3 months</h3>
+                <p className="text-xs text-gray-500 mb-5">via SSI (Solution Seeking Index)</p>
+                <div className="space-y-4">
+                  <ProgressBar label="Confidence" value={37} delay={0} />
+                  <ProgressBar label="Problem Solving" value={42} delay={100} />
+                  <ProgressBar label="Creativity" value={45} delay={200} />
+                  <ProgressBar label="Leadership" value={40} delay={300} />
+                  <ProgressBar label="Communication" value={35} delay={400} />
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={300}>
+              <div className="bg-[#166534] rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden">
+                <div className="text-5xl text-white/20 font-serif absolute top-4 left-6">&ldquo;</div>
+                <div className="relative z-10 pt-6">
+                  <p className={`${playfair.className} text-lg sm:text-xl leading-relaxed mb-6`}>
+                    My daughter went from being shy to presenting her idea in front of 200 people. Youngpreneurs changed her life.
+                  </p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-white/20" />
+                    <div>
+                      <div className="font-semibold text-sm">Priya Sharma, Parent</div>
+                      <div className="text-xs text-white/60">Mumbai</div>
+                    </div>
                   </div>
-                </Reveal>
-              ))}
-            </div>
+                </div>
+                <div className="text-5xl text-white/20 font-serif absolute bottom-4 right-6">&rdquo;</div>
+              </div>
+            </Reveal>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══ STATS ═══ */}
-        <section className="py-16 sm:py-24 px-4 relative overflow-hidden" aria-labelledby="stats-heading">
-          <h2 id="stats-heading" className="sr-only">Platform Statistics</h2>
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#D4AF37]/5 rounded-full blur-[100px] pointer-events-none"
-            style={{ transform: `translate(-50%, -50%) translateY(${scrollY * -0.04}px)` }}
-            aria-hidden="true"
-          />
+      {/* ═══ BACKED BY INSTITUTIONS ═══ */}
+      <section className="py-12 lg:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className={`${playfair.className} text-xl sm:text-2xl lg:text-3xl font-bold text-[#1B2A4A] text-center mb-10`}>
+              Backed By Institutions Parents Trust
+            </h2>
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="flex flex-wrap justify-center items-center gap-10 sm:gap-14 lg:gap-20">
+              <img src="/images/yp/ttoi.png" alt="Times of India" className="h-12 sm:h-16 w-auto object-contain" />
+              <img src="/images/yp/et.png" alt="Economic Times" className="h-12 sm:h-16 w-auto object-contain" />
+              <img src="/images/yp/startUpIndiaLogo.png" alt="Startup India" className="h-10 sm:h-14 w-auto object-contain" />
+              <img src="/images/yp/AIPlogo.png" alt="Association of Indian Principals" className="h-12 sm:h-16 w-auto object-contain" />
+              <img src="/images/yp/AIClogo.png" alt="AIC BIMTECH" className="h-12 sm:h-16 w-auto object-contain" />
+            </div>
+          </Reveal>
+        </div>
+      </section>
 
-          <div ref={statsRef} className="container mx-auto max-w-6xl relative z-10">
-            <Reveal>
-              <div className="glass-panel p-6 sm:p-10 lg:p-12 relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+      {/* ═══ PARENT TESTIMONIALS ═══ */}
+      <section className="py-16 lg:py-20 bg-[#FAFAFA]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2A4A] text-center mb-3`}>
+              What Parents Are Saying
+            </h2>
+            <p className="text-gray-500 text-sm sm:text-base text-center mb-10">Real feedback from families across India</p>
+          </Reveal>
+          <Reveal delay={150}>
+            <ParentCarousel testimonials={parentTestimonials} />
+          </Reveal>
+        </div>
+      </section>
 
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 text-center">
-                  {[
-                    { target: '10000', suffix: '+', label: 'Students', count: stat1 },
-                    { target: '50', suffix: '+', label: 'Countries', count: stat2 },
-                    { target: '1000000', prefix: '$', suffix: '+', label: 'Ideas Impact', count: stat3, format: true },
-                    { target: '95', suffix: '%', label: 'Satisfaction', count: stat4 },
-                  ].map((stat, idx) => (
-                    <div key={idx} className="p-2 sm:p-4">
-                      <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#D4AF37] to-[#B8952E] mb-1 sm:mb-2 tabular-nums inline-block">
-                        {stat.prefix || ''}
-                        {stat.format
-                          ? (stat.count >= 1000000 ? `${(stat.count / 1000000).toFixed(0)}M` : stat.count >= 1000 ? `${(stat.count / 1000).toFixed(0)}K` : stat.count)
-                          : (stat.count >= 1000 ? `${(stat.count / 1000).toFixed(0)}K` : stat.count)}
-                        {stat.suffix}
+      {/* ═══ FUTURE TITANS — HERO ═══ */}
+      <section className="bg-[#1B2A4A] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+          <div className="grid lg:grid-cols-2 gap-10 items-center">
+            <div>
+              <Reveal>
+                <p className="text-[#C8960C] font-bold text-xs tracking-[0.2em] uppercase mb-4">
+                  Be Seen. Be Heard. Build the Future.
+                </p>
+                <h2 className={`${playfair.className} text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-3`}>
+                  FUTURE TITANS
+                </h2>
+                <p className="text-gray-300 text-base sm:text-lg mb-2">
+                  India&apos;s Biggest Entrepreneurial Hunt for Students
+                </p>
+                <p className="text-gray-400 text-sm mb-6">
+                  Ages 12–19 · ₹10 Lakhs+ Prize Pool · National Finale
+                </p>
+                <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-lg">
+                  A national challenge designed to equip India&apos;s teens with the solution-seeking mindset. Before the competition, every participant goes through a 5-part &quot;Build Like a Titan&quot; workshop series.
+                </p>
+              </Reveal>
+
+              <Reveal delay={150}>
+                <div className="flex flex-wrap gap-4 sm:gap-6 mb-8">
+                  {competitionFeatures.map((feat, idx) => (
+                    <div key={idx} className="flex flex-col items-center text-center">
+                      <div className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-white mb-2">
+                        {feat.icon}
                       </div>
-                      <div className="text-gray-500 font-medium tracking-wide uppercase text-[11px] sm:text-xs">{stat.label}</div>
+                      <div className="text-white text-xs font-bold">{feat.label}</div>
+                      <div className="text-gray-400 text-[10px]">{feat.sub}</div>
                     </div>
                   ))}
                 </div>
+              </Reveal>
+
+              <Reveal delay={250}>
+                <div className="flex flex-wrap gap-3">
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#C8960C] text-white font-bold text-sm hover:bg-white hover:text-[#1B2A4A] transition-all"
+                  >
+                    Register Now
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <Link
+                    href="/future-titans"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 border-white/20 text-white font-bold text-sm hover:border-[#C8960C] hover:text-[#C8960C] transition-all"
+                  >
+                    Learn More
+                  </Link>
+                </div>
+              </Reveal>
+            </div>
+
+            <Reveal delay={200}>
+              <div className="relative w-full lg:w-[120%] xl:w-[130%] aspect-[3/4] sm:aspect-[4/4] lg:aspect-[4/3]">
+                <img
+                  src="/images/yp/hero-students.jpg"
+                  alt="Real students at Youngpreneurs"
+                  className="w-full h-full object-cover scale-110"
+                  style={{
+                    maskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%)',
+                    maskComposite: 'intersect',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%)',
+                    WebkitMaskComposite: 'source-in',
+                  }}
+                />
               </div>
             </Reveal>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══ CTA ═══ */}
-        <section className="py-16 sm:py-24 lg:py-32 px-4 text-center" aria-labelledby="cta-heading">
+      {/* ═══ FUTURE TITANS — FRAMEWORKS ═══ */}
+      <section className="py-16 lg:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="container mx-auto max-w-4xl bg-[#1A1A1A] rounded-3xl sm:rounded-[32px] p-8 sm:p-12 lg:p-16 relative overflow-hidden shadow-2xl border border-gray-800">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-60" aria-hidden="true" />
-              <div className="absolute -top-20 -left-20 w-40 h-40 bg-[#D4AF37]/15 rounded-full blur-[60px]" aria-hidden="true" />
-              <div className="absolute -bottom-20 -right-20 w-40 h-40 bg-[#F5D76E]/10 rounded-full blur-[60px]" aria-hidden="true" />
-
-              <Rocket className="w-10 h-10 sm:w-12 sm:h-12 text-[#D4AF37] mx-auto mb-5 sm:mb-6 animate-pulse" />
-
-              <h2 id="cta-heading" className="text-2xl sm:text-3xl lg:text-5xl font-bold text-white mb-4 sm:mb-6 relative">
-                Ready to shape the future?
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2A4A] mb-3`}>
+                The Architecture Behind <span className="text-[#C8960C]">Future Titans</span>
               </h2>
+              <p className="text-gray-500 text-base max-w-2xl mx-auto">A patent-pending innovation architecture designed for the next generation.</p>
+            </div>
+          </Reveal>
+          <div className="grid sm:grid-cols-2 gap-5 max-w-5xl mx-auto">
+            {[
+              { title: 'IDEA DNA', sub: 'The Structured Innovation Pipeline', body: 'A four-stage progression: Innovate → Design → Experiment → Apply. A clear, structured, and repeatable innovation sequence.' },
+              { title: 'S.U.R.G.E.', sub: 'The Cognitive Sequencing Protocol', body: 'A five-step cognitive protocol guiding how students process challenges and convert them into actionable steps.' },
+              { title: 'SSI', sub: 'Solution-Seeking Index', body: 'A proprietary index capturing clarity in framing challenges, quality of idea design, experimentation approach, and ability to apply insights.' },
+              { title: 'AI Co-Founder', sub: 'A Guided Thinking Companion', body: 'A structured assistant supporting problem analysis, idea refinement, step-by-step breakdown, and pitch clarity.' },
+            ].map((c, i) => (
+              <Reveal key={i} delay={i * 100}>
+                <div className="bg-[#FAFAFA] border border-gray-100 rounded-2xl p-6 hover:border-[#C8960C]/30 hover:-translate-y-1 hover:shadow-lg transition-all group h-full">
+                  <div className="flex items-start gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#C8960C]/10 text-xs font-bold text-[#C8960C] ring-1 ring-[#C8960C]/25">{String(i + 1).padStart(2, '0')}</span>
+                    <div>
+                      <h3 className="text-lg font-bold text-[#1B2A4A]">{c.title}</h3>
+                      <p className="text-[#C8960C] text-xs mt-0.5">{c.sub}</p>
+                      <p className="text-gray-600 text-sm leading-relaxed mt-2">{c.body}</p>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-2xl mx-auto relative">
-                Join thousands of student innovators who are already building tomorrow&apos;s solutions.
-              </p>
+      {/* ═══ FUTURE TITANS — WORKSHOP LADDER ═══ */}
+      <section className="py-16 lg:py-20 bg-[#FFFBF0]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2A4A]`}>
+                Build Like a Titan: <span className="text-[#C8960C]">5-Step Journey</span>
+              </h2>
+              <p className="mt-3 text-gray-500 max-w-2xl mx-auto">Five connected workshops — each step prepares you for the next, from empathy to pitch.</p>
+            </div>
+          </Reveal>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[
+              { step: '01', title: 'Discover & Define', body: 'Empathy-driven exploration of real-world challenges' },
+              { step: '02', title: 'Design the Difference', body: 'Master ideation tools to uncover what makes their solution stand out' },
+              { step: '03', title: 'Prototype to Pitch', body: 'Bring ideas to life using no-code tools, rapid testing, and iteration' },
+              { step: '04', title: 'Map Your Model', body: 'Learn monetization and scalability — turning ideas into viable models' },
+              { step: '05', title: 'Pitch Like a Pro', body: 'A masterclass in influence, refining delivery and confidence' },
+            ].map((w, i) => (
+              <Reveal key={i} delay={i * 80}>
+                <div className="bg-white border border-gray-100 rounded-2xl p-5 hover:-translate-y-1 hover:shadow-md hover:border-[#C8960C]/30 transition-all h-full">
+                  <span className="text-[#C8960C] font-mono text-2xl font-black opacity-30 block mb-2">{w.step}</span>
+                  <h4 className="text-sm font-bold text-[#1B2A4A] mb-1.5">{w.title}</h4>
+                  <p className="text-gray-500 text-xs leading-relaxed">{w.body}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
 
+      {/* ═══ FUTURE TITANS — COMPETITION FORMAT ═══ */}
+      <section className="py-16 lg:py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#C8960C]`}>
+                The Competition Format
+              </h2>
+              <p className="mt-3 text-gray-500">Three milestones from idea to national stage.</p>
+            </div>
+          </Reveal>
+          <div className="space-y-5">
+            {[
+              { phase: 'Phase 1', title: 'Idea Submission (Virtual)', body: 'Participants submit their refined concepts shaped using IDEA DNA, S.U.R.G.E., and early-level experimentation.' },
+              { phase: 'Phase 2', title: 'Pitch Video (Virtual)', body: 'Participants communicate their concept through a short video pitch showcasing their problem insight, structured approach, and prototype.' },
+              { phase: 'Phase 3', title: 'The Grand Finale (Live Bootcamp)', body: 'The Top 50 Titans join a national bootcamp — deepening innovation models, receiving guidance from mentors, and pitching to a national jury.' },
+            ].map((p, i) => (
+              <Reveal key={i} delay={i * 120}>
+                <div className="flex gap-4 sm:gap-6">
+                  <div className="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-full bg-[#C8960C] text-white text-sm font-bold shadow-lg shadow-[#C8960C]/20">{i + 1}</div>
+                  <div className="flex-1 bg-[#FAFAFA] border border-gray-100 rounded-2xl p-5 sm:p-6 hover:border-[#C8960C]/30 transition-all">
+                    <span className="text-[#C8960C] font-mono font-bold text-xs tracking-wider">{p.phase}</span>
+                    <h4 className="text-base sm:text-lg font-bold text-[#1B2A4A] mt-1 mb-2">{p.title}</h4>
+                    <p className="text-gray-600 text-sm leading-relaxed">{p.body}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+          <Reveal delay={400}>
+            <div className="text-center mt-10">
               <Link
                 href="/signup"
-                className="glass-button px-8 sm:px-12 py-4 sm:py-5 text-base sm:text-lg inline-flex shadow-2xl shadow-[#D4AF37]/30 hover:shadow-[#D4AF37]/40 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group"
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#C8960C] text-white font-bold text-sm tracking-wider hover:bg-[#b5870b] transition-all shadow-lg shadow-[#C8960C]/20"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                <span className="relative">Start Your Journey Now</span>
+                Register for Future Titans — ₹1,500/yr
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </Reveal>
-        </section>
+        </div>
+      </section>
 
-        {/* ═══ FOOTER ═══ */}
-        <footer className="bg-[#1A1A1A] border-t border-gray-800 py-10 sm:py-16 px-4 rounded-t-3xl sm:rounded-t-[32px] mt-8" role="contentinfo">
-          <div className="container mx-auto max-w-6xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-12 mb-10 sm:mb-12">
-              <div className="sm:col-span-2 lg:col-span-1">
-                <div className="font-bold text-xl sm:text-2xl text-white mb-3">Future Titans</div>
-                <p className="text-gray-500 text-sm leading-relaxed">Empowering the next generation of innovators with tools, mentorship, and community.</p>
+      {/* ═══ CONNECT WITH YOUNGPRENEURS ═══ */}
+      <section className="py-12 lg:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className={`${playfair.className} text-2xl sm:text-3xl font-bold text-[#1B2A4A] text-center mb-8`}>
+              Connect with Youngpreneurs
+            </h2>
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+              <a
+                href="tel:+919038428532"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 text-[#1B2A4A] text-sm font-medium hover:border-[#C8960C] hover:text-[#C8960C] transition-all"
+              >
+                <Phone className="w-4 h-4" />
+                Call Us
+              </a>
+              <a
+                href="mailto:yes@youngpreneurs.ai"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 text-[#1B2A4A] text-sm font-medium hover:border-[#C8960C] hover:text-[#C8960C] transition-all"
+              >
+                <Mail className="w-4 h-4" />
+                Email Us
+              </a>
+              <a
+                href="https://wa.me/919038428532"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-gray-200 text-[#1B2A4A] text-sm font-medium hover:border-[#25D366] hover:text-[#25D366] transition-all"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+                WhatsApp
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ═══ FAQ SECTION ═══ */}
+      <section className="py-16 lg:py-20 bg-[#FAFAFA]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2A4A] text-center mb-12`}>
+              Questions Parents Ask (We Answer)
+            </h2>
+          </Reveal>
+
+          <div className="grid lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 grid sm:grid-cols-2 gap-x-6 gap-y-0">
+              {[...faqsLeft, ...faqsRight].map((faq, idx) => (
+                <div key={idx} className="border-b border-gray-200">
+                  <button
+                    className="w-full flex items-center justify-between py-4 text-left"
+                    onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
+                  >
+                    <span className="text-sm font-medium text-[#1B2A4A] pr-4">{faq.q}</span>
+                    {openFaq === idx ? (
+                      <Minus className="w-4 h-4 text-[#C8960C] shrink-0" />
+                    ) : (
+                      <Plus className="w-4 h-4 text-gray-400 shrink-0" />
+                    )}
+                  </button>
+                  <div className={`faq-answer-collapse ${openFaq === idx ? 'open' : ''}`}>
+                    <div>
+                      <p className="text-sm text-gray-600 pb-4">{faq.a}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <Reveal delay={200}>
+              <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-sm text-center">
+                <h3 className="text-lg font-bold text-[#1B2A4A] mb-2">Still have questions?</h3>
+                <p className="text-sm text-gray-500 mb-6">Our team is here to help you.</p>
+                <a
+                  href="tel:+919038428532"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 border-[#1B2A4A] text-[#1B2A4A] font-semibold text-sm hover:bg-[#1B2A4A] hover:text-white transition-all"
+                >
+                  <Phone className="w-4 h-4" />
+                  TALK TO OUR COUNSELOR
+                </a>
               </div>
-              <div>
-                <h4 className="font-bold text-gray-300 mb-3 sm:mb-4 text-sm tracking-wide uppercase">Company</h4>
-                <ul className="space-y-2.5">
-                  <li><a href="https://www.youngpreneurs.ai/about-us/" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">About</a></li>
-                  <li><a href="https://www.youngpreneurs.ai/contact" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#F5D76E] transition text-sm">Contact</a></li>
-                  <li>
-                    <a href="tel:+918031338782" className="text-gray-500 hover:text-[#F5D76E] transition text-sm flex items-center gap-2">
-                      <Phone className="w-3.5 h-3.5" />
-                      +91 80313 38782
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold text-gray-300 mb-3 sm:mb-4 text-sm tracking-wide uppercase">Connect</h4>
-                <div className="flex gap-3">
-                  {[
-                    { href: 'https://www.instagram.com/youngpreneurs.ai?igsh=MThlOW93dXJtYjRpeQ==', icon: Instagram, label: 'Instagram' },
-                    { href: 'https://www.facebook.com/share/1cqPc5C3LW/?mibextid=wwXIfr', icon: Facebook, label: 'Facebook' },
-                    { href: 'https://www.linkedin.com/company/youngpreneurs-ai/posts/?feedView=all', icon: Linkedin, label: 'LinkedIn' },
-                  ].map(({ href, icon: Icon, label }) => (
-                    <a
-                      key={label}
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={label}
-                      className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-500 hover:bg-[#D4AF37]/10 hover:text-[#F5D76E] hover:border-[#D4AF37]/20 transition-all"
-                    >
-                      <Icon className="w-4 h-4" />
-                    </a>
-                  ))}
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ FOOTER ═══ */}
+      <footer className="bg-[#1B2A4A] text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 mb-10">
+            <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+              <div className="flex items-center gap-1.5 mb-4">
+                <div className="w-8 h-8 bg-[#C8960C] rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                  YP
+                </div>
+                <div>
+                  <div className="font-bold text-sm">YOUNGPRENEURS</div>
+                  <div className="text-[10px] text-gray-400">Future Ready. Nurtured Today.</div>
                 </div>
               </div>
+              <div className="flex items-center gap-3 mt-4">
+                {[Instagram, Facebook, Linkedin, Youtube, Twitter].map((Icon, i) => (
+                  <a
+                    key={i}
+                    href="#"
+                    className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:bg-[#C8960C] hover:text-white transition-all"
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                  </a>
+                ))}
+              </div>
             </div>
-            <div className="pt-8 border-t border-gray-800 text-center text-gray-600 text-sm">
-              &copy; {new Date().getFullYear()} Future Titans. All rights reserved.
+
+            {[
+              { title: 'Programs', links: ['Future Titans', 'Workshops', 'Innovation Labs', 'AI Co-Founder'] },
+              { title: 'For Parents', links: ['Overview', 'FAQ', 'Resources', 'Blog'] },
+              { title: 'For Schools', links: ['Overview', 'Benefits', 'Partner With Us', 'Success Stories'] },
+              { title: 'About Us', links: ['Our Story', 'Our Team', 'Media', 'Careers'] },
+            ].map((col) => (
+              <div key={col.title}>
+                <h4 className="font-bold text-sm mb-3">{col.title}</h4>
+                <ul className="space-y-2">
+                  {col.links.map((link) => (
+                    <li key={link}>
+                      <a href="#" className="text-gray-400 text-sm hover:text-[#C8960C] transition-colors">
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+
+            <div>
+              <h4 className="font-bold text-sm mb-3">Stay Updated</h4>
+              <p className="text-gray-400 text-xs mb-3">Get updates on programs, events & opportunities.</p>
+              <div className="flex">
+                <input
+                  type="email"
+                  placeholder="Enter your email"
+                  className="flex-1 min-w-0 px-3 py-2 bg-white/10 border border-white/10 !rounded-l-lg !rounded-r-none text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#C8960C] !min-h-0 h-10"
+                />
+                <button className="px-3 py-2 bg-[#C8960C] rounded-r-lg hover:bg-[#b5870b] transition-colors">
+                  <ArrowRight className="w-4 h-4 text-white" />
+                </button>
+              </div>
             </div>
           </div>
-        </footer>
-      </div>
+
+          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+            <p>&copy; {new Date().getFullYear()} youngpreneurs.ai · All rights reserved.</p>
+            <div className="flex items-center gap-4">
+              <a href="#" className="hover:text-[#C8960C] transition-colors">Privacy Policy</a>
+              <a href="#" className="hover:text-[#C8960C] transition-colors">Terms of Use</a>
+              <a href="#" className="hover:text-[#C8960C] transition-colors">Data Policy</a>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

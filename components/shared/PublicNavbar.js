@@ -1,0 +1,288 @@
+'use client';
+
+import { useState, useEffect, useRef, useCallback } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
+
+const NAV_LINKS = [
+  // {
+  //   label: 'Programs',
+  //   href: null,
+  //   dropdown: [
+  //     { label: 'Future Titans', href: '/future-titans' },
+  //     { label: 'Academy', href: '/academy' },
+  //   ],
+  // },
+  { label: 'Future Titans', href: '/future-titans' },
+  { label: 'For Parents', href: '/for-parents' },
+  { label: 'For Schools', href: '/for-schools' },
+  { label: 'Success Stories', href: '/success-stories' },
+  { label: 'About Us', href: '/about-us' },
+];
+
+const SECONDARY_LINKS = [
+  { label: 'Team', href: '/team' },
+  { label: 'Media', href: '/media' },
+  { label: 'Contact', href: '/contact' },
+];
+
+export default function PublicNavbar() {
+  const pathname = usePathname();
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const dropdownTimeout = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [pathname]);
+
+  const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
+
+  const isActive = (href) => {
+    if (!href) return false;
+    return pathname === href || pathname?.startsWith(href + '/');
+  };
+
+  const handleDropdownEnter = () => {
+    clearTimeout(dropdownTimeout.current);
+    setDropdownOpen(true);
+  };
+
+  const handleDropdownLeave = () => {
+    dropdownTimeout.current = setTimeout(() => setDropdownOpen(false), 150);
+  };
+
+  return (
+    <>
+      <nav
+        className={`sticky top-0 z-50 transition-all duration-300 bg-white ${scrolled ? 'shadow-md' : 'shadow-sm'
+          }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-[72px]">
+            {/* Logo */}
+            <Link href="/" className="shrink-0">
+              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-10 sm:h-12 w-auto object-contain" />
+            </Link>
+
+            {/* Desktop Nav */}
+            <div className="hidden lg:flex items-center gap-1">
+              {NAV_LINKS.map((link) =>
+                link.dropdown ? (
+                  <div
+                    key={link.label}
+                    ref={dropdownRef}
+                    className="relative"
+                    onMouseEnter={handleDropdownEnter}
+                    onMouseLeave={handleDropdownLeave}
+                  >
+                    <button
+                      onClick={() => setDropdownOpen((o) => !o)}
+                      className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-lg ${dropdownOpen
+                        ? 'text-[#C8960C]'
+                        : 'text-[#1B2A4A] hover:text-[#C8960C]'
+                        }`}
+                    >
+                      {link.label}
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''
+                          }`}
+                      />
+                    </button>
+                    {dropdownOpen && (
+                      <div className="absolute top-full left-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
+                        {link.dropdown.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`block px-4 py-2.5 text-sm font-medium transition-colors ${isActive(item.href)
+                              ? 'text-[#C8960C] bg-[#FFF8E7]'
+                              : 'text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50'
+                              }`}
+                            onClick={() => setDropdownOpen(false)}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-lg ${isActive(link.href)
+                      ? 'text-[#C8960C]'
+                      : 'text-[#1B2A4A] hover:text-[#C8960C]'
+                      }`}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
+            </div>
+
+            {/* Desktop Right */}
+            <div className="hidden lg:flex items-center gap-3">
+              <Link
+                href="/login"
+                className="px-5 py-2 rounded-full border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="px-5 py-2.5 rounded-full bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5"
+              >
+                Enroll Now — ₹1,500/yr
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              {/* <div className="hidden xl:flex items-center gap-1.5 text-xs text-gray-500 ml-2">
+                <span>Trusted by 10,000+ families</span>
+                <div className="flex -space-x-1.5">
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="w-5 h-5 rounded-full bg-gray-300 border-2 border-white"
+                    />
+                  ))}
+                </div>
+              </div> */}
+            </div>
+
+            {/* Mobile Hamburger */}
+            <button
+              className="lg:hidden p-2 text-[#1B2A4A]"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden fixed inset-0 top-16 z-40">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={closeMobile}
+          />
+          <div className="relative bg-white border-t border-gray-100 shadow-xl max-h-[80vh] overflow-y-auto">
+            <div className="px-4 py-4 space-y-1">
+              {NAV_LINKS.map((link) =>
+                link.dropdown ? (
+                  <div key={link.label}>
+                    <button
+                      className="flex items-center justify-between w-full px-4 py-3 text-[#1B2A4A] font-medium rounded-xl hover:bg-gray-50"
+                      onClick={() => setMobileDropdownOpen((o) => !o)}
+                    >
+                      {link.label}
+                      <ChevronDown
+                        className={`w-4 h-4 transition-transform duration-200 ${mobileDropdownOpen ? 'rotate-180' : ''
+                          }`}
+                      />
+                    </button>
+                    {mobileDropdownOpen && (
+                      <div className="ml-4 space-y-1">
+                        {link.dropdown.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`block px-4 py-2.5 text-sm font-medium rounded-lg ${isActive(item.href)
+                              ? 'text-[#C8960C] bg-[#FFF8E7]'
+                              : 'text-[#1B2A4A] hover:bg-gray-50'
+                              }`}
+                            onClick={closeMobile}
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    className={`block px-4 py-3 font-medium rounded-xl ${isActive(link.href)
+                      ? 'text-[#C8960C] bg-[#FFF8E7]'
+                      : 'text-[#1B2A4A] hover:bg-gray-50'
+                      }`}
+                    onClick={closeMobile}
+                  >
+                    {link.label}
+                  </Link>
+                )
+              )}
+
+              <div className="h-px bg-gray-100 my-2" />
+
+              {SECONDARY_LINKS.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`block px-4 py-3 font-medium rounded-xl ${isActive(link.href)
+                    ? 'text-[#C8960C] bg-[#FFF8E7]'
+                    : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  onClick={closeMobile}
+                >
+                  {link.label}
+                </Link>
+              ))}
+
+              <div className="pt-3 space-y-2">
+                <Link
+                  href="/login"
+                  className="block w-full text-center px-4 py-3 rounded-xl border border-[#1B2A4A] text-[#1B2A4A] font-semibold"
+                  onClick={closeMobile}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/signup"
+                  className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
+                  onClick={closeMobile}
+                >
+                  Enroll Now — ₹1,500/yr
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
