@@ -613,13 +613,13 @@ export default function Landing() {
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {[
-              { name: 'Kshitij, Class 10', location: 'Kolkata', quote: 'Before Youngpreneurs, I had ideas but no clue how to build them. Now I\'ve built a working prototype and pitched it to real mentors. My confidence has gone through the roof.', avatar: '🧑‍💻' },
-              { name: 'Naisha, Class 9', location: 'Delhi', quote: 'I used to be terrified of public speaking. After the workshops, I presented my solution in front of 150 people — and loved it. My parents couldn\'t believe the change.', avatar: '👩‍🎓' },
-              { name: 'Shivay, Class 11', location: 'Bangalore', quote: 'The SURGE framework taught me to think like an entrepreneur. I now look at every problem as an opportunity. It\'s completely changed how I approach challenges.', avatar: '🎯' },
+              { name: 'Kshitij, Class 10', location: 'Kolkata', quote: 'Before Youngpreneurs, I had ideas but no clue how to build them. Now I\'ve built a working prototype and pitched it to real mentors. My confidence has gone through the roof.', avatar: '/images/yp/student_1.png' },
+              { name: 'Naisha, Class 9', location: 'Delhi', quote: 'I used to be terrified of public speaking. After the workshops, I presented my solution in front of 150 people — and loved it. My parents couldn\'t believe the change.', avatar: '/images/yp/student_2.png' },
+              { name: 'Shivay, Class 11', location: 'Bangalore', quote: 'The SURGE framework taught me to think like an entrepreneur. I now look at every problem as an opportunity. It\'s completely changed how I approach challenges.', avatar: '/images/yp/student_3.png' },
             ].map((student, idx) => (
               <Reveal key={idx} delay={idx * 100}>
                 <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-sm hover:shadow-md hover:border-[#C8960C]/30 transition-all h-full">
-                  <div className="text-3xl mb-3">{student.avatar}</div>
+                  <img src={student.avatar} alt={student.name} className="w-16 h-16 rounded-full object-cover border-2 border-gray-100 mb-4" />
                   <p className="text-gray-600 text-sm leading-relaxed mb-4">&ldquo;{student.quote}&rdquo;</p>
                   <div className="border-t border-gray-100 pt-3">
                     <div className="font-semibold text-sm text-[#1B2A4A]">{student.name}</div>
