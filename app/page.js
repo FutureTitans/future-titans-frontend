@@ -641,9 +641,29 @@ export default function Landing() {
             </h2>
             <p className="text-gray-500 text-sm sm:text-base text-center mb-10">Real feedback from families across India</p>
           </Reveal>
-          <Reveal delay={150}>
-            <ParentCarousel testimonials={parentTestimonials} />
-          </Reveal>
+          <div className="grid sm:grid-cols-2 gap-5 max-w-5xl mx-auto">
+            {parentTestimonials.map((t, idx) => (
+              <Reveal key={idx} delay={idx * 80}>
+                <div className="bg-white rounded-2xl border border-gray-100 p-6 sm:p-7 shadow-sm hover:shadow-md hover:border-[#C8960C]/20 transition-all h-full">
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="text-3xl text-[#C8960C]/25 font-serif leading-none shrink-0">&ldquo;</div>
+                    <p className={`${playfair.className} text-base sm:text-lg text-[#1B2A4A] leading-relaxed`}>
+                      {t.quote}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
+                    <div className="w-10 h-10 rounded-full bg-[#FFF8E7] flex items-center justify-center text-[#C8960C]">
+                      <Users className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm text-[#1B2A4A]">{t.name}</div>
+                      <div className="text-xs text-gray-500">{t.location}</div>
+                    </div>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -728,17 +748,17 @@ export default function Landing() {
           <Reveal>
             <div className="text-center mb-12">
               <h2 className={`${playfair.className} text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1B2A4A] mb-3`}>
-                The Architecture Behind <span className="text-[#C8960C]">Future Titans</span>
+                How Your Child Learns to <span className="text-[#C8960C]">Think & Build</span>
               </h2>
-              <p className="text-gray-500 text-base max-w-2xl mx-auto">A patent-pending innovation architecture designed for the next generation.</p>
+              <p className="text-gray-500 text-base max-w-2xl mx-auto">Here&apos;s how we teach your child to think and build — in 4 clear steps. No jargon, just a proven curriculum.</p>
             </div>
           </Reveal>
           <div className="grid sm:grid-cols-2 gap-5 max-w-5xl mx-auto">
             {[
-              { title: 'IDEA DNA', sub: 'The Structured Innovation Pipeline', body: 'A four-stage progression: Innovate → Design → Experiment → Apply. A clear, structured, and repeatable innovation sequence.' },
-              { title: 'S.U.R.G.E.', sub: 'The Cognitive Sequencing Protocol', body: 'A five-step cognitive protocol guiding how students process challenges and convert them into actionable steps.' },
-              { title: 'SSI', sub: 'Solution-Seeking Index', body: 'A proprietary index capturing clarity in framing challenges, quality of idea design, experimentation approach, and ability to apply insights.' },
-              { title: 'AI Co-Founder', sub: 'A Guided Thinking Companion', body: 'A structured assistant supporting problem analysis, idea refinement, step-by-step breakdown, and pitch clarity.' },
+              { title: 'IDEA DNA', sub: 'Step 1: From Problem to Solution', body: 'Your child picks a real problem they care about, brainstorms solutions, builds a simple prototype, and tests it — learning to think like an innovator.' },
+              { title: 'S.U.R.G.E.', sub: 'Step 2: A Thinking Framework', body: 'A simple 5-step method that teaches your child how to break down any challenge, ask the right questions, and turn ideas into clear action plans.' },
+              { title: 'SSI', sub: 'Step 3: Track Your Child\'s Growth', body: 'We measure your child\'s progress across confidence, creativity, leadership, and problem-solving — so you can see real improvement, not just grades.' },
+              { title: 'AI Co-Founder', sub: 'Step 4: A Smart Study Buddy', body: 'An AI assistant that helps your child refine their ideas, prepare their pitch, and think through challenges — like having a mentor available anytime.' },
             ].map((c, i) => (
               <Reveal key={i} delay={i * 100}>
                 <div className="bg-[#FAFAFA] border border-gray-100 rounded-2xl p-6 hover:border-[#C8960C]/30 hover:-translate-y-1 hover:shadow-lg transition-all group h-full">
