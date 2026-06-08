@@ -1,4 +1,6 @@
-"use client";
+import os
+
+content = r'''"use client";
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -372,11 +374,11 @@ export default function Landing() {
 
       {/* ═══ HERO ═══ */}
       <section className="bg-[#FFFBF0] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-12 lg:pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 pb-12 lg:pt-0 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div>
-              <h1 className={`${playfair.className} text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-[#1B2A4A] leading-[1.12] mb-4`}>
-                Will Your Child Be Replaced by AI,<br className="hidden sm:block" />
+            <div className="-mt-12 lg:-mt-20">
+              <h1 className={`${playfair.className} text-4xl sm:text-5xl lg:text-[3.5rem] xl:text-5xl font-bold text-[#1B2A4A] leading-[1.1] mb-4`}>
+                Will Your Child Be Replaced by AI,<br />
                 or Will They <span className="text-[#C8960C]">Lead It?</span>
               </h1>
 
@@ -408,35 +410,35 @@ export default function Landing() {
                 <span className="text-sm font-bold text-[#1B2A4A]">Knowledge Partner: IIT Kharagpur</span>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-6">
                 <Link
                   href="/signup"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8960C]/20"
+                  className="px-6 py-3.5 rounded-full bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center gap-2 shadow-lg shadow-[#C8960C]/20"
                 >
                   Register Now — Secure Your Child&apos;s Spot
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link
                   href="#video"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-full border border-gray-300 text-[#1B2A4A] font-semibold text-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+                  className="px-6 py-3.5 rounded-full border border-gray-300 text-[#1B2A4A] font-semibold text-sm hover:bg-gray-50 transition-all flex items-center gap-2"
                 >
                   <Play className="w-4 h-4 text-[#C8960C]" />
                   See Their Transformation
                 </Link>
               </div>
 
-              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <div className="flex items-center gap-0.5">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#C8960C] text-[#C8960C]" />
+                    <Star key={i} className="w-4 h-4 fill-[#C8960C] text-[#C8960C]" />
                   ))}
                 </div>
-                <span className="text-xs sm:text-sm text-gray-600"><span className="font-bold text-[#1B2A4A]">4.8/5</span> · Trusted by 10,000+ families across 120+ cities</span>
+                <span className="text-sm text-gray-600"><span className="font-bold text-[#1B2A4A]">4.8/5</span> · Trusted by 10,000+ forward-thinking families across 120+ cities in India</span>
               </div>
             </div>
 
             <div className="relative lg:-mr-16 xl:-mr-24">
-              <div className="relative w-full lg:w-[120%] xl:w-[130%] aspect-[4/3] sm:aspect-[4/3] lg:aspect-[4/3]">
+              <div className="relative w-full lg:w-[120%] xl:w-[130%] aspect-[3/4] sm:aspect-[4/4] lg:aspect-[4/3]">
                 <img
                   src="/images/yp/hero-students.jpg"
                   alt="Real students at Youngpreneurs"
@@ -735,7 +737,7 @@ export default function Landing() {
                 <p className="text-[#C8960C] font-bold text-sm tracking-[0.2em] uppercase mb-4">
                   India's Flagship Innovation Capability Ecosystem
                 </p>
-                <h2 className={`${playfair.className} text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight`}>
+                <h2 className={`${playfair.className} text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight`}>
                   BE SEEN.<br />BE HEARD.<br /><span className="text-[#C8960C]">BUILD THE FUTURE.</span>
                 </h2>
                 <p className="text-gray-300 text-base sm:text-lg font-medium mb-6">
@@ -755,11 +757,9 @@ export default function Landing() {
                     <li><span className="text-white font-semibold">S.U.R.G.E.™</span> — a patent-pending cognitive framework, not a curriculum.</li>
                     <li><span className="text-white font-semibold">SSI™</span> — a measurable thinking score, reportable to parents and boards.</li>
                     <li><span className="text-white font-semibold">Zunnova™</span> — an AI co-founder that asks questions, never gives answers.</li>
-                    <li>A year-round <span className="text-white font-semibold">Innovation Club</span> installed inside your school.</li>
-                    <li>Real stakes: <span className="text-white font-semibold">national challenge · global mentors · ₹40 Lakhs prize pool.</span></li>
                   </ul>
                   <p className="font-semibold text-white italic mt-4 border-l-4 border-[#C8960C] pl-4">
-                    &ldquo;Everything a course promises. The infrastructure to make it permanent.&rdquo;
+                    "Everything a course promises. The infrastructure to make it permanent."
                   </p>
                 </div>
               </Reveal>
@@ -789,40 +789,39 @@ export default function Landing() {
                       <Users className="w-5 h-5" /> Why Parents Love It
                     </h4>
                     <ul className="space-y-2 text-sm text-gray-300">
-                      <li>• Massive, visible confidence boost — parents notice it within weeks</li>
-                      <li>• Mentorship from global leaders — IIT Kharagpur faculty, industry veterans, and world-class practitioners</li>
-                      <li>• Nationally recognised certificates valued by top colleges</li>
-                      <li>• AI skills that future-proof their career — regardless of which field they choose</li>
-                      <li>• Results whether they win or not — the learning is the prize</li>
+                      <li>• Massive, visible confidence boost</li>
+                      <li>• Mentorship from global leaders</li>
+                      <li>• Nationally recognised certificates</li>
+                      <li>• AI skills that future-proof their career</li>
                     </ul>
                   </div>
                 </div>
                 <Link
                   href="/signup"
-                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#C8960C] text-white font-bold text-xs sm:text-sm hover:bg-white hover:text-[#1B2A4A] transition-all shadow-lg text-center"
+                  className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#C8960C] text-white font-bold text-sm hover:bg-white hover:text-[#1B2A4A] transition-all shadow-lg"
                 >
-                  <span>Register Your Child for Future Titans</span>
-                  <ArrowRight className="w-4 h-4 shrink-0" />
+                  Register Your Child for Future Titans — Don't Let Them Miss This
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
               </Reveal>
             </div>
 
             <Reveal delay={200}>
-              <div className="relative w-full aspect-[4/3] sm:aspect-square lg:aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+              <div className="relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
                 <img
                   src="/images/yp/hero-students.jpg"
                   alt="Future Titans"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#1B2A4A] via-transparent to-transparent opacity-90" />
-                <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8">
-                  <div className="flex flex-wrap gap-3 sm:gap-4 lg:gap-6">
+                <div className="absolute bottom-8 left-8 right-8">
+                  <div className="flex flex-wrap gap-4 sm:gap-6">
                     {competitionFeatures.map((feat, idx) => (
                       <div key={idx} className="flex flex-col items-center text-center">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[#C8960C] mb-1 sm:mb-2">
+                        <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[#C8960C] mb-2">
                           {feat.icon}
                         </div>
-                        <div className="text-white text-[10px] sm:text-xs font-bold">{feat.label}</div>
+                        <div className="text-white text-xs font-bold">{feat.label}</div>
                       </div>
                     ))}
                   </div>
@@ -1133,22 +1132,22 @@ export default function Landing() {
       </section>
 
       {/* ═══ FINAL CTA ═══ */}
-      <section className="py-14 sm:py-20 lg:py-28 bg-[#FFFBF0] text-center border-b border-gray-200">
+      <section className="py-20 lg:py-28 bg-[#FFFBF0] text-center border-b border-gray-200">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className={`${playfair.className} text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1B2A4A] mb-6 sm:mb-8 leading-tight`}>
+            <h2 className={`${playfair.className} text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1B2A4A] mb-8 leading-tight`}>
               Don't Let Your Child Watch the Future Happen to Them.
             </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-8 sm:mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
               10,000+ families have already given their children the unfair advantage. Seats in the next cohort are limited.
             </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mb-8 sm:mb-10">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-10">
               <Link
                 href="/signup"
-                className="px-8 sm:px-10 py-4 sm:py-5 rounded-full bg-[#C8960C] text-white font-bold text-base sm:text-lg tracking-wide hover:bg-[#b5870b] transition-all shadow-xl shadow-[#C8960C]/30 flex items-center gap-3 w-full sm:w-auto justify-center hover:-translate-y-1"
+                className="px-10 py-5 rounded-full bg-[#C8960C] text-white font-bold text-lg tracking-wide hover:bg-[#b5870b] transition-all shadow-xl shadow-[#C8960C]/30 flex items-center gap-3 w-full sm:w-auto justify-center hover:-translate-y-1"
               >
                 Register Now — Secure Your Child's Spot
-                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
+                <ArrowRight className="w-6 h-6" />
               </Link>
             </div>
             <p className="text-gray-500 font-medium text-sm">
@@ -1243,3 +1242,9 @@ function QuoteIcon(props) {
     </svg>
   );
 }
+'''
+
+with open("/Users/prashantjadon/Desktop/personalfreeprojects/futuretitansLastProject/frontend/app/page.js", "w", encoding="utf-8") as f:
+    f.write(content)
+
+print("File written successfully.")

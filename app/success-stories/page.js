@@ -6,9 +6,9 @@ import PublicNavbar from '@/components/shared/PublicNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 
 const ambassadors = [
-  { name: 'Naisha Kapoor', quote: 'Innovation begins the moment you decide to look deeper.', description: 'Naisha shares how observing the world around her led her to channel her curiosity into building something of value.', video: '/images/yp/naishaVoice.mp4' },
-  { name: 'Shivay Dhar', quote: 'Once you start building, the world starts opening up.', description: 'Shivay reflects on how experimenting with ideas broadened his perspective and helped him recognise hidden opportunities.', video: '/images/yp/ShivayVoice.mp4' },
-  { name: 'Krishika Shaw', quote: 'You find clarity when you start creating, not when you wait.', description: 'Krishika talks about how taking her first step brought focus, structure, and direction to her journey.', video: '/images/yp/KrishikaVoice.mp4' },
+  { name: 'Naisha Kapoor', quote: 'Innovation begins the moment you decide to look deeper.', description: 'Naisha shares how a single moment of curiosity became the spark that led her to build something she never imagined possible.', video: '/images/yp/naishaVoice.mp4' },
+  { name: 'Shivay Dhar', quote: 'Once you start building, the world starts opening up.', description: 'Shivay reflects on how stepping outside the classroom unlocked a version of himself that no exam had ever asked for.', video: '/images/yp/ShivayVoice.mp4' },
+  { name: 'Krishika Shaw', quote: 'You find clarity when you start creating, not when you wait.', description: 'Krishika talks about how building her first idea gave her a clarity and direction she had never found in any textbook.', video: '/images/yp/KrishikaVoice.mp4' },
   { name: 'Kshitij Manish Kalunke', quote: 'Every big journey starts with one small spark.', description: 'Kshitij describes the moment that ignited his passion — sparking a journey of curiosity and continuous growth.', video: '/images/yp/kshitijVoice.mp4' },
 ];
 
