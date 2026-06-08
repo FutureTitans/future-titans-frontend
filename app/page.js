@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, isAdmin, isStudent } from '@/lib/auth';
 import PublicFooter from '@/components/shared/PublicFooter';
+import PublicNavbar from '@/components/shared/PublicNavbar';
 import {
   ArrowRight, ChevronDown, ChevronLeft, ChevronRight, Play, Plus, Minus,
   Users, Award, Lightbulb, MessageCircle, Globe, Crown,
@@ -289,88 +290,7 @@ export default function Landing() {
       </a>
 
       {/* ═══ NAVBAR ═══ */}
-      <nav className={`sticky top-0 z-50 transition-all duration-300 bg-white ${scrolled ? 'shadow-md' : 'shadow-sm'}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-[72px]">
-            <Link href="/" className="shrink-0">
-              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-10 sm:h-12 w-auto object-contain" />
-            </Link>
-
-            <div className="hidden lg:flex items-center gap-1">
-              {navLinks.map((link) => (
-                <a
-                  key={link.label}
-                  href={link.href}
-                  className="flex items-center gap-1 px-3 py-2 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] transition-colors"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-
-            <div className="hidden lg:flex items-center gap-3">
-              <Link
-                href="/login"
-                className="px-5 py-2 rounded-full border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all"
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="px-5 py-2.5 rounded-full bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5"
-              >
-                Register Now
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <button
-              className="lg:hidden p-2 text-[#1B2A4A]"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-
-        {mobileMenuOpen && (
-          <div className="lg:hidden fixed inset-0 top-16 z-40">
-            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileMenuOpen(false)} />
-            <div className="relative bg-white border-t border-gray-100 shadow-xl max-h-[80vh] overflow-y-auto">
-              <div className="px-4 py-4 space-y-1">
-                {navLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="block px-4 py-3 text-[#1B2A4A] font-medium rounded-xl hover:bg-gray-50"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-                <div className="pt-3 space-y-2">
-                  <Link
-                    href="/login"
-                    className="block w-full text-center px-4 py-3 rounded-xl border border-[#1B2A4A] text-[#1B2A4A] font-semibold"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Register Now
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </nav>
-
+      <PublicNavbar />
       {/* ═══ HERO ═══ */}
       <section className="bg-[#FFFBF0] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-12 lg:pb-16">
@@ -713,8 +633,8 @@ export default function Landing() {
                 { name: 'Dr. Partha Ghosh', title: 'Former Senior Partner, McKinsey; Professor, MIT', image: '/images/yp/partha.jpg' },
                 { name: 'Suman Bose', title: 'Former CEO & MD, Siemens', image: '/images/yp/suman.jpg' },
                 { name: 'Sachin Kapoor', title: 'Former Sr Director, LinkedIn India', image: '/images/yp/sachin.jpeg' },
-                { name: 'Dr. Julia Stamm', title: 'Founder, She Shapes AI, London', image: '/images/yp/julia.jpg' },
-                { name: 'Rajeev Barua', title: 'Professor of CS, UMD · Ph.D. MIT', image: '/images/yp/rajeev.jpg' },
+                { name: 'Dr. Julia Stamm', title: 'Founder, She Shapes AI, London', image: '/images/juliya.jpg' },
+                { name: 'Rajeev Barua', title: 'Professor of CS, UMD · Ph.D. MIT', image: '/images/rajeev.jpg' },
               ].map((mentor, idx) => (
                 <div key={idx} className="flex flex-col items-center text-center group">
                   <img src={mentor.image} alt={mentor.name} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-md mb-3 group-hover:border-[#C8960C] transition-all" />

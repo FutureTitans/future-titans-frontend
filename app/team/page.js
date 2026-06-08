@@ -9,11 +9,11 @@ const teamMembers = [
   { name: 'Fred Katz', title: 'Senior Advisor', description: 'Senior Professional Faculty, Johns Hopkins Carey Business School · President/CEO, Wise Products', image: '/images/yp/fred.jpeg', linkedin: 'https://www.linkedin.com/in/fred-katz-748b242' },
   { name: 'Suman Bose', title: 'Advisor', description: 'Founder, Project KREEA · Former CEO & MD, Siemens · Building India\'s Deeptech Hub', image: '/images/yp/suman.jpg', linkedin: 'https://www.linkedin.com/in/sumanbose' },
   { name: 'Partha Ghosh', title: 'Advisor', description: 'Founder, Partha Ghosh Leadership Academy IIT Kharagpur · Former McKinsey Senior Partner · MIT Professor', image: '/images/yp/partha.jpg', linkedin: 'https://www.linkedin.com/in/partha-ghosh-820b4a/' },
-  { name: 'Dr. Julia Stamm', title: 'Advisor', description: 'Founder & CEO, She Shapes AI, London · Responsible Tech & AI for Impact · Fellow, Royal Society of Arts', image: '/images/yp/juliya.jpeg', linkedin: 'https://www.linkedin.com/in/dr-julia-stamm/' },
+  { name: 'Dr. Julia Stamm', title: 'Advisor', description: 'Founder & CEO, She Shapes AI, London · Responsible Tech & AI for Impact · Fellow, Royal Society of Arts', image: '/images/juliya.jpg', linkedin: 'https://www.linkedin.com/in/dr-julia-stamm/' },
   { name: 'Pankaj Dubey', title: 'Advisor', description: 'Former Country Head & MD, Polaris India · Top 50 Indian Icon · ET Global Visionary Leader', image: '/images/yp/pankaj.jpg', linkedin: 'https://www.linkedin.com/in/pankajdubey1967' },
   { name: 'Jayesh Ranjan', title: 'Advisor', description: 'Special Chief Secretary, IT, Industries & Commerce, Government of Telangana', image: '/images/yp/jayesh.png', linkedin: 'https://www.linkedin.com/in/jayesh-ranjan-37415963/' },
   { name: 'Sachin Kapoor', title: 'Advisor', description: 'Former Sr Director & Head of BD, LinkedIn India · Founder & CEO, Trumsy.Ai', image: '/images/yp/sachin.jpeg', linkedin: 'https://www.linkedin.com/in/sachinkapoor/' },
-  { name: 'Rajeev Barua', title: 'Advisor', description: 'Founder & CEO, SecondWrite · Professor of CS, University of Maryland · Ph.D. MIT · Contributed to chip dev with IBM', image: '/images/yp/rajeevbaura.jpeg', linkedin: 'https://www.linkedin.com/in/rajeev-barua/' },
+  { name: 'Rajeev Barua', title: 'Advisor', description: 'Founder & CEO, SecondWrite · Professor of CS, University of Maryland · Ph.D. MIT · Contributed to chip dev with IBM', image: '/images/rajeev.jpg', linkedin: 'https://www.linkedin.com/in/rajeev-barua/' },
 ];
 
 const doers = [

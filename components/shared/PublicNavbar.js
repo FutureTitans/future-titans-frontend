@@ -33,8 +33,12 @@ export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
+  const [mobileLoginDropdownOpen, setMobileLoginDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const dropdownTimeout = useRef(null);
+  const loginDropdownRef = useRef(null);
+  const loginDropdownTimeout = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -51,6 +55,9 @@ export default function PublicNavbar() {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setDropdownOpen(false);
+      }
+      if (loginDropdownRef.current && !loginDropdownRef.current.contains(e.target)) {
+        setLoginDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -75,6 +82,15 @@ export default function PublicNavbar() {
 
   const handleDropdownLeave = () => {
     dropdownTimeout.current = setTimeout(() => setDropdownOpen(false), 150);
+  };
+
+  const handleLoginDropdownEnter = () => {
+    clearTimeout(loginDropdownTimeout.current);
+    setLoginDropdownOpen(true);
+  };
+
+  const handleLoginDropdownLeave = () => {
+    loginDropdownTimeout.current = setTimeout(() => setLoginDropdownOpen(false), 150);
   };
 
   return (
@@ -149,17 +165,50 @@ export default function PublicNavbar() {
 
             {/* Desktop Right */}
             <div className="hidden lg:flex items-center gap-3">
-              <Link
-                href="/login"
-                className="px-5 py-2 rounded-full border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all"
+              <div
+                ref={loginDropdownRef}
+                className="relative"
+                onMouseEnter={handleLoginDropdownEnter}
+                onMouseLeave={handleLoginDropdownLeave}
               >
-                Login
-              </Link>
+                <button
+                  onClick={() => setLoginDropdownOpen((o) => !o)}
+                  className="px-5 py-2 rounded-full border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all flex items-center gap-1"
+                >
+                  Login
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdownOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {loginDropdownOpen && (
+                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 overflow-hidden">
+                    <Link
+                      href="/login"
+                      className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors border-b border-gray-50"
+                      onClick={() => setLoginDropdownOpen(false)}
+                    >
+                      Student Login
+                    </Link>
+                    <Link
+                      href="/school-poc/login"
+                      className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors border-b border-gray-50"
+                      onClick={() => setLoginDropdownOpen(false)}
+                    >
+                      School POC Login
+                    </Link>
+                    <Link
+                      href="/association/login"
+                      className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors"
+                      onClick={() => setLoginDropdownOpen(false)}
+                    >
+                      Association Login
+                    </Link>
+                  </div>
+                )}
+              </div>
               <Link
                 href="/signup"
                 className="px-5 py-2.5 rounded-full bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5"
               >
-                Enroll Now — ₹1,500/yr + GST
+                Enroll Now
                 <ArrowRight className="w-4 h-4" />
               </Link>
               {/* <div className="hidden xl:flex items-center gap-1.5 text-xs text-gray-500 ml-2">
@@ -264,19 +313,46 @@ export default function PublicNavbar() {
               ))}
 
               <div className="pt-3 space-y-2">
-                <Link
-                  href="/login"
-                  className="block w-full text-center px-4 py-3 rounded-xl border border-[#1B2A4A] text-[#1B2A4A] font-semibold"
-                  onClick={closeMobile}
-                >
-                  Login
-                </Link>
+                <div className="rounded-xl border border-[#1B2A4A] overflow-hidden">
+                  <button
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[#1B2A4A] font-semibold transition-colors"
+                    onClick={() => setMobileLoginDropdownOpen((o) => !o)}
+                  >
+                    Login
+                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileLoginDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  {mobileLoginDropdownOpen && (
+                    <div className="bg-gray-50 border-t border-gray-100 divide-y divide-gray-100">
+                      <Link
+                        href="/login"
+                        className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
+                        onClick={closeMobile}
+                      >
+                        Student Login
+                      </Link>
+                      <Link
+                        href="/school-poc/login"
+                        className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
+                        onClick={closeMobile}
+                      >
+                        School POC Login
+                      </Link>
+                      <Link
+                        href="/association/login"
+                        className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
+                        onClick={closeMobile}
+                      >
+                        Association Login
+                      </Link>
+                    </div>
+                  )}
+                </div>
                 <Link
                   href="/signup"
                   className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
                   onClick={closeMobile}
                 >
-                  Enroll Now — ₹1,500/yr + GST
+                  Enroll Now
                 </Link>
               </div>
             </div>
