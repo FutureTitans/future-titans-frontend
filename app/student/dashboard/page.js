@@ -272,9 +272,6 @@ export default function StudentDashboard() {
                       Special price via school link: ₹{paymentStatus.price} + 18% GST
                     </span>
                   )}
-                  <span className="block mt-1 text-xs text-gray-500">
-                    ₹{paymentStatus?.price || 1500} + 18% GST = ₹{paymentStatus?.totalAmount || Math.round((paymentStatus?.price || 1500) * 1.18)} total
-                  </span>
                 </p>
               </div>
               <button
@@ -282,7 +279,7 @@ export default function StudentDashboard() {
                 className="glass-button px-6 py-3 flex items-center gap-2 flex-shrink-0 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white border-0 shadow-lg shadow-[#D4AF37]/30 hover:scale-105"
               >
                 <CreditCard className="w-5 h-5" />
-                Pay ₹{paymentStatus?.totalAmount || Math.round((paymentStatus?.price || 1500) * 1.18)}
+                Pay ₹{paymentStatus?.price || 1500} + 18% GST
               </button>
             </div>
           </div>
