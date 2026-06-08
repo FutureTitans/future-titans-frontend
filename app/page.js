@@ -322,6 +322,10 @@ export default function Landing() {
                   <Zap className="w-5 h-5 text-[#C8960C] shrink-0 mt-0.5" />
                   <span>Your child won&apos;t just survive the AI era — they&apos;ll build with it.</span>
                 </li>
+                <li className="flex items-start gap-2 text-sm sm:text-base text-gray-700">
+                  <GraduationCap className="w-5 h-5 text-[#C8960C] shrink-0 mt-0.5" />
+                  <span><span className="font-bold text-[#1B2A4A]">Learn from Global Faculties</span> — mentors from MIT, Johns Hopkins, McKinsey & more.</span>
+                </li>
               </ul>
 
               <div className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg shadow-sm border border-gray-100 w-fit mb-6">
@@ -337,13 +341,7 @@ export default function Landing() {
                   Register Now — Secure Your Child&apos;s Spot
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link
-                  href="#video"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-full border border-gray-300 text-[#1B2A4A] font-semibold text-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
-                >
-                  <Play className="w-4 h-4 text-[#C8960C]" />
-                  See Their Transformation
-                </Link>
+
               </div>
 
               <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -400,49 +398,43 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ═══ FOUNDER STORY ═══ */}
-      <section className="py-16 lg:py-24 bg-[#FAFAFA]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <Reveal>
-              <div className="relative aspect-square sm:aspect-[4/3] lg:aspect-square w-full max-w-md mx-auto lg:max-w-none rounded-2xl overflow-hidden shadow-2xl">
-                <img
-                  src="/images/yp/devika.jpg"
-                  alt="Devika Majumder - Founder"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1B2A4A] via-transparent to-transparent opacity-80" />
-                <div className="absolute bottom-6 left-6 right-6">
-                  <h3 className={`${playfair.className} text-2xl font-bold text-white mb-1`}>Devika Majumder</h3>
-                  <p className="text-[#C8960C] font-semibold text-sm">Founder & CEO, Youngpreneurs</p>
-                </div>
-              </div>
-            </Reveal>
-            <Reveal delay={150}>
-              <div>
-                <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] leading-tight mb-6`}>
-                  Why This Program Exists
-                </h2>
-                <div className="space-y-4 text-gray-600 text-sm sm:text-base leading-relaxed">
-                  <p>
-                    Devika Majumder left India at 17 with a suitcase of dreams and a mind built for building. She earned degrees in Computer Science and Mathematics in the USA, then founded NetIQ Consulting — working with Fortune 50 to Fortune 500 companies including JP Morgan, ADP, State Street Global Advisors, and Santander.
-                  </p>
-                  <p>
-                    When her entrepreneurial instincts pushed her further, she launched mobileSPA — the US&apos;s first mobile day spa experience, which grew into a premium corporate wellness and PR activation platform serving Google, Microsoft, PricewaterhouseCoopers, McKinsey, and BCG, and was featured at the Oscars alongside Coca-Cola and Aveeno.
-                  </p>
-                  <p>
-                    Navigating between the US and India, she saw a critical void: the world had no real system for nurturing teen talent or helping young creators find their footing. That gap led her to file two foundational AI patents — and to build Youngpreneurs.ai, India&apos;s first youth innovation ecosystem powered by a patent-pending Mindset Engine™ and the Solution-Seeking Index™, India&apos;s first measurable mindset metric.
-                  </p>
-                  <p>
-                    Her story has been featured in The Wall Street Journal, CNBC, The Economic Times, USA Today, Entrepreneur, and Business World. She has been nominated as one of Business Today&apos;s Most Powerful Women in Business.
-                  </p>
-                  <p className="font-semibold text-[#1B2A4A] text-base sm:text-lg italic mt-6 border-l-4 border-[#C8960C] pl-4">
-                    "But the chapter she speaks about most is not in any publication — it&apos;s the moment she watched a brilliant teenager shrink in a room where she should have owned it. Not because the idea was weak. Because no one had ever given her the tools. That moment built Youngpreneurs. The mission is simple: find the leaders hiding inside India&apos;s classrooms. Give them everything they need to step forward. Not someday. Now."
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          </div>
+      {/* ═══ MEDIA & PRESS ═══ */}
+      <section className="py-16 lg:py-20 bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+                Media & Press
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                What the media is saying about YoungPreneurs
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[
+                { logo: '/images/yp/statesman.png', desc: "Youngpreneurs' new mantra", button: 'Read More', link: 'https://epaper.thestatesman.com/c/78671280' },
+                { logo: '/images/yp/businesStandard.png', desc: "Three US-based entrepreneurs' mission to make leaders out of Indian teens...", button: 'Read More', link: 'https://www.business-standard.com/article/companies/us-based-entrepreneurs-eyes-indian-teens-to-create-future-leaders-117061200838_1.html' },
+                { logo: '/images/yp/bussinessworld.png', desc: 'Our Mission Is To Connect Education And Entrepreneur Ecosystem In India...', button: 'Read More', link: 'https://www.businessworld.in/article/%E2%80%98our-mission-is-to-connect-education-and-entrepreneur-ecosystem-in-india%E2%80%99-122972' },
+                { logo: '/images/yp/et.png', desc: 'Meet eight budding teenpreneurs who are giving wings to their startup ideas...', button: 'Read More', link: 'https://economictimes.indiatimes.com/small-biz/entrepreneurship/meet-eight-budding-teenpreneurs-who-are-giving-wings-to-their-startup-ideas/articleshow/59007317.cms' },
+                { logo: '/images/yp/cnbc.png', desc: '', button: 'Watch Now', link: 'https://www.facebook.com/watch/?v=1062508397224697' },
+                { logo: '/images/yp/enterpreneurIndia.png', desc: "It's Time The Indian Students' Entrepreneurship Streak Is Tapped in School...", button: 'Read More', link: 'https://www.entrepreneur.com/en-in/starting-a-business/its-time-the-indian-students-entrepreneurship-streak-is/294662' },
+                { logo: '/images/yp/telegraph.png', desc: '', button: 'Read More', link: 'https://youngpreneurs.in/the-telegraph/' },
+                { logo: '/images/yp/ibns.png', desc: 'Kolkata: Students get hands-on training at the Youngpreneurs India Camp...', button: 'Read More', link: 'https://indiablooms.com/life/kolkata-students-get-hands-on-training-at-the-youngpreneurs-india-camp/details' },
+              ].map((item, i) => (
+                <a key={i} href={item.link} target="_blank" rel="noopener noreferrer" className="group bg-white border border-gray-100 rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-lg hover:border-[#C8960C]/30 hover:-translate-y-1 transition-all no-underline">
+                  <div className="w-full h-16 flex items-center justify-center mb-4">
+                    <img src={item.logo} alt="Media" className="max-h-full max-w-full object-contain opacity-60 group-hover:opacity-100 transition-opacity" />
+                  </div>
+                  {item.desc && <p className="text-gray-500 text-sm leading-relaxed mb-4 flex-grow">{item.desc}</p>}
+                  <span className="inline-block bg-[#C8960C] text-white px-5 py-2 rounded-full text-xs font-bold tracking-wider hover:bg-[#b5870b] transition-colors">
+                    {item.button}
+                  </span>
+                </a>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -627,14 +619,15 @@ export default function Landing() {
             </div>
           </Reveal>
           <Reveal delay={100}>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 sm:gap-8 max-w-6xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-6 sm:gap-8 max-w-6xl mx-auto">
               {[
-                { name: 'Prof. Fred Katz', title: 'Johns Hopkins Carey Business School', image: '/images/yp/fred.jpeg' },
-                { name: 'Dr. Partha Ghosh', title: 'Former Senior Partner, McKinsey; Professor, MIT', image: '/images/yp/partha.jpg' },
-                { name: 'Suman Bose', title: 'Former CEO & MD, Siemens', image: '/images/yp/suman.jpg' },
-                { name: 'Sachin Kapoor', title: 'Former Sr Director, LinkedIn India', image: '/images/yp/sachin.jpeg' },
-                { name: 'Dr. Julia Stamm', title: 'Founder, She Shapes AI, London', image: '/images/juliya.jpg' },
-                { name: 'Rajeev Barua', title: 'Professor of CS, UMD · Ph.D. MIT', image: '/images/rajeev.jpg' },
+                { name: 'Devika Majumder', title: 'Founder & CEO · WSJ Featured · TedX Speaker · Business Today Most Powerful Women', image: '/images/yp/devika.jpg' },
+                { name: 'Prof. Fred Katz', title: 'Senior Professional Faculty, Johns Hopkins Carey Business School · President/CEO, Wise Products', image: '/images/yp/fred.jpeg' },
+                { name: 'Dr. Partha Ghosh', title: 'Founder, Partha Ghosh Leadership Academy IIT Kharagpur · Former McKinsey Senior Partner · MIT Professor', image: '/images/yp/partha.jpg' },
+                { name: 'Suman Bose', title: 'Founder, Project KREEA · Former CEO & MD, Siemens · Building India\'s Deeptech Hub', image: '/images/yp/suman.jpg' },
+                { name: 'Sachin Kapoor', title: 'Former Sr Director & Head of BD, LinkedIn India · Founder & CEO, Trumsy.Ai', image: '/images/yp/sachin.jpeg' },
+                { name: 'Dr. Julia Stamm', title: 'Founder & CEO, She Shapes AI, London · Responsible Tech & AI for Impact · Fellow, Royal Society of Arts', image: '/images/juliya.jpg' },
+                { name: 'Rajeev Barua', title: 'Founder & CEO, SecondWrite · Professor of CS, University of Maryland · Ph.D. MIT · Contributed to chip dev with IBM', image: '/images/rajeev.jpg' },
               ].map((mentor, idx) => (
                 <div key={idx} className="flex flex-col items-center text-center group">
                   <img src={mentor.image} alt={mentor.name} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-md mb-3 group-hover:border-[#C8960C] transition-all" />
@@ -969,7 +962,7 @@ export default function Landing() {
               ))}
             </div>
           </div>
-          
+
           <Reveal delay={200}>
             <div className="mt-12 text-center">
               <p className="text-gray-600 mb-6 font-medium">Still have questions? Our team is here to help.</p>

@@ -6,24 +6,16 @@ import { usePathname } from 'next/navigation';
 import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
 
 const NAV_LINKS = [
-  // {
-  //   label: 'Programs',
-  //   href: null,
-  //   dropdown: [
-  //     { label: 'Future Titans', href: '/future-titans' },
-  //     { label: 'Academy', href: '/academy' },
-  //   ],
-  // },
   { label: 'Future Titans', href: '/future-titans' },
   { label: 'For Parents', href: '/for-parents' },
   { label: 'For Schools', href: '/for-schools' },
   { label: 'Success Stories', href: '/success-stories' },
+  { label: 'Media', href: '/media' },
+  { label: 'Meet the Doers', href: '/team' },
   { label: 'About Us', href: '/about-us' },
 ];
 
 const SECONDARY_LINKS = [
-  { label: 'Team', href: '/team' },
-  { label: 'Media', href: '/media' },
   { label: 'Contact', href: '/contact' },
 ];
 
