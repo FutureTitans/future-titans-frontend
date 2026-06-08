@@ -159,7 +159,7 @@ export default function PublicNavbar() {
                 href="/signup"
                 className="px-5 py-2.5 rounded-full bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5"
               >
-                Enroll Now — ₹1,500/yr
+                Enroll Now — ₹1,500/yr + GST
                 <ArrowRight className="w-4 h-4" />
               </Link>
               {/* <div className="hidden xl:flex items-center gap-1.5 text-xs text-gray-500 ml-2">
@@ -276,7 +276,7 @@ export default function PublicNavbar() {
                   className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
                   onClick={closeMobile}
                 >
-                  Enroll Now — ₹1,500/yr
+                  Enroll Now — ₹1,500/yr + GST
                 </Link>
               </div>
             </div>

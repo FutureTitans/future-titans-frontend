@@ -1,12 +1,10 @@
 import Link from 'next/link';
-import { Instagram, Facebook, Linkedin, Youtube, Twitter, ArrowRight } from 'lucide-react';
+import { Instagram, Facebook, Linkedin, ArrowRight } from 'lucide-react';
 
 const SOCIAL_LINKS = [
   { Icon: Instagram, href: 'https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==' },
   { Icon: Facebook, href: 'https://www.facebook.com/share/16jUKyEemq/?mibextid=wwXIfr' },
   { Icon: Linkedin, href: 'https://www.linkedin.com/company/youngpreneurs-ai/' },
-  { Icon: Youtube, href: '#' },
-  { Icon: Twitter, href: '#' },
 ];
 
 const COLUMNS = [
@@ -15,16 +13,12 @@ const COLUMNS = [
     links: [
       { label: 'Future Titans', href: '/future-titans' },
       { label: 'Academy', href: '/academy' },
-      { label: 'Workshops', href: '#' },
-      { label: 'AI Co-Founder', href: '#' },
     ],
   },
   {
     title: 'For Parents',
     links: [
       { label: 'Overview', href: '/for-parents' },
-      { label: 'FAQ', href: '#' },
-      { label: 'Resources', href: '#' },
       { label: 'Blog', href: '/blog' },
     ],
   },
@@ -32,8 +26,6 @@ const COLUMNS = [
     title: 'For Schools',
     links: [
       { label: 'Overview', href: '/for-schools' },
-      { label: 'Benefits', href: '#' },
-      { label: 'Partner With Us', href: '#' },
       { label: 'Success Stories', href: '/success-stories' },
     ],
   },
@@ -44,7 +36,6 @@ const COLUMNS = [
       { label: 'Our Team', href: '/team' },
       { label: 'Media', href: '/media' },
       { label: 'Contact', href: '/contact' },
-      { label: 'Careers', href: '#' },
     ],
   },
 ];
@@ -116,11 +107,6 @@ export default function PublicFooter() {
         {/* Bottom Bar */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
           <p>&copy; 2026 youngpreneurs.ai &middot; All rights reserved.</p>
-          <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-[#C8960C] transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-[#C8960C] transition-colors">Terms of Use</a>
-            <a href="#" className="hover:text-[#C8960C] transition-colors">Data Policy</a>
-          </div>
         </div>
       </div>
     </footer>
