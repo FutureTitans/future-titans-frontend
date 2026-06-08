@@ -166,14 +166,14 @@ export default function LoginPage() {
               )}
             </button>
 
-            {/* <button
+            <button
               type="button"
               onClick={handleDemoLogin}
               disabled={isLoading}
               className="glass-button-secondary w-full py-4 text-base border-gray-200 text-gray-700 disabled:opacity-60"
             >
               Try Demo Account
-            </button> */}
+            </button>
           </form>
 
           <div className="flex flex-col xs:flex-row items-center justify-between gap-3 mt-6 sm:mt-8 text-sm">
