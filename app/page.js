@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, isAdmin, isStudent } from '@/lib/auth';
+import PublicFooter from '@/components/shared/PublicFooter';
 import {
   ArrowRight, ChevronDown, ChevronLeft, ChevronRight, Play, Plus, Minus,
   Users, Award, Lightbulb, MessageCircle, Globe, Crown,
@@ -1159,78 +1160,7 @@ export default function Landing() {
       </section>
 
       {/* ═══ FOOTER ═══ */}
-      <footer className="bg-[#1B2A4A] text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 mb-10">
-            <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-              <div className="flex items-center gap-1.5 mb-4">
-                <div className="w-8 h-8 bg-[#C8960C] rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                  YP
-                </div>
-                <div>
-                  <div className="font-bold text-sm">YOUNGPRENEURS</div>
-                  <div className="text-[10px] text-gray-400">Future Ready. Nurtured Today.</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 mt-4">
-                {[Instagram, Facebook, Linkedin, Youtube, Twitter].map((Icon, i) => (
-                  <a
-                    key={i}
-                    href="#"
-                    className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-gray-400 hover:bg-[#C8960C] hover:text-white transition-all"
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            {[
-              { title: 'Programs', links: ['Future Titans', 'Academy', 'Workshops', 'AI Co-Founder'] },
-              { title: 'For Parents', links: ['Overview', 'FAQ', 'Resources', 'Blog'] },
-              { title: 'For Schools', links: ['Overview', 'Benefits', 'Partner With Us', 'Success Stories'] },
-              { title: 'About Us', links: ['Our Story', 'Our Team', 'Media', 'Contact', 'Careers'] },
-            ].map((col) => (
-              <div key={col.title}>
-                <h4 className="font-bold text-sm mb-3">{col.title}</h4>
-                <ul className="space-y-2">
-                  {col.links.map((link) => (
-                    <li key={link}>
-                      <a href="#" className="text-gray-400 text-sm hover:text-[#C8960C] transition-colors">
-                        {link}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-
-            <div>
-              <h4 className="font-bold text-sm mb-3">Stay Updated</h4>
-              <p className="text-gray-400 text-xs mb-3">Get updates on programs, events & opportunities.</p>
-              <div className="flex">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="flex-1 min-w-0 px-3 py-2 bg-white/10 border border-white/10 !rounded-l-lg !rounded-r-none text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#C8960C] !min-h-0 h-10"
-                />
-                <button className="px-3 py-2 bg-[#C8960C] rounded-r-lg hover:bg-[#b5870b] transition-colors">
-                  <ArrowRight className="w-4 h-4 text-white" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-            <p>&copy; 2026 youngpreneurs.ai · All rights reserved.</p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-[#C8960C] transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-[#C8960C] transition-colors">Terms of Use</a>
-              <a href="#" className="hover:text-[#C8960C] transition-colors">Data Policy</a>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
     </div>
   );
 }
