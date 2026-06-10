@@ -293,102 +293,120 @@ export default function Landing() {
       {/* ═══ NAVBAR ═══ */}
       <PublicNavbar />
       {/* ═══ HERO ═══ */}
-      <section className="bg-[#FFFBF0] relative overflow-hidden">
-        <div className="max-w-[1440px] mx-auto relative">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 items-center min-h-[600px] lg:min-h-[700px]">
-            {/* Left Text Content */}
-            <div className="px-4 sm:px-6 lg:px-8 xl:px-16 pt-24 sm:pt-28 lg:pt-32 pb-12 lg:pb-16 relative z-10">
-              <h1 className="font-sans text-[32px] sm:text-[42px] lg:text-[52px] font-medium text-black leading-[1.2] tracking-tighter mb-6 sm:mb-8">
-                <span className="inline-block relative -top-2 sm:-top-4">
-                  Will Your Child Be<br />
-                  Replaced by AI, or<br />
-                </span><br className="hidden sm:block" />
-                <img src="/images/yp/will-they-lead-it.png" alt="WILL THEY LEAD IT?" className="inline-block h-[150px] sm:h-[165px] lg:h-[120px] w-auto mt-1 -ml-1" />
-              </h1>
+      <section className="bg-[#FFFBF0] relative overflow-hidden min-h-[600px] lg:min-h-[700px]">
+        {/* Right Image — positioned relative to the full-width section so it always reaches the viewport edge */}
+        <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[55%] xl:w-[50%]">
+          <img
+            src="/images/yp/hero-students.png"
+            alt="Real students at Youngpreneurs"
+            className="w-full h-full object-cover object-center"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
+              maskComposite: 'intersect',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
+              WebkitMaskComposite: 'source-in',
+            }}
+          />
 
-              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-7 sm:mb-8 max-w-lg">
-                Youngpreneurs transforms teenagers into confident problem-solvers, creators, and future leaders through India&apos;s most powerful innovation platform.
-              </p>
+          {/* Prize Pool Badge Overlay */}
+          <img
+            src="/images/yp/prize-pool.png"
+            alt="IIT Kharagpur Prize Pool"
+            className="absolute bottom-8 sm:bottom-12 lg:bottom-16 right-4 sm:right-8 lg:right-12 xl:right-16 w-36 sm:w-48 lg:w-56 xl:w-64 object-contain z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-300"
+          />
+        </div>
 
-              <div className="flex items-start mb-8 sm:mb-10">
-                <div className="flex flex-col items-center text-center pr-3 sm:pr-5">
-                  <Trophy className="w-5 h-5 sm:w-7 sm:h-7 text-[#C8960C] mb-1.5 sm:mb-2" />
-                  <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">₹40+ LAKHS</span>
-                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Prizes &amp; Incubation</span>
-                </div>
-                <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
-                <div className="flex flex-col items-center text-center px-3 sm:px-5">
-                  <img src="/images/yp/iit-kharagpur.svg" alt="IIT Kharagpur" className="w-6 h-6 sm:w-8 sm:h-8 mb-1.5 sm:mb-2 object-contain" />
-                  <span className="text-[10px] sm:text-sm font-bold text-[#1B2A4A] leading-tight whitespace-nowrap">IIT KHARAGPUR</span>
-                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Knowledge Partner</span>
-                </div>
-                <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
-                <div className="flex flex-col items-center text-center px-3 sm:px-5">
-                  <Users className="w-5 h-5 sm:w-7 sm:h-7 text-[#1B2A4A] mb-1.5 sm:mb-2" />
-                  <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">10,000+</span>
-                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Student Innovators</span>
-                </div>
-                <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
-                <div className="flex flex-col items-center text-center pl-3 sm:pl-5">
-                  <GraduationCap className="w-5 h-5 sm:w-7 sm:h-7 text-[#1B2A4A] mb-1.5 sm:mb-2" />
-                  <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">1,500+</span>
-                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Schools in India</span>
-                </div>
+        {/* Left Text Content — stays inside a max-width container */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="lg:w-[45%] xl:w-[48%] pt-24 sm:pt-28 lg:pt-32 pb-12 lg:pb-16">
+            <h1 className="font-sans text-[32px] sm:text-[42px] lg:text-[52px] font-medium text-black leading-[1.2] tracking-tighter mb-6 sm:mb-8">
+              <span className="inline-block relative -top-2 sm:-top-4">
+                Will Your Child Be<br />
+                Replaced by AI, or<br />
+              </span><br className="hidden sm:block" />
+              <img src="/images/yp/will-they-lead-it.png" alt="WILL THEY LEAD IT?" className="inline-block h-[150px] sm:h-[165px] lg:h-[120px] w-auto mt-1 -ml-1" />
+            </h1>
+
+            <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-7 sm:mb-8 max-w-lg">
+              Youngpreneurs transforms teenagers into confident problem-solvers, creators, and future leaders through India&apos;s most powerful innovation platform.
+            </p>
+
+            <div className="flex items-start mb-8 sm:mb-10">
+              <div className="flex flex-col items-center text-center pr-3 sm:pr-5">
+                <Trophy className="w-5 h-5 sm:w-7 sm:h-7 text-[#C8960C] mb-1.5 sm:mb-2" />
+                <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">₹40+ LAKHS</span>
+                <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Prizes &amp; Incubation</span>
               </div>
-
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-7 sm:mb-8">
-                <Link
-                  href="/signup"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8960C]/20"
-                >
-                  Register Now — Secure Your Child&apos;s Spot
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-
-                <Link
-                  href="/success-stories"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg bg-white text-black font-semibold text-sm hover:bg-gray-50 border border-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-200/50"
-                >
-                  Success Stories
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-
+              <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
+              <div className="flex flex-col items-center text-center px-3 sm:px-5">
+                <img src="/images/yp/iit-kharagpur.svg" alt="IIT Kharagpur" className="w-6 h-6 sm:w-8 sm:h-8 mb-1.5 sm:mb-2 object-contain" />
+                <span className="text-[10px] sm:text-sm font-bold text-[#1B2A4A] leading-tight whitespace-nowrap">IIT KHARAGPUR</span>
+                <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Knowledge Partner</span>
               </div>
-
-              <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-                <div className="flex items-center gap-0.5">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#C8960C] text-[#C8960C]" />
-                  ))}
-                </div>
-                <span className="text-xs sm:text-sm text-gray-600"><span className="font-bold text-[#1B2A4A]">4.8/5</span> · Trusted by 10,000+ families across 120+ cities</span>
+              <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
+              <div className="flex flex-col items-center text-center px-3 sm:px-5">
+                <Users className="w-5 h-5 sm:w-7 sm:h-7 text-[#1B2A4A] mb-1.5 sm:mb-2" />
+                <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">10,000+</span>
+                <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Student Innovators</span>
+              </div>
+              <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
+              <div className="flex flex-col items-center text-center pl-3 sm:pl-5">
+                <GraduationCap className="w-5 h-5 sm:w-7 sm:h-7 text-[#1B2A4A] mb-1.5 sm:mb-2" />
+                <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">1,500+</span>
+                <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Schools in India</span>
               </div>
             </div>
 
-            {/* Right Image — bleeds to viewport edge */}
-            <div className="relative lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-[55%] xl:w-[52%]">
-              <div className="relative w-full h-full min-h-[350px] sm:min-h-[450px] lg:min-h-full">
-                <img
-                  src="/images/yp/hero-students.png"
-                  alt="Real students at Youngpreneurs"
-                  className="w-full h-full object-cover object-center"
-                  style={{
-                    maskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
-                    maskComposite: 'intersect',
-                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
-                    WebkitMaskComposite: 'source-in',
-                  }}
-                />
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-7 sm:mb-8">
+              <Link
+                href="/signup"
+                className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8960C]/20"
+              >
+                Register Now — Secure Your Child&apos;s Spot
+                <ArrowRight className="w-4 h-4" />
+              </Link>
 
-                {/* Prize Pool Badge Overlay */}
-                <img
-                  src="/images/yp/prize-pool.png"
-                  alt="IIT Kharagpur Prize Pool"
-                  className="absolute bottom-8 sm:bottom-12 lg:bottom-16 right-4 sm:right-8 lg:right-12 xl:right-16 w-36 sm:w-48 lg:w-56 xl:w-64 object-contain z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-300"
-                />
+              <Link
+                href="/success-stories"
+                className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg bg-white text-black font-semibold text-sm hover:bg-gray-50 border border-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-200/50"
+              >
+                Success Stories
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+
+            </div>
+
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+              <div className="flex items-center gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#C8960C] text-[#C8960C]" />
+                ))}
               </div>
+              <span className="text-xs sm:text-sm text-gray-600"><span className="font-bold text-[#1B2A4A]">4.8/5</span> · Trusted by 10,000+ families across 120+ cities</span>
             </div>
           </div>
+        </div>
+
+        {/* Mobile Image — shown below text on small screens */}
+        <div className="lg:hidden relative w-full aspect-[4/3]">
+          <img
+            src="/images/yp/hero-students.png"
+            alt="Real students at Youngpreneurs"
+            className="w-full h-full object-cover object-center"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
+              maskComposite: 'intersect',
+              WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
+              WebkitMaskComposite: 'source-in',
+            }}
+          />
+
+          {/* Prize Pool Badge Overlay - Mobile */}
+          <img
+            src="/images/yp/prize-pool.png"
+            alt="IIT Kharagpur Prize Pool"
+            className="absolute bottom-6 right-4 sm:right-8 w-36 sm:w-48 object-contain z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-300"
+          />
         </div>
       </section>
 
