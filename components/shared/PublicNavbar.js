@@ -164,7 +164,7 @@ export default function PublicNavbar() {
               >
                 <button
                   onClick={() => setLoginDropdownOpen((o) => !o)}
-                  className="px-4 py-2 border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all flex items-center gap-1 whitespace-nowrap"
+                  className="px-5 py-2 rounded-md border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all flex items-center gap-1 whitespace-nowrap"
                 >
                   Login
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdownOpen ? 'rotate-180' : ''}`} />
@@ -197,7 +197,7 @@ export default function PublicNavbar() {
               </div>
               <Link
                 href="/signup"
-                className="px-4 py-2 bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5 whitespace-nowrap"
+                className="px-5 py-2 rounded-md bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5 whitespace-nowrap"
               >
                 Enroll Now
                 <ArrowRight className="w-4 h-4" />

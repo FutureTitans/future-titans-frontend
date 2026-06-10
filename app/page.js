@@ -364,7 +364,7 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="relative lg:-mr-16 xl:-mr-24 -ml-8 sm:-ml-12 lg:-ml-20 xl:-ml-28 -mt-2 sm:-mt-6 lg:-mt-10">
+            <div className="relative ml-auto -mr-8 sm:-mr-12 lg:-mr-24 xl:-mr-32 -mt-2 sm:-mt-6 lg:-mt-10 flex justify-end">
               <div className="relative w-full lg:w-[115%] xl:w-[125%] aspect-[4/3]">
                 <img
                   src="/images/yp/hero-students.png"
