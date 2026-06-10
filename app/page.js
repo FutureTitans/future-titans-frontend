@@ -1094,14 +1094,23 @@ export default function Landing() {
       </section> */ }
 
       {/* ═══ FINAL CTA (IMAGE) ═══ */}
-      <section className="bg-white relative w-full border-b border-gray-200 hover:opacity-95 transition-opacity">
-        <Link href="/signup" className="block w-full">
+      <section className="relative w-full bg-[#fdf0ce]">
+        <Link href="/signup" className="block w-full hover:opacity-95 transition-opacity">
           <img
             src="/images/yp/final-cta.png"
             alt="Don't Let Your Child Watch the Future Happen to Them. Register Your Child for Future Titans."
-            className="w-full h-auto object-cover"
+            className="w-full h-auto object-cover block"
           />
         </Link>
+        <div className="flex justify-center py-8 bg-[#fdf0ce] relative">
+          <div className="absolute -top-16 left-0 right-0 h-16 bg-gradient-to-b from-transparent to-[#fdf0ce] pointer-events-none" />
+          <Link
+            href="/signup"
+            className="px-8 py-3.5 rounded-md bg-[#C8960C] text-white font-semibold text-base hover:bg-[#b5870b] transition-all shadow-lg shadow-[#C8960C]/20"
+          >
+            Register Your Child for Future Titans
+          </Link>
+        </div>
       </section>
 
       {/* ═══ FOOTER ═══ */}
