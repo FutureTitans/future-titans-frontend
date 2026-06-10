@@ -592,7 +592,7 @@ export default function Landing() {
       </section>
 
       {/* ═══ MEDIA & PRESS ═══ */}
-      <section className="py-16 lg:py-20 bg-white border-b border-gray-100">
+      {/* <section className="py-16 lg:py-20 bg-white border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-12">
@@ -629,7 +629,7 @@ export default function Landing() {
             </div>
           </Reveal>
         </div>
-      </section>
+      </section> */}
 
       {/* ═══ AI MASTERY SECTION (IMAGE) ═══ */}
       <section className="bg-[#0A101D] relative w-full hover:opacity-95 transition-opacity">
