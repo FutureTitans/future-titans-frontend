@@ -410,6 +410,28 @@ export default function Landing() {
         </div>
       </section>
 
+
+      {/* ═══ FEATURED IN ═══ */}
+      <section className="py-10 bg-white border-y border-gray-100 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm font-bold tracking-widest text-gray-400 uppercase mb-8">Featured In</p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
+            {[
+              '/images/yp/statesman.png',
+              '/images/yp/businesStandard.png',
+              '/images/yp/bussinessworld.png',
+              '/images/yp/et.png',
+              '/images/yp/cnbc.png',
+              '/images/yp/enterpreneurIndia.png',
+              '/images/yp/telegraph.png',
+              '/images/yp/ibns.png'
+            ].map((logo, i) => (
+              <img key={i} src={logo} alt="Featured in Media" className="h-10 sm:h-12 md:h-16 object-contain hover:scale-105 transition-transform" />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ═══ MENTORS ═══ */}
       <section className="py-16 lg:py-20 bg-[#FAFAFA] border-y border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -723,26 +745,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ═══ FEATURED IN ═══ */}
-      <section className="py-10 bg-white border-y border-gray-100 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm font-bold tracking-widest text-gray-400 uppercase mb-8">Featured In</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
-            {[
-              '/images/yp/statesman.png',
-              '/images/yp/businesStandard.png',
-              '/images/yp/bussinessworld.png',
-              '/images/yp/et.png',
-              '/images/yp/cnbc.png',
-              '/images/yp/enterpreneurIndia.png',
-              '/images/yp/telegraph.png',
-              '/images/yp/ibns.png'
-            ].map((logo, i) => (
-              <img key={i} src={logo} alt="Featured in Media" className="h-10 sm:h-12 md:h-16 object-contain hover:scale-105 transition-transform" />
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ═══ ACADEMIC OUTCOMES ═══
       // <section className="py-16 lg:py-24 bg-[#FFFBF0]">
