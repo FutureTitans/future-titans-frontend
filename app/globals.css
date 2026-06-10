@@ -716,3 +716,31 @@ a:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+@font-face {
+  font-family: 'Edo';
+  src: url('/fonts/edosz.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-edo {
+  font-family: 'Edo', sans-serif;
+}
+
+@font-face {
+  font-family: 'Heading Now';
+  src: url('/fonts/heading-now/HeadingNowTrial-68Heavy.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Heading Now';
+  src: url('/fonts/heading-now/HeadingNowTrial-34Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}

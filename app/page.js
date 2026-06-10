@@ -11,7 +11,7 @@ import {
   Users, Award, Lightbulb, MessageCircle, Globe, Crown,
   Search, Trophy, Flag, Megaphone, Briefcase, CheckCircle2, Star,
   Phone, Mail, Menu, X, Instagram, Facebook, Linkedin, Youtube, Twitter,
-  Calendar, GraduationCap, Target, Zap, Shield, Rocket, Clock, Check
+  Calendar, GraduationCap, Target, Zap, Shield, Rocket, Clock, Check, UserPlus, Puzzle, TrendingUp
 } from 'lucide-react';
 import { Playfair_Display } from 'next/font/google';
 
@@ -214,12 +214,13 @@ export default function Landing() {
   ];
 
   const skills = [
-    { icon: <Target className="w-7 h-7" />, title: 'Unshakeable Confidence', desc: 'No more stage fright. Watch them speak up, present ideas, and own a room fearlessly.' },
-    { icon: <Crown className="w-7 h-7" />, title: 'Real-World Leadership', desc: 'They stop waiting for permission and start taking initiative — at 14.' },
-    { icon: <MessageCircle className="w-7 h-7" />, title: 'Persuasive Communication', desc: 'The ability to articulate complex thoughts clearly and with massive impact.' },
-    { icon: <Lightbulb className="w-7 h-7" />, title: 'Innovative Creativity', desc: 'From playing games to actually building real, working solutions people use.' },
-    { icon: <Search className="w-7 h-7" />, title: 'Critical Problem Solving', desc: 'Stop memorising textbooks; start tackling real-world, dynamic challenges.' },
-    { icon: <Globe className="w-7 h-7" />, title: 'AI Mastery & Future Readiness', desc: 'They won\'t fear AI taking jobs — they\'ll master AI to create their own opportunities.' },
+    { icon: <UserPlus className="w-7 h-7 sm:w-8 sm:h-8" />, title: 'Confidence', desc: 'Speak up, express\nideas, lead fearlessly' },
+    { icon: <Users className="w-7 h-7 sm:w-8 sm:h-8" />, title: 'Leadership', desc: 'Lead teams, take\ninitiative, inspire others' },
+    { icon: <MessageCircle className="w-7 h-7 sm:w-8 sm:h-8" />, title: 'Communication', desc: 'Speak clearly,\ninfluence positively' },
+    { icon: <Lightbulb className="w-7 h-7 sm:w-8 sm:h-8" />, title: 'Creativity &\nInnovation', desc: 'Think differently,\ncreate solutions' },
+    { icon: <Puzzle className="w-7 h-7 sm:w-8 sm:h-8" />, title: 'Problem Solving', desc: 'Solve real-world\nchallenges' },
+    { icon: <TrendingUp className="w-7 h-7 sm:w-8 sm:h-8" />, title: 'Financial Literacy', desc: 'Understand money,\nmake smart decisions' },
+    { icon: <Globe className="w-7 h-7 sm:w-8 sm:h-8" />, title: 'Future Readiness', desc: 'AI-ready, future-fit,\nlife-ready' },
   ];
 
   const parentTestimonials = [
@@ -295,50 +296,59 @@ export default function Landing() {
       <section className="bg-[#FFFBF0] relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-12 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div>
-              <h1 className={`${playfair.className} text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-[#1B2A4A] leading-[1.12] mb-4`}>
-                Will Your Child Be Replaced by AI,<br className="hidden sm:block" />
-                or Will They <span className="text-[#C8960C]">Lead It?</span>
+            <div className="pt-16 sm:pt-24 lg:pt-32">
+              <h1 className="font-sans text-[32px] sm:text-[42px] lg:text-[52px] font-medium text-black leading-[1.2] tracking-tighter mb-6 sm:mb-8">
+                <span className="inline-block relative -top-2 sm:-top-4">
+                  Will Your Child Be<br />
+                  Replaced by AI, or<br />
+                </span><br className="hidden sm:block" />
+                <img src="/images/yp/will-they-lead-it.png" alt="WILL THEY LEAD IT?" className="inline-block h-[150px] sm:h-[165px] lg:h-[120px] w-auto mt-1 -ml-1" />
               </h1>
 
-              <p className="text-[#C8960C] font-semibold text-sm mb-3">
-                For students aged 12–19 | Across India
+              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-7 sm:mb-8 max-w-lg">
+                Youngpreneurs transforms teenagers into confident problem-solvers, creators, and future leaders through India&apos;s most powerful innovation platform.
               </p>
 
-              <p className="text-gray-600 text-base sm:text-lg leading-relaxed mb-4 max-w-lg">
-                The world is changing faster than ever. While millions fear AI taking over jobs, the smartest parents are doing something different — they&apos;re making sure their child knows how to use it. Youngpreneurs transforms teenagers into confident problem-solvers, creators, and future leaders through India&apos;s most powerful innovation platform. Give them the ultimate unfair advantage.
-              </p>
-
-              <ul className="space-y-3 mb-6">
-                <li className="flex items-start gap-2 text-sm sm:text-base text-gray-700">
-                  <Trophy className="w-5 h-5 text-[#C8960C] shrink-0 mt-0.5" />
-                  <span><span className="font-bold text-[#1B2A4A]">Compete for ₹40 Lakhs</span> in prizes, incubation & real mentorship.</span>
-                </li>
-                <li className="flex items-start gap-2 text-sm sm:text-base text-gray-700">
-                  <Shield className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                  <span>Designed to complement academics — not compete with them. Just 2–3 hrs/week.</span>
-                </li>
-                <li className="flex items-start gap-2 text-sm sm:text-base text-gray-700">
-                  <Zap className="w-5 h-5 text-[#C8960C] shrink-0 mt-0.5" />
-                  <span>Your child won&apos;t just survive the AI era — they&apos;ll build with it.</span>
-                </li>
-                <li className="flex items-start gap-2 text-sm sm:text-base text-gray-700">
-                  <GraduationCap className="w-5 h-5 text-[#C8960C] shrink-0 mt-0.5" />
-                  <span><span className="font-bold text-[#1B2A4A]">Learn from Global Faculties</span> — mentors from MIT, Johns Hopkins, McKinsey & more.</span>
-                </li>
-              </ul>
-
-              <div className="flex items-center gap-3 px-4 py-2.5 bg-white rounded-lg shadow-sm border border-gray-100 w-fit mb-6">
-                <img src="/images/yp/iit-kharagpur.svg" alt="IIT Kharagpur" className="h-8 w-8 object-contain" />
-                <span className="text-sm font-bold text-[#1B2A4A]">Knowledge Partner: IIT Kharagpur</span>
+              <div className="flex items-start mb-8 sm:mb-10">
+                <div className="flex flex-col items-center text-center pr-3 sm:pr-5">
+                  <Trophy className="w-5 h-5 sm:w-7 sm:h-7 text-[#C8960C] mb-1.5 sm:mb-2" />
+                  <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">₹40+ LAKHS</span>
+                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Prizes &amp; Incubation</span>
+                </div>
+                <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
+                <div className="flex flex-col items-center text-center px-3 sm:px-5">
+                  <img src="/images/yp/iit-kharagpur.svg" alt="IIT Kharagpur" className="w-6 h-6 sm:w-8 sm:h-8 mb-1.5 sm:mb-2 object-contain" />
+                  <span className="text-[10px] sm:text-sm font-bold text-[#1B2A4A] leading-tight whitespace-nowrap">IIT KHARAGPUR</span>
+                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Knowledge Partner</span>
+                </div>
+                <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
+                <div className="flex flex-col items-center text-center px-3 sm:px-5">
+                  <Users className="w-5 h-5 sm:w-7 sm:h-7 text-[#1B2A4A] mb-1.5 sm:mb-2" />
+                  <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">10,000+</span>
+                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Student Innovators</span>
+                </div>
+                <div className="w-px h-12 sm:h-16 bg-gray-300 self-center shrink-0" />
+                <div className="flex flex-col items-center text-center pl-3 sm:pl-5">
+                  <GraduationCap className="w-5 h-5 sm:w-7 sm:h-7 text-[#1B2A4A] mb-1.5 sm:mb-2" />
+                  <span className="text-[12px] sm:text-xl font-bold text-[#1B2A4A] whitespace-nowrap">1,500+</span>
+                  <span className="text-[9px] sm:text-xs text-gray-500 mt-0.5">Schools in India</span>
+                </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-6">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-7 sm:mb-8">
                 <Link
                   href="/signup"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-full bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8960C]/20"
+                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg bg-[#C8960C] text-white font-semibold text-sm hover:bg-[#b5870b] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#C8960C]/20"
                 >
                   Register Now — Secure Your Child&apos;s Spot
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+
+                <Link
+                  href="/success-stories"
+                  className="px-5 sm:px-6 py-3 sm:py-3.5 rounded-lg bg-white text-black font-semibold text-sm hover:bg-gray-50 border border-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg shadow-gray-200/50"
+                >
+                  Success Stories
                   <ArrowRight className="w-4 h-4" />
                 </Link>
 
@@ -354,21 +364,95 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="relative lg:-mr-16 xl:-mr-24">
-              <div className="relative w-full lg:w-[120%] xl:w-[130%] aspect-[4/3] sm:aspect-[4/3] lg:aspect-[4/3]">
+            <div className="relative lg:-mr-16 xl:-mr-24 -ml-8 sm:-ml-12 lg:-ml-20 xl:-ml-28 -mt-2 sm:-mt-6 lg:-mt-10">
+              <div className="relative w-full lg:w-[115%] xl:w-[125%] aspect-[4/3]">
                 <img
-                  src="/images/yp/hero-students.jpg"
+                  src="/images/yp/hero-students.png"
                   alt="Real students at Youngpreneurs"
-                  className="w-full h-full object-cover scale-110"
+                  className="w-full h-full object-cover object-center"
                   style={{
-                    maskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%)',
+                    maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
                     maskComposite: 'intersect',
-                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 80%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
                     WebkitMaskComposite: 'source-in',
                   }}
                 />
+
+                {/* Prize Pool Badge Overlay */}
+                <img
+                  src="/images/yp/prize-pool.png"
+                  alt="IIT Kharagpur Prize Pool"
+                  className="absolute bottom-0 sm:bottom-4 lg:bottom-8 right-[8%] sm:right-[18%] lg:right-[23%] xl:right-[29%] w-40 sm:w-56 lg:w-64 xl:w-72 object-contain z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-300"
+                />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ MENTORS ═══ */}
+      <section className="py-16 lg:py-20 bg-[#FAFAFA] border-y border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+                Meet the Minds Behind the Program
+              </h2>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                Every mentor, practitioner, and educator on our team brings one thing: a genuine investment in what young people are capable of.
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={100}>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-6 sm:gap-8 max-w-6xl mx-auto">
+              {[
+                { name: 'Devika Majumder', title: 'Founder & CEO · WSJ Featured · TedX Speaker · Business Today Most Powerful Women', image: '/images/yp/devika.jpg' },
+                { name: 'Prof. Fred Katz', title: 'Senior Professional Faculty, Johns Hopkins Carey Business School · President/CEO, Wise Products', image: '/images/yp/fred.jpeg' },
+                { name: 'Dr. Partha Ghosh', title: 'Founder, Partha Ghosh Leadership Academy IIT Kharagpur · Former McKinsey Senior Partner · MIT Professor', image: '/images/yp/partha.jpg' },
+                { name: 'Suman Bose', title: 'Founder, Project KREEA · Former CEO & MD, Siemens · Building India\'s Deeptech Hub', image: '/images/yp/suman.jpg' },
+                { name: 'Sachin Kapoor', title: 'Former Sr Director & Head of BD, LinkedIn India · Founder & CEO, Trumsy.Ai', image: '/images/yp/sachin.jpeg' },
+                { name: 'Dr. Julia Stamm', title: 'Founder & CEO, She Shapes AI, London · Responsible Tech & AI for Impact · Fellow, Royal Society of Arts', image: '/images/juliya.jpg' },
+                { name: 'Rajeev Barua', title: 'Founder & CEO, SecondWrite · Professor of CS, University of Maryland · Ph.D. MIT · Contributed to chip dev with IBM', image: '/images/rajeev.jpg' },
+              ].map((mentor, idx) => (
+                <div key={idx} className="flex flex-col items-center text-center group">
+                  <img src={mentor.image} alt={mentor.name} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-md mb-3 group-hover:border-[#C8960C] transition-all" />
+                  <h4 className="text-sm font-bold text-[#1B2A4A] leading-tight mb-1">{mentor.name}</h4>
+                  <p className="text-xs text-gray-500 leading-tight">{mentor.title}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+
+      {/* ═══ WHAT YOUR CHILD WILL GAIN ═══ */}
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12 lg:mb-16">
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-3`}>
+                What Your Child Will Gain
+              </h2>
+              <p className="text-gray-500 text-sm sm:text-base">Class 8–12 · Building the thinking, confidence, and capability tomorrow&apos;s world demands</p>
+            </div>
+          </Reveal>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 sm:gap-6 lg:gap-4 xl:gap-8 max-w-7xl mx-auto px-2">
+            {skills.map((skill, idx) => {
+              const isEven = idx % 2 === 0;
+              return (
+                <Reveal key={idx} delay={idx * 80}>
+                  <div className="flex flex-col items-center text-center group h-full">
+                    <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center mb-4 transition-transform duration-300 group-hover:-translate-y-1 shadow-sm ${isEven ? 'bg-[#EAF3EA] text-[#2E7D32]' : 'bg-[#FFF6E5] text-[#D98C00]'
+                      }`}>
+                      {skill.icon}
+                    </div>
+                    <h3 className="text-[13px] sm:text-sm font-bold text-[#1B2A4A] mb-2 leading-tight whitespace-pre-line">{skill.title}</h3>
+                    <p className="text-[11px] sm:text-xs text-gray-500 leading-snug whitespace-pre-line px-1">{skill.desc}</p>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -395,6 +479,73 @@ export default function Landing() {
               ))}
             </div>
           </Reveal>
+        </div>
+      </section>
+
+      {/* ═══ REAL GROWTH / SSI SECTION ═══ */}
+      <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center">
+            <Reveal>
+              <div>
+                <h2 className={`${playfair.className} text-3xl sm:text-4xl lg:text-[2.5rem] font-bold text-[#1B2A4A] leading-tight mb-6`}>
+                  Growth You Can See.<br />
+                  Progress You Can Trust.
+                </h2>
+                <p className="text-gray-600 text-base mb-6">
+                  Our proprietary SSI (Solution Seeking Index) measures 21st century skills essential for success beyond academics.
+                </p>
+                <ul className="space-y-4">
+                  {[
+                    'AI-powered assessment',
+                    'Personalised growth roadmap',
+                    'Track progress over time',
+                    'Skills that colleges & future employers value',
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-base text-gray-700">
+                      <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
+                      <span className="font-medium">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+
+            <Reveal delay={150}>
+              <div className="bg-[#FAFAFA] rounded-3xl p-8 shadow-inner border border-gray-200">
+                <h3 className="font-bold text-[#1B2A4A] text-xl mb-1">Real Growth. Real Result.</h3>
+                <p className="text-sm text-gray-500 mb-6">Average improvement in 3 months</p>
+                <div className="space-y-5">
+                  <ProgressBar label="Confidence" value={37} delay={0} />
+                  <ProgressBar label="Problem Solving" value={42} delay={100} />
+                  <ProgressBar label="Creativity" value={45} delay={200} />
+                  <ProgressBar label="Leadership" value={40} delay={300} />
+                  <ProgressBar label="Communication" value={35} delay={400} />
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={300}>
+              <div className="bg-gradient-to-r from-[#034634] to-[#007c57] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl h-full flex flex-col justify-center">
+                <div className="text-6xl text-white/10 font-serif absolute top-4 left-6">&ldquo;</div>
+                <div className="relative z-10 pt-6">
+                  <p className={`${playfair.className} text-lg sm:text-xl leading-relaxed mb-8 text-gray-200`}>
+                    My child has become more proactive and confident after participating in these sessions. The exposure to entrepreneurship has been incredibly valuable.
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 border border-gray-200">
+                      <img src="/images/yp/priya-sharma.jpg" alt="Priya Sharma" className="w-full h-full object-cover" />
+                    </div>
+                    <div>
+                      <div className="font-bold text-white">Priya Sharma</div>
+                      <div className="text-sm text-[#C8960C]">Parent · Mumbai</div>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-6xl text-white/10 font-serif absolute bottom-4 right-6">&rdquo;</div>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -438,422 +589,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ═══ AI MASTERY SECTION ═══ */}
-      <section className="py-16 lg:py-24 bg-[#1B2A4A] text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <Reveal>
-            <h2 className={`${playfair.className} text-3xl sm:text-4xl lg:text-5xl font-bold mb-6`}>
-              In the Age of AI, Your Child Doesn&apos;t Need to Fear It. <span className="text-[#C8960C]">They Need to Lead It.</span>
-            </h2>
-            <p className="text-xl text-gray-300 font-medium mb-8">Here&apos;s the truth no school is telling you:</p>
-            <div className="bg-white/10 border border-white/20 rounded-2xl p-6 sm:p-8 mb-12 shadow-xl backdrop-blur-sm">
-              <p className="text-xl sm:text-2xl font-bold leading-relaxed text-white">
-                AI will not replace your child. But a teenager who knows how to work with AI <span className="text-[#C8960C]">will replace one who doesn&apos;t.</span>
-              </p>
-            </div>
-            <p className="text-gray-300 mb-8 max-w-3xl mx-auto">
-              At Youngpreneurs, AI isn&apos;t a subject — it&apos;s a tool your child picks up and uses from Day 1. Here&apos;s exactly what that looks like:
-            </p>
-          </Reveal>
-          <div className="grid sm:grid-cols-2 gap-6 text-left">
-            {[
-              "They use our AI Co-Founder tool to pressure-test their ideas — the same way a startup founder would use a co-founder to challenge their thinking",
-              "They learn to frame problems using AI-assisted research — going from 'I have an idea' to 'I have data, insight, and a structured solution'",
-              "They build and refine pitches with AI feedback before presenting to real mentors",
-              "They leave the program understanding how to use AI as a creative and business partner — a skill that top universities and employers are already looking for"
-            ].map((text, idx) => (
-              <Reveal key={idx} delay={idx * 100}>
-                <div className="flex items-start gap-4 p-5 rounded-xl bg-white/5 border border-white/10 h-full">
-                  <CheckCircle2 className="w-6 h-6 text-[#C8960C] shrink-0 mt-0.5" />
-                  <p className="text-sm text-gray-200 leading-relaxed">{text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ WHAT YOUR CHILD WILL GAIN ═══ */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-12 lg:mb-16">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-3`}>
-                What Your Child Will Gain
-              </h2>
-              <p className="text-gray-500 text-sm sm:text-base">Class 8–12 · Building the thinking, confidence, and capability tomorrow&apos;s world demands</p>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 max-w-5xl mx-auto">
-            {skills.map((skill, idx) => (
-              <Reveal key={idx} delay={idx * 80}>
-                <div className="flex flex-col items-center text-center group bg-[#FAFAFA] rounded-2xl p-6 border border-gray-100 hover:border-[#C8960C]/30 hover:shadow-lg transition-all h-full">
-                  <div className="w-16 h-16 rounded-2xl bg-[#FFF8E7] flex items-center justify-center text-[#C8960C] mb-4 group-hover:scale-110 group-hover:bg-[#C8960C] group-hover:text-white transition-all duration-300 shadow-sm">
-                    {skill.icon}
-                  </div>
-                  <h3 className="text-lg font-bold text-[#1B2A4A] mb-2">{skill.title}</h3>
-                  <p className="text-sm text-gray-500 leading-relaxed">{skill.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ ACADEMIC OUTCOMES ═══ */}
-      <section className="py-16 lg:py-24 bg-[#FFFBF0]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-12 lg:mb-16 max-w-3xl mx-auto">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
-                Academic Outcomes — Why Schools See Better Results
-              </h2>
-              <p className="text-gray-600 text-base sm:text-lg">
-                This is not an extracurricular. Every skill built here makes a student sharper, clearer, and more capable — <span className="font-bold">inside the classroom.</span>
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            {[
-              { title: 'Conceptual Clarity', desc: 'Students stop memorising and start understanding deeply. Innovation training rewires how a student approaches any subject — not as content to reproduce, but as a system to understand and apply.' },
-              { title: 'Exam Performance', desc: 'Problem-solving improves especially in Maths & Science. Breaking a business problem into steps is the same cognitive skill that cracks a multi-part Maths question. Students don\'t freeze. They have a method.' },
-              { title: 'Communication', desc: 'Students write better, think clearer, express with confidence. Pitching to industry leaders teaches communication under pressure. That skill shows up in vivas, essays, and class participation immediately.' },
-              { title: 'CBSE · ICSE · IB', desc: 'Application-based learning improves performance in modern exam patterns. Future Titans masters application, analysis, and logical justification — exactly what boards are increasingly demanding.' },
-              { title: 'Discipline & Focus', desc: 'Students who take responsibility for their own ideas stop waiting to be told what to do in class. Self-direction is not taught — it is triggered. And it stays.' },
-            ].map((item, i) => (
-              <Reveal key={i} delay={i * 100}>
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#C8960C]/10 h-full flex flex-col">
-                  <h4 className="text-[#C8960C] font-bold text-lg mb-3">{item.title}</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-          <Reveal delay={500}>
-            <div className="mt-12 max-w-3xl mx-auto text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-              <p className="text-xl font-bold text-[#1B2A4A] mb-2">The same thinking that builds startups is the thinking that builds toppers.</p>
-              <p className="text-gray-500">This is not an alternative to academics. This is what makes academics meaningful.</p>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══ REAL GROWTH / SSI SECTION ═══ */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center">
-            <Reveal>
-              <div>
-                <h2 className={`${playfair.className} text-3xl sm:text-4xl lg:text-[2.5rem] font-bold text-[#1B2A4A] leading-tight mb-6`}>
-                  Real Growth.<br />
-                  Real Numbers.
-                </h2>
-                <p className="text-gray-600 text-base mb-6">
-                  Our proprietary SSI (Solution Seeking Index) is India&apos;s first metric that measures 21st century skills — the skills classrooms can&apos;t grade.
-                </p>
-                <ul className="space-y-4">
-                  {[
-                    'AI-powered assessment',
-                    'Personalised growth roadmap',
-                    'Track progress over time',
-                    'Skills that colleges & future employers value',
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-3 text-base text-gray-700">
-                      <CheckCircle2 className="w-5 h-5 text-green-600 shrink-0 mt-0.5" />
-                      <span className="font-medium">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-
-            <Reveal delay={150}>
-              <div className="bg-[#FAFAFA] rounded-3xl p-8 shadow-inner border border-gray-200">
-                <h3 className="font-bold text-[#1B2A4A] text-xl mb-1">Average improvement in 3 months</h3>
-                <p className="text-sm text-gray-500 mb-6">Measured via SSI</p>
-                <div className="space-y-5">
-                  <ProgressBar label="Confidence" value={37} delay={0} />
-                  <ProgressBar label="Problem Solving" value={42} delay={100} />
-                  <ProgressBar label="Creativity" value={45} delay={200} />
-                  <ProgressBar label="Leadership" value={40} delay={300} />
-                  <ProgressBar label="Communication" value={35} delay={400} />
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={300}>
-              <div className="bg-[#1B2A4A] rounded-3xl p-8 text-white relative overflow-hidden shadow-xl h-full flex flex-col justify-center">
-                <div className="text-6xl text-white/10 font-serif absolute top-4 left-6">&ldquo;</div>
-                <div className="relative z-10 pt-6">
-                  <p className={`${playfair.className} text-lg sm:text-xl leading-relaxed mb-8 text-gray-200 italic`}>
-                    My child has become more proactive and confident after participating in these sessions. The exposure to entrepreneurship has been incredibly valuable.
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#C8960C] flex items-center justify-center">
-                      <Users className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="font-bold text-white">Priya Sharma</div>
-                      <div className="text-sm text-[#C8960C]">Parent · Mumbai</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-6xl text-white/10 font-serif absolute bottom-4 right-6">&rdquo;</div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ MENTORS ═══ */}
-      <section className="py-16 lg:py-20 bg-[#FAFAFA] border-y border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
-                Meet the Minds Behind the Program
-              </h2>
-              <p className="text-gray-600 max-w-2xl mx-auto">
-                Every mentor, practitioner, and educator on our team brings one thing: a genuine investment in what young people are capable of.
-              </p>
-            </div>
-          </Reveal>
-          <Reveal delay={100}>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-6 sm:gap-8 max-w-6xl mx-auto">
-              {[
-                { name: 'Devika Majumder', title: 'Founder & CEO · WSJ Featured · TedX Speaker · Business Today Most Powerful Women', image: '/images/yp/devika.jpg' },
-                { name: 'Prof. Fred Katz', title: 'Senior Professional Faculty, Johns Hopkins Carey Business School · President/CEO, Wise Products', image: '/images/yp/fred.jpeg' },
-                { name: 'Dr. Partha Ghosh', title: 'Founder, Partha Ghosh Leadership Academy IIT Kharagpur · Former McKinsey Senior Partner · MIT Professor', image: '/images/yp/partha.jpg' },
-                { name: 'Suman Bose', title: 'Founder, Project KREEA · Former CEO & MD, Siemens · Building India\'s Deeptech Hub', image: '/images/yp/suman.jpg' },
-                { name: 'Sachin Kapoor', title: 'Former Sr Director & Head of BD, LinkedIn India · Founder & CEO, Trumsy.Ai', image: '/images/yp/sachin.jpeg' },
-                { name: 'Dr. Julia Stamm', title: 'Founder & CEO, She Shapes AI, London · Responsible Tech & AI for Impact · Fellow, Royal Society of Arts', image: '/images/juliya.jpg' },
-                { name: 'Rajeev Barua', title: 'Founder & CEO, SecondWrite · Professor of CS, University of Maryland · Ph.D. MIT · Contributed to chip dev with IBM', image: '/images/rajeev.jpg' },
-              ].map((mentor, idx) => (
-                <div key={idx} className="flex flex-col items-center text-center group">
-                  <img src={mentor.image} alt={mentor.name} className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-md mb-3 group-hover:border-[#C8960C] transition-all" />
-                  <h4 className="text-sm font-bold text-[#1B2A4A] leading-tight mb-1">{mentor.name}</h4>
-                  <p className="text-xs text-gray-500 leading-tight">{mentor.title}</p>
-                </div>
-              ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══ FUTURE TITANS — HERO ═══ */}
-      <section className="bg-[#1B2A4A] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <Reveal>
-                <p className="text-[#C8960C] font-bold text-sm tracking-[0.2em] uppercase mb-4">
-                  India's Flagship Innovation Capability Ecosystem
-                </p>
-                <h2 className={`${playfair.className} text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight`}>
-                  BE SEEN.<br />BE HEARD.<br /><span className="text-[#C8960C]">BUILD THE FUTURE.</span>
-                </h2>
-                <p className="text-gray-300 text-base sm:text-lg font-medium mb-6">
-                  Class 8–12 · ₹40 Lakhs Prize Pool · National Finale · Real Investors · Real Mentors
-                </p>
-                <div className="space-y-4 text-gray-400 text-sm leading-relaxed mb-8 max-w-lg">
-                  <p>
-                    India&apos;s first school-embedded Innovation Capability Ecosystem. Not a course. Not a competition. A system installed inside your school.
-                  </p>
-                  <p>
-                    What a standard entrepreneurship course delivers: Business Model Canvas, how to pitch an idea, basic market research, customer discovery, one final project.
-                  </p>
-                  <p>
-                    Future Titans delivers all of that — inside a system that permanently changes how students think.
-                  </p>
-                  <ul className="list-disc pl-5 space-y-1 mt-2 text-gray-300">
-                    <li><span className="text-white font-semibold">S.U.R.G.E.™</span> — a patent-pending cognitive framework, not a curriculum.</li>
-                    <li><span className="text-white font-semibold">SSI™</span> — a measurable thinking score, reportable to parents and boards.</li>
-                    <li><span className="text-white font-semibold">Zunnova™</span> — an AI co-founder that asks questions, never gives answers.</li>
-                    <li>A year-round <span className="text-white font-semibold">Innovation Club</span> installed inside your school.</li>
-                    <li>Real stakes: <span className="text-white font-semibold">national challenge · global mentors · ₹40 Lakhs prize pool.</span></li>
-                  </ul>
-                  <p className="font-semibold text-white italic mt-4 border-l-4 border-[#C8960C] pl-4">
-                    &ldquo;Everything a course promises. The infrastructure to make it permanent.&rdquo;
-                  </p>
-                </div>
-              </Reveal>
-
-              <Reveal delay={200}>
-                <div className="bg-white/10 border border-[#C8960C]/50 rounded-xl p-5 backdrop-blur-sm mb-8">
-                  <p className="text-white font-medium text-sm leading-relaxed">
-                    Here&apos;s the most important thing: every participant — whether they win or not — walks away with skills, a nationally recognised certificate, and measurable growth in their SSI score. The program delivers value regardless of competition results.
-                  </p>
-                </div>
-              </Reveal>
-
-              <Reveal delay={300}>
-                <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                  <div>
-                    <h4 className="text-[#C8960C] font-bold mb-3 flex items-center gap-2">
-                      <Award className="w-5 h-5" /> Why Students Love It
-                    </h4>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li>• ₹40 Lakhs Prize Pool & Access to Real Investors</li>
-                      <li>• Building something real that solves a real problem</li>
-                      <li>• National recognition and a stage to be seen</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="text-[#C8960C] font-bold mb-3 flex items-center gap-2">
-                      <Users className="w-5 h-5" /> Why Parents Love It
-                    </h4>
-                    <ul className="space-y-2 text-sm text-gray-300">
-                      <li>• Massive, visible confidence boost — parents notice it within weeks</li>
-                      <li>• Mentorship from global leaders — IIT Kharagpur faculty, industry veterans, and world-class practitioners</li>
-                      <li>• Nationally recognised certificates valued by top colleges</li>
-                      <li>• AI skills that future-proof their career — regardless of which field they choose</li>
-                      <li>• Results whether they win or not — the learning is the prize</li>
-                    </ul>
-                  </div>
-                </div>
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#C8960C] text-white font-bold text-xs sm:text-sm hover:bg-white hover:text-[#1B2A4A] transition-all shadow-lg text-center"
-                >
-                  <span>Register Your Child for Future Titans</span>
-                  <ArrowRight className="w-4 h-4 shrink-0" />
-                </Link>
-              </Reveal>
-            </div>
-
-            <Reveal delay={200}>
-              <div className="relative w-full aspect-[4/3] sm:aspect-square lg:aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                <img
-                  src="/images/yp/hero-students.jpg"
-                  alt="Future Titans"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1B2A4A] via-transparent to-transparent opacity-90" />
-                <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8">
-                  <div className="flex flex-wrap gap-3 sm:gap-4 lg:gap-6">
-                    {competitionFeatures.map((feat, idx) => (
-                      <div key={idx} className="flex flex-col items-center text-center">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[#C8960C] mb-1 sm:mb-2">
-                          {feat.icon}
-                        </div>
-                        <div className="text-white text-[10px] sm:text-xs font-bold">{feat.label}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ FUTURE TITANS — INNOVATION ARCHITECTURE ═══ */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
-                The Innovation Architecture Behind Future Titans
-              </h2>
-              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-                A patent-pending innovation architecture designed for the next generation:
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {[
-              { title: 'IDEA DNA', sub: 'The Innovation Pipeline', body: 'A four-stage process: Innovate → Design → Experiment → Apply. Gives students a repeatable, structured way to go from idea to solution — every time.' },
-              { title: 'S.U.R.G.E.', sub: 'Cognitive Sequencing Protocol', body: 'A five-step mental framework that teaches students how to break down any challenge and convert it into clear, actionable steps.' },
-              { title: 'SSI', sub: 'Solution-Seeking Index', body: 'India\'s first measurement tool for entrepreneurial mindset. Tracks your child\'s growth across creativity, problem framing, experimentation, and pitch quality.' },
-              { title: 'AI Co-Founder', sub: 'Guided Thinking Tool', body: 'An AI assistant that works like a co-founder — helping students pressure-test ideas, refine pitches, and break down complex problems step by step.' },
-            ].map((c, i) => (
-              <Reveal key={i} delay={i * 100}>
-                <div className="bg-[#FFFBF0] border border-[#C8960C]/20 rounded-2xl p-8 hover:bg-[#C8960C] hover:text-white transition-all group h-full flex flex-col items-center text-center shadow-sm hover:shadow-xl">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[#C8960C] text-xl font-black mb-6 shadow-sm group-hover:bg-white/20 group-hover:text-white transition-colors">
-                    0{i + 1}
-                  </div>
-                  <h3 className="text-xl font-bold text-[#1B2A4A] group-hover:text-white mb-2 transition-colors">{c.title}</h3>
-                  <p className="text-[#C8960C] font-semibold text-xs uppercase tracking-wider mb-4 group-hover:text-white/80 transition-colors">{c.sub}</p>
-                  <p className="text-gray-600 text-sm leading-relaxed group-hover:text-white/90 transition-colors">{c.body}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ FUTURE TITANS — WORKSHOP LADDER ═══ */}
-      <section className="py-16 lg:py-24 bg-[#FAFAFA]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A]`}>
-                Build Like a Titan: <span className="text-[#C8960C]">The 5-Workshop Journey</span>
-              </h2>
-              <p className="mt-4 text-gray-600 text-lg max-w-3xl mx-auto">
-                Five connected workshops — each step prepares students for the next, building from empathy all the way to a live pitch:
-              </p>
-            </div>
-          </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {[
-              { step: '01', title: 'Discover & Define', body: 'Empathy-driven exploration of real-world challenges. Understand users, not just problems.', outcome: 'A clearly defined challenge they care about solving' },
-              { step: '02', title: 'Design the Difference', body: 'Master ideation tools to uncover what makes their solution genuinely stand out.', outcome: 'A unique, validated solution concept' },
-              { step: '03', title: 'Prototype to Pitch', body: 'Bring ideas to life using no-code tools, rapid testing, and iteration — including AI tools.', outcome: 'A working prototype they can demo' },
-              { step: '04', title: 'Map Your Model', body: 'Monetisation and scalability — turning ideas into viable real-world models.', outcome: 'A basic business model canvas' },
-              { step: '05', title: 'Pitch Like a Pro', body: 'A masterclass in influence and delivery. Present with confidence to real judges.', outcome: 'A competition-ready pitch' },
-            ].map((w, i) => (
-              <Reveal key={i} delay={i * 80}>
-                <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:-translate-y-2 hover:shadow-xl hover:border-[#C8960C] transition-all h-full flex flex-col">
-                  <span className="text-[#C8960C] font-mono text-3xl font-black opacity-20 block mb-4">{w.step}</span>
-                  <h4 className="text-base font-bold text-[#1B2A4A] mb-3">{w.title}</h4>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">{w.body}</p>
-                  <div className="pt-4 border-t border-gray-100 mt-auto">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Outcome</p>
-                    <p className="text-sm font-semibold text-[#1B2A4A]">{w.outcome}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══ COMPETITION FORMAT ═══ */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-16">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#C8960C]`}>
-                The Competition Format
-              </h2>
-              <p className="mt-4 text-gray-600 text-lg">Three milestones from idea to national stage:</p>
-            </div>
-          </Reveal>
-          <div className="space-y-8">
-            {[
-              { phase: 'Phase 1', format: 'Virtual', title: 'Idea Submission', body: 'Submit their refined solution concept — shaped using IDEA DNA, S.U.R.G.E., and early prototyping' },
-              { phase: 'Phase 2', format: 'Virtual', title: 'Pitch Video', body: 'A short video pitch showcasing their problem insight, structured approach, and prototype' },
-              { phase: 'Phase 3', format: 'Live National Bootcamp', title: 'Grand Finale', body: 'Top 50 Titans compete at a national bootcamp — mentorship, deep-dives, and a live pitch to a national jury of investors and leaders' },
-            ].map((p, i) => (
-              <Reveal key={i} delay={i * 120}>
-                <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start sm:items-center">
-                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A] text-[#C8960C] text-2xl font-bold shadow-lg shadow-[#1B2A4A]/20">
-                    {i + 1}
-                  </div>
-                  <div className="flex-1 bg-[#FFFBF0] border border-[#C8960C]/20 rounded-3xl p-6 sm:p-8 hover:shadow-md transition-all">
-                    <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
-                      <span className="text-[#1B2A4A] font-bold text-lg">{p.title}</span>
-                      <span className="bg-white text-[#C8960C] text-xs font-bold px-3 py-1 rounded-full border border-[#C8960C]/20">{p.format}</span>
-                    </div>
-                    <span className="text-[#C8960C] font-mono font-bold text-sm tracking-wider block mb-2">{p.phase}</span>
-                    <p className="text-gray-600 text-base leading-relaxed">{p.body}</p>
-                  </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
+      {/* ═══ AI MASTERY SECTION (IMAGE) ═══ */}
+      <section className="bg-[#0A101D] relative w-full hover:opacity-95 transition-opacity">
+        <Link href="/signup" className="block w-full">
+          <img
+            src="/images/yp/ai-section.png"
+            alt="In the Age of AI, Your Child Doesn't Need to Fear It. They Need to Lead It."
+            className="w-full h-auto object-cover"
+          />
+        </Link>
       </section>
 
       {/* ═══ STUDENT SUCCESS STORIES ═══ */}
@@ -862,9 +606,8 @@ export default function Landing() {
           <Reveal>
             <div className="text-center mb-12">
               <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
-                Hear It From Our Students
+                Real Stories. Real Impact.
               </h2>
-              <p className="text-gray-600 text-lg">Real students. Real outcomes. Real confidence. From 120+ cities across India.</p>
             </div>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
@@ -878,7 +621,7 @@ export default function Landing() {
                   <div className="text-[#C8960C] mb-4">
                     <QuoteIcon className="w-8 h-8 opacity-50" />
                   </div>
-                  <p className="text-gray-700 text-base leading-relaxed italic mb-8 flex-1">&ldquo;{student.quote}&rdquo;</p>
+                  <p className="text-gray-700 text-base leading-relaxed mb-8 flex-1">&ldquo;{student.quote}&rdquo;</p>
                   <div className="flex items-center gap-4 pt-6 border-t border-gray-100">
                     <div className="w-12 h-12 bg-[#FFFBF0] rounded-full flex items-center justify-center text-[#C8960C] font-bold text-xl">
                       {student.name.charAt(0)}
@@ -892,24 +635,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ═══ PARENT TESTIMONIALS ═══ */}
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="text-center mb-12">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
-                What Parents Are Saying
-              </h2>
-              <p className="text-gray-600 text-lg max-w-3xl mx-auto">
-                Real feedback from families across India — including students who didn't win the competition and still saw life-changing results:
-              </p>
-            </div>
-          </Reveal>
-          <div className="max-w-4xl mx-auto">
-            <ParentCarousel testimonials={parentTestimonials} />
-          </div>
-        </div>
-      </section>
 
       {/* ═══ FAQ SECTION ═══ */}
       <section className="py-16 lg:py-24 bg-[#FAFAFA]">
@@ -978,8 +703,310 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ═══ FEATURED IN ═══ */}
+      <section className="py-10 bg-white border-y border-gray-100 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm font-bold tracking-widest text-gray-400 uppercase mb-8">Featured In</p>
+          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
+            {[
+              '/images/yp/statesman.png',
+              '/images/yp/businesStandard.png',
+              '/images/yp/bussinessworld.png',
+              '/images/yp/et.png',
+              '/images/yp/cnbc.png',
+              '/images/yp/enterpreneurIndia.png',
+              '/images/yp/telegraph.png',
+              '/images/yp/ibns.png'
+            ].map((logo, i) => (
+              <img key={i} src={logo} alt="Featured in Media" className="h-10 sm:h-12 md:h-16 object-contain hover:scale-105 transition-transform" />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══ ACADEMIC OUTCOMES ═══
+      // <section className="py-16 lg:py-24 bg-[#FFFBF0]">
+      //   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      //     <Reveal>
+      //       <div className="text-center mb-12 lg:mb-16 max-w-3xl mx-auto">
+      //         <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+      //           Academic Outcomes — Why Schools See Better Results
+      //         </h2>
+      //         <p className="text-gray-600 text-base sm:text-lg">
+      //           This is not an extracurricular. Every skill built here makes a student sharper, clearer, and more capable — <span className="font-bold">inside the classroom.</span>
+      //         </p>
+      //       </div>
+      //     </Reveal>
+      //     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      //       {[
+      //         { title: 'Conceptual Clarity', desc: 'Students stop memorising and start understanding deeply. Innovation training rewires how a student approaches any subject — not as content to reproduce, but as a system to understand and apply.' },
+      //         { title: 'Exam Performance', desc: 'Problem-solving improves especially in Maths & Science. Breaking a business problem into steps is the same cognitive skill that cracks a multi-part Maths question. Students don\'t freeze. They have a method.' },
+      //         { title: 'Communication', desc: 'Students write better, think clearer, express with confidence. Pitching to industry leaders teaches communication under pressure. That skill shows up in vivas, essays, and class participation immediately.' },
+      //         { title: 'CBSE · ICSE · IB', desc: 'Application-based learning improves performance in modern exam patterns. Future Titans masters application, analysis, and logical justification — exactly what boards are increasingly demanding.' },
+      //         { title: 'Discipline & Focus', desc: 'Students who take responsibility for their own ideas stop waiting to be told what to do in class. Self-direction is not taught — it is triggered. And it stays.' },
+      //       ].map((item, i) => (
+      //         <Reveal key={i} delay={i * 100}>
+      //           <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#C8960C]/10 h-full flex flex-col">
+      //             <h4 className="text-[#C8960C] font-bold text-lg mb-3">{item.title}</h4>
+      //             <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
+      //           </div>
+      //         </Reveal>
+      //       ))}
+      //     </div>
+      //     <Reveal delay={500}>
+      //       <div className="mt-12 max-w-3xl mx-auto text-center bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+      //         <p className="text-xl font-bold text-[#1B2A4A] mb-2">The same thinking that builds startups is the thinking that builds toppers.</p>
+      //         <p className="text-gray-500">This is not an alternative to academics. This is what makes academics meaningful.</p>
+      //       </div>
+      //     </Reveal>
+      //   </div>
+      // </section>
+
+
+
+
+
+      {/* ═══ FUTURE TITANS — HERO ═══ */}
+      {/* <section className="bg-[#1B2A4A] relative overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <Reveal>
+                <p className="text-[#C8960C] font-bold text-sm tracking-[0.2em] uppercase mb-4">
+                  India's Flagship Innovation Capability Ecosystem
+                </p>
+                <h2 className={`${playfair.className} text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight`}>
+                  BE SEEN.<br />BE HEARD.<br /><span className="text-[#C8960C]">BUILD THE FUTURE.</span>
+                </h2>
+                <p className="text-gray-300 text-base sm:text-lg font-medium mb-6">
+                  Class 8–12 · ₹40 Lakhs Prize Pool · National Finale · Real Investors · Real Mentors
+                </p>
+                <div className="space-y-4 text-gray-400 text-sm leading-relaxed mb-8 max-w-lg">
+                  <p>
+                    India&apos;s first school-embedded Innovation Capability Ecosystem. Not a course. Not a competition. A system installed inside your school.
+                  </p>
+                  <p>
+                    What a standard entrepreneurship course delivers: Business Model Canvas, how to pitch an idea, basic market research, customer discovery, one final project.
+                  </p>
+                  <p>
+                    Future Titans delivers all of that — inside a system that permanently changes how students think.
+                  </p>
+                  <ul className="list-disc pl-5 space-y-1 mt-2 text-gray-300">
+                    <li><span className="text-white font-semibold">S.U.R.G.E.™</span> — a patent-pending cognitive framework, not a curriculum.</li>
+                    <li><span className="text-white font-semibold">SSI™</span> — a measurable thinking score, reportable to parents and boards.</li>
+                    <li><span className="text-white font-semibold">Zunnova™</span> — an AI co-founder that asks questions, never gives answers.</li>
+                    <li>A year-round <span className="text-white font-semibold">Innovation Club</span> installed inside your school.</li>
+                    <li>Real stakes: <span className="text-white font-semibold">national challenge · global mentors · ₹40 Lakhs prize pool.</span></li>
+                  </ul>
+                  <p className="font-semibold text-white mt-4 border-l-4 border-[#C8960C] pl-4">
+                    &ldquo;Everything a course promises. The infrastructure to make it permanent.&rdquo;
+                  </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={200}>
+                <div className="bg-white/10 border border-[#C8960C]/50 rounded-xl p-5 backdrop-blur-sm mb-8">
+                  <p className="text-white font-medium text-sm leading-relaxed">
+                    Here&apos;s the most important thing: every participant — whether they win or not — walks away with skills, a nationally recognised certificate, and measurable growth in their SSI score. The program delivers value regardless of competition results.
+                  </p>
+                </div>
+              </Reveal>
+
+              <Reveal delay={300}>
+                <div className="grid sm:grid-cols-2 gap-6 mb-8">
+                  <div>
+                    <h4 className="text-[#C8960C] font-bold mb-3 flex items-center gap-2">
+                      <Award className="w-5 h-5" /> Why Students Love It
+                    </h4>
+                    <ul className="space-y-2 text-sm text-gray-300">
+                      <li>• ₹40 Lakhs Prize Pool & Access to Real Investors</li>
+                      <li>• Building something real that solves a real problem</li>
+                      <li>• National recognition and a stage to be seen</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h4 className="text-[#C8960C] font-bold mb-3 flex items-center gap-2">
+                      <Users className="w-5 h-5" /> Why Parents Love It
+                    </h4>
+                    <ul className="space-y-2 text-sm text-gray-300">
+                      <li>• Massive, visible confidence boost — parents notice it within weeks</li>
+                      <li>• Mentorship from global leaders — IIT Kharagpur faculty, industry veterans, and world-class practitioners</li>
+                      <li>• Nationally recognised certificates valued by top colleges</li>
+                      <li>• AI skills that future-proof their career — regardless of which field they choose</li>
+                      <li>• Results whether they win or not — the learning is the prize</li>
+                    </ul>
+                  </div>
+                </div>
+                <Link
+                  href="/signup"
+                  className="inline-flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#C8960C] text-white font-bold text-xs sm:text-sm hover:bg-white hover:text-[#1B2A4A] transition-all shadow-lg text-center"
+                >
+                  <span>Register Your Child for Future Titans</span>
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                </Link>
+              </Reveal>
+            </div>
+
+            <Reveal delay={200}>
+              <div className="relative w-full aspect-[4/3] sm:aspect-square lg:aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl border border-white/10">
+                <img
+                  src="/images/yp/hero-students.png"
+                  alt="Future Titans"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1B2A4A] via-transparent to-transparent opacity-90" />
+                <div className="absolute bottom-4 sm:bottom-8 left-4 sm:left-8 right-4 sm:right-8">
+                  <div className="flex flex-wrap gap-3 sm:gap-4 lg:gap-6">
+                    {competitionFeatures.map((feat, idx) => (
+                      <div key={idx} className="flex flex-col items-center text-center">
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-[#C8960C] mb-1 sm:mb-2">
+                          {feat.icon}
+                        </div>
+                        <div className="text-white text-[10px] sm:text-xs font-bold">{feat.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section> */}
+
+      {/* ═══ FUTURE TITANS — INNOVATION ARCHITECTURE ═══ */}
+      {/* <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+                The Innovation Architecture Behind Future Titans
+              </h2>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+                A patent-pending innovation architecture designed for the next generation:
+              </p>
+            </div>
+          </Reveal>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+            {[
+              { title: 'IDEA DNA', sub: 'The Innovation Pipeline', body: 'A four-stage process: Innovate → Design → Experiment → Apply. Gives students a repeatable, structured way to go from idea to solution — every time.' },
+              { title: 'S.U.R.G.E.', sub: 'Cognitive Sequencing Protocol', body: 'A five-step mental framework that teaches students how to break down any challenge and convert it into clear, actionable steps.' },
+              { title: 'SSI', sub: 'Solution-Seeking Index', body: 'India\'s first measurement tool for entrepreneurial mindset. Tracks your child\'s growth across creativity, problem framing, experimentation, and pitch quality.' },
+              { title: 'AI Co-Founder', sub: 'Guided Thinking Tool', body: 'An AI assistant that works like a co-founder — helping students pressure-test ideas, refine pitches, and break down complex problems step by step.' },
+            ].map((c, i) => (
+              <Reveal key={i} delay={i * 100}>
+                <div className="bg-[#FFFBF0] border border-[#C8960C]/20 rounded-2xl p-8 hover:bg-[#C8960C] hover:text-white transition-all group h-full flex flex-col items-center text-center shadow-sm hover:shadow-xl">
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-[#C8960C] text-xl font-black mb-6 shadow-sm group-hover:bg-white/20 group-hover:text-white transition-colors">
+                    0{i + 1}
+                  </div>
+                  <h3 className="text-xl font-bold text-[#1B2A4A] group-hover:text-white mb-2 transition-colors">{c.title}</h3>
+                  <p className="text-[#C8960C] font-semibold text-xs uppercase tracking-wider mb-4 group-hover:text-white/80 transition-colors">{c.sub}</p>
+                  <p className="text-gray-600 text-sm leading-relaxed group-hover:text-white/90 transition-colors">{c.body}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section> */}
+
+      {/* ═══ FUTURE TITANS — WORKSHOP LADDER ═══ */}
+      {/* <section className="py-16 lg:py-24 bg-[#FAFAFA]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A]`}>
+                Build Like a Titan: <span className="text-[#C8960C]">The 5-Workshop Journey</span>
+              </h2>
+              <p className="mt-4 text-gray-600 text-lg max-w-3xl mx-auto">
+                Five connected workshops — each step prepares students for the next, building from empathy all the way to a live pitch:
+              </p>
+            </div>
+          </Reveal>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {[
+              { step: '01', title: 'Discover & Define', body: 'Empathy-driven exploration of real-world challenges. Understand users, not just problems.', outcome: 'A clearly defined challenge they care about solving' },
+              { step: '02', title: 'Design the Difference', body: 'Master ideation tools to uncover what makes their solution genuinely stand out.', outcome: 'A unique, validated solution concept' },
+              { step: '03', title: 'Prototype to Pitch', body: 'Bring ideas to life using no-code tools, rapid testing, and iteration — including AI tools.', outcome: 'A working prototype they can demo' },
+              { step: '04', title: 'Map Your Model', body: 'Monetisation and scalability — turning ideas into viable real-world models.', outcome: 'A basic business model canvas' },
+              { step: '05', title: 'Pitch Like a Pro', body: 'A masterclass in influence and delivery. Present with confidence to real judges.', outcome: 'A competition-ready pitch' },
+            ].map((w, i) => (
+              <Reveal key={i} delay={i * 80}>
+                <div className="bg-white border border-gray-200 rounded-2xl p-6 hover:-translate-y-2 hover:shadow-xl hover:border-[#C8960C] transition-all h-full flex flex-col">
+                  <span className="text-[#C8960C] font-mono text-3xl font-black opacity-20 block mb-4">{w.step}</span>
+                  <h4 className="text-base font-bold text-[#1B2A4A] mb-3">{w.title}</h4>
+                  <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">{w.body}</p>
+                  <div className="pt-4 border-t border-gray-100 mt-auto">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Outcome</p>
+                    <p className="text-sm font-semibold text-[#1B2A4A]">{w.outcome}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section> */}
+
+      {/* ═══ COMPETITION FORMAT ═══ */}
+      {/* <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-16">
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#C8960C]`}>
+                The Competition Format
+              </h2>
+              <p className="mt-4 text-gray-600 text-lg">Three milestones from idea to national stage:</p>
+            </div>
+          </Reveal>
+          <div className="space-y-8">
+            {[
+              { phase: 'Phase 1', format: 'Virtual', title: 'Idea Submission', body: 'Submit their refined solution concept — shaped using IDEA DNA, S.U.R.G.E., and early prototyping' },
+              { phase: 'Phase 2', format: 'Virtual', title: 'Pitch Video', body: 'A short video pitch showcasing their problem insight, structured approach, and prototype' },
+              { phase: 'Phase 3', format: 'Live National Bootcamp', title: 'Grand Finale', body: 'Top 50 Titans compete at a national bootcamp — mentorship, deep-dives, and a live pitch to a national jury of investors and leaders' },
+            ].map((p, i) => (
+              <Reveal key={i} delay={i * 120}>
+                <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start sm:items-center">
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#1B2A4A] text-[#C8960C] text-2xl font-bold shadow-lg shadow-[#1B2A4A]/20">
+                    {i + 1}
+                  </div>
+                  <div className="flex-1 bg-[#FFFBF0] border border-[#C8960C]/20 rounded-3xl p-6 sm:p-8 hover:shadow-md transition-all">
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+                      <span className="text-[#1B2A4A] font-bold text-lg">{p.title}</span>
+                      <span className="bg-white text-[#C8960C] text-xs font-bold px-3 py-1 rounded-full border border-[#C8960C]/20">{p.format}</span>
+                    </div>
+                    <span className="text-[#C8960C] font-mono font-bold text-sm tracking-wider block mb-2">{p.phase}</span>
+                    <p className="text-gray-600 text-base leading-relaxed">{p.body}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section> */}
+
+
+
+      {/* ═══ PARENT TESTIMONIALS ═══ */}
+      {/* <section className="py-16 lg:py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center mb-12">
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+                What Parents Are Saying
+              </h2>
+              <p className="text-gray-600 text-lg max-w-3xl mx-auto">
+                Real feedback from families across India — including students who didn't win the competition and still saw life-changing results:
+              </p>
+            </div>
+          </Reveal>
+          <div className="max-w-4xl mx-auto">
+            <ParentCarousel testimonials={parentTestimonials} />
+          </div>
+        </div>
+      </section> */}
+
+
+
       {/* ═══ URGENCY & PROMISE (NEW SECTIONS) ═══ */}
-      <section className="py-16 lg:py-24 bg-[#1B2A4A] text-white">
+      {/* <section className="py-16 lg:py-24 bg-[#1B2A4A] text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
             <Reveal>
@@ -1036,7 +1063,7 @@ export default function Landing() {
                       If your child completes the full program and you don't see a meaningful, visible change in their confidence and thinking — we'll refund every rupee. No questions asked.
                     </p>
                   </div>
-                  <p className="text-sm text-gray-500 italic">
+                  <p className="text-sm text-gray-500">
                     We've made this promise because we've never had to honour it. Over 10,000 families trust us — and counting.
                   </p>
                 </div>
@@ -1044,32 +1071,17 @@ export default function Landing() {
             </Reveal>
           </div>
         </div>
-      </section>
+      </section> */ }
 
-      {/* ═══ FINAL CTA ═══ */}
-      <section className="py-14 sm:py-20 lg:py-28 bg-[#FFFBF0] text-center border-b border-gray-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <h2 className={`${playfair.className} text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1B2A4A] mb-6 sm:mb-8 leading-tight`}>
-              Don't Let Your Child Watch the Future Happen to Them.
-            </h2>
-            <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-8 sm:mb-10 max-w-2xl mx-auto">
-              10,000+ families have already given their children the unfair advantage. Seats in the next cohort are limited.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mb-8 sm:mb-10">
-              <Link
-                href="/signup"
-                className="px-8 sm:px-10 py-4 sm:py-5 rounded-full bg-[#C8960C] text-white font-bold text-base sm:text-lg tracking-wide hover:bg-[#b5870b] transition-all shadow-xl shadow-[#C8960C]/30 flex items-center gap-3 w-full sm:w-auto justify-center hover:-translate-y-1"
-              >
-                Register Now — Secure Your Child's Spot
-                <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 shrink-0" />
-              </Link>
-            </div>
-            <p className="text-gray-500 font-medium text-sm">
-              Questions? Call or WhatsApp: <a href="tel:+919038428532" className="text-[#1B2A4A] font-bold hover:underline">+91 9038428532</a> · <a href="mailto:yes@youngpreneurs.ai" className="text-[#1B2A4A] font-bold hover:underline">yes@youngpreneurs.ai</a>
-            </p>
-          </Reveal>
-        </div>
+      {/* ═══ FINAL CTA (IMAGE) ═══ */}
+      <section className="bg-white relative w-full border-b border-gray-200 hover:opacity-95 transition-opacity">
+        <Link href="/signup" className="block w-full">
+          <img
+            src="/images/yp/final-cta.png"
+            alt="Don't Let Your Child Watch the Future Happen to Them. Register Your Child for Future Titans."
+            className="w-full h-auto object-cover"
+          />
+        </Link>
       </section>
 
       {/* ═══ FOOTER ═══ */}

@@ -88,14 +88,13 @@ export default function PublicNavbar() {
   return (
     <>
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 bg-white ${scrolled ? 'shadow-md' : 'shadow-sm'
-          }`}
+        className="absolute top-0 left-0 w-full z-50 bg-transparent transition-all duration-300"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-[72px]">
             {/* Logo */}
             <Link href="/" className="shrink-0">
-              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-10 sm:h-12 w-auto object-contain" />
+              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-6 sm:h-8 w-auto object-contain" />
             </Link>
 
             {/* Desktop Nav */}
@@ -111,7 +110,7 @@ export default function PublicNavbar() {
                   >
                     <button
                       onClick={() => setDropdownOpen((o) => !o)}
-                      className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-lg ${dropdownOpen
+                      className={`flex items-center gap-1 px-2 py-2 text-sm font-medium transition-colors rounded-lg whitespace-nowrap ${dropdownOpen
                         ? 'text-[#C8960C]'
                         : 'text-[#1B2A4A] hover:text-[#C8960C]'
                         }`}
@@ -144,7 +143,7 @@ export default function PublicNavbar() {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-lg ${isActive(link.href)
+                    className={`flex items-center gap-1 px-2 py-2 text-sm font-medium transition-colors rounded-lg whitespace-nowrap ${isActive(link.href)
                       ? 'text-[#C8960C]'
                       : 'text-[#1B2A4A] hover:text-[#C8960C]'
                       }`}
@@ -165,7 +164,7 @@ export default function PublicNavbar() {
               >
                 <button
                   onClick={() => setLoginDropdownOpen((o) => !o)}
-                  className="px-5 py-2 rounded-full border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all flex items-center gap-1"
+                  className="px-4 py-2 border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all flex items-center gap-1 whitespace-nowrap"
                 >
                   Login
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdownOpen ? 'rotate-180' : ''}`} />
@@ -198,7 +197,7 @@ export default function PublicNavbar() {
               </div>
               <Link
                 href="/signup"
-                className="px-5 py-2.5 rounded-full bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5"
+                className="px-4 py-2 bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5 whitespace-nowrap"
               >
                 Enroll Now
                 <ArrowRight className="w-4 h-4" />
