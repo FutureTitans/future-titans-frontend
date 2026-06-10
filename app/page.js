@@ -294,9 +294,10 @@ export default function Landing() {
       <PublicNavbar />
       {/* ═══ HERO ═══ */}
       <section className="bg-[#FFFBF0] relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 lg:pt-14 pb-12 lg:pb-16">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="pt-16 sm:pt-24 lg:pt-32">
+        <div className="max-w-[1440px] mx-auto relative">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-0 items-center min-h-[600px] lg:min-h-[700px]">
+            {/* Left Text Content */}
+            <div className="px-4 sm:px-6 lg:px-8 xl:px-16 pt-24 sm:pt-28 lg:pt-32 pb-12 lg:pb-16 relative z-10">
               <h1 className="font-sans text-[32px] sm:text-[42px] lg:text-[52px] font-medium text-black leading-[1.2] tracking-tighter mb-6 sm:mb-8">
                 <span className="inline-block relative -top-2 sm:-top-4">
                   Will Your Child Be<br />
@@ -364,16 +365,17 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="relative ml-auto -mr-8 sm:-mr-12 lg:-mr-24 xl:-mr-32 -mt-2 sm:-mt-6 lg:-mt-10 flex justify-end">
-              <div className="relative w-full lg:w-[115%] xl:w-[125%] aspect-[4/3]">
+            {/* Right Image — bleeds to viewport edge */}
+            <div className="relative lg:absolute lg:right-0 lg:top-0 lg:bottom-0 lg:w-[55%] xl:w-[52%]">
+              <div className="relative w-full h-full min-h-[350px] sm:min-h-[450px] lg:min-h-full">
                 <img
                   src="/images/yp/hero-students.png"
                   alt="Real students at Youngpreneurs"
                   className="w-full h-full object-cover object-center"
                   style={{
-                    maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
+                    maskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
                     maskComposite: 'intersect',
-                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
+                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 15%, black 100%), linear-gradient(to bottom, transparent 0%, black 8%, black 85%, transparent 100%)',
                     WebkitMaskComposite: 'source-in',
                   }}
                 />
@@ -382,7 +384,7 @@ export default function Landing() {
                 <img
                   src="/images/yp/prize-pool.png"
                   alt="IIT Kharagpur Prize Pool"
-                  className="absolute bottom-0 sm:bottom-4 lg:bottom-8 right-[8%] sm:right-[18%] lg:right-[23%] xl:right-[29%] w-40 sm:w-56 lg:w-64 xl:w-72 object-contain z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-300"
+                  className="absolute bottom-8 sm:bottom-12 lg:bottom-16 right-4 sm:right-8 lg:right-12 xl:right-16 w-36 sm:w-48 lg:w-56 xl:w-64 object-contain z-10 drop-shadow-2xl hover:scale-105 transition-transform duration-300"
                 />
               </div>
             </div>
