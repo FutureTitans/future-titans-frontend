@@ -45,6 +45,7 @@ module.exports = {
       fontFamily: {
         sans: ['var(--font-inter)', '-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif'],
         edo: ['Edo', 'sans-serif'],
+        roca: ['roca-two', 'serif'],
         'heading-now': ['"Heading Now"', 'sans-serif'],
       },
       fontSize: {
