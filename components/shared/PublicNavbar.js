@@ -3,7 +3,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, Menu, X, ArrowRight } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, User, LayoutDashboard } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { isAuthenticated, isStudent, isAdmin } from '@/lib/auth';
+import { auth } from '@/lib/api';
 
 const NAV_LINKS = [
   { label: 'Future Titans', href: '/future-titans' },
@@ -21,16 +24,38 @@ const SECONDARY_LINKS = [
 
 export default function PublicNavbar() {
   const pathname = usePathname();
+  const { user, hydrateUser } = useAuthStore();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
   const [mobileLoginDropdownOpen, setMobileLoginDropdownOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [profileName, setProfileName] = useState(null);
   const dropdownRef = useRef(null);
   const dropdownTimeout = useRef(null);
   const loginDropdownRef = useRef(null);
   const loginDropdownTimeout = useRef(null);
+
+  useEffect(() => {
+    hydrateUser();
+    setMounted(true);
+  }, [hydrateUser]);
+
+  useEffect(() => {
+    if (user && (isStudent() || isAdmin())) {
+      auth.getProfile()
+        .then((profile) => {
+          if (profile?.name) setProfileName(profile.name);
+        })
+        .catch(() => {});
+    }
+  }, [user]);
+
+  const loggedIn = mounted && user && isAuthenticated();
+  const displayName = profileName || user?.name;
+  const dashboardHref = isAdmin() ? '/admin' : '/student/dashboard';
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -156,63 +181,75 @@ export default function PublicNavbar() {
 
             {/* Desktop Right */}
             <div className="hidden lg:flex items-center gap-3">
-              <div
-                ref={loginDropdownRef}
-                className="relative"
-                onMouseEnter={handleLoginDropdownEnter}
-                onMouseLeave={handleLoginDropdownLeave}
-              >
-                <button
-                  onClick={() => setLoginDropdownOpen((o) => !o)}
-                  className="px-5 py-2 rounded-md border border-white/40 text-white text-sm font-semibold hover:bg-white/10 transition-all flex items-center gap-1 whitespace-nowrap"
-                >
-                  Login
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdownOpen ? 'rotate-180' : ''}`} />
-                </button>
-                {loginDropdownOpen && (
-                  <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 overflow-hidden">
-                    <Link
-                      href="/login"
-                      className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors border-b border-gray-50"
-                      onClick={() => setLoginDropdownOpen(false)}
+              {loggedIn ? (
+                <>
+                  <Link
+                    href={dashboardHref}
+                    className="flex items-center gap-2.5 px-4 py-2 rounded-md bg-white/10 border border-white/15 hover:bg-white/15 transition-all text-sm font-medium text-white"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center flex-shrink-0">
+                      <User className="w-3.5 h-3.5 text-white" />
+                    </div>
+                    <span className="max-w-[120px] truncate">{displayName}</span>
+                  </Link>
+                  <Link
+                    href={dashboardHref}
+                    className="px-5 py-2 rounded-md bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5 whitespace-nowrap"
+                  >
+                    <LayoutDashboard className="w-4 h-4" />
+                    Dashboard
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <div
+                    ref={loginDropdownRef}
+                    className="relative"
+                    onMouseEnter={handleLoginDropdownEnter}
+                    onMouseLeave={handleLoginDropdownLeave}
+                  >
+                    <button
+                      onClick={() => setLoginDropdownOpen((o) => !o)}
+                      className="px-5 py-2 rounded-md border border-white/40 text-white text-sm font-semibold hover:bg-white/10 transition-all flex items-center gap-1 whitespace-nowrap"
                     >
-                      Student Login
-                    </Link>
-                    <Link
-                      href="/school-poc/login"
-                      className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors border-b border-gray-50"
-                      onClick={() => setLoginDropdownOpen(false)}
-                    >
-                      School POC Login
-                    </Link>
-                    <Link
-                      href="/association/login"
-                      className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors"
-                      onClick={() => setLoginDropdownOpen(false)}
-                    >
-                      Association Login
-                    </Link>
+                      Login
+                      <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {loginDropdownOpen && (
+                      <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50 overflow-hidden">
+                        <Link
+                          href="/login"
+                          className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors border-b border-gray-50"
+                          onClick={() => setLoginDropdownOpen(false)}
+                        >
+                          Student Login
+                        </Link>
+                        <Link
+                          href="/school-poc/login"
+                          className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors border-b border-gray-50"
+                          onClick={() => setLoginDropdownOpen(false)}
+                        >
+                          School POC Login
+                        </Link>
+                        <Link
+                          href="/association/login"
+                          className="block px-4 py-3 text-sm font-medium text-[#1B2A4A] hover:text-[#C8960C] hover:bg-gray-50 transition-colors"
+                          onClick={() => setLoginDropdownOpen(false)}
+                        >
+                          Association Login
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <Link
-                href="/signup"
-                className="px-5 py-2 rounded-md bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5 whitespace-nowrap"
-              >
-                Enroll Now
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              {/* <div className="hidden xl:flex items-center gap-1.5 text-xs text-gray-500 ml-2">
-                <span>Trusted by 10,000+ families</span>
-                <div className="flex -space-x-1.5">
-                  {[...Array(4)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-5 h-5 rounded-full bg-gray-300 border-2 border-white"
-                    />
-                  ))}
-                </div>
-              </div> */}
+                  <Link
+                    href="/signup"
+                    className="px-5 py-2 rounded-md bg-[#C8960C] text-white text-sm font-semibold hover:bg-[#b5870b] transition-all flex items-center gap-1.5 whitespace-nowrap"
+                  >
+                    Enroll Now
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </>
+              )}
             </div>
 
             {/* Mobile Hamburger */}
@@ -304,47 +341,69 @@ export default function PublicNavbar() {
               ))}
 
               <div className="pt-3 space-y-2">
-                <div className="rounded-xl border border-[#1B2A4A] overflow-hidden">
-                  <button
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[#1B2A4A] font-semibold transition-colors"
-                    onClick={() => setMobileLoginDropdownOpen((o) => !o)}
-                  >
-                    Login
-                    <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileLoginDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
-                  {mobileLoginDropdownOpen && (
-                    <div className="bg-gray-50 border-t border-gray-100 divide-y divide-gray-100">
-                      <Link
-                        href="/login"
-                        className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
-                        onClick={closeMobile}
-                      >
-                        Student Login
-                      </Link>
-                      <Link
-                        href="/school-poc/login"
-                        className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
-                        onClick={closeMobile}
-                      >
-                        School POC Login
-                      </Link>
-                      <Link
-                        href="/association/login"
-                        className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
-                        onClick={closeMobile}
-                      >
-                        Association Login
-                      </Link>
+                {loggedIn ? (
+                  <>
+                    <div className="flex items-center gap-3 px-4 py-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center flex-shrink-0">
+                        <User className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[#1B2A4A] font-semibold truncate">{displayName}</p>
+                      </div>
                     </div>
-                  )}
-                </div>
-                <Link
-                  href="/signup"
-                  className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
-                  onClick={closeMobile}
-                >
-                  Enroll Now
-                </Link>
+                    <Link
+                      href={dashboardHref}
+                      className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
+                      onClick={closeMobile}
+                    >
+                      Go to Dashboard
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <div className="rounded-xl border border-[#1B2A4A] overflow-hidden">
+                      <button
+                        className="w-full flex items-center justify-center gap-2 px-4 py-3 text-[#1B2A4A] font-semibold transition-colors"
+                        onClick={() => setMobileLoginDropdownOpen((o) => !o)}
+                      >
+                        Login
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${mobileLoginDropdownOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      {mobileLoginDropdownOpen && (
+                        <div className="bg-gray-50 border-t border-gray-100 divide-y divide-gray-100">
+                          <Link
+                            href="/login"
+                            className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
+                            onClick={closeMobile}
+                          >
+                            Student Login
+                          </Link>
+                          <Link
+                            href="/school-poc/login"
+                            className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
+                            onClick={closeMobile}
+                          >
+                            School POC Login
+                          </Link>
+                          <Link
+                            href="/association/login"
+                            className="block w-full text-center px-4 py-3 text-[#1B2A4A] font-medium hover:text-[#C8960C] transition-colors"
+                            onClick={closeMobile}
+                          >
+                            Association Login
+                          </Link>
+                        </div>
+                      )}
+                    </div>
+                    <Link
+                      href="/signup"
+                      className="block w-full text-center px-4 py-3 rounded-xl bg-[#C8960C] text-white font-semibold"
+                      onClick={closeMobile}
+                    >
+                      Enroll Now
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </div>
