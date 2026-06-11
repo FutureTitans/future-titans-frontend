@@ -68,16 +68,16 @@ export default function PublicFooter() {
           {/* Link Columns */}
           {COLUMNS.map((col) => (
             <div key={col.title}>
-              <h4 className="font-bold text-sm mb-3">{col.title}</h4>
+              <h4 className="font-bold text-[#F5D76E] text-sm mb-3">{col.title}</h4>
               <ul className="space-y-2">
                 {col.links.map(({ label, href }) => (
                   <li key={label}>
                     {href === '#' ? (
-                      <a href="#" className="text-gray-400 text-sm hover:text-[#C8960C] transition-colors">
+                      <a href="#" className="text-white text-sm hover:text-[#C8960C] transition-colors">
                         {label}
                       </a>
                     ) : (
-                      <Link href={href} className="text-gray-400 text-sm hover:text-[#C8960C] transition-colors">
+                      <Link href={href} className="text-white text-sm hover:text-[#C8960C] transition-colors">
                         {label}
                       </Link>
                     )}
@@ -89,8 +89,8 @@ export default function PublicFooter() {
 
           {/* Stay Updated */}
           <div>
-            <h4 className="font-bold text-sm mb-3">Stay Updated</h4>
-            <p className="text-gray-400 text-xs mb-3">Get updates on programs, events &amp; opportunities.</p>
+            <h4 className="font-bold text-[#F5D76E] text-sm mb-3">Stay Updated</h4>
+            <p className="text-white text-xs mb-3">Get updates on programs, events &amp; opportunities.</p>
             <div className="flex">
               <input
                 type="email"
