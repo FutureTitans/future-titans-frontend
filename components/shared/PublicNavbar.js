@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { label: 'For Schools', href: '/for-schools' },
   { label: 'Success Stories', href: '/success-stories' },
   { label: 'Media', href: '/media' },
-  { label: 'Meet the Doers', href: '/team' },
+  { label: 'Team', href: '/team' },
   { label: 'About Us', href: '/about-us' },
 ];
 
@@ -88,13 +88,13 @@ export default function PublicNavbar() {
   return (
     <>
       <nav
-        className="absolute top-0 left-0 w-full z-50 bg-transparent transition-all duration-300"
+        className="absolute top-0 left-0 w-full z-50 bg-[rgba(10,16,29,0.85)] backdrop-blur-md transition-all duration-300"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-[72px]">
             {/* Logo */}
             <Link href="/" className="shrink-0">
-              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-6 sm:h-8 w-auto object-contain" />
+              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-5 sm:h-7 w-auto object-contain" />
             </Link>
 
             {/* Desktop Nav */}
@@ -112,7 +112,7 @@ export default function PublicNavbar() {
                       onClick={() => setDropdownOpen((o) => !o)}
                       className={`flex items-center gap-1 px-2 py-2 text-sm font-medium transition-colors rounded-lg whitespace-nowrap ${dropdownOpen
                         ? 'text-[#C8960C]'
-                        : 'text-[#1B2A4A] hover:text-[#C8960C]'
+                        : 'text-white/90 hover:text-[#C8960C]'
                         }`}
                     >
                       {link.label}
@@ -145,7 +145,7 @@ export default function PublicNavbar() {
                     href={link.href}
                     className={`flex items-center gap-1 px-2 py-2 text-sm font-medium transition-colors rounded-lg whitespace-nowrap ${isActive(link.href)
                       ? 'text-[#C8960C]'
-                      : 'text-[#1B2A4A] hover:text-[#C8960C]'
+                      : 'text-white/90 hover:text-[#C8960C]'
                       }`}
                   >
                     {link.label}
@@ -164,7 +164,7 @@ export default function PublicNavbar() {
               >
                 <button
                   onClick={() => setLoginDropdownOpen((o) => !o)}
-                  className="px-5 py-2 rounded-md border border-[#1B2A4A] text-[#1B2A4A] text-sm font-semibold hover:bg-[#1B2A4A] hover:text-white transition-all flex items-center gap-1 whitespace-nowrap"
+                  className="px-5 py-2 rounded-md border border-white/40 text-white text-sm font-semibold hover:bg-white/10 transition-all flex items-center gap-1 whitespace-nowrap"
                 >
                   Login
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${loginDropdownOpen ? 'rotate-180' : ''}`} />
@@ -217,7 +217,7 @@ export default function PublicNavbar() {
 
             {/* Mobile Hamburger */}
             <button
-              className="lg:hidden p-2 text-[#1B2A4A]"
+              className="lg:hidden p-2 text-white"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={mobileMenuOpen}

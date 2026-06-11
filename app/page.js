@@ -187,12 +187,7 @@ export default function Landing() {
   const [scrolled, setScrolled] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
 
-  useEffect(() => {
-    if (isAuthenticated()) {
-      if (isAdmin()) router.push('/admin');
-      else if (isStudent()) router.push('/student/dashboard');
-    }
-  }, [router]);
+  // Authenticated users can still view the homepage (e.g. clicking the logo)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
