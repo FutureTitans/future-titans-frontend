@@ -52,10 +52,10 @@ export default function ForParents() {
                 Register Now — Secure Your Child&apos;s Spot
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </Link>
-              <button className="inline-flex items-center justify-center gap-2 border-2 border-gray-200 text-[#1B2A4A] bg-white px-8 py-4 rounded-xl font-bold text-sm tracking-wide hover:border-gray-300 hover:bg-gray-50 transition-all">
+              {/* <button className="inline-flex items-center justify-center gap-2 border-2 border-gray-200 text-[#1B2A4A] bg-white px-8 py-4 rounded-xl font-bold text-sm tracking-wide hover:border-gray-300 hover:bg-gray-50 transition-all">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 Download Brochure
-              </button>
+              </button> */}
             </div>
 
             {/* Trust markers */}
