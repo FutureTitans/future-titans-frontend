@@ -29,7 +29,7 @@ export default function Navbar() {
         .then((profile) => {
           if (profile?.name) setProfileName(profile.name);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [user]);
 
@@ -68,11 +68,10 @@ export default function Navbar() {
   return (
     <>
       <nav
-        className={`sticky top-0 z-50 transition-all duration-300 ${
-          scrolled
+        className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
             ? 'bg-black/95 backdrop-blur-2xl shadow-[0_1px_24px_rgba(0,0,0,0.25)] border-b border-white/[0.06]'
             : 'bg-black/85 backdrop-blur-xl border-b border-white/[0.04]'
-        }`}
+          }`}
       >
         <div className="container-lg">
           <div className="flex justify-between items-center h-16">
@@ -98,11 +97,10 @@ export default function Navbar() {
                   </NavLink>
                   <Link
                     href="/login"
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                      isActive('/login')
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${isActive('/login')
                         ? 'text-[#F5D76E] bg-white/[0.08]'
                         : 'text-gray-300 hover:text-white hover:bg-white/[0.06]'
-                    }`}
+                      }`}
                   >
                     Log In
                   </Link>
@@ -261,11 +259,10 @@ function NavLink({ href, active, icon, children }) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-        active
+      className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${active
           ? 'text-[#F5D76E] bg-white/[0.1]'
           : 'text-gray-300 hover:text-white hover:bg-white/[0.06]'
-      }`}
+        }`}
     >
       {icon}
       {children}
@@ -277,11 +274,10 @@ function MobileNavLink({ href, onClick, active, icon, children }) {
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors font-medium ${
-        active
+      className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors font-medium ${active
           ? 'bg-[#D4AF37]/15 text-[#F5D76E]'
           : 'text-gray-200 hover:bg-white/[0.06]'
-      }`}
+        }`}
       onClick={onClick}
     >
       {icon && <span className={active ? 'text-[#D4AF37]' : 'text-gray-400'}>{icon}</span>}
