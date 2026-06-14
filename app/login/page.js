@@ -65,26 +65,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoLogin = async () => {
-    setIsLoading(true);
-    try {
-      const response = await auth.login({ email: 'demo@futuretitans.com', password: 'demo123' });
-      setAuthToken(response.accessToken);
-      setRefreshToken(response.refreshToken);
-      setUser(response.user);
-      storeSetUser(response.user);
-      setTokens(response.accessToken, response.refreshToken);
-
-      router.push('/student/dashboard');
-    } catch (error) {
-      let errMsg = error.error || error.message || 'Incorrect credentials';
-      setErrors({ submit: errMsg });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-
   return (
     <div className="min-h-[calc(100dvh-4rem)] flex items-center justify-center relative overflow-hidden px-4 py-8 sm:py-12">
       <div className="absolute -top-[15%] -left-[15%] w-[55%] h-[55%] bg-[#F5D76E]/15 rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
@@ -166,14 +146,6 @@ export default function LoginPage() {
               )}
             </button>
 
-            <button
-              type="button"
-              onClick={handleDemoLogin}
-              disabled={isLoading}
-              className="glass-button-secondary w-full py-4 text-base border-gray-200 text-gray-700 disabled:opacity-60"
-            >
-              Try Demo Account
-            </button>
           </form>
 
           <div className="flex flex-col xs:flex-row items-center justify-between gap-3 mt-6 sm:mt-8 text-sm">
