@@ -48,7 +48,9 @@ export const metadata = {
       'India\'s premier AI-powered innovation challenge for age 12-19. Master entrepreneurship through structured learning and compete nationally.',
     images: [
       {
-        url: '/logo.png',
+        url: '/og-logo.png',
+        width: 1200,
+        height: 630,
         alt: 'Future Titans Logo',
       },
     ],
@@ -58,7 +60,7 @@ export const metadata = {
     title: 'India\'s First Complete Entrepreneurship and Innovation Capability Ecosystem',
     description:
       'India\'s premier AI-powered innovation challenge for age 12-19. Master entrepreneurship through structured learning and compete nationally.',
-    images: ['/logo.png'],
+    images: ['/og-logo.png'],
   },
   robots: {
     index: true,
