@@ -74,8 +74,8 @@ export const metadata = {
     },
   },
   icons: {
-    icon: '/favicon.png',
-    apple: '/apple-touch-icon.png',
+    icon: '/favicon.png?v=2',
+    apple: '/favicon.png?v=2',
   },
 };
 
