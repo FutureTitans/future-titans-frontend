@@ -20,11 +20,11 @@ export const viewport = {
 
 export const metadata = {
   title: {
-    default: 'Future Titans Innovation Challenge | AI-Powered Learning for Young Innovators',
+    default: 'India\'s First Complete Entrepreneurship and Innovation Capability Ecosystem',
     template: '%s | Future Titans',
   },
   description:
-    'India\'s premier AI-powered innovation challenge for students. Master entrepreneurship through structured learning modules, build real ideas, and compete nationally. Join 10,000+ student innovators.',
+    'India\'s premier AI-powered innovation challenge for age 12-19. Master entrepreneurship through structured learning and compete nationally.',
   keywords: [
     'innovation challenge',
     'student entrepreneurship',
@@ -42,25 +42,23 @@ export const metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    siteName: 'Future Titans Innovation Challenge',
-    title: 'Future Titans Innovation Challenge | AI-Powered Learning for Young Innovators',
+    siteName: 'Future Titans',
+    title: 'India\'s First Complete Entrepreneurship and Innovation Capability Ecosystem',
     description:
-      'India\'s premier AI-powered innovation challenge for students. Master entrepreneurship through structured learning and compete nationally.',
+      'India\'s premier AI-powered innovation challenge for age 12-19. Master entrepreneurship through structured learning and compete nationally.',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'Future Titans Innovation Challenge',
+        url: '/logo.png',
+        alt: 'Future Titans Logo',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Future Titans Innovation Challenge',
+    title: 'India\'s First Complete Entrepreneurship and Innovation Capability Ecosystem',
     description:
-      'AI-powered innovation challenge for students. Master entrepreneurship through structured learning modules.',
-    images: ['/og-image.png'],
+      'India\'s premier AI-powered innovation challenge for age 12-19. Master entrepreneurship through structured learning and compete nationally.',
+    images: ['/logo.png'],
   },
   robots: {
     index: true,
@@ -82,9 +80,9 @@ export const metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'EducationalOrganization',
-  name: 'Future Titans Innovation Challenge',
+  name: 'Future Titans',
   description:
-    'AI-powered innovation challenge platform for student entrepreneurs in India.',
+    'India\'s premier AI-powered innovation challenge for age 12-19. Master entrepreneurship through structured learning and compete nationally.',
   url: process.env.NEXT_PUBLIC_SITE_URL || 'https://future-titans-frontend-xi.vercel.app',
 };
 
