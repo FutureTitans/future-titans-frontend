@@ -832,7 +832,7 @@ export default function StudentDashboard() {
                 webkit-playsinline="true"
                 preload="auto"
                 className="w-full h-full object-contain rounded-lg"
-                src="https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/Click%20me%20first%20video%20progressive.mp4"
+                src="https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/yp%20dashboard%20explainer%20video%20for%20Investor%20pitch%20%281%29.mp4"
               />
             </div>
           </div>
