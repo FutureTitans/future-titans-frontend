@@ -7,6 +7,7 @@ import { isStudent, getUser } from '@/lib/auth';
 import { BookOpen, Play, CheckCircle, ArrowLeft, ArrowRight, Trophy, Target, Lightbulb, Lock, Bell, Settings, LayoutDashboard, UserCircle, PlayCircle, Brain, Search } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import AIChatComponent from '@/components/student/AIChat';
+import ChapterQuiz from '@/components/student/ChapterQuiz';
 import ModuleFaceGuard from '@/components/shared/ModuleFaceGuard';
 
 export default function ModulePlayerPage() {
@@ -25,6 +26,8 @@ export default function ModulePlayerPage() {
   const [navigatingNext, setNavigatingNext] = useState(false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [isDemo, setIsDemo] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
   const lastFetchedChapterRef = useRef(null);
   const completingChapterRef = useRef(false);
 
@@ -57,6 +60,8 @@ export default function ModulePlayerPage() {
     if (lastFetchedChapterRef.current !== chapterId) {
       lastFetchedChapterRef.current = chapterId;
       fetchChapterContent(chapterId);
+      setShowQuiz(false);
+      setQuizCompleted(false);
     }
 
     // Don't re-check completion from chat history if we're in the middle of marking complete
@@ -136,10 +141,9 @@ export default function ModulePlayerPage() {
         completingChapterRef.current = true;
         await aiChat.completeChapter(moduleId, current._id);
         setChapterCompleted(prev => ({ ...prev, [current._id]: true }));
-        await fetchModule(current._id); // Refresh module progress stats
-        if (current?.aiInteractionEnabled) {
-          setShowAIChat(true);
-        }
+        await fetchModule(current._id);
+        setShowQuiz(true);
+        setShowAIChat(false);
       } catch (err) {
         console.error('Failed to auto-complete demo chapter:', err);
       } finally {
@@ -229,16 +233,23 @@ export default function ModulePlayerPage() {
       setChapterCompleted(prev => ({ ...prev, [chapterId]: true }));
       await fetchModule(chapterId);
 
-      const current = module.chapters[currentChapter];
-      if (current?.aiInteractionEnabled) {
-        setShowAIChat(true);
-      }
+      setShowQuiz(true);
+      setShowAIChat(false);
     } catch (error) {
       console.error('Failed to complete chapter:', error);
       alert('Failed to mark chapter as complete: ' + (error?.error || error?.message || 'Unknown error'));
     } finally {
       setMarkingComplete(false);
       completingChapterRef.current = false;
+    }
+  };
+
+  const handleQuizComplete = () => {
+    setQuizCompleted(true);
+    setShowQuiz(false);
+    const current = module.chapters[currentChapter];
+    if (current?.aiInteractionEnabled) {
+      setShowAIChat(true);
     }
   };
 
@@ -517,6 +528,15 @@ export default function ModulePlayerPage() {
             </div>
           )}
 
+          {/* Chapter Quiz — appears after marking complete, before Zunnova */}
+          {showQuiz && isCompleted && !quizCompleted && (
+            <ChapterQuiz
+              chapterOrder={currentChapter}
+              studentClass={getUser()?.class || '8'}
+              onQuizComplete={handleQuizComplete}
+            />
+          )}
+
           {/* Navigation Controls */}
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 pt-6 border-t border-gray-100">
             <button
@@ -572,8 +592,8 @@ export default function ModulePlayerPage() {
           </div>
         </div>
 
-        {/* Right Sidebar: AI Chat */}
-        {showAIChat && isCompleted && ZunnovaAvailable && (
+        {/* Right Sidebar: AI Chat — only after quiz or on revisit */}
+        {showAIChat && isCompleted && ZunnovaAvailable && !showQuiz && (
           <div className="w-full lg:w-[360px] xl:w-[400px] flex-shrink-0 flex flex-col h-[500px] sm:h-[600px] lg:h-[calc(100vh-180px)] lg:sticky lg:top-32">
             <div className="bg-white rounded-3xl shadow-lg border border-gray-100 flex-1 flex flex-col overflow-hidden">
               <AIChatComponent
@@ -586,7 +606,7 @@ export default function ModulePlayerPage() {
         )}
 
         {/* Mobile Zunnova button */}
-        {ZunnovaAvailable && isCompleted && !showAIChat && (
+        {ZunnovaAvailable && isCompleted && !showAIChat && !showQuiz && (
           <button
             onClick={() => setShowAIChat(true)}
             className="lg:hidden fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-[#212121] text-[#D4AF37] shadow-xl shadow-black/20 flex items-center justify-center border-2 border-[#D4AF37]/30"
