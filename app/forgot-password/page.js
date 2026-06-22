@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/api';
-import { ArrowLeft, Mail } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -46,9 +46,7 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md relative z-10">
         <div className="card">
           <div className="mb-6 sm:mb-8 text-center">
-              <div className="w-16 h-16 bg-[#D4AF37]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Mail className="w-8 h-8 text-[#D4AF37]" />
-              </div>
+              <img src="/logo.png" alt="Youngpreneurs" className="h-12 sm:h-14 w-auto object-contain mx-auto mb-5" />
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Forgot Password?</h1>
               <p className="text-gray-500">Enter your email and we'll send you a reset link</p>
             </div>

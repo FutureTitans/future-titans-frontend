@@ -142,9 +142,7 @@ export default function SchoolPocDashboardPage() {
             <div className="relative z-40 bg-white/40 backdrop-blur-md border-b border-white/50 shadow-sm">
                 <div className="w-full max-w-[1920px] mx-auto py-4 flex items-center justify-between px-4 sm:px-8 xl:px-12">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] rounded-full flex items-center justify-center shadow-lg shadow-[#D4AF37]/20 border border-white/50">
-                            <School className="w-6 h-6 text-white" />
-                        </div>
+                        <img src="/favicon.png" alt="Youngpreneurs" className="w-12 h-12 object-contain" />
                         <div>
                             <h1 className="font-bold text-xl text-gray-900 tracking-wide">{dashboardData?.school?.name || 'School POC Dashboard'}</h1>
                             <p className="text-sm text-gray-600 font-medium">Administration Panel</p>

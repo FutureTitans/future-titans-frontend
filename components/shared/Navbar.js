@@ -79,9 +79,9 @@ export default function Navbar() {
             <Link href="/" className="flex items-center gap-2 flex-shrink-0" onClick={closeMobileMenu}>
               <Image
                 src="/logo.png"
-                alt="Future Titans"
-                width={130}
-                height={36}
+                alt="Youngpreneurs"
+                width={200}
+                height={32}
                 className="object-contain"
                 priority
                 onError={(e) => { e.target.style.display = 'none'; }}

@@ -44,9 +44,7 @@ export default function DemoAccessPage() {
         {status === 'loading' ? (
           <>
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#D4AF37] to-[#F5D76E] flex items-center justify-center shadow-lg shadow-[#D4AF37]/20">
-                <Rocket className="w-8 h-8 text-white animate-pulse" />
-              </div>
+              <img src="/logo.png" alt="Youngpreneurs" className="h-12 sm:h-14 w-auto object-contain" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Launching Demo</h1>
             <p className="text-gray-500 mb-8">Setting up your demo experience...</p>

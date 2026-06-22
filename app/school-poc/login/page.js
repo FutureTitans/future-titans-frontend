@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { schoolPoc } from '@/lib/api';
 import { setAuthToken } from '@/lib/auth';
-import { Building2, Lock, Mail, ArrowRight, LayoutDashboard } from 'lucide-react';
+import { Lock, Mail, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 export default function SchoolPocLoginPage() {
     const router = useRouter();
@@ -50,9 +50,7 @@ export default function SchoolPocLoginPage() {
                     
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-white border border-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-sm">
-                            <Building2 className="w-8 h-8 text-indigo-600" />
-                        </div>
+                        <img src="/logo.png" alt="Youngpreneurs" className="h-12 sm:h-14 w-auto object-contain mx-auto mb-5" />
                         <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">School Portal</h1>
                         <p className="text-sm text-neutral-medium">
                             Manage your cohort and track student progress

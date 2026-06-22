@@ -119,7 +119,7 @@ export default function PublicNavbar() {
           <div className="flex items-center justify-between h-16 lg:h-[72px]">
             {/* Logo */}
             <Link href="/" className="shrink-0">
-              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-5 sm:h-7 w-auto object-contain" />
+              <img src="/images/yp/yp-logo-full.png" alt="Youngpreneurs" className="h-7 sm:h-9 w-auto object-contain" />
             </Link>
 
             {/* Desktop Nav */}

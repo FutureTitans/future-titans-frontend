@@ -81,6 +81,7 @@ export default function LoginPage() {
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               Back to Home
             </Link>
+            <img src="/logo.png" alt="Youngpreneurs" className="h-12 sm:h-14 w-auto object-contain mb-4" />
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1.5">Welcome Back</h1>
             <p className="text-gray-500 text-sm sm:text-base">Log in to continue your innovation journey</p>
           </div>

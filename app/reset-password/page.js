@@ -71,6 +71,7 @@ function ResetPasswordForm() {
       <div className="w-full max-w-md relative z-10">
         <div className="card">
           <div className="mb-6 sm:mb-8">
+              <img src="/logo.png" alt="Youngpreneurs" className="h-12 sm:h-14 w-auto object-contain mb-5" />
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h1>
               <p className="text-gray-500">Enter your new password</p>
             </div>

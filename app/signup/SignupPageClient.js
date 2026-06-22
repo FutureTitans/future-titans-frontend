@@ -129,6 +129,7 @@ export default function SignupPageClient() {
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
               Back to Home
             </Link>
+            <img src="/logo.png" alt="Youngpreneurs" className="h-12 sm:h-14 w-auto object-contain mb-3" />
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h1>
             <p className="text-gray-500 text-sm">Join Future Titans and start your innovation journey</p>
             {initialSlug && (

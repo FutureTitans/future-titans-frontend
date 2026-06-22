@@ -675,8 +675,8 @@ export default function AssociationDashboard() {
             {/* Banner Logo Title */}
             <div className="flex-1 bg-gradient-to-r from-white to-[#FAEDCD] rounded-[2rem] border border-[#D4AF37]/30 shadow-xl flex items-center p-8 gap-6 overflow-hidden relative">
               <div className="absolute inset-0 bg-[#D4AF37]/5 backdrop-blur-3xl saturate-150"></div>
-              <div className="w-16 h-16 bg-white rounded-2xl shadow-lg border-2 border-[#D4AF37]/20 flex items-center justify-center relative z-10">
-                 <Shield className="w-10 h-10 text-[#1A1A1A]" />
+              <div className="w-16 h-16 bg-white rounded-2xl shadow-lg border-2 border-[#D4AF37]/20 flex items-center justify-center relative z-10 p-2">
+                 <img src="/favicon.png" alt="Youngpreneurs" className="w-full h-full object-contain" />
               </div>
               <h2 className="text-3xl font-black text-[#1A1A1A] leading-tight relative z-10 tracking-tight" style={{textShadow: '0 2px 10px rgba(0,0,0,0.05)'}}>
                 Association of<br/>Registered Schools

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { auth } from '@/lib/api';
 import { setAuthToken, setRefreshToken, setUser } from '@/lib/auth';
-import { Building2, Lock, Mail, ArrowRight, LayoutDashboard, Shield } from 'lucide-react';
+import { Lock, Mail, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 export default function AssociationLoginPage() {
     const router = useRouter();
@@ -57,9 +57,7 @@ export default function AssociationLoginPage() {
                     
                     {/* Header */}
                     <div className="text-center mb-8">
-                        <div className="w-16 h-16 bg-gradient-to-br from-[#D4AF37] to-[#F5EDD6] rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-[#D4AF37]/20 border border-[#D4AF37]/30">
-                            <Shield className="w-8 h-8 text-white" />
-                        </div>
+                        <img src="/logo.png" alt="Youngpreneurs" className="h-12 sm:h-14 w-auto object-contain mx-auto mb-5" />
                         <h1 className="text-2xl font-bold text-[#1A1A1A] tracking-tight mb-2">Association Portal</h1>
                         <p className="text-sm text-neutral-500 font-medium">
                             Manage your registered schools and metrics
