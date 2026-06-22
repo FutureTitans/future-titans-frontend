@@ -99,7 +99,6 @@ export default function FutureTitans() {
           <p className="text-black text-lg mb-10 max-w-xl mx-auto font-medium">A USA–India initiative backed by leaders in education, policy, and media.</p>
           <div className="flex flex-nowrap items-center justify-center gap-8 sm:gap-10 lg:gap-14 overflow-x-auto">
             <Image src="/images/yp/iit-kharagpur.svg" alt="IIT Kharagpur" width={200} height={100} className="h-20 sm:h-24 w-auto object-contain shrink-0" />
-            <Image src="/images/yp/ttoi.png" alt="Times of India" width={220} height={122} className="h-20 sm:h-24 w-auto object-contain shrink-0" />
             <Image src="/images/yp/startUpIndiaLogo.png" alt="Startup India" width={2000} height={528} className="h-18 sm:h-22 w-auto object-contain shrink-0" />
             <Image src="/images/yp/AIPlogo.png" alt="Association of Indian Principals" width={339} height={149} className="h-20 sm:h-24 w-auto object-contain shrink-0" />
             <Image src="/images/yp/AIClogo.png" alt="AIC BIMTECH" width={290} height={159} className="h-20 sm:h-24 w-auto object-contain shrink-0" />

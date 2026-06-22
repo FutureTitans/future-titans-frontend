@@ -99,7 +99,7 @@ export default function PublicFooter() {
           {/* Logo + Social */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <div className="mb-4">
-              <img src="/images/yp/yp-logo-full.webp" alt="Youngpreneurs" className="h-10 w-auto object-contain brightness-0 invert" />
+              <img src="/images/yp/yp-logo-full.png" alt="Youngpreneurs" className="h-12 w-auto object-contain brightness-0 invert" />
             </div>
             <div className="flex items-center gap-3 mt-4">
               {SOCIAL_LINKS.map(({ Icon, href }, i) => (

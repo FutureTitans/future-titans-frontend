@@ -410,7 +410,7 @@ export default function Landing() {
       <section className="py-10 bg-white border-y border-gray-100 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm font-bold tracking-widest text-gray-400 uppercase mb-8">Featured In</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
+          <div className="flex flex-nowrap justify-center items-center gap-6 md:gap-10 lg:gap-14">
             {[
               '/images/yp/statesman.png',
               '/images/yp/businesStandard.png',
@@ -419,9 +419,10 @@ export default function Landing() {
               '/images/yp/cnbc.png',
               '/images/yp/enterpreneurIndia.png',
               '/images/yp/telegraph.png',
-              '/images/yp/ibns.png'
+              '/images/yp/ibns.png',
+              '/images/yp/ttoi.png'
             ].map((logo, i) => (
-              <img key={i} src={logo} alt="Featured in Media" className="h-10 sm:h-12 md:h-16 object-contain hover:scale-105 transition-transform" />
+              <img key={i} src={logo} alt="Featured in Media" className="h-8 sm:h-10 md:h-12 object-contain shrink-0 hover:scale-105 transition-transform" />
             ))}
           </div>
         </div>
@@ -504,7 +505,6 @@ export default function Landing() {
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10">
               {[
                 { name: 'IIT Kharagpur', img: '/images/yp/iit-kharagpur.svg', desc: 'Curriculum co-developed with India\'s top engineering institution' },
-                { name: 'Times of India', img: '/images/yp/ttoi.png', desc: 'Nationally recognised program covered by India\'s #1 newspaper' },
                 { name: 'Startup India', img: '/images/yp/startUpIndiaLogo.png', desc: 'Officially backed by the Government of India\'s flagship startup initiative' },
                 { name: 'AIP', img: '/images/yp/AIPlogo.png', desc: 'Endorsed by India\'s national body of school principals' },
                 { name: 'AIC BIMTEC', img: '/images/yp/AIClogo.png', desc: 'Atal Incubation Centre — supporting next-generation innovators' },

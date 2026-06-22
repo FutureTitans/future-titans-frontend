@@ -13,6 +13,7 @@ const mediaItems = [
   { logo: '/images/yp/enterpreneurIndia.png', desc: "It's Time The Indian Students' Entrepreneurship Streak Is Tapped in School.", button: 'Read More', link: 'https://www.entrepreneur.com/en-in/starting-a-business/its-time-the-indian-students-entrepreneurship-streak-is/294662' },
   { logo: '/images/yp/telegraph.png', desc: 'Schools nurturing future founders through experiential learning.', button: 'Read More', link: 'https://youngpreneurs.in/the-telegraph/' },
   { logo: '/images/yp/ibns.png', desc: 'Kolkata: Students get hands-on training at the Youngpreneurs India Camp.', button: 'Read More', link: 'https://indiablooms.com/life/kolkata-students-get-hands-on-training-at-the-youngpreneurs-india-camp/details' },
+  { logo: '/images/yp/ttoi.png', desc: 'Youngpreneurs featured on The Times of India for empowering the next generation of student entrepreneurs.', button: 'View Feature', link: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/Times%20of%20India%20Youngpreneurs%20feature%20copy%201.pdf' },
 ];
 
 export default function Media() {

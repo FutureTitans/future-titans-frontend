@@ -72,7 +72,7 @@ export default function SuccessStories() {
           <div className="text-center mb-12 flex flex-col items-center">
             <h2 className="text-3xl font-bold text-[#1B2A4A] mb-3">Greatness Begins with Belief</h2>
             <div className="w-16 h-[2px] bg-[#C8960C] mb-6"></div>
-            <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto mb-2">Every teen entrepreneur started with a spark — an idea, a dream, and most importantly,<br className="hidden sm:block"/> someone who believed in them.</p>
+            <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto mb-2">Every teen entrepreneur started with a spark — an idea, a dream, and most importantly,<br className="hidden sm:block" /> someone who believed in them.</p>
             <p className="text-[#1A5632] text-sm sm:text-base font-bold">Now, imagine what your child could achieve with that same belief.</p>
           </div>
 
@@ -117,7 +117,6 @@ export default function SuccessStories() {
         <div className="max-w-6xl mx-auto">
           <h3 className="text-center text-sm font-bold text-gray-400 tracking-widest uppercase mb-10">Backed by</h3>
           <div className="flex flex-wrap justify-center items-center gap-10 sm:gap-14 lg:gap-20">
-            <Image src="/images/yp/ttoi.png" alt="Times of India" width={220} height={122} className="h-14 sm:h-16 w-auto object-contain" />
             <Image src="/images/yp/et.png" alt="Economic Times" width={262} height={148} className="h-14 sm:h-16 w-auto object-contain" />
             <Image src="/images/yp/startUpIndiaLogo.png" alt="Startup India" width={2000} height={528} className="h-12 sm:h-14 w-auto object-contain" />
             <Image src="/images/yp/AIPlogo.png" alt="Association of Indian Principals" width={339} height={149} className="h-14 sm:h-16 w-auto object-contain" />
