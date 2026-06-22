@@ -502,7 +502,7 @@ export default function Landing() {
             <p className="text-center text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-8">Backed by institutions Indian parents trust</p>
           </Reveal>
           <Reveal delay={100}>
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-10">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-10 max-w-4xl mx-auto">
               {[
                 { name: 'IIT Kharagpur', img: '/images/yp/iit-kharagpur.svg', desc: 'Curriculum co-developed with India\'s top engineering institution' },
                 { name: 'Startup India', img: '/images/yp/startUpIndiaLogo.png', desc: 'Officially backed by the Government of India\'s flagship startup initiative' },
