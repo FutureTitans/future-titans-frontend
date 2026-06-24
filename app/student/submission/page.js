@@ -205,46 +205,58 @@ export default function IdeaSubmissionPage() {
     }
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+  const fieldToSection = {
+    projectTitle: 1,
+    category: 1,
+    elevatorPitch: 1,
+    problemStatement: 2,
+    solutionOverview: 3,
+    inspiration: 7,
+    pdfFile: 8,
+    videoFile: 8,
+  };
 
-    // Required fields validation
-    if (!formData.projectTitle) newErrors.projectTitle = 'Project title is required';
-    if (!formData.category) newErrors.category = 'Category is required';
-    if (!formData.elevatorPitch) newErrors.elevatorPitch = 'Elevator pitch is required';
-    if (!formData.problemStatement) newErrors.problemStatement = 'Problem statement is required';
-    if (!formData.solutionOverview) newErrors.solutionOverview = 'Solution overview is required';
+  const getValidationErrors = () => {
+    const e = {};
 
-    // Word limit validation
-    if (formData.elevatorPitch && formData.elevatorPitch.split(' ').length > 100) {
-      newErrors.elevatorPitch = 'Elevator pitch must be 100 words or less';
-    }
-    if (formData.problemStatement && formData.problemStatement.split(' ').length > 150) {
-      newErrors.problemStatement = 'Problem statement must be 150 words or less';
-    }
-    if (formData.solutionOverview && formData.solutionOverview.split(' ').length > 200) {
-      newErrors.solutionOverview = 'Solution overview must be 200 words or less';
-    }
-    if (formData.inspiration && formData.inspiration.split(' ').length > 50) {
-      newErrors.inspiration = 'Inspiration must be 50 words or less';
-    }
+    if (!formData.projectTitle?.trim()) e.projectTitle = 'Project title is required';
+    if (!formData.category) e.category = 'Category is required';
+    if (!formData.elevatorPitch?.trim()) e.elevatorPitch = 'Elevator pitch is required';
+    else if (formData.elevatorPitch.trim().split(/\s+/).length > 100) e.elevatorPitch = 'Elevator pitch must be 100 words or less';
+    if (!formData.problemStatement?.trim()) e.problemStatement = 'Problem statement is required';
+    else if (formData.problemStatement.trim().split(/\s+/).length > 150) e.problemStatement = 'Problem statement must be 150 words or less';
+    if (!formData.solutionOverview?.trim()) e.solutionOverview = 'Solution overview is required';
+    else if (formData.solutionOverview.trim().split(/\s+/).length > 200) e.solutionOverview = 'Solution overview must be 200 words or less';
+    if (formData.inspiration && formData.inspiration.trim().split(/\s+/).length > 50) e.inspiration = 'Inspiration must be 50 words or less';
 
-    // File validation
-    if (!files.pdfFile) newErrors.pdfFile = 'PDF file is required';
-    if (files.pdfFile && files.pdfFile.size > 10 * 1024 * 1024) {
-      newErrors.pdfFile = 'PDF file must be less than 10MB';
-    }
-    if (files.videoFile && files.videoFile.size > 100 * 1024 * 1024) {
-      newErrors.videoFile = 'Video file must be less than 100MB';
-    }
+    if (!files.pdfFile && !formData.pdfFile) e.pdfFile = 'PDF file is required';
+    else if (files.pdfFile && files.pdfFile.size > 10 * 1024 * 1024) e.pdfFile = 'PDF file must be less than 10MB';
+    if (files.videoFile && files.videoFile.size > 100 * 1024 * 1024) e.videoFile = 'Video file must be less than 100MB';
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return e;
+  };
+
+  const getSectionErrors = () => {
+    const sectionErrors = {};
+    for (const [field, section] of Object.entries(fieldToSection)) {
+      if (errors[field]) {
+        if (!sectionErrors[section]) sectionErrors[section] = [];
+        sectionErrors[section].push(errors[field]);
+      }
+    }
+    return sectionErrors;
   };
 
   const handleSubmit = async () => {
-    if (!validateForm()) {
-      alert('Please fix the errors before submitting');
+    const validationErrors = getValidationErrors();
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      const firstErrorField = Object.keys(validationErrors)[0];
+      if (fieldToSection[firstErrorField] !== undefined) {
+        setCurrentSection(fieldToSection[firstErrorField]);
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -651,6 +663,11 @@ export default function IdeaSubmissionPage() {
                     Selected: {files.pdfFile.name} ({(files.pdfFile.size / 1024 / 1024).toFixed(2)} MB)
                   </p>
                 )}
+                {!files.pdfFile && formData.pdfFile && (
+                  <p className="mt-2 text-sm text-emerald-600 flex items-center justify-center gap-1">
+                    <CheckCircle className="w-4 h-4" /> PDF already uploaded from draft
+                  </p>
+                )}
                 {errors.pdfFile && <p className="text-semantic-error text-sm mt-1">{errors.pdfFile}</p>}
               </div>
             </div>
@@ -723,20 +740,29 @@ export default function IdeaSubmissionPage() {
         {/* Mobile Section Steps */}
         <div className="lg:hidden mb-4">
           <div className="flex items-center gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: 'none' }}>
-            {sections.map((section) => (
-              <button
-                key={section.id}
-                onClick={() => setCurrentSection(section.id)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all ${
-                  currentSection === section.id
-                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md'
-                    : 'bg-white/60 text-gray-500 border border-gray-200'
-                }`}
-              >
-                <span>{section.icon}</span>
-                <span>{section.title}</span>
-              </button>
-            ))}
+            {sections.map((section) => {
+              const sectionErrors = getSectionErrors();
+              const hasError = !!sectionErrors[section.id];
+              return (
+                <button
+                  key={section.id}
+                  onClick={() => setCurrentSection(section.id)}
+                  className={`relative flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 transition-all ${
+                    currentSection === section.id
+                      ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md'
+                      : hasError
+                        ? 'bg-red-50 text-red-600 border border-red-300'
+                        : 'bg-white/60 text-gray-500 border border-gray-200'
+                  }`}
+                >
+                  <span>{section.icon}</span>
+                  <span>{section.title}</span>
+                  {hasError && (
+                    <span className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
+                  )}
+                </button>
+              );
+            })}
           </div>
           <div className="mt-3 flex items-center gap-3">
             <div className="flex-1 bg-gray-200 rounded-full h-1.5">
@@ -746,26 +772,58 @@ export default function IdeaSubmissionPage() {
           </div>
         </div>
 
+        {Object.keys(errors).length > 0 && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-red-700 mb-2">Please fix the following errors before submitting:</p>
+                <ul className="space-y-1">
+                  {Object.entries(errors).map(([field, message]) => (
+                    <li key={field}>
+                      <button
+                        onClick={() => setCurrentSection(fieldToSection[field] ?? 0)}
+                        className="text-sm text-red-600 hover:text-red-800 hover:underline text-left"
+                      >
+                        {sections[fieldToSection[field]]?.title}: {message}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-6 lg:gap-8">
           {/* Desktop Sidebar */}
           <div className="hidden lg:block w-72 flex-shrink-0">
             <div className="card sticky top-36">
               <h3 className="font-bold mb-4 text-gray-800">Sections</h3>
               <div className="space-y-1">
-                {sections.map((section) => (
-                  <button
-                    key={section.id}
-                    onClick={() => setCurrentSection(section.id)}
-                    className={`w-full text-left p-3 rounded-xl transition flex items-center gap-3 ${
-                      currentSection === section.id
-                        ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md'
-                        : 'hover:bg-white/60 text-gray-600'
-                    }`}
-                  >
-                    <span className="text-base">{section.icon}</span>
-                    <span className="text-sm font-medium">{section.title}</span>
-                  </button>
-                ))}
+                {sections.map((section) => {
+                  const sectionErrors = getSectionErrors();
+                  const hasError = !!sectionErrors[section.id];
+                  return (
+                    <button
+                      key={section.id}
+                      onClick={() => setCurrentSection(section.id)}
+                      className={`w-full text-left p-3 rounded-xl transition flex items-center gap-3 ${
+                        currentSection === section.id
+                          ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white shadow-md'
+                          : hasError
+                            ? 'bg-red-50 text-red-600 border border-red-200'
+                            : 'hover:bg-white/60 text-gray-600'
+                      }`}
+                    >
+                      <span className="text-base">{section.icon}</span>
+                      <span className="text-sm font-medium flex-1">{section.title}</span>
+                      {hasError && (
+                        <span className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
+                      )}
+                    </button>
+                  );
+                })}
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-100">

@@ -3,9 +3,11 @@
 import { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { aiChat, payment } from '@/lib/api';
+import { stripMarkdown } from '@/lib/utils';
 import { isStudent } from '@/lib/auth';
 import { MessageCircle, Send, Loader, Volume2, VolumeX, X, Bot, Sparkles } from 'lucide-react';
 import ZunnovaAvatar from './ZunnovaAvatar';
+import TopupPopup from './TopupPopup';
 
 export default function GlobalAIChat() {
   const pathname = usePathname();
@@ -20,6 +22,8 @@ export default function GlobalAIChat() {
   const messagesEndRef = useRef(null);
   const audioRef = useRef(null);
   const [rateLimit, setRateLimit] = useState(null);
+  const [wordBalance, setWordBalance] = useState(null);
+  const [showTopup, setShowTopup] = useState(false);
 
   const shouldHide =
     pathname === '/' ||
@@ -51,10 +55,14 @@ export default function GlobalAIChat() {
         const history = await aiChat.getGlobalHistory();
         setMessages(history.conversation || []);
 
-        // Fetch rate limit status
+        // Fetch rate limit status and word balance
         try {
-          const rl = await aiChat.getRateLimitStatus();
+          const [rl, wb] = await Promise.all([
+            aiChat.getRateLimitStatus(),
+            aiChat.getWordBalance(),
+          ]);
           setRateLimit(rl);
+          setWordBalance(wb.wordBalance);
         } catch (e) { /* ignore */ }
       } catch (error) {
         console.error('Failed to initialize global AI chat:', error);
@@ -183,9 +191,11 @@ export default function GlobalAIChat() {
     playTTS();
   }, [messages, ttsEnabled, voice]);
 
+  const isBalanceExhausted = wordBalance !== null && wordBalance <= 0;
+
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || (rateLimit && rateLimit.limitReached)) return;
+    if (!input.trim() || (rateLimit && rateLimit.limitReached) || isBalanceExhausted) return;
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -204,8 +214,15 @@ export default function GlobalAIChat() {
       }
       const aiMessage = { role: 'assistant', message: response.aiMessage, timestamp: new Date() };
       setMessages((prev) => [...prev, aiMessage]);
+      if (response.wordBalance !== undefined) setWordBalance(response.wordBalance);
     } catch (error) {
       console.error('Global AI chat error:', error);
+      if (error?.needsTopup || error?.response?.status === 402) {
+        setWordBalance(0);
+        setShowTopup(true);
+        setMessages((prev) => prev.slice(0, -1));
+        return;
+      }
       const errorText = error?.name === 'AbortError' || error?.message?.includes('timed out')
         ? 'Request timed out. Please try again.'
         : error?.error || error?.message || 'Sorry, I encountered an error. Please try again.';
@@ -233,7 +250,7 @@ export default function GlobalAIChat() {
       {!isOpen && (
         <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-0">
 
-          <div className="relative mb-[-20px] mr-20 md:mr-36 self-start animate-fade-in-up origin-bottom">
+          <div className="relative mb-[-20px] mr-28 md:mr-44 self-start animate-fade-in-up origin-bottom">
             <div className="bg-white/90 backdrop-blur-md shadow-lg rounded-2xl rounded-br-sm px-4 py-3 w-52 md:w-64 border border-white/50">
               <p className="text-xs md:text-sm text-gray-800 leading-relaxed font-semibold">
                 <span className="font-extrabold text-[#B8952E]">Zunnova:</span>{' '}
@@ -248,12 +265,12 @@ export default function GlobalAIChat() {
           <button
             type="button"
             onClick={() => setIsOpen(true)}
-            className="text-white rounded-full w-40 h-28 md:w-44 md:h-40 flex items-center justify-center hover:scale-110 transition-transform duration-300 hover-glow flex-shrink-0"
+            className="text-white rounded-full w-52 h-36 md:w-60 md:h-44 flex items-center justify-center hover:scale-110 transition-transform duration-300 hover-glow flex-shrink-0"
             title="Chat with Zunnova"
           >
             <ZunnovaAvatar
               isTalking={false}
-              className="w-full h-full scale-[1.3] md:scale-150 transform origin-bottom"
+              className="w-full h-full scale-[1.6] md:scale-[1.8] transform origin-bottom"
             />
           </button>
 
@@ -269,7 +286,7 @@ export default function GlobalAIChat() {
             <div className="flex items-center gap-3 relative z-10 flex-1 min-w-0">
               <ZunnovaAvatar
                 isTalking={isLoading}
-                className="w-20 h-20 md:w-28 md:h-28 flex-shrink-0 scale-110"
+                className="w-28 h-20 md:w-36 md:h-28 flex-shrink-0 scale-125"
               />
               <div className="min-w-0 flex-1 ml-2">
                 <p className="font-semibold text-sm md:text-base flex items-center gap-1 truncate">
@@ -302,7 +319,7 @@ export default function GlobalAIChat() {
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-center px-4">
                 <div className="glass-subtle p-6 rounded-2xl max-w-sm pt-8">
-                  <ZunnovaAvatar isTalking={false} className="w-24 h-24 md:w-32 md:h-32 mx-auto mb-4 drop-shadow-lg scale-125 origin-bottom" />
+                  <ZunnovaAvatar isTalking={false} className="w-40 h-28 md:w-48 md:h-32 mx-auto mb-4 drop-shadow-lg scale-[1.4] origin-bottom" />
                   <p className="text-gray-600 font-medium mb-1 text-sm md:text-base">Start a conversation</p>
                   <p className="text-xs md:text-sm text-gray-500">Ask anything about ideas, mindset, or SURGE</p>
                 </div>
@@ -324,7 +341,7 @@ export default function GlobalAIChat() {
                       : 'glass-subtle text-gray-800 rounded-bl-sm border border-white/30'
                       }`}
                   >
-                    <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+                    <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap">{msg.role === 'assistant' ? stripMarkdown(msg.message) : msg.message}</p>
                     <span className={`text-[10px] md:text-xs mt-1 block ${msg.role === 'user' ? 'text-white/70' : 'text-gray-500'}`}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -355,33 +372,65 @@ export default function GlobalAIChat() {
 
           {/* Input */}
           <form onSubmit={handleSend} className="border-t border-white/20 p-3 md:p-4 glass-subtle">
-            {rateLimit && (
-              <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
-                {rateLimit.limitReached
-                  ? `⚠️ Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
-                  : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
+            {wordBalance !== null && (
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-[10px] md:text-xs font-semibold ${isBalanceExhausted ? 'text-red-500' : 'text-gray-500'}`}>
+                  {isBalanceExhausted ? 'Word balance exhausted' : `${wordBalance.toLocaleString()} words remaining`}
+                </span>
+                {isBalanceExhausted && (
+                  <button
+                    type="button"
+                    onClick={() => setShowTopup(true)}
+                    className="text-[10px] md:text-xs font-bold text-[#D4AF37] hover:underline"
+                  >
+                    Top Up
+                  </button>
+                )}
               </div>
             )}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask anything...'}
-                className="flex-1 px-3 py-2 md:px-4 md:py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs md:text-sm"
-                disabled={isLoading || rateLimit?.limitReached}
-              />
+            {rateLimit && !isBalanceExhausted && (
+              <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
+                {rateLimit.limitReached
+                  ? `Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
+                  : `${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
+              </div>
+            )}
+            {isBalanceExhausted ? (
               <button
-                type="submit"
-                disabled={isLoading || !input.trim() || rateLimit?.limitReached}
-                className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
+                type="button"
+                onClick={() => setShowTopup(true)}
+                className="w-full py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl font-semibold text-sm hover:shadow-lg transition-all"
               >
-                <Send className="w-4 h-4 md:w-5 md:h-5" />
+                Top Up to Continue Chatting
               </button>
-            </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask anything...'}
+                  className="flex-1 px-3 py-2 md:px-4 md:py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs md:text-sm"
+                  disabled={isLoading || rateLimit?.limitReached}
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || !input.trim() || rateLimit?.limitReached}
+                  className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
+                >
+                  <Send className="w-4 h-4 md:w-5 md:h-5" />
+                </button>
+              </div>
+            )}
           </form>
         </div>
       )}
+
+      <TopupPopup
+        isOpen={showTopup}
+        onClose={() => setShowTopup(false)}
+        onSuccess={(newBalance) => setWordBalance(newBalance)}
+      />
     </>
   );
 }
