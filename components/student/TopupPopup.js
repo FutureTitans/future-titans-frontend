@@ -74,7 +74,6 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
 
   return (
     <>
-      {/* Inline styles for glassmorphism hover animations */}
       <style jsx>{`
         .topup-option {
           transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -91,24 +90,21 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
           z-index: 0;
         }
         .topup-option:hover::before {
-          background: linear-gradient(135deg, rgba(212, 175, 55, 0.18) 0%, rgba(245, 215, 110, 0.12) 100%);
+          background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(245, 215, 110, 0.10) 100%);
         }
         .topup-option:hover {
-          border-color: #D4AF37 !important;
-          box-shadow: 0 8px 32px rgba(212, 175, 55, 0.25), inset 0 1px 0 rgba(255,255,255,0.4);
-          transform: translateY(-2px) scale(1.01);
+          border-color: rgba(212, 175, 55, 0.4) !important;
+          box-shadow: 0 4px 20px rgba(212, 175, 55, 0.18), inset 0 1px 0 rgba(255,255,255,0.4);
+          transform: translateY(-1px);
         }
-        .topup-option:hover .topup-icon-box {
-          background: linear-gradient(135deg, #D4AF37 0%, #F5D76E 100%) !important;
-          color: white !important;
-          box-shadow: 0 4px 16px rgba(212, 175, 55, 0.4);
+        .topup-option:hover .topup-icon-wrap {
+          color: #B8952E !important;
         }
         .topup-option:hover .topup-label {
           color: #B8952E !important;
         }
         .topup-option:hover .topup-price {
-          color: #D4AF37 !important;
-          text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+          color: #B8952E !important;
         }
         .topup-option:hover .topup-desc {
           color: #8B7A3D !important;
@@ -123,25 +119,6 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
           0% { opacity: 0; transform: scale(0.92) translateY(20px); }
           100% { opacity: 1; transform: scale(1) translateY(0); }
         }
-        @keyframes topupShimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-        .topup-shimmer-text {
-          background: linear-gradient(
-            90deg,
-            #D4AF37 0%,
-            #F5D76E 25%,
-            #D4AF37 50%,
-            #F5D76E 75%,
-            #D4AF37 100%
-          );
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: topupShimmer 4s linear infinite;
-        }
       `}</style>
 
       <div className="fixed inset-0 z-[60] flex items-center justify-center p-4"
@@ -151,41 +128,44 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
         <div className="absolute inset-0 bg-black/40 backdrop-blur-md" />
 
         {/* Glassmorphism Panel */}
-        <div className="topup-glass-panel relative w-full max-w-[420px] rounded-3xl overflow-hidden"
+        <div className="topup-glass-panel relative w-full max-w-[420px] rounded-2xl overflow-hidden"
           style={{
-            background: 'linear-gradient(145deg, rgba(255,252,242,0.88) 0%, rgba(255,248,230,0.82) 50%, rgba(250,240,210,0.78) 100%)',
+            background: 'rgba(255, 252, 245, 0.82)',
             backdropFilter: 'blur(24px) saturate(1.8)',
             WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
-            boxShadow: '0 24px 80px rgba(0,0,0,0.15), 0 8px 32px rgba(212,175,55,0.12), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(212,175,55,0.1)',
-            border: '1px solid rgba(212, 175, 55, 0.2)',
+            boxShadow: '0 24px 80px rgba(0,0,0,0.12), 0 8px 32px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.5)',
+            border: '1px solid rgba(255, 255, 255, 0.4)',
           }}
         >
-          {/* Header — dark gold gradient banner */}
-          <div className="relative px-6 py-5 flex items-center justify-between"
+          {/* Header — frosted gold glass banner */}
+          <div className="relative px-6 py-5 text-center"
             style={{
-              background: 'linear-gradient(135deg, #C5A028 0%, #D4AF37 35%, #B8952E 100%)',
-              boxShadow: '0 4px 20px rgba(212,175,55,0.25), inset 0 1px 0 rgba(255,255,255,0.2)',
+              background: 'linear-gradient(135deg, rgba(197, 160, 40, 0.65) 0%, rgba(212, 175, 55, 0.55) 40%, rgba(184, 149, 46, 0.6) 100%)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+              borderBottom: '1px solid rgba(212, 175, 55, 0.15)',
             }}
           >
-            <div className="text-center w-full pr-6">
-              <h2 className="text-white font-bold text-xl tracking-tight drop-shadow-sm">
-                Top Up Word Balance
-              </h2>
-              <p className="text-white/75 text-sm mt-0.5">
-                Continue chatting with Zunnova
-              </p>
-            </div>
+            <h2 className="text-white font-bold text-xl tracking-tight"
+              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.15)' }}
+            >
+              Top Up Word Balance
+            </h2>
+            <p className="text-white/80 text-sm mt-0.5">
+              Continue chatting with Zunnova
+            </p>
+            {/* Close — simple × without circle */}
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 hover:rotate-90 hover:bg-white/20"
-              style={{ background: 'rgba(255,255,255,0.12)' }}
+              className="absolute top-4 right-5 transition-opacity duration-200 hover:opacity-100"
+              style={{ opacity: 0.6 }}
             >
-              <X className="w-4 h-4 text-white/80" />
+              <X className="w-5 h-5 text-white" strokeWidth={2.5} />
             </button>
           </div>
 
           {/* Package Options */}
-          <div className="px-6 pt-4 pb-2 space-y-3">
+          <div className="px-5 pt-4 pb-2 space-y-2.5">
             {packages.map((pkg) => {
               const Icon = PACKAGE_ICONS[pkg.id] || Zap;
               const perAsk = Math.round(pkg.words / 100);
@@ -195,31 +175,27 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
                   key={pkg.id}
                   onClick={() => handlePurchase(pkg)}
                   disabled={loading}
-                  className={`topup-option w-full flex items-center gap-4 p-4 rounded-2xl text-left cursor-pointer ${
+                  className={`topup-option w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-left cursor-pointer ${
                     loading && selectedPkg === pkg.id ? 'opacity-60' : ''
                   }`}
                   style={{
                     background: isStandard
-                      ? 'linear-gradient(135deg, rgba(212,175,55,0.12) 0%, rgba(245,215,110,0.08) 100%)'
-                      : 'rgba(255,255,255,0.45)',
+                      ? 'linear-gradient(135deg, rgba(212,175,55,0.10) 0%, rgba(245,215,110,0.06) 100%)'
+                      : 'rgba(255,255,255,0.5)',
                     border: isStandard
-                      ? '1.5px solid rgba(212, 175, 55, 0.45)'
-                      : '1.5px solid rgba(212, 175, 55, 0.15)',
-                    backdropFilter: 'blur(12px)',
-                    boxShadow: isStandard
-                      ? '0 4px 20px rgba(212, 175, 55, 0.15), inset 0 1px 0 rgba(255,255,255,0.5)'
-                      : '0 2px 12px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.6)',
+                      ? '1px solid rgba(212, 175, 55, 0.25)'
+                      : '1px solid rgba(0, 0, 0, 0.06)',
+                    boxShadow: '0 1px 4px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.7)',
                   }}
                 >
-                  {/* Icon */}
+                  {/* Icon — subtle, not in a heavy box */}
                   <div
-                    className={`topup-icon-box w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300`}
+                    className="topup-icon-wrap w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-300"
                     style={{
                       background: isStandard
-                        ? 'linear-gradient(135deg, #D4AF37 0%, #F5D76E 100%)'
-                        : 'rgba(212, 175, 55, 0.1)',
-                      color: isStandard ? 'white' : '#C5A028',
-                      boxShadow: isStandard ? '0 4px 12px rgba(212,175,55,0.35)' : 'none',
+                        ? 'rgba(212, 175, 55, 0.12)'
+                        : 'rgba(0, 0, 0, 0.03)',
+                      color: isStandard ? '#C5A028' : '#999',
                     }}
                   >
                     <Icon className="w-5 h-5 relative z-10" />
@@ -229,17 +205,16 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
                   <div className="flex-1 min-w-0 relative z-10">
                     <div className="flex items-center gap-2">
                       <span className="topup-label font-bold text-[15px] transition-colors duration-300"
-                        style={{ color: isStandard ? '#9A7B1A' : '#3D3520' }}
+                        style={{ color: '#2D2A22' }}
                       >
                         {pkg.label}
                       </span>
                       {isStandard && (
                         <span className="text-[9px] font-bold tracking-wider px-2 py-0.5 rounded-full"
                           style={{
-                            background: 'linear-gradient(135deg, #D4AF37 0%, #C5A028 100%)',
+                            background: 'linear-gradient(135deg, #C5A028 0%, #B8952E 100%)',
                             color: 'white',
-                            letterSpacing: '0.06em',
-                            boxShadow: '0 2px 6px rgba(212,175,55,0.3)',
+                            letterSpacing: '0.05em',
                           }}
                         >
                           POPULAR
@@ -247,7 +222,7 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
                       )}
                     </div>
                     <p className="topup-desc text-[13px] transition-colors duration-300"
-                      style={{ color: 'rgba(100, 85, 50, 0.6)' }}
+                      style={{ color: '#999' }}
                     >
                       {pkg.words.toLocaleString()} words (~{perAsk} asks)
                     </p>
@@ -256,7 +231,7 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
                   {/* Price */}
                   <div className="text-right flex-shrink-0 relative z-10">
                     <span className="topup-price text-xl font-bold transition-all duration-300"
-                      style={{ color: '#3D3520' }}
+                      style={{ color: '#2D2A22' }}
                     >
                       Rs.{pkg.price}
                     </span>
@@ -267,9 +242,9 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
           </div>
 
           {/* Footer Note */}
-          <div className="px-6 pt-2 pb-6">
-            <p className="text-[11px] text-center leading-relaxed"
-              style={{ color: 'rgba(120, 100, 60, 0.5)' }}
+          <div className="px-6 pt-2 pb-5">
+            <p className="text-[11px] text-center leading-relaxed italic"
+              style={{ color: 'rgba(120, 100, 60, 0.45)' }}
             >
               1 ask = ~100 words (50 input + 50 output). Balance never expires.
             </p>
