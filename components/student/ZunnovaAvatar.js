@@ -44,10 +44,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
                 playsInline
                 onCanPlay={() => setReady(true)}
                 className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
-                style={{
-                    display: actualIsTalking ? 'none' : 'block',
-                    transform: 'scale(1.7, 1.05)',
-                }}
+                style={{ display: actualIsTalking ? 'none' : 'block' }}
             />
             <video
                 ref={talkRef}
@@ -56,10 +53,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
                 muted
                 playsInline
                 className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
-                style={{
-                    display: actualIsTalking ? 'block' : 'none',
-                    transform: 'scale(1.7, 1.05)',
-                }}
+                style={{ display: actualIsTalking ? 'block' : 'none' }}
             />
             {!ready && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full animate-pulse">
