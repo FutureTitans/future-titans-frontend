@@ -4,11 +4,12 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { modules, aiChat, auth } from '@/lib/api';
 import { isStudent, getUser } from '@/lib/auth';
-import { BookOpen, Play, CheckCircle, ArrowLeft, ArrowRight, Trophy, Target, Lightbulb, Lock, Bell, Settings, LayoutDashboard, UserCircle, PlayCircle, Brain, Search } from 'lucide-react';
+import { BookOpen, Play, CheckCircle, ArrowLeft, ArrowRight, Trophy, Target, Lightbulb, Lock, Bell, Settings, LayoutDashboard, UserCircle, PlayCircle, Brain, Search, MessageSquare, Sparkles } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import AIChatComponent from '@/components/student/AIChat';
 import ChapterQuiz from '@/components/student/ChapterQuiz';
 import ModuleFaceGuard from '@/components/shared/ModuleFaceGuard';
+import TopupPopup from '@/components/student/TopupPopup';
 
 export default function ModulePlayerPage() {
   const router = useRouter();
@@ -28,6 +29,8 @@ export default function ModulePlayerPage() {
   const [isDemo, setIsDemo] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [wordBalance, setWordBalance] = useState(null);
+  const [showTopup, setShowTopup] = useState(false);
   const lastFetchedChapterRef = useRef(null);
   const completingChapterRef = useRef(false);
 
@@ -159,6 +162,8 @@ export default function ModulePlayerPage() {
     try {
       const data = await modules.getById(moduleId);
       setModule(data);
+
+      aiChat.getWordBalance().then(wb => setWordBalance(wb.wordBalance)).catch(() => {});
 
       try {
         const profile = await auth.getProfile();
@@ -425,6 +430,22 @@ export default function ModulePlayerPage() {
                 {progressPercentage}%
               </div>
             </div>
+            {wordBalance !== null && (
+              <button
+                onClick={() => setShowTopup(true)}
+                className={`hidden sm:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold transition-colors border ${
+                  wordBalance <= 0
+                    ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100'
+                    : wordBalance <= 500
+                      ? 'bg-orange-50 text-orange-600 border-orange-200 hover:bg-orange-100'
+                      : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                <MessageSquare className="w-3.5 h-3.5" />
+                <span>{wordBalance.toLocaleString()}</span>
+                <Sparkles className="w-3 h-3 text-[#D4AF37]" />
+              </button>
+            )}
             {ZunnovaAvailable && (
               <button
                 onClick={() => setShowAIChat(!showAIChat)}
@@ -503,6 +524,38 @@ export default function ModulePlayerPage() {
               Focus on pain points you experience personally to find high-value problems.
             </p>
           </div>
+
+          {wordBalance !== null && (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <MessageSquare className="w-4 h-4 text-[#D4AF37]" />
+                <h4 className="font-bold text-sm text-gray-900">AI Word Balance</h4>
+              </div>
+              <div className="flex items-baseline gap-1 mb-2">
+                <span className={`text-2xl font-light ${wordBalance <= 0 ? 'text-red-500' : 'text-gray-900'}`}>
+                  {wordBalance.toLocaleString()}
+                </span>
+                <span className="text-xs text-gray-500">words</span>
+              </div>
+              <div className="w-full bg-gray-100 rounded-full h-1.5 mb-3 overflow-hidden">
+                <div
+                  className={`h-1.5 rounded-full transition-all duration-700 ${wordBalance <= 0 ? 'bg-red-400' : wordBalance <= 500 ? 'bg-orange-400' : 'bg-[#D4AF37]'}`}
+                  style={{ width: `${Math.min((wordBalance / 2000) * 100, 100)}%` }}
+                />
+              </div>
+              <button
+                onClick={() => setShowTopup(true)}
+                className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition-all ${
+                  wordBalance <= 0
+                    ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white hover:shadow-md'
+                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                <Sparkles className="w-3 h-3" />
+                {wordBalance <= 0 ? 'Top Up Now' : 'View Packages'}
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Center: Main Content */}
@@ -616,6 +669,12 @@ export default function ModulePlayerPage() {
           </button>
         )}
       </div>
+
+      <TopupPopup
+        isOpen={showTopup}
+        onClose={() => setShowTopup(false)}
+        onSuccess={(newBalance) => setWordBalance(newBalance)}
+      />
 
       {/* ─── Completion Modal ─── */}
       {showCompletionModal && (
