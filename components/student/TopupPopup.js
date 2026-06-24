@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { aiChat } from '@/lib/api';
-import { X, Zap, Sparkles, Crown } from 'lucide-react';
+import { X } from 'lucide-react';
 
-const PACKAGE_ICONS = {
-  starter: Zap,
-  standard: Sparkles,
-  premium: Crown,
+const PACKAGE_IMAGES = {
+  starter: '/starter.png',
+  standard: '/standard.png',
+  premium: '/premium.png',
 };
 
 export default function TopupPopup({ isOpen, onClose, onSuccess }) {
@@ -97,18 +97,7 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
           box-shadow: 0 4px 20px rgba(212, 175, 55, 0.18), inset 0 1px 0 rgba(255,255,255,0.4);
           transform: translateY(-1px);
         }
-        .topup-option:hover .topup-icon-wrap {
-          color: #B8952E !important;
-        }
-        .topup-option:hover .topup-label {
-          color: #B8952E !important;
-        }
-        .topup-option:hover .topup-price {
-          color: #B8952E !important;
-        }
-        .topup-option:hover .topup-desc {
-          color: #8B7A3D !important;
-        }
+
         .topup-option:active {
           transform: translateY(0) scale(0.99);
         }
@@ -168,7 +157,7 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
           {/* Package Options */}
           <div className="px-5 pt-4 pb-2 space-y-2.5">
             {packages.map((pkg) => {
-              const Icon = PACKAGE_ICONS[pkg.id] || Zap;
+              const iconSrc = PACKAGE_IMAGES[pkg.id] || PACKAGE_IMAGES.starter;
               const perAsk = Math.round(pkg.words / 100);
               const isStandard = pkg.id === 'standard';
               return (
@@ -191,24 +180,18 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
                     boxShadow: '0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(255,255,255,0.2)',
                   }}
                 >
-                  {/* Icon — subtle, not in a heavy box */}
-                  <div
-                    className="topup-icon-wrap w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors duration-300"
-                    style={{
-                      background: isStandard
-                        ? 'rgba(212, 175, 55, 0.12)'
-                        : 'rgba(0, 0, 0, 0.03)',
-                      color: isStandard ? '#C5A028' : '#999',
-                    }}
-                  >
-                    <Icon className="w-5 h-5 relative z-10" />
-                  </div>
+                  {/* Package icon image */}
+                  <img
+                    src={iconSrc}
+                    alt={pkg.label}
+                    className="w-10 h-10 flex-shrink-0 object-contain relative z-10"
+                  />
 
                   {/* Text */}
                   <div className="flex-1 min-w-0 relative z-10">
                     <div className="flex items-center gap-2">
-                      <span className="topup-label font-bold text-[15px] transition-colors duration-300"
-                        style={{ color: '#2D2A22' }}
+                      <span className="font-bold text-[15px]"
+                        style={{ color: '#000' }}
                       >
                         {pkg.label}
                       </span>
@@ -224,8 +207,8 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
                         </span>
                       )}
                     </div>
-                    <p className="topup-desc text-[13px] transition-colors duration-300"
-                      style={{ color: '#999' }}
+                    <p className="text-[13px]"
+                      style={{ color: '#000' }}
                     >
                       {pkg.words.toLocaleString()} words (~{perAsk} asks)
                     </p>
@@ -233,8 +216,8 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
 
                   {/* Price */}
                   <div className="text-right flex-shrink-0 relative z-10">
-                    <span className="topup-price text-xl font-bold transition-all duration-300"
-                      style={{ color: '#2D2A22' }}
+                    <span className="text-xl font-bold"
+                      style={{ color: '#000' }}
                     >
                       Rs.{pkg.price}
                     </span>
