@@ -27,7 +27,6 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const audioRef = useRef(null);
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime, setStartTime] = useState(null);
-  const [rateLimit, setRateLimit] = useState(null);
   const [wordBalance, setWordBalance] = useState(null);
   const [showTopup, setShowTopup] = useState(false);
 
@@ -58,13 +57,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
           setAllModulesCompleted(false);
         }
 
-        // Fetch rate limit status and word balance
         try {
-          const [rl, wb] = await Promise.all([
-            aiChat.getRateLimitStatus(),
-            aiChat.getWordBalance(),
-          ]);
-          setRateLimit(rl);
+          const wb = await aiChat.getWordBalance();
           setWordBalance(wb.wordBalance);
         } catch (e) { /* ignore */ }
 
@@ -206,7 +200,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!input.trim() || isCompleted || (rateLimit && rateLimit.limitReached) || isBalanceExhausted) return;
+    if (!input.trim() || isCompleted || isBalanceExhausted) return;
 
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
@@ -254,11 +248,6 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
-      // Refresh rate limit after sending
-      try {
-        const rl = await aiChat.getRateLimitStatus();
-        setRateLimit(rl);
-      } catch (e) { /* ignore */ }
     }
   };
 
@@ -414,13 +403,6 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
               </button>
             </div>
           )}
-          {rateLimit && !isBalanceExhausted && (
-            <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
-              {rateLimit.limitReached
-                ? `Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
-                : `${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
-            </div>
-          )}
           {isBalanceExhausted ? (
             <button
               type="button"
@@ -431,17 +413,27 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
             </button>
           ) : (
             <form onSubmit={handleSendMessage} className="relative z-10 flex gap-3">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask Zunnova anything...'}
-                className="flex-1 px-5 py-3.5 bg-white border border-black/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all text-sm md:text-base shadow-sm placeholder-gray-400 font-medium"
-                disabled={isLoading || rateLimit?.limitReached}
-              />
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => {
+                    const words = e.target.value.trim().split(/\s+/).filter(Boolean);
+                    if (words.length <= 50) setInput(e.target.value);
+                  }}
+                  placeholder="Ask Zunnova anything..."
+                  className="w-full px-5 py-3.5 pr-16 bg-white border border-black/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all text-sm md:text-base shadow-sm placeholder-gray-400 font-medium"
+                  disabled={isLoading}
+                />
+                <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold ${
+                  (input.trim().split(/\s+/).filter(Boolean).length || 0) >= 45 ? 'text-orange-500' : 'text-gray-400'
+                }`}>
+                  {input.trim() ? input.trim().split(/\s+/).filter(Boolean).length : 0}/50
+                </span>
+              </div>
               <button
                 type="submit"
-                disabled={isLoading || !input.trim() || rateLimit?.limitReached}
+                disabled={isLoading || !input.trim()}
                 className="bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white w-14 h-14 rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 disabled:opacity-50 disabled:hover:shadow-none transition-all flex items-center justify-center flex-shrink-0 border border-white/20"
               >
                 <Send className="w-5 h-5 ml-1" />

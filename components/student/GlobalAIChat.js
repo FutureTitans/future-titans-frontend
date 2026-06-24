@@ -21,7 +21,6 @@ export default function GlobalAIChat() {
   const [voice, setVoice] = useState(null);
   const messagesEndRef = useRef(null);
   const audioRef = useRef(null);
-  const [rateLimit, setRateLimit] = useState(null);
   const [wordBalance, setWordBalance] = useState(null);
   const [showTopup, setShowTopup] = useState(false);
 
@@ -55,13 +54,8 @@ export default function GlobalAIChat() {
         const history = await aiChat.getGlobalHistory();
         setMessages(history.conversation || []);
 
-        // Fetch rate limit status and word balance
         try {
-          const [rl, wb] = await Promise.all([
-            aiChat.getRateLimitStatus(),
-            aiChat.getWordBalance(),
-          ]);
-          setRateLimit(rl);
+          const wb = await aiChat.getWordBalance();
           setWordBalance(wb.wordBalance);
         } catch (e) { /* ignore */ }
       } catch (error) {
@@ -195,7 +189,7 @@ export default function GlobalAIChat() {
 
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || (rateLimit && rateLimit.limitReached) || isBalanceExhausted) return;
+    if (!input.trim() || isBalanceExhausted) return;
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -234,11 +228,6 @@ export default function GlobalAIChat() {
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
-      // Refresh rate limit after sending
-      try {
-        const rl = await aiChat.getRateLimitStatus();
-        setRateLimit(rl);
-      } catch (e) { /* ignore */ }
     }
   };
 
@@ -386,13 +375,6 @@ export default function GlobalAIChat() {
                 </button>
               </div>
             )}
-            {rateLimit && !isBalanceExhausted && (
-              <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
-                {rateLimit.limitReached
-                  ? `Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
-                  : `${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
-              </div>
-            )}
             {isBalanceExhausted ? (
               <button
                 type="button"
@@ -403,17 +385,27 @@ export default function GlobalAIChat() {
               </button>
             ) : (
               <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask anything...'}
-                  className="flex-1 px-3 py-2 md:px-4 md:py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs md:text-sm"
-                  disabled={isLoading || rateLimit?.limitReached}
-                />
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => {
+                      const words = e.target.value.trim().split(/\s+/).filter(Boolean);
+                      if (words.length <= 50) setInput(e.target.value);
+                    }}
+                    placeholder="Ask anything..."
+                    className="w-full px-3 py-2 md:px-4 md:py-2.5 pr-14 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs md:text-sm"
+                    disabled={isLoading}
+                  />
+                  <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[9px] md:text-[10px] font-bold ${
+                    (input.trim().split(/\s+/).filter(Boolean).length || 0) >= 45 ? 'text-orange-500' : 'text-gray-400'
+                  }`}>
+                    {input.trim() ? input.trim().split(/\s+/).filter(Boolean).length : 0}/50
+                  </span>
+                </div>
                 <button
                   type="submit"
-                  disabled={isLoading || !input.trim() || rateLimit?.limitReached}
+                  disabled={isLoading || !input.trim()}
                   className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
                 >
                   <Send className="w-4 h-4 md:w-5 md:h-5" />
