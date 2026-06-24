@@ -30,9 +30,12 @@ import {
   X,
   ChevronUp,
   HelpCircle,
-  Search
+  Search,
+  MessageSquare,
+  Sparkles
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import TopupPopup from '@/components/student/TopupPopup';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, YAxis } from 'recharts';
 
 const faqData = {
@@ -89,6 +92,8 @@ export default function StudentDashboard() {
   const [ssiScore, setSSIScore] = useState(null);
   const [achievementsData, setAchievementsData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [wordBalance, setWordBalance] = useState(null);
+  const [showTopup, setShowTopup] = useState(false);
 
   // New states for buttons & modals
   const [showFAQ, setShowFAQ] = useState(false);
@@ -127,12 +132,13 @@ export default function StudentDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const [modulesData, paymentData, ssiData, achievementsRes, profileData] = await Promise.all([
+      const [modulesData, paymentData, ssiData, achievementsRes, profileData, wordBalanceData] = await Promise.all([
         modules.getAll().catch(() => []),
         payment.getPaymentStatus().catch(() => ({ isPaid: false })),
         aiChat.getSSI().catch(() => ({ overallSSI: 0, breakdown: {} })),
         achievements.getAll().catch(() => ({ achievements: [], stats: { total: 0 } })),
         auth.getProfile().catch(() => null),
+        aiChat.getWordBalance().catch(() => null),
       ]);
 
       setModulesList(modulesData);
@@ -140,6 +146,7 @@ export default function StudentDashboard() {
       setSSIScore(ssiData);
       setAchievementsData(achievementsRes);
       setProfile(profileData);
+      if (wordBalanceData) setWordBalance(wordBalanceData.wordBalance);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     } finally {
@@ -676,6 +683,45 @@ export default function StudentDashboard() {
               <div className="text-xl font-light text-gray-900">{overallProgress}%</div>
             </div>
 
+            {/* Zunnova AI Balance */}
+            {wordBalance !== null && (
+              <div className="glass-panel p-5 relative overflow-hidden group">
+                <div className="absolute -top-8 -right-8 w-32 h-32 bg-[#D4AF37]/10 blur-3xl rounded-full pointer-events-none"></div>
+                <div className="flex items-center justify-between mb-3 relative z-10">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D4AF37] to-[#B8952E] flex items-center justify-center shadow-md shadow-[#D4AF37]/20">
+                      <MessageSquare className="w-5 h-5 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm text-gray-900">Zunnova AI</h3>
+                      <p className="text-[10px] text-gray-500 uppercase tracking-wider font-semibold">Word Balance</p>
+                    </div>
+                  </div>
+                  <span className={`text-2xl font-light tracking-tight ${wordBalance <= 0 ? 'text-red-500' : 'text-gray-900'}`}>
+                    {wordBalance.toLocaleString()}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-1.5 mb-4 overflow-hidden">
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-700 ${wordBalance <= 0 ? 'bg-red-400' : wordBalance <= 500 ? 'bg-orange-400' : 'bg-[#D4AF37]'}`}
+                    style={{ width: `${Math.min((wordBalance / 2000) * 100, 100)}%` }}
+                  />
+                </div>
+                <div className="flex items-center justify-between relative z-10">
+                  <span className={`text-xs font-medium ${wordBalance <= 0 ? 'text-red-500' : wordBalance <= 500 ? 'text-orange-500' : 'text-gray-500'}`}>
+                    {wordBalance <= 0 ? 'Balance exhausted' : wordBalance <= 500 ? 'Running low' : `~${Math.round(wordBalance / 100)} asks left`}
+                  </span>
+                  <button
+                    onClick={() => setShowTopup(true)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-lg text-xs font-semibold hover:shadow-md hover:shadow-[#D4AF37]/20 transition-all"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    {wordBalance <= 0 ? 'Top Up' : 'View Packages'}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Dark Card - Module Tasks */}
             <div className="bg-[#1A1A1A] rounded-[24px] sm:rounded-[32px] p-4 sm:p-6 flex-1 shadow-2xl flex flex-col border border-gray-800 relative overflow-hidden min-h-[300px] max-h-[500px] xl:max-h-none">
               {/* Ambient top light */}
@@ -874,6 +920,12 @@ export default function StudentDashboard() {
 
       {/* Razorpay Script */}
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
+
+      <TopupPopup
+        isOpen={showTopup}
+        onClose={() => setShowTopup(false)}
+        onSuccess={(newBalance) => setWordBalance(newBalance)}
+      />
     </div>
   );
 }

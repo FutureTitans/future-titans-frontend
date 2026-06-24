@@ -406,14 +406,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
         <div className="bg-white/80 backdrop-blur-md p-4 border-t border-black/5 shrink-0 relative">
           {wordBalance !== null && (
             <div className="flex items-center justify-between mb-2">
-              <span className={`text-[10px] md:text-xs font-semibold ${isBalanceExhausted ? 'text-red-500' : 'text-gray-500'}`}>
+              <span className={`text-[10px] md:text-xs font-semibold ${isBalanceExhausted ? 'text-red-500' : wordBalance <= 500 ? 'text-orange-500' : 'text-gray-500'}`}>
                 {isBalanceExhausted ? 'Word balance exhausted' : `${wordBalance.toLocaleString()} words remaining`}
               </span>
-              {isBalanceExhausted && (
-                <button type="button" onClick={() => setShowTopup(true)} className="text-[10px] md:text-xs font-bold text-[#D4AF37] hover:underline">
-                  Top Up
-                </button>
-              )}
+              <button type="button" onClick={() => setShowTopup(true)} className="text-[10px] md:text-xs font-bold text-[#D4AF37] hover:underline">
+                {isBalanceExhausted ? 'Top Up' : 'View Packages'}
+              </button>
             </div>
           )}
           {rateLimit && !isBalanceExhausted && (
