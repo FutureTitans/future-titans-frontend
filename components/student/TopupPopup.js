@@ -160,26 +160,28 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
             border: '1px solid rgba(212, 175, 55, 0.2)',
           }}
         >
-          {/* Close Button */}
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 hover:rotate-90"
+          {/* Header — dark gold gradient banner */}
+          <div className="relative px-6 py-5 flex items-center justify-between"
             style={{
-              background: 'rgba(0,0,0,0.06)',
-              backdropFilter: 'blur(8px)',
+              background: 'linear-gradient(135deg, #C5A028 0%, #D4AF37 35%, #B8952E 100%)',
+              boxShadow: '0 4px 20px rgba(212,175,55,0.25), inset 0 1px 0 rgba(255,255,255,0.2)',
             }}
           >
-            <X className="w-4 h-4 text-gray-500" />
-          </button>
-
-          {/* Header */}
-          <div className="pt-7 pb-1 px-8 text-center">
-            <h2 className="topup-shimmer-text text-2xl font-bold tracking-tight">
-              Top Up Word Balance
-            </h2>
-            <p className="text-sm mt-1.5" style={{ color: 'rgba(120, 100, 60, 0.7)' }}>
-              Continue chatting with Zunnova
-            </p>
+            <div className="text-center w-full pr-6">
+              <h2 className="text-white font-bold text-xl tracking-tight drop-shadow-sm">
+                Top Up Word Balance
+              </h2>
+              <p className="text-white/75 text-sm mt-0.5">
+                Continue chatting with Zunnova
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 hover:rotate-90 hover:bg-white/20"
+              style={{ background: 'rgba(255,255,255,0.12)' }}
+            >
+              <X className="w-4 h-4 text-white/80" />
+            </button>
           </div>
 
           {/* Package Options */}
