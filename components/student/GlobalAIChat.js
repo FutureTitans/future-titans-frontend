@@ -7,6 +7,7 @@ import { stripMarkdown } from '@/lib/utils';
 import { isStudent } from '@/lib/auth';
 import { MessageCircle, Send, Loader, Volume2, VolumeX, X, Bot, Sparkles } from 'lucide-react';
 import ZunnovaAvatar from './ZunnovaAvatar';
+import TopupPopup from './TopupPopup';
 
 export default function GlobalAIChat() {
   const pathname = usePathname();
@@ -21,6 +22,8 @@ export default function GlobalAIChat() {
   const messagesEndRef = useRef(null);
   const audioRef = useRef(null);
   const [rateLimit, setRateLimit] = useState(null);
+  const [wordBalance, setWordBalance] = useState(null);
+  const [showTopup, setShowTopup] = useState(false);
 
   const shouldHide =
     pathname === '/' ||
@@ -52,10 +55,14 @@ export default function GlobalAIChat() {
         const history = await aiChat.getGlobalHistory();
         setMessages(history.conversation || []);
 
-        // Fetch rate limit status
+        // Fetch rate limit status and word balance
         try {
-          const rl = await aiChat.getRateLimitStatus();
+          const [rl, wb] = await Promise.all([
+            aiChat.getRateLimitStatus(),
+            aiChat.getWordBalance(),
+          ]);
           setRateLimit(rl);
+          setWordBalance(wb.wordBalance);
         } catch (e) { /* ignore */ }
       } catch (error) {
         console.error('Failed to initialize global AI chat:', error);
@@ -184,9 +191,11 @@ export default function GlobalAIChat() {
     playTTS();
   }, [messages, ttsEnabled, voice]);
 
+  const isBalanceExhausted = wordBalance !== null && wordBalance <= 0;
+
   const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || (rateLimit && rateLimit.limitReached)) return;
+    if (!input.trim() || (rateLimit && rateLimit.limitReached) || isBalanceExhausted) return;
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
@@ -205,8 +214,15 @@ export default function GlobalAIChat() {
       }
       const aiMessage = { role: 'assistant', message: response.aiMessage, timestamp: new Date() };
       setMessages((prev) => [...prev, aiMessage]);
+      if (response.wordBalance !== undefined) setWordBalance(response.wordBalance);
     } catch (error) {
       console.error('Global AI chat error:', error);
+      if (error?.needsTopup || error?.response?.status === 402) {
+        setWordBalance(0);
+        setShowTopup(true);
+        setMessages((prev) => prev.slice(0, -1));
+        return;
+      }
       const errorText = error?.name === 'AbortError' || error?.message?.includes('timed out')
         ? 'Request timed out. Please try again.'
         : error?.error || error?.message || 'Sorry, I encountered an error. Please try again.';
@@ -356,33 +372,65 @@ export default function GlobalAIChat() {
 
           {/* Input */}
           <form onSubmit={handleSend} className="border-t border-white/20 p-3 md:p-4 glass-subtle">
-            {rateLimit && (
-              <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
-                {rateLimit.limitReached
-                  ? `⚠️ Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
-                  : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
+            {wordBalance !== null && (
+              <div className="flex items-center justify-between mb-2">
+                <span className={`text-[10px] md:text-xs font-semibold ${isBalanceExhausted ? 'text-red-500' : 'text-gray-500'}`}>
+                  {isBalanceExhausted ? 'Word balance exhausted' : `${wordBalance.toLocaleString()} words remaining`}
+                </span>
+                {isBalanceExhausted && (
+                  <button
+                    type="button"
+                    onClick={() => setShowTopup(true)}
+                    className="text-[10px] md:text-xs font-bold text-[#D4AF37] hover:underline"
+                  >
+                    Top Up
+                  </button>
+                )}
               </div>
             )}
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask anything...'}
-                className="flex-1 px-3 py-2 md:px-4 md:py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs md:text-sm"
-                disabled={isLoading || rateLimit?.limitReached}
-              />
+            {rateLimit && !isBalanceExhausted && (
+              <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
+                {rateLimit.limitReached
+                  ? `Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
+                  : `${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
+              </div>
+            )}
+            {isBalanceExhausted ? (
               <button
-                type="submit"
-                disabled={isLoading || !input.trim() || rateLimit?.limitReached}
-                className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
+                type="button"
+                onClick={() => setShowTopup(true)}
+                className="w-full py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl font-semibold text-sm hover:shadow-lg transition-all"
               >
-                <Send className="w-4 h-4 md:w-5 md:h-5" />
+                Top Up to Continue Chatting
               </button>
-            </div>
+            ) : (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask anything...'}
+                  className="flex-1 px-3 py-2 md:px-4 md:py-2.5 glass border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500/50 text-xs md:text-sm"
+                  disabled={isLoading || rateLimit?.limitReached}
+                />
+                <button
+                  type="submit"
+                  disabled={isLoading || !input.trim() || rateLimit?.limitReached}
+                  className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-2 md:px-4 md:py-2.5 rounded-xl hover:shadow-lg disabled:opacity-50 transition-all flex-shrink-0"
+                >
+                  <Send className="w-4 h-4 md:w-5 md:h-5" />
+                </button>
+              </div>
+            )}
           </form>
         </div>
       )}
+
+      <TopupPopup
+        isOpen={showTopup}
+        onClose={() => setShowTopup(false)}
+        onSuccess={(newBalance) => setWordBalance(newBalance)}
+      />
     </>
   );
 }

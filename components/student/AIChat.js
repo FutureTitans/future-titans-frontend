@@ -6,6 +6,7 @@ import { aiChat, auth } from '@/lib/api';
 import { stripMarkdown } from '@/lib/utils';
 import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles, User } from 'lucide-react';
 import ZunnovaAvatar from './ZunnovaAvatar';
+import TopupPopup from './TopupPopup';
 
 const AUTO_SURGE_SEED = '__AUTO_SURGE_START__';
 
@@ -27,6 +28,8 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const [timeSpent, setTimeSpent] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [rateLimit, setRateLimit] = useState(null);
+  const [wordBalance, setWordBalance] = useState(null);
+  const [showTopup, setShowTopup] = useState(false);
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -55,10 +58,14 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
           setAllModulesCompleted(false);
         }
 
-        // Fetch rate limit status
+        // Fetch rate limit status and word balance
         try {
-          const rl = await aiChat.getRateLimitStatus();
+          const [rl, wb] = await Promise.all([
+            aiChat.getRateLimitStatus(),
+            aiChat.getWordBalance(),
+          ]);
           setRateLimit(rl);
+          setWordBalance(wb.wordBalance);
         } catch (e) { /* ignore */ }
 
         if (!data.conversation || data.conversation.length === 0 && !data.isCompleted) {
@@ -195,9 +202,11 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
     playTTS();
   }, [messages, ttsEnabled, voice]);
 
+  const isBalanceExhausted = wordBalance !== null && wordBalance <= 0;
+
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!input.trim() || isCompleted || (rateLimit && rateLimit.limitReached)) return;
+    if (!input.trim() || isCompleted || (rateLimit && rateLimit.limitReached) || isBalanceExhausted) return;
 
     const userMessage = { role: 'user', message: input, timestamp: new Date() };
     setMessages((prev) => [...prev, userMessage]);
@@ -215,6 +224,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       }
       const aiMessage = { role: 'assistant', message: response.aiMessage, timestamp: new Date() };
       setMessages((prev) => [...prev, aiMessage]);
+      if (response.wordBalance !== undefined) setWordBalance(response.wordBalance);
       if (response.ssiScore) {
         if (ssiScore) {
           setSsiDelta(response.ssiScore.overall - ssiScore.overall);
@@ -227,6 +237,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       }
     } catch (error) {
       console.error('Failed to send message:', error);
+      if (error?.needsTopup || error?.response?.status === 402) {
+        setWordBalance(0);
+        setShowTopup(true);
+        setMessages((prev) => prev.slice(0, -1));
+        return;
+      }
       const errorText = error?.name === 'AbortError'
         ? 'Request timed out. Please try again.'
         : error?.error || error?.message || 'Sorry, I encountered an error. Please try again.';
@@ -282,6 +298,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
   const filteredMessages = messages.filter((m) => !(m.role === 'user' && m.message === AUTO_SURGE_SEED));
 
   return (
+    <>
     <div className="flex flex-col glass-panel rounded-3xl border border-white/40 shadow-xl overflow-hidden h-full">
       {/* Dark Premium Bot Header */}
       <div className="bg-[#212121] text-white px-5 py-4 flex flex-col justify-center relative overflow-hidden shrink-0">
@@ -387,30 +404,52 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
       {/* Input Area */}
       {!isCompleted ? (
         <div className="bg-white/80 backdrop-blur-md p-4 border-t border-black/5 shrink-0 relative">
-          {rateLimit && (
-            <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
-              {rateLimit.limitReached
-                ? `⚠️ Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
-                : `💬 ${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
+          {wordBalance !== null && (
+            <div className="flex items-center justify-between mb-2">
+              <span className={`text-[10px] md:text-xs font-semibold ${isBalanceExhausted ? 'text-red-500' : 'text-gray-500'}`}>
+                {isBalanceExhausted ? 'Word balance exhausted' : `${wordBalance.toLocaleString()} words remaining`}
+              </span>
+              {isBalanceExhausted && (
+                <button type="button" onClick={() => setShowTopup(true)} className="text-[10px] md:text-xs font-bold text-[#D4AF37] hover:underline">
+                  Top Up
+                </button>
+              )}
             </div>
           )}
-          <form onSubmit={handleSendMessage} className="relative z-10 flex gap-3">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask Zunnova anything...'}
-              className="flex-1 px-5 py-3.5 bg-white border border-black/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all text-sm md:text-base shadow-sm placeholder-gray-400 font-medium"
-              disabled={isLoading || rateLimit?.limitReached}
-            />
+          {rateLimit && !isBalanceExhausted && (
+            <div className={`text-[10px] md:text-xs mb-2 font-semibold text-center ${rateLimit.limitReached ? 'text-red-500' : 'text-gray-500'}`}>
+              {rateLimit.limitReached
+                ? `Message limit reached (${rateLimit.limit}/${rateLimit.limit}). Try again ${rateLimit.windowHours ? `in ${rateLimit.windowHours}h` : 'later'}.`
+                : `${rateLimit.remaining} / ${rateLimit.limit} messages remaining${rateLimit.windowHours ? ` (resets every ${rateLimit.windowHours}h)` : ''}`}
+            </div>
+          )}
+          {isBalanceExhausted ? (
             <button
-              type="submit"
-              disabled={isLoading || !input.trim() || rateLimit?.limitReached}
-              className="bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white w-14 h-14 rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 disabled:opacity-50 disabled:hover:shadow-none transition-all flex items-center justify-center flex-shrink-0 border border-white/20"
+              type="button"
+              onClick={() => setShowTopup(true)}
+              className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl font-semibold text-sm hover:shadow-lg transition-all"
             >
-              <Send className="w-5 h-5 ml-1" />
+              Top Up to Continue Chatting
             </button>
-          </form>
+          ) : (
+            <form onSubmit={handleSendMessage} className="relative z-10 flex gap-3">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={rateLimit?.limitReached ? 'Message limit reached...' : 'Ask Zunnova anything...'}
+                className="flex-1 px-5 py-3.5 bg-white border border-black/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] transition-all text-sm md:text-base shadow-sm placeholder-gray-400 font-medium"
+                disabled={isLoading || rateLimit?.limitReached}
+              />
+              <button
+                type="submit"
+                disabled={isLoading || !input.trim() || rateLimit?.limitReached}
+                className="bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white w-14 h-14 rounded-2xl hover:shadow-lg hover:shadow-[#D4AF37]/30 disabled:opacity-50 disabled:hover:shadow-none transition-all flex items-center justify-center flex-shrink-0 border border-white/20"
+              >
+                <Send className="w-5 h-5 ml-1" />
+              </button>
+            </form>
+          )}
 
           {messages.length > 0 && (
             <div className="mt-4 pt-4 border-t border-black/5">
@@ -451,5 +490,12 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
         </div>
       )}
     </div>
+
+    <TopupPopup
+      isOpen={showTopup}
+      onClose={() => setShowTopup(false)}
+      onSuccess={(newBalance) => setWordBalance(newBalance)}
+    />
+    </>
   );
 }
