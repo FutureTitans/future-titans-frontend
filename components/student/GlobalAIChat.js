@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { aiChat, payment } from '@/lib/api';
+import { stripMarkdown } from '@/lib/utils';
 import { isStudent } from '@/lib/auth';
 import { MessageCircle, Send, Loader, Volume2, VolumeX, X, Bot, Sparkles } from 'lucide-react';
 import ZunnovaAvatar from './ZunnovaAvatar';
@@ -324,7 +325,7 @@ export default function GlobalAIChat() {
                       : 'glass-subtle text-gray-800 rounded-bl-sm border border-white/30'
                       }`}
                   >
-                    <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap">{msg.message}</p>
+                    <p className="text-xs md:text-sm leading-relaxed whitespace-pre-wrap">{msg.role === 'assistant' ? stripMarkdown(msg.message) : msg.message}</p>
                     <span className={`text-[10px] md:text-xs mt-1 block ${msg.role === 'user' ? 'text-white/70' : 'text-gray-500'}`}>
                       {new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>

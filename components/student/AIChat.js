@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { aiChat, auth } from '@/lib/api';
+import { stripMarkdown } from '@/lib/utils';
 import { Send, Loader, Volume2, VolumeX, CheckCircle, Trophy, Bot, Sparkles, User } from 'lucide-react';
 import ZunnovaAvatar from './ZunnovaAvatar';
 
@@ -355,7 +356,7 @@ export default function AIChatComponent({ moduleId, chapterId, module }) {
                   : 'bg-white text-gray-800 rounded-2xl rounded-tl-md border border-black/5'
                   }`}
               >
-                {msg.message}
+                {msg.role === 'assistant' ? stripMarkdown(msg.message) : msg.message}
               </div>
 
               {msg.role === 'user' && (
