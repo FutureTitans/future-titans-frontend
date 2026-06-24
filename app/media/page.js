@@ -21,7 +21,7 @@ export default function Media() {
     <div className="min-h-screen bg-white">
       <PublicNavbar />
 
-      <section className="relative w-full overflow-hidden pt-16 lg:pt-[72px] bg-[#0A101D]">
+      <section className="relative w-full overflow-hidden pt-16 lg:pt-[72px] bg-[#0A1A12]">
         <Image src="/images/yp/media-hero-new.png" alt="Media & Press Hero" width={1920} height={1080} className="w-full h-auto object-cover" priority />
       </section>
 
@@ -33,7 +33,7 @@ export default function Media() {
               <span className="text-[#C8960C] text-xs font-bold tracking-widest uppercase">IN THE SPOTLIGHT</span>
               <div className="w-8 h-px bg-[#C8960C]"></div>
             </div>
-            <h2 className="text-4xl lg:text-5xl font-serif text-[#1B2A4A] mb-6">Media & Press</h2>
+            <h2 className="text-4xl lg:text-5xl font-serif text-[#123c1f] mb-6">Media & Press</h2>
             <p className="text-gray-600 text-base max-w-2xl mx-auto leading-relaxed">
               Explore how leading media houses are covering the stories, achievements, and impact of Youngpreneurs and Future Titans.
             </p>
@@ -56,7 +56,7 @@ export default function Media() {
                 </div>
                 
                 {/* Description */}
-                <p className="text-[#1B2A4A] text-[15px] leading-relaxed mb-6 flex-grow font-medium">
+                <p className="text-[#123c1f] text-[15px] leading-relaxed mb-6 flex-grow font-medium">
                   {item.desc}
                 </p>
                 

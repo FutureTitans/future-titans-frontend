@@ -29,12 +29,12 @@ export default function FutureTitans() {
           priority
         />
         {/* Overlay for text readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a1a3a] via-[#0a1a3a]/75 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a1a12] via-[#0a1a12]/75 to-transparent" />
 
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           {/* Badges */}
           <div className="flex flex-wrap gap-3 items-center mb-6">
-            <span className="rounded-full bg-white px-5 py-2 text-xs font-bold text-[#1B2A4A] shadow-sm">Youngpreneurs Presents</span>
+            <span className="rounded-full bg-white px-5 py-2 text-xs font-bold text-[#123c1f] shadow-sm">Youngpreneurs Presents</span>
             <span className="rounded-full bg-[#C8960C] px-5 py-2 text-xs font-bold text-white shadow-sm">National Challenge</span>
           </div>
 
@@ -419,7 +419,7 @@ export default function FutureTitans() {
               priority
             />
             {/* Overlay for readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#051934]/95 via-[#051934]/80 to-[#051934]/30" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#051912]/95 via-[#051912]/80 to-[#051912]/30" />
 
             <div className="relative z-10 px-8 sm:px-12 lg:px-16 py-12 w-full">
               <div className="max-w-lg">

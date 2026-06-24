@@ -433,7 +433,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#123c1f] mb-4`}>
                 Meet the Minds Behind the Program
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -469,7 +469,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-12 lg:mb-16">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-3`}>
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#123c1f] mb-3`}>
                 What Your Child Will Gain
               </h2>
               <p className="text-gray-500 text-sm sm:text-base">Class 8–12 · Building the thinking, confidence, and capability tomorrow&apos;s world demands</p>
@@ -525,7 +525,7 @@ export default function Landing() {
           <div className="grid lg:grid-cols-3 gap-8 lg:gap-12 items-center">
             <Reveal>
               <div>
-                <h2 className={`${playfair.className} text-3xl sm:text-4xl lg:text-[2.5rem] font-bold text-[#1B2A4A] leading-tight mb-6`}>
+                <h2 className={`${playfair.className} text-3xl sm:text-4xl lg:text-[2.5rem] font-bold text-[#123c1f] leading-tight mb-6`}>
                   Growth You Can See.<br />
                   Progress You Can Trust.
                 </h2>
@@ -642,7 +642,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#123c1f] mb-4`}>
                 Real Stories. Real Impact.
               </h2>
             </div>
@@ -677,7 +677,7 @@ export default function Landing() {
       <section className="py-16 lg:py-24 bg-[#FAFAFA]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] text-center mb-12`}>
+            <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#123c1f] text-center mb-12`}>
               Questions Parents Ask (We Answer)
             </h2>
           </Reveal>

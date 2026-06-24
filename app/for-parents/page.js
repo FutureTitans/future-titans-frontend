@@ -185,7 +185,7 @@ export default function ForParents() {
 
       {/* 4. Bottom CTA Section */}
       <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
-        <div className="relative rounded-[2.5rem] overflow-hidden w-full bg-[#051934] min-h-[400px] flex items-center">
+        <div className="relative rounded-[2.5rem] overflow-hidden w-full bg-[#051912] min-h-[400px] flex items-center">
           {/* Background Image */}
           <Image
             src="/images/yp/for-parents-cta.png"
@@ -194,7 +194,7 @@ export default function ForParents() {
             alt="Child looking at future"
           />
           {/* Overlay to ensure text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#051934] via-[#051934]/90 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#051912] via-[#051912]/90 to-transparent"></div>
 
           <div className="relative z-10 p-10 lg:p-16 max-w-2xl w-full">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-[1.2] mb-6">
