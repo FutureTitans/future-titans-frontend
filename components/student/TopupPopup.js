@@ -140,7 +140,7 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
           {/* Header — frosted gold glass banner */}
           <div className="relative px-6 py-5 text-center"
             style={{
-              background: 'linear-gradient(135deg, rgba(197, 160, 40, 0.50) 0%, rgba(212, 175, 55, 0.40) 40%, rgba(184, 149, 46, 0.45) 100%)',
+              background: 'linear-gradient(to right, rgba(173, 142, 78, 0.75) 0%, rgba(210, 222, 130, 0.70) 100%)',
               backdropFilter: 'blur(20px) saturate(1.6)',
               WebkitBackdropFilter: 'blur(20px) saturate(1.6)',
               borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
