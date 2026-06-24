@@ -125,25 +125,26 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
         onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       >
         {/* Backdrop */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-md" />
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-xl" />
 
         {/* Glassmorphism Panel */}
         <div className="topup-glass-panel relative w-full max-w-[420px] rounded-2xl overflow-hidden"
           style={{
-            background: 'rgba(255, 252, 245, 0.82)',
-            backdropFilter: 'blur(24px) saturate(1.8)',
-            WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
-            boxShadow: '0 24px 80px rgba(0,0,0,0.12), 0 8px 32px rgba(212,175,55,0.08), inset 0 1px 0 rgba(255,255,255,0.5)',
-            border: '1px solid rgba(255, 255, 255, 0.4)',
+            background: 'linear-gradient(160deg, rgba(255, 252, 245, 0.55) 0%, rgba(255, 248, 235, 0.50) 50%, rgba(250, 245, 225, 0.45) 100%)',
+            backdropFilter: 'blur(40px) saturate(2)',
+            WebkitBackdropFilter: 'blur(40px) saturate(2)',
+            boxShadow: '0 32px 80px rgba(0,0,0,0.18), 0 8px 32px rgba(212,175,55,0.10), inset 0 1px 1px rgba(255,255,255,0.7), inset 0 -1px 1px rgba(255,255,255,0.15)',
+            border: '1px solid rgba(255, 255, 255, 0.55)',
           }}
         >
           {/* Header — frosted gold glass banner */}
           <div className="relative px-6 py-5 text-center"
             style={{
-              background: 'linear-gradient(135deg, rgba(197, 160, 40, 0.65) 0%, rgba(212, 175, 55, 0.55) 40%, rgba(184, 149, 46, 0.6) 100%)',
-              backdropFilter: 'blur(16px)',
-              WebkitBackdropFilter: 'blur(16px)',
-              borderBottom: '1px solid rgba(212, 175, 55, 0.15)',
+              background: 'linear-gradient(135deg, rgba(197, 160, 40, 0.50) 0%, rgba(212, 175, 55, 0.40) 40%, rgba(184, 149, 46, 0.45) 100%)',
+              backdropFilter: 'blur(20px) saturate(1.6)',
+              WebkitBackdropFilter: 'blur(20px) saturate(1.6)',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.25)',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(212,175,55,0.1)',
             }}
           >
             <h2 className="text-white font-bold text-xl tracking-tight"
@@ -181,11 +182,13 @@ export default function TopupPopup({ isOpen, onClose, onSuccess }) {
                   style={{
                     background: isStandard
                       ? 'linear-gradient(135deg, rgba(212,175,55,0.10) 0%, rgba(245,215,110,0.06) 100%)'
-                      : 'rgba(255,255,255,0.5)',
+                      : 'rgba(255,255,255,0.35)',
+                    backdropFilter: 'blur(12px)',
+                    WebkitBackdropFilter: 'blur(12px)',
                     border: isStandard
                       ? '1px solid rgba(212, 175, 55, 0.25)'
-                      : '1px solid rgba(0, 0, 0, 0.06)',
-                    boxShadow: '0 1px 4px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.7)',
+                      : '1px solid rgba(255, 255, 255, 0.5)',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.8), inset 0 -1px 0 rgba(255,255,255,0.2)',
                   }}
                 >
                   {/* Icon — subtle, not in a heavy box */}
