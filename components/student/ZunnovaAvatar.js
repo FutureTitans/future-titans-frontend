@@ -34,7 +34,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
     }, [actualIsTalking]);
 
     return (
-        <div className={`relative flex items-center justify-center ${className}`}>
+        <div className={`relative flex items-end justify-center overflow-hidden ${className}`}>
             <video
                 ref={idleRef}
                 src="/idle_animation.webm"
@@ -43,7 +43,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
                 muted
                 playsInline
                 onCanPlay={() => setReady(true)}
-                className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
+                className="w-full object-cover object-bottom pointer-events-none select-none drop-shadow-md"
                 style={{ display: actualIsTalking ? 'none' : 'block' }}
             />
             <video
@@ -52,7 +52,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-contain pointer-events-none select-none drop-shadow-md"
+                className="w-full object-cover object-bottom pointer-events-none select-none drop-shadow-md"
                 style={{ display: actualIsTalking ? 'block' : 'none' }}
             />
             {!ready && (
