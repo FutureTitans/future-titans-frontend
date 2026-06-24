@@ -50,7 +50,7 @@ export default function SuccessStories() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
         <div className="text-center mb-12 flex flex-col items-center">
           <span className="text-[#C8960C] text-xs font-bold tracking-widest uppercase">Meet Our Brand Ambassadors</span>
-          <h2 className="text-3xl font-bold text-[#1B2A4A] mt-3 mb-4">Voices of Clarity, Courage, and Momentum.</h2>
+          <h2 className="text-3xl font-bold text-[#123c1f] mt-3 mb-4">Voices of Clarity, Courage, and Momentum.</h2>
           <div className="w-16 h-[2px] bg-[#C8960C]"></div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -70,7 +70,7 @@ export default function SuccessStories() {
       <section className="bg-[#FAFAFA] px-4 sm:px-6 lg:px-8 py-16 lg:py-20 relative overflow-hidden">
         <div className="max-w-4xl mx-auto relative z-10">
           <div className="text-center mb-12 flex flex-col items-center">
-            <h2 className="text-3xl font-bold text-[#1B2A4A] mb-3">Greatness Begins with Belief</h2>
+            <h2 className="text-3xl font-bold text-[#123c1f] mb-3">Greatness Begins with Belief</h2>
             <div className="w-16 h-[2px] bg-[#C8960C] mb-6"></div>
             <p className="text-gray-600 text-sm sm:text-base max-w-2xl mx-auto mb-2">Every teen entrepreneur started with a spark — an idea, a dream, and most importantly,<br className="hidden sm:block" /> someone who believed in them.</p>
             <p className="text-[#1A5632] text-sm sm:text-base font-bold">Now, imagine what your child could achieve with that same belief.</p>

@@ -323,7 +323,10 @@ export default function FutureTitans() {
         </div>
       </section>
 
-      <section className="bg-[#051934] px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      <section 
+        className="relative bg-cover bg-center bg-no-repeat px-4 sm:px-6 lg:px-8 py-16 lg:py-24" 
+        style={{ backgroundImage: "url('/leaders-bg.jpg')" }}
+      >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <h2 className="font-roca text-3xl md:text-5xl font-bold tracking-tight"><span className="text-white">What the </span><span className="text-[#C8960C]">leaders</span><span className="text-white"> say</span></h2>

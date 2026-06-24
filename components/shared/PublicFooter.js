@@ -93,7 +93,12 @@ export default function PublicFooter() {
   };
 
   return (
-    <footer className="bg-[#1B2A4A] text-white">
+    <footer 
+      className="relative text-white bg-cover bg-center bg-no-repeat"
+      style={{ 
+        backgroundImage: "url('/new-footer-bg.jpg')" 
+      }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 mb-10">
           {/* Logo + Social */}

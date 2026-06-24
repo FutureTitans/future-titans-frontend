@@ -92,7 +92,7 @@ export default function Team() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Reveal>
             <div className="text-center mb-12">
-              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#1B2A4A] mb-4`}>
+              <h2 className={`${playfair.className} text-3xl sm:text-4xl font-bold text-[#123c1f] mb-4`}>
                 Meet the Minds Behind the Program
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
@@ -123,8 +123,8 @@ export default function Team() {
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="text-center mb-16 flex flex-col items-center">
             <span className="inline-block px-5 py-1.5 border border-[#C8960C]/50 rounded-full text-[#C8960C] text-xs font-bold tracking-widest uppercase mb-6 bg-white shadow-sm">The Engine Room</span>
-            <h2 className="text-4xl lg:text-5xl font-serif font-bold text-[#1B2A4A] mb-4">
-              Meet the <span className="text-[#2B4B8B]">Doers</span>
+            <h2 className="text-4xl lg:text-5xl font-serif font-bold text-[#123c1f] mb-4">
+              Meet the <span className="text-[#123c1f]">Doers</span>
             </h2>
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="w-10 h-px bg-[#C8960C]"></div>

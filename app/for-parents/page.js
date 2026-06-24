@@ -76,7 +76,7 @@ export default function ForParents() {
               </div>
 
               {/* Floating Quote Box */}
-              <div className="absolute -bottom-16 lg:-bottom-20 left-1/2 -translate-x-1/2 bg-[#0E352B] p-6 lg:p-8 rounded-2xl border border-[#C8960C]/40 shadow-2xl w-[90%] sm:w-[450px] max-w-full z-10 rounded-br-[2rem] rounded-tl-[1rem]">
+              <div className="absolute -bottom-16 lg:-bottom-20 left-1/2 -translate-x-1/2 bg-cover bg-center bg-no-repeat p-6 lg:p-8 rounded-2xl border border-[#C8960C]/40 shadow-2xl w-[90%] sm:w-[450px] max-w-full z-10 rounded-br-[2rem] rounded-tl-[1rem]" style={{ backgroundImage: "url('/new-footer-bg.jpg')" }}>
                 <div className="text-[#C8960C] text-5xl font-serif leading-[0] mb-5">“</div>
                 <p className="text-white text-base lg:text-lg font-medium leading-relaxed mb-4">
                   Behind every young child who believes in himself is a parent who believed first..
