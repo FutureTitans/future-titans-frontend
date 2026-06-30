@@ -1,29 +1,19 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
-
-function useIsMobile() {
-    const [mobile, setMobile] = useState(false);
-
-    useEffect(() => {
-        if (typeof navigator === 'undefined') return;
-        const ua = navigator.userAgent;
-        const isIOS = /iPad|iPhone|iPod/.test(ua) || (ua.includes('Mac') && 'ontouchend' in document);
-        const isAndroid = /Android/i.test(ua);
-        const isMobileUA = /Mobile|webOS|Opera Mini/i.test(ua);
-        setMobile(isIOS || isAndroid || isMobileUA);
-    }, []);
-
-    return mobile;
-}
+import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
     const idleRef = useRef(null);
     const talkRef = useRef(null);
-    const mobileRef = useRef(null);
     const [actualIsTalking, setActualIsTalking] = useState(isTalking);
     const [ready, setReady] = useState(false);
+    const [needsBlend, setNeedsBlend] = useState(false);
     const timeoutRef = useRef(null);
-    const isMobile = useIsMobile();
+
+    const detectFormat = useCallback((video) => {
+        if (video?.currentSrc?.endsWith('.mp4')) {
+            setNeedsBlend(true);
+        }
+    }, []);
 
     useEffect(() => {
         if (isTalking) {
@@ -40,10 +30,6 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
     }, [isTalking]);
 
     useEffect(() => {
-        if (isMobile) {
-            mobileRef.current?.play().catch(() => {});
-            return;
-        }
         if (actualIsTalking) {
             talkRef.current?.play().catch(() => {});
             idleRef.current?.pause();
@@ -52,53 +38,40 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
             talkRef.current?.pause();
             if (talkRef.current) talkRef.current.currentTime = 0;
         }
-    }, [actualIsTalking, isMobile]);
+    }, [actualIsTalking]);
 
-    if (isMobile) {
-        return (
-            <div className={`relative flex items-end justify-center overflow-hidden ${className}`} style={{ isolation: 'isolate' }}>
-                <video
-                    ref={mobileRef}
-                    src="/zunnova_mobile.mp4"
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    onCanPlay={() => setReady(true)}
-                    className="w-full h-full object-cover object-bottom pointer-events-none select-none"
-                    style={{ mixBlendMode: 'screen' }}
-                />
-                {!ready && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full animate-pulse">
-                        <span className="text-[10px] text-gray-400 font-medium">syncing...</span>
-                    </div>
-                )}
-            </div>
-        );
-    }
+    const blendStyle = needsBlend ? { mixBlendMode: 'screen' } : undefined;
 
     return (
-        <div className={`relative flex items-end justify-center overflow-hidden ${className}`}>
+        <div
+            className={`relative flex items-end justify-center overflow-hidden ${className}`}
+            style={needsBlend ? { isolation: 'isolate' } : undefined}
+        >
             <video
                 ref={idleRef}
-                src="/idle_animation.webm"
                 autoPlay
                 loop
                 muted
                 playsInline
-                onCanPlay={() => setReady(true)}
+                onCanPlay={(e) => { setReady(true); detectFormat(e.target); }}
                 className="w-full object-cover object-bottom pointer-events-none select-none drop-shadow-md"
-                style={{ display: actualIsTalking ? 'none' : 'block' }}
-            />
+                style={{ display: actualIsTalking ? 'none' : 'block', ...blendStyle }}
+            >
+                <source src="/idle_animation.webm" type="video/webm" />
+                <source src="/zunnova_mobile.mp4" type="video/mp4" />
+            </video>
             <video
                 ref={talkRef}
-                src="/talk_animation.webm"
                 loop
                 muted
                 playsInline
+                onCanPlay={(e) => detectFormat(e.target)}
                 className="w-full object-cover object-bottom pointer-events-none select-none drop-shadow-md"
-                style={{ display: actualIsTalking ? 'block' : 'none' }}
-            />
+                style={{ display: actualIsTalking ? 'block' : 'none', ...blendStyle }}
+            >
+                <source src="/talk_animation.webm" type="video/webm" />
+                <source src="/zunnova_mobile.mp4" type="video/mp4" />
+            </video>
             {!ready && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full animate-pulse">
                     <span className="text-[10px] text-gray-400 font-medium">syncing...</span>
