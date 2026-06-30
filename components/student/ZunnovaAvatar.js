@@ -58,6 +58,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
                 style={{ display: actualIsTalking ? 'none' : 'block', ...blendStyle }}
             >
                 <source src="/idle_animation.webm" type="video/webm" />
+                <source src="/zunnova_idle_ios.mov" type='video/quicktime; codecs="hvc1"' />
                 <source src="/zunnova_mobile.mp4" type="video/mp4" />
             </video>
             <video
@@ -70,6 +71,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
                 style={{ display: actualIsTalking ? 'block' : 'none', ...blendStyle }}
             >
                 <source src="/talk_animation.webm" type="video/webm" />
+                <source src="/zunnova_talk_ios.mov" type='video/quicktime; codecs="hvc1"' />
                 <source src="/zunnova_mobile.mp4" type="video/mp4" />
             </video>
             {!ready && (

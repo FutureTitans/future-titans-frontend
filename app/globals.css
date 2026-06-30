@@ -744,3 +744,13 @@ a:focus-visible {
   font-style: normal;
   font-display: swap;
 }
+
+/* ──── Video Enhancements ──── */
+/* Hide iOS Safari native play button overlay when autoplay is blocked */
+video::-webkit-media-controls {
+    display: none !important;
+}
+video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none;
+}
