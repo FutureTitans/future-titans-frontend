@@ -56,7 +56,7 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
 
     if (isMobile) {
         return (
-            <div className={`relative flex items-end justify-center overflow-hidden ${className}`}>
+            <div className={`relative flex items-end justify-center overflow-hidden ${className}`} style={{ isolation: 'isolate' }}>
                 <video
                     ref={mobileRef}
                     src="/zunnova_mobile.mp4"
@@ -65,7 +65,8 @@ export default function ZunnovaAvatar({ isTalking, className = "w-16 h-16" }) {
                     muted
                     playsInline
                     onCanPlay={() => setReady(true)}
-                    className="w-full h-full object-cover object-bottom pointer-events-none select-none rounded-xl"
+                    className="w-full h-full object-cover object-bottom pointer-events-none select-none"
+                    style={{ mixBlendMode: 'screen' }}
                 />
                 {!ready && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black/5 rounded-full animate-pulse">
