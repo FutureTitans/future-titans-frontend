@@ -85,7 +85,6 @@ module.exports = {
         'scale-in': 'scaleIn 0.3s ease-out',
         'float': 'float 3s ease-in-out infinite',
         'glow': 'glow 2s ease-in-out infinite',
-        'zunnova-talk': 'zunnovaTalk 1s ease-in-out infinite',
       },
       keyframes: {
         fadeIn: {
@@ -111,10 +110,6 @@ module.exports = {
         glow: {
           '0%, 100%': { boxShadow: '0 0 20px rgba(212, 175, 55, 0.30)' },
           '50%': { boxShadow: '0 0 30px rgba(212, 175, 55, 0.50)' },
-        },
-        zunnovaTalk: {
-          '0%, 100%': { transform: 'scale(1)', filter: 'brightness(1)' },
-          '50%': { transform: 'scale(1.03)', filter: 'brightness(1.1)' },
         },
       },
       screens: {
