@@ -681,26 +681,20 @@ export default function InnovationClubPage() {
                 Expert mentors, national challenges, teacher support, and practical venture-building &mdash; all inside one school innovation ecosystem.
               </p>
 
-              {/* CTAs */}
+              {/* CTA */}
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link
-                  href="#explore"
-                  className="inline-flex items-center gap-2 bg-[#1B3A2D] border-2 border-gold text-gold font-bold px-6 py-3 rounded-full text-sm hover:bg-gold hover:text-[#1B3A2D] transition-all duration-200 shadow-gold"
+                  href="/student/innovation-club"
+                  className="inline-flex items-center gap-2 bg-gold text-[#1B3A2D] font-bold px-6 py-3 rounded-full text-sm hover:bg-gold-light transition-all duration-200 shadow-gold"
                 >
-                  Explore the Club
-                </Link>
-                <Link
-                  href="/for-schools"
-                  className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold px-6 py-3 rounded-full text-sm hover:bg-white/10 transition-all duration-200"
-                >
-                  For Schools
+                  Go to Innovation Club
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
 
               {/* Bottom note */}
               <p className="text-white/40 text-xs tracking-wide pt-2">
-                Built for students. Designed with schools.
+                Exclusively for paid members.
               </p>
             </div>
 
@@ -826,25 +820,18 @@ export default function InnovationClubPage() {
           }`}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-display font-bold text-white mb-4 leading-tight">
-            Built for Students.{' '}
-            <span className="text-gold">Designed with Schools.</span>
+            Your Innovation Club.{' '}
+            <span className="text-gold">All in One Place.</span>
           </h2>
           <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-8 max-w-xl mx-auto">
-            Join India&apos;s fastest-growing innovation ecosystem. Expert mentors, national competitions, and a community of young builders &mdash; all in one place.
+            Expert mentors, national competitions, and a community of young builders &mdash; exclusively for paid members.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link
-              href="/signup"
+              href="/student/innovation-club"
               className="inline-flex items-center gap-2 bg-gold text-[#1B3A2D] font-bold px-8 py-3.5 rounded-full text-sm hover:bg-gold-light transition-all duration-200 shadow-gold"
             >
-              Join Innovation Club
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/for-schools"
-              className="inline-flex items-center gap-2 border border-white/20 text-white font-semibold px-8 py-3.5 rounded-full text-sm hover:bg-white/10 transition-all duration-200"
-            >
-              For Schools
+              Go to Innovation Club
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
