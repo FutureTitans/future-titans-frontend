@@ -68,14 +68,14 @@ export default function InnovationClubHub() {
   const fetchStats = async () => {
     try {
       const [sessionsRes, hackathonsRes, resourcesRes] = await Promise.all([
-        innovationClub.getSessions({}).catch(() => ({ sessions: [] })),
-        innovationClub.getHackathons().catch(() => ({ hackathons: [] })),
-        innovationClub.getResourceStats().catch(() => ({ total: 0 })),
+        innovationClub.getSessions({}).catch(() => []),
+        innovationClub.getHackathons().catch(() => []),
+        innovationClub.getResourceStats().catch(() => ({})),
       ]);
       setStats({
-        sessions: sessionsRes?.sessions?.length || sessionsRes?.total || 0,
-        hackathons: hackathonsRes?.hackathons?.length || hackathonsRes?.total || 0,
-        resources: resourcesRes?.total || 0,
+        sessions: Array.isArray(sessionsRes) ? sessionsRes.length : 0,
+        hackathons: Array.isArray(hackathonsRes) ? hackathonsRes.length : 0,
+        resources: resourcesRes?.totalResources || 0,
       });
     } catch (error) {
       console.error('Failed to fetch innovation club stats:', error);

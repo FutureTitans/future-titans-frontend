@@ -113,7 +113,7 @@ export default function TeachersTrainingPage() {
   const fetchCohorts = async () => {
     try {
       const res = await innovationClub.getTrainingCohorts();
-      setCohorts(res?.cohorts || []);
+      setCohorts(Array.isArray(res) ? res : res?.cohorts || []);
     } catch (error) {
       console.error('Failed to fetch training cohorts:', error);
       setCohorts([]);

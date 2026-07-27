@@ -112,7 +112,7 @@ export default function ResourceLibraryPage() {
       if (appliedFilters.sort) params.sort = appliedFilters.sort;
 
       const res = await innovationClub.getResources(params);
-      const resourceList = res?.resources || [];
+      const resourceList = Array.isArray(res) ? res : res?.resources || [];
       setResources(resourceList);
 
       // Track bookmarked resources
@@ -132,7 +132,12 @@ export default function ResourceLibraryPage() {
   const fetchStats = async () => {
     try {
       const res = await innovationClub.getResourceStats();
-      setStats(res);
+      setStats({
+        topResources: res?.mostUsed || [],
+        totalDownloads: res?.totalDownloads || 0,
+        totalResources: res?.totalResources || 0,
+        stageCounts: res?.byStage?.reduce((acc, s) => { acc[s._id] = s.count; return acc; }, {}) || {},
+      });
     } catch (error) {
       console.error('Failed to fetch resource stats:', error);
     }

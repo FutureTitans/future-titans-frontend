@@ -134,7 +134,7 @@ export default function HackathonsPage() {
   const fetchHackathons = async () => {
     try {
       const res = await innovationClub.getHackathons();
-      setHackathons(res?.hackathons || []);
+      setHackathons(Array.isArray(res) ? res : res?.hackathons || []);
     } catch (error) {
       console.error('Failed to fetch hackathons:', error);
       setHackathons([]);

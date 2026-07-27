@@ -81,7 +81,7 @@ export default function ExpertExposurePage() {
       if (appliedFilters.search) params.search = appliedFilters.search;
 
       const res = await innovationClub.getSessions(params);
-      setSessions(res?.sessions || []);
+      setSessions(Array.isArray(res) ? res : res?.sessions || []);
     } catch (error) {
       console.error('Failed to fetch sessions:', error);
       setSessions([]);
