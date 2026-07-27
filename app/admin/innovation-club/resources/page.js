@@ -6,6 +6,7 @@ import {
   Star, ArrowUpDown, Download,
 } from 'lucide-react';
 import { adminIC } from '@/lib/api';
+import { upload } from '@vercel/blob/client';
 
 const RESOURCE_TYPES = ['pdf', 'video', 'article', 'worksheet', 'template', 'toolkit', 'infographic'];
 const RESOURCE_LEVELS = ['beginner', 'intermediate', 'advanced'];
@@ -25,6 +26,8 @@ export default function ResourceLibraryPage() {
   const [form, setForm] = useState(emptyResource);
   const [saving, setSaving] = useState(false);
   const [sortByDownloads, setSortByDownloads] = useState(false);
+  const [resourceFile, setResourceFile] = useState(null);
+  const [coverImageFile, setCoverImageFile] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -43,6 +46,8 @@ export default function ResourceLibraryPage() {
   useEffect(() => { fetchData(); }, []);
 
   const openForm = (resource = null) => {
+    setResourceFile(null);
+    setCoverImageFile(null);
     if (resource) {
       setEditingId(resource._id);
       setForm({
@@ -69,14 +74,34 @@ export default function ResourceLibraryPage() {
     setShowForm(false);
     setEditingId(null);
     setForm(emptyResource);
+    setResourceFile(null);
+    setCoverImageFile(null);
   };
 
   const saveResource = async () => {
     if (!form.title) return;
     setSaving(true);
     try {
+      let fileUrl = form.fileUrl || '';
+      if (resourceFile) {
+        const result = await upload(`resource-file-${Date.now()}-${resourceFile.name}`, resourceFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        fileUrl = result.url;
+      }
+      let coverImage = form.coverImage || '';
+      if (coverImageFile) {
+        const result = await upload(`resource-cover-${Date.now()}-${coverImageFile.name}`, coverImageFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        coverImage = result.url;
+      }
       const payload = {
         ...form,
+        fileUrl,
+        coverImage,
         tags: typeof form.tags === 'string' ? form.tags.split(',').map(t => t.trim()).filter(Boolean) : form.tags,
       };
       if (editingId) {
@@ -179,12 +204,60 @@ export default function ResourceLibraryPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">File URL</label>
-              <input type="url" value={form.fileUrl} onChange={(e) => setForm({ ...form, fileUrl: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="https://..." />
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Resource File</label>
+              {(resourceFile || form.fileUrl) && (
+                <div className="mb-2 flex items-center gap-2">
+                  {resourceFile ? (
+                    <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-lg truncate max-w-[200px]">{resourceFile.name}</span>
+                  ) : (
+                    <a href={form.fileUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-[#D4AF37] underline truncate max-w-[200px]">{form.fileUrl.split('/').pop()}</a>
+                  )}
+                  <button
+                    onClick={() => { setResourceFile(null); setForm({ ...form, fileUrl: '' }); }}
+                    className="w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0"
+                  >x</button>
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,application/pdf,video/mp4,video/webm"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 5 * 1024 * 1024) { alert('File must be under 5 MB'); e.target.value = ''; return; }
+                  setResourceFile(file);
+                }}
+                className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer file:transition-colors"
+              />
+              <p className="text-[10px] text-gray-400 mt-1">PDF, MP4, WebM, JPEG, PNG, WebP. Max 5 MB.</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cover Image URL</label>
-              <input type="url" value={form.coverImage} onChange={(e) => setForm({ ...form, coverImage: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="https://..." />
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Cover Image</label>
+              {(coverImageFile || form.coverImage) && (
+                <div className="mb-2 relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200">
+                  <img
+                    src={coverImageFile ? URL.createObjectURL(coverImageFile) : form.coverImage}
+                    alt="Preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    onClick={() => { setCoverImageFile(null); setForm({ ...form, coverImage: '' }); }}
+                    className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs"
+                  >x</button>
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 5 * 1024 * 1024) { alert('File must be under 5 MB'); e.target.value = ''; return; }
+                  setCoverImageFile(file);
+                }}
+                className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer file:transition-colors"
+              />
+              <p className="text-[10px] text-gray-400 mt-1">JPEG, PNG, WebP. Max 5 MB.</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>

@@ -5,13 +5,14 @@ import {
   Users, Plus, Edit, Trash2, Save, X, AlertCircle, RefreshCw, Calendar, Video,
 } from 'lucide-react';
 import { adminIC } from '@/lib/api';
+import { upload } from '@vercel/blob/client';
 
 const TRACKS = ['ai', 'business', 'design', 'finance'];
 const FORMATS = ['live', 'recorded', 'hybrid'];
 const SESSION_STATUSES = ['scheduled', 'live', 'completed', 'cancelled'];
 
-const emptyExpert = { name: '', credential: '', bio: '', photoUrl: '', track: 'ai' };
-const emptySession = { expert: '', title: '', topic: '', scheduledDate: '', duration: 60, format: 'live', status: 'scheduled', videoUrl: '' };
+const emptyExpert = { name: '', credential: '', bio: '', photo: '', track: 'ai' };
+const emptySession = { expert: '', title: '', topic: '', scheduledDate: '', duration: 60, format: 'live', status: 'scheduled', videoUrl: '', thumbnailUrl: '' };
 
 export default function ExpertsManagerPage() {
   const [experts, setExperts] = useState([]);
@@ -25,6 +26,8 @@ export default function ExpertsManagerPage() {
   const [editingSession, setEditingSession] = useState(null);
   const [sessionForm, setSessionForm] = useState(emptySession);
   const [saving, setSaving] = useState(false);
+  const [expertPhotoFile, setExpertPhotoFile] = useState(null);
+  const [sessionThumbFile, setSessionThumbFile] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -45,9 +48,10 @@ export default function ExpertsManagerPage() {
 
   // Expert CRUD
   const openExpertForm = (expert = null) => {
+    setExpertPhotoFile(null);
     if (expert) {
       setEditingExpert(expert._id);
-      setExpertForm({ name: expert.name, credential: expert.credential, bio: expert.bio || '', photoUrl: expert.photoUrl || '', track: expert.track });
+      setExpertForm({ name: expert.name, credential: expert.credential, bio: expert.bio || '', photo: expert.photo || '', track: expert.track });
     } else {
       setEditingExpert(null);
       setExpertForm(emptyExpert);
@@ -59,16 +63,26 @@ export default function ExpertsManagerPage() {
     setShowExpertForm(false);
     setEditingExpert(null);
     setExpertForm(emptyExpert);
+    setExpertPhotoFile(null);
   };
 
   const saveExpert = async () => {
     if (!expertForm.name || !expertForm.credential) return;
     setSaving(true);
     try {
+      let photo = expertForm.photo || '';
+      if (expertPhotoFile) {
+        const result = await upload(`expert-photo-${Date.now()}-${expertPhotoFile.name}`, expertPhotoFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        photo = result.url;
+      }
+      const payload = { ...expertForm, photo };
       if (editingExpert) {
-        await adminIC.updateExpert(editingExpert, expertForm);
+        await adminIC.updateExpert(editingExpert, payload);
       } else {
-        await adminIC.createExpert(expertForm);
+        await adminIC.createExpert(payload);
       }
       closeExpertForm();
       await fetchData();
@@ -93,6 +107,7 @@ export default function ExpertsManagerPage() {
 
   // Session CRUD
   const openSessionForm = (session = null) => {
+    setSessionThumbFile(null);
     if (session) {
       setEditingSession(session._id);
       setSessionForm({
@@ -104,6 +119,7 @@ export default function ExpertsManagerPage() {
         format: session.format || 'live',
         status: session.status || 'scheduled',
         videoUrl: session.videoUrl || '',
+        thumbnailUrl: session.thumbnailUrl || '',
       });
     } else {
       setEditingSession(null);
@@ -116,16 +132,26 @@ export default function ExpertsManagerPage() {
     setShowSessionForm(false);
     setEditingSession(null);
     setSessionForm(emptySession);
+    setSessionThumbFile(null);
   };
 
   const saveSession = async () => {
     if (!sessionForm.title || !sessionForm.expert) return;
     setSaving(true);
     try {
+      let thumbnailUrl = sessionForm.thumbnailUrl || '';
+      if (sessionThumbFile) {
+        const result = await upload(`session-thumb-${Date.now()}-${sessionThumbFile.name}`, sessionThumbFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        thumbnailUrl = result.url;
+      }
+      const payload = { ...sessionForm, thumbnailUrl };
       if (editingSession) {
-        await adminIC.updateSession(editingSession, sessionForm);
+        await adminIC.updateSession(editingSession, payload);
       } else {
-        await adminIC.createSession(sessionForm);
+        await adminIC.createSession(payload);
       }
       closeSessionForm();
       await fetchData();
@@ -197,8 +223,32 @@ export default function ExpertsManagerPage() {
                 <textarea value={expertForm.bio} onChange={(e) => setExpertForm({ ...expertForm, bio: e.target.value })} rows={3} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="Brief bio..." />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Photo URL</label>
-                <input type="url" value={expertForm.photoUrl} onChange={(e) => setExpertForm({ ...expertForm, photoUrl: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="https://..." />
+                <label className="block text-xs font-medium text-gray-500 mb-1.5">Photo</label>
+                {(expertPhotoFile || expertForm.photo) && (
+                  <div className="mb-2 relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200">
+                    <img
+                      src={expertPhotoFile ? URL.createObjectURL(expertPhotoFile) : expertForm.photo}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => { setExpertPhotoFile(null); setExpertForm({ ...expertForm, photo: '' }); }}
+                      className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs"
+                    >x</button>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (file.size > 5 * 1024 * 1024) { alert('File must be under 5 MB'); e.target.value = ''; return; }
+                    setExpertPhotoFile(file);
+                  }}
+                  className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer file:transition-colors"
+                />
+                <p className="text-[10px] text-gray-400 mt-1">JPEG, PNG, WebP. Max 5 MB.</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Track</label>
@@ -317,6 +367,34 @@ export default function ExpertsManagerPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Video URL</label>
                 <input type="url" value={sessionForm.videoUrl} onChange={(e) => setSessionForm({ ...sessionForm, videoUrl: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="https://..." />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1.5">Thumbnail</label>
+                {(sessionThumbFile || sessionForm.thumbnailUrl) && (
+                  <div className="mb-2 relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200">
+                    <img
+                      src={sessionThumbFile ? URL.createObjectURL(sessionThumbFile) : sessionForm.thumbnailUrl}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={() => { setSessionThumbFile(null); setSessionForm({ ...sessionForm, thumbnailUrl: '' }); }}
+                      className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs"
+                    >x</button>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    if (file.size > 5 * 1024 * 1024) { alert('File must be under 5 MB'); e.target.value = ''; return; }
+                    setSessionThumbFile(file);
+                  }}
+                  className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer file:transition-colors"
+                />
+                <p className="text-[10px] text-gray-400 mt-1">JPEG, PNG, WebP. Max 5 MB.</p>
               </div>
             </div>
             <div className="flex justify-end gap-3 mt-5">

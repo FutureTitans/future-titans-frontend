@@ -115,6 +115,11 @@ export default function HackathonsPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [hackathons, setHackathons] = useState([]);
+  const [registerModal, setRegisterModal] = useState(null);
+  const [registerForm, setRegisterForm] = useState({ teamName: '', members: '' });
+  const [registering, setRegistering] = useState(false);
+  const [registerSuccess, setRegisterSuccess] = useState(false);
+  const [registerError, setRegisterError] = useState(null);
 
   useEffect(() => {
     const currentUser = getUser();
@@ -136,6 +141,37 @@ export default function HackathonsPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRegisterTeam = async (hackathonId) => {
+    if (!registerForm.teamName.trim()) return;
+    setRegistering(true);
+    setRegisterError(null);
+    try {
+      const membersArray = registerForm.members
+        .split(',')
+        .map((m) => m.trim())
+        .filter(Boolean);
+      await innovationClub.registerTeam(hackathonId, {
+        teamName: registerForm.teamName.trim(),
+        members: membersArray,
+      });
+      setRegisterSuccess(true);
+      setRegisterForm({ teamName: '', members: '' });
+      fetchHackathons();
+    } catch (error) {
+      console.error('Failed to register team:', error);
+      setRegisterError(error?.response?.data?.message || 'Registration failed. Please try again.');
+    } finally {
+      setRegistering(false);
+    }
+  };
+
+  const closeRegisterModal = () => {
+    setRegisterModal(null);
+    setRegisterForm({ teamName: '', members: '' });
+    setRegisterSuccess(false);
+    setRegisterError(null);
   };
 
   if (loading) {
@@ -281,14 +317,24 @@ export default function HackathonsPage() {
 
               {/* Actions */}
               <div className="flex flex-wrap gap-3">
-                <button className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl font-semibold text-sm hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all">
+                <button
+                  onClick={() => setRegisterModal(featured._id || featured.id)}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl font-semibold text-sm hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all"
+                >
                   <UserPlus className="w-4 h-4" />
                   Register Team
                 </button>
-                <button className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 border border-gray-200 text-gray-700 rounded-2xl font-medium text-sm hover:bg-gray-50 transition-all">
-                  <FileText className="w-4 h-4" />
-                  View Rulebook
-                </button>
+                {featured.rulebookUrl && (
+                  <a
+                    href={featured.rulebookUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white/80 border border-gray-200 text-gray-700 rounded-2xl font-medium text-sm hover:bg-gray-50 transition-all"
+                  >
+                    <FileText className="w-4 h-4" />
+                    View Rulebook
+                  </a>
+                )}
               </div>
             </div>
           </div>
@@ -328,9 +374,12 @@ export default function HackathonsPage() {
                   )}
                 </div>
                 <div className="mt-auto pt-2">
-                  <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all">
-                    View Details
-                    <ArrowRight className="w-4 h-4" />
+                  <button
+                    onClick={() => setRegisterModal(h._id || h.id)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all"
+                  >
+                    Register Team
+                    <UserPlus className="w-4 h-4" />
                   </button>
                 </div>
               </div>
@@ -391,6 +440,101 @@ export default function HackathonsPage() {
           </div>
         )}
       </div>
+
+      {/* Registration Modal */}
+      {registerModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={closeRegisterModal} />
+          <div className="relative glass-panel p-6 sm:p-8 max-w-md w-full shadow-2xl">
+            {registerSuccess ? (
+              <div className="text-center py-4">
+                <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-green-100 flex items-center justify-center">
+                  <CheckCircle2 className="w-7 h-7 text-green-600" />
+                </div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Team Registered</h3>
+                <p className="text-sm text-gray-600 mb-6">Your team has been successfully registered for this hackathon.</p>
+                <button
+                  onClick={closeRegisterModal}
+                  className="px-6 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg transition-all"
+                >
+                  Done
+                </button>
+              </div>
+            ) : (
+              <>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">Register Your Team</h3>
+                <p className="text-sm text-gray-500 mb-5">Enter your team details to join this hackathon.</p>
+
+                {registerError && (
+                  <div className="p-3 mb-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                    {registerError}
+                  </div>
+                )}
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleRegisterTeam(registerModal);
+                  }}
+                  className="space-y-4"
+                >
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1.5">
+                      Team Name
+                    </label>
+                    <input
+                      type="text"
+                      value={registerForm.teamName}
+                      onChange={(e) => setRegisterForm({ ...registerForm, teamName: e.target.value })}
+                      placeholder="Enter your team name"
+                      className="w-full px-4 py-3 bg-white/60 border border-white/40 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/50 transition-all"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1.5">
+                      Team Members
+                    </label>
+                    <input
+                      type="text"
+                      value={registerForm.members}
+                      onChange={(e) => setRegisterForm({ ...registerForm, members: e.target.value })}
+                      placeholder="Member names, separated by commas"
+                      className="w-full px-4 py-3 bg-white/60 border border-white/40 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/50 transition-all"
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={closeRegisterModal}
+                      className="flex-1 px-4 py-3 bg-white/80 border border-gray-200 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-50 transition-all"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={registering}
+                      className="flex-1 px-4 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {registering ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          Registering...
+                        </>
+                      ) : (
+                        <>
+                          <UserPlus className="w-4 h-4" />
+                          Register
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

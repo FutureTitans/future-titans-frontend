@@ -14,60 +14,8 @@ import {
   Lock,
   Crown,
   CheckCircle2,
-  Clock,
-  AlertCircle,
   FileDown,
 } from 'lucide-react';
-
-const SAMPLE_EXPORTS = [
-  {
-    id: 1,
-    name: 'Cohort A -- Phase 1',
-    date: 'Jul 12, 2026',
-    format: 'PDF',
-    status: 'Ready',
-  },
-  {
-    id: 2,
-    name: 'Ananya S. -- Full history',
-    date: 'Jul 8, 2026',
-    format: 'CSV',
-    status: 'Ready',
-  },
-  {
-    id: 3,
-    name: 'Cohort B -- Phase 2',
-    date: 'Jul 5, 2026',
-    format: 'PDF',
-    status: 'Failed',
-  },
-];
-
-function StatusBadge({ status }) {
-  const config = {
-    Ready: {
-      bg: 'bg-green-50 text-green-700',
-      icon: CheckCircle2,
-    },
-    Processing: {
-      bg: 'bg-amber-50 text-amber-700',
-      icon: Clock,
-    },
-    Failed: {
-      bg: 'bg-red-50 text-red-700',
-      icon: AlertCircle,
-    },
-  };
-
-  const { bg, icon: Icon } = config[status] || config.Processing;
-
-  return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${bg}`}>
-      <Icon className="w-3 h-3" />
-      {status}
-    </span>
-  );
-}
 
 export default function ZunnovaExportPage() {
   const router = useRouter();
@@ -279,94 +227,12 @@ export default function ZunnovaExportPage() {
         <div className="glass-panel p-6 sm:p-8">
           <h2 className="text-lg font-semibold text-gray-900 mb-5">Export History</h2>
 
-          {/* Desktop Table */}
-          <div className="hidden sm:block overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200/60">
-                  <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-3 pr-4">
-                    Name
-                  </th>
-                  <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-3 pr-4">
-                    Date
-                  </th>
-                  <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-3 pr-4">
-                    Format
-                  </th>
-                  <th className="text-left text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-3 pr-4">
-                    Status
-                  </th>
-                  <th className="text-right text-[10px] uppercase tracking-wider text-gray-500 font-semibold pb-3">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100/60">
-                {SAMPLE_EXPORTS.map((exp) => (
-                  <tr key={exp.id} className="group">
-                    <td className="py-4 pr-4">
-                      <p className="text-sm font-medium text-gray-900">{exp.name}</p>
-                    </td>
-                    <td className="py-4 pr-4">
-                      <p className="text-sm text-gray-600">{exp.date}</p>
-                    </td>
-                    <td className="py-4 pr-4">
-                      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-gray-100 text-gray-600">
-                        <FileText className="w-3 h-3" />
-                        {exp.format}
-                      </span>
-                    </td>
-                    <td className="py-4 pr-4">
-                      <StatusBadge status={exp.status} />
-                    </td>
-                    <td className="py-4 text-right">
-                      {exp.status === 'Ready' ? (
-                        <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-lg text-xs font-semibold hover:shadow-md hover:shadow-[#D4AF37]/20 transition-all">
-                          <Download className="w-3.5 h-3.5" />
-                          Download
-                        </button>
-                      ) : exp.status === 'Failed' ? (
-                        <button className="inline-flex items-center gap-1.5 px-4 py-2 bg-white/80 border border-gray-200 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-50 transition-all">
-                          Retry
-                        </button>
-                      ) : (
-                        <span className="text-xs text-gray-400">Processing...</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Mobile Cards */}
-          <div className="sm:hidden space-y-3">
-            {SAMPLE_EXPORTS.map((exp) => (
-              <div key={exp.id} className="p-4 bg-white/50 border border-white/30 rounded-xl">
-                <div className="flex items-start justify-between mb-2">
-                  <p className="text-sm font-medium text-gray-900">{exp.name}</p>
-                  <StatusBadge status={exp.status} />
-                </div>
-                <div className="flex items-center gap-3 text-xs text-gray-500 mb-3">
-                  <span>{exp.date}</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-semibold uppercase tracking-wider text-[10px]">
-                    {exp.format}
-                  </span>
-                </div>
-                {exp.status === 'Ready' ? (
-                  <button className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-lg text-xs font-semibold hover:shadow-md transition-all">
-                    <Download className="w-3.5 h-3.5" />
-                    Download
-                  </button>
-                ) : exp.status === 'Failed' ? (
-                  <button className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 bg-white/80 border border-gray-200 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-50 transition-all">
-                    Retry
-                  </button>
-                ) : (
-                  <p className="text-center text-xs text-gray-400 py-2">Processing...</p>
-                )}
-              </div>
-            ))}
+          <div className="py-8 text-center">
+            <FileText className="w-10 h-10 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-base font-medium text-gray-700 mb-2">No Exports Yet</h3>
+            <p className="text-sm text-gray-500 max-w-sm mx-auto">
+              Use the form above to generate your first export. Completed exports will appear here for download.
+            </p>
           </div>
         </div>
       </div>

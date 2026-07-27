@@ -96,6 +96,9 @@ export default function TeachersTrainingPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cohorts, setCohorts] = useState([]);
+  const [reservingId, setReservingId] = useState(null);
+  const [reserveSuccess, setReserveSuccess] = useState(null);
+  const [reserveError, setReserveError] = useState(null);
 
   useEffect(() => {
     const currentUser = getUser();
@@ -116,6 +119,24 @@ export default function TeachersTrainingPage() {
       setCohorts([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReserveSeat = async (cohortId) => {
+    setReservingId(cohortId);
+    setReserveError(null);
+    setReserveSuccess(null);
+    try {
+      await innovationClub.reserveSeat(cohortId);
+      setReserveSuccess(cohortId);
+      fetchCohorts();
+      setTimeout(() => setReserveSuccess(null), 4000);
+    } catch (error) {
+      console.error('Failed to reserve seat:', error);
+      setReserveError(error?.response?.data?.message || 'Failed to reserve seat. Please try again.');
+      setTimeout(() => setReserveError(null), 4000);
+    } finally {
+      setReservingId(null);
     }
   };
 
@@ -152,6 +173,16 @@ export default function TeachersTrainingPage() {
         <div className="absolute top-0 -left-[10%] w-[50%] h-[50%] bg-white/60 rounded-full blur-[100px]" />
         <div className="absolute -bottom-[10%] -right-[10%] w-[60%] h-[60%] bg-[#D4AF37]/10 rounded-full blur-[100px]" />
       </div>
+
+      {/* Reserve Error Toast */}
+      {reserveError && (
+        <div className="fixed top-6 right-6 z-50">
+          <div className="glass-panel p-4 flex items-center gap-3 shadow-xl border border-red-200 bg-red-50/90 max-w-sm">
+            <p className="text-sm text-red-700">{reserveError}</p>
+            <button onClick={() => setReserveError(null)} className="text-red-400 hover:text-red-600 ml-auto text-lg leading-none">x</button>
+          </div>
+        </div>
+      )}
 
       <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 md:px-8 xl:px-12 py-6 sm:py-8 relative z-10">
         {/* Back + Header */}
@@ -236,10 +267,32 @@ export default function TeachersTrainingPage() {
                     </div>
 
                     <div className="mt-auto pt-2">
-                      <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all">
-                        Reserve a Seat
-                        <ArrowRight className="w-4 h-4" />
-                      </button>
+                      {reserveSuccess === (cohort._id || cohort.id) ? (
+                        <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-semibold">
+                          <CheckCircle2 className="w-4 h-4" />
+                          Seat Reserved
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleReserveSeat(cohort._id || cohort.id)}
+                          disabled={reservingId === (cohort._id || cohort.id) || seatsLeft <= 0}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {reservingId === (cohort._id || cohort.id) ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Reserving...
+                            </>
+                          ) : seatsLeft <= 0 ? (
+                            'Fully Booked'
+                          ) : (
+                            <>
+                              Reserve a Seat
+                              <ArrowRight className="w-4 h-4" />
+                            </>
+                          )}
+                        </button>
+                      )}
                     </div>
                   </div>
                 );

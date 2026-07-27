@@ -6,6 +6,7 @@ import {
   ChevronDown, ChevronUp, Users,
 } from 'lucide-react';
 import { adminIC } from '@/lib/api';
+import { upload } from '@vercel/blob/client';
 
 const FORMATS = ['online', 'offline', 'hybrid'];
 
@@ -31,6 +32,7 @@ export default function TrainingManagerPage() {
   const [form, setForm] = useState(emptyCohort);
   const [saving, setSaving] = useState(false);
   const [expandedCohort, setExpandedCohort] = useState(null);
+  const [certificateFile, setCertificateFile] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -49,6 +51,7 @@ export default function TrainingManagerPage() {
   useEffect(() => { fetchData(); }, []);
 
   const openForm = (cohort = null) => {
+    setCertificateFile(null);
     if (cohort) {
       setEditingId(cohort._id);
       const modules = cohort.modules && cohort.modules.length > 0
@@ -74,6 +77,7 @@ export default function TrainingManagerPage() {
     setShowForm(false);
     setEditingId(null);
     setForm(JSON.parse(JSON.stringify(emptyCohort)));
+    setCertificateFile(null);
   };
 
   const updateModule = (idx, field, value) => {
@@ -86,10 +90,19 @@ export default function TrainingManagerPage() {
     if (!form.startDate || !form.endDate) return;
     setSaving(true);
     try {
+      let certificateTemplate = form.certificateTemplate || '';
+      if (certificateFile) {
+        const result = await upload(`certificate-template-${Date.now()}-${certificateFile.name}`, certificateFile, {
+          access: 'public',
+          handleUploadUrl: '/api/upload',
+        });
+        certificateTemplate = result.url;
+      }
+      const payload = { ...form, certificateTemplate };
       if (editingId) {
-        await adminIC.updateCohort(editingId, form);
+        await adminIC.updateCohort(editingId, payload);
       } else {
-        await adminIC.createCohort(form);
+        await adminIC.createCohort(payload);
       }
       closeForm();
       await fetchData();
@@ -175,8 +188,36 @@ export default function TrainingManagerPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Certificate Template URL</label>
-              <input type="url" value={form.certificateTemplate} onChange={(e) => setForm({ ...form, certificateTemplate: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="https://..." />
+              <label className="block text-xs font-medium text-gray-500 mb-1.5">Certificate Template</label>
+              {(certificateFile || form.certificateTemplate) && (
+                <div className="mb-2 flex items-center gap-2">
+                  {certificateFile ? (
+                    <span className="text-xs text-gray-600 bg-gray-100 px-2 py-1 rounded-lg truncate max-w-[200px]">{certificateFile.name}</span>
+                  ) : form.certificateTemplate.match(/\.(jpe?g|png|webp)$/i) ? (
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200">
+                      <img src={form.certificateTemplate} alt="Preview" className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <a href={form.certificateTemplate} target="_blank" rel="noopener noreferrer" className="text-xs text-[#D4AF37] underline truncate max-w-[200px]">{form.certificateTemplate.split('/').pop()}</a>
+                  )}
+                  <button
+                    onClick={() => { setCertificateFile(null); setForm({ ...form, certificateTemplate: '' }); }}
+                    className="w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs flex-shrink-0"
+                  >x</button>
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (!file) return;
+                  if (file.size > 5 * 1024 * 1024) { alert('File must be under 5 MB'); e.target.value = ''; return; }
+                  setCertificateFile(file);
+                }}
+                className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer file:transition-colors"
+              />
+              <p className="text-[10px] text-gray-400 mt-1">JPEG, PNG, WebP, PDF. Max 5 MB.</p>
             </div>
             <div className="flex items-center gap-3 pt-6">
               <label className="relative inline-flex items-center cursor-pointer">
