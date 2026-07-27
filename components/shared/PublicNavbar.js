@@ -10,6 +10,7 @@ import { auth } from '@/lib/api';
 
 const NAV_LINKS = [
   { label: 'Future Titans', href: '/future-titans' },
+  { label: 'Innovation Club', href: '/innovation-club' },
   { label: 'For Parents', href: '/for-parents' },
   { label: 'For Schools', href: '/for-schools' },
   { label: 'Success Stories', href: '/success-stories' },
