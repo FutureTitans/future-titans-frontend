@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { auth } from '@/lib/api';
-import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield, Newspaper } from 'lucide-react';
+import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield, Newspaper, Lightbulb } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Navbar() {
@@ -124,6 +124,9 @@ export default function Navbar() {
                       <NavLink href="/student/modules" active={isActive('/student/modules')} icon={<BookOpen className="w-4 h-4" />}>
                         Modules
                       </NavLink>
+                      <NavLink href="/student/innovation-club" active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-4 h-4" />}>
+                        Innovation Club
+                      </NavLink>
                     </>
                   )}
                   {isAdmin() && (
@@ -224,6 +227,9 @@ export default function Navbar() {
                       </MobileNavLink>
                       <MobileNavLink href="/student/modules" onClick={closeMobileMenu} active={isActive('/student/modules')} icon={<BookOpen className="w-5 h-5" />}>
                         Modules
+                      </MobileNavLink>
+                      <MobileNavLink href="/student/innovation-club" onClick={closeMobileMenu} active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-5 h-5" />}>
+                        Innovation Club
                       </MobileNavLink>
                       <MobileNavLink href="/student/profile" onClick={closeMobileMenu} active={isActive('/student/profile')} icon={<User className="w-5 h-5" />}>
                         Profile
