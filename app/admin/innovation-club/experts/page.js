@@ -425,6 +425,7 @@ export default function ExpertsManagerPage() {
                     <th className="px-6 py-4">Date</th>
                     <th className="px-6 py-4">Format</th>
                     <th className="px-6 py-4">Status</th>
+                    <th className="px-6 py-4">Attendees</th>
                     <th className="px-6 py-4 text-right">Actions</th>
                   </tr>
                 </thead>
@@ -441,6 +442,7 @@ export default function ExpertsManagerPage() {
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${statusColors[session.status] || 'bg-gray-100 text-gray-800'}`}>{session.status}</span>
                         </td>
+                        <td className="px-6 py-4">{session.attendees?.length || 0}</td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <button onClick={() => openSessionForm(session)} className="p-1.5 text-gray-400 hover:text-[#D4AF37] transition" title="Edit"><Edit className="w-4 h-4" /></button>

@@ -78,10 +78,16 @@ function StatusBadge({ status }) {
 }
 
 function ExpertPhoto({ photo, name, className }) {
+  const [failed, setFailed] = useState(false);
   return (
     <div className={`bg-gradient-to-br from-[#123524]/10 to-[#D4AF37]/10 flex items-center justify-center overflow-hidden ${className}`}>
-      {photo ? (
-        <img src={photo} alt={name || 'Expert'} className="w-full h-full object-cover" />
+      {photo && !failed ? (
+        <img
+          src={photo}
+          alt={name || 'Expert'}
+          className="w-full h-full object-cover"
+          onError={() => setFailed(true)}
+        />
       ) : (
         <User className="w-10 h-10 text-[#123524]/30" />
       )}
@@ -113,6 +119,23 @@ export default function ExpertExposurePage() {
   const [requestForm, setRequestForm] = useState({ schoolName: '', email: '', topic: '' });
   const [submitting, setSubmitting] = useState(false);
   const [requestSent, setRequestSent] = useState(false);
+  const [reservingId, setReservingId] = useState(null);
+
+  const handleReserveSeat = async (session) => {
+    const id = session._id || session.id;
+    setReservingId(id);
+    try {
+      await innovationClub.reserveSessionSeat(id);
+      setSessions((prev) =>
+        prev.map((s) => ((s._id || s.id) === id ? { ...s, isReserved: true, attendeeCount: (s.attendeeCount || 0) + 1 } : s))
+      );
+    } catch (error) {
+      console.error('Failed to reserve seat:', error);
+      alert(error?.error || error?.message || 'Failed to save your seat. Please try again.');
+    } finally {
+      setReservingId(null);
+    }
+  };
 
   useEffect(() => {
     const currentUser = getUser();
@@ -248,9 +271,22 @@ export default function ExpertExposurePage() {
         </button>
       );
     }
+    if (session.isReserved) {
+      return (
+        <div className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-green-50 border border-green-200 text-green-700 rounded-xl text-sm font-semibold">
+          <ShieldCheck className="w-4 h-4" />
+          Seat Saved
+        </div>
+      );
+    }
+    const id = session._id || session.id;
     return (
-      <button className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#123524] text-white rounded-xl text-sm font-semibold hover:bg-[#1B4A32] transition-all">
-        {s === 'upcoming' ? 'Reserve Seat' : 'Save Your Seat'}
+      <button
+        onClick={() => handleReserveSeat(session)}
+        disabled={reservingId === id}
+        className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-[#123524] text-white rounded-xl text-sm font-semibold hover:bg-[#1B4A32] transition-all disabled:opacity-50"
+      >
+        {reservingId === id ? 'Saving...' : s === 'upcoming' ? 'Reserve Seat' : 'Save Your Seat'}
         <ArrowRight className="w-4 h-4" />
       </button>
     );
