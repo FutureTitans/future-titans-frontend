@@ -584,6 +584,33 @@ export default function HackathonsPage() {
                     </span>
                   )}
                 </div>
+                {/* Winners inline once results are out */}
+                {['results_out', 'completed'].includes(h.status?.toLowerCase()) && h.winners?.length > 0 && (
+                  <div className="mb-5 pt-4 border-t border-gray-100">
+                    <p className="text-[10px] uppercase tracking-wider text-[#B8952E] font-bold mb-2.5">Winners</p>
+                    <div className="space-y-2">
+                      {h.winners.slice(0, 3).map((w, i) => {
+                        const badge = BADGE_STYLES[w.badge] || BADGE_STYLES.spotlight;
+                        return (
+                          <div key={w._id || i} className="flex items-center gap-2.5">
+                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${
+                              i === 0 ? 'bg-[#D4AF37] text-white' : i === 1 ? 'bg-gray-300 text-gray-700' : 'bg-amber-700 text-white'
+                            }`}>
+                              {w.rank || i + 1}
+                            </span>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-bold text-[#123524] truncate">{w.teamName}</p>
+                              <p className="text-[10px] text-gray-500 truncate">{w.school}</p>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider flex-shrink-0 ${badge.chip}`}>
+                              {badge.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
                 <div className="mt-auto">{ctaFor(h)}</div>
               </div>
             ))}
