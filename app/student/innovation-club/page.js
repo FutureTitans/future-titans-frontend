@@ -10,7 +10,6 @@ import {
   Lightbulb,
   Users,
   Trophy,
-  GraduationCap,
   BookOpen,
   ArrowRight,
   Zap,
@@ -32,13 +31,6 @@ const sections = [
     href: '/student/innovation-club/hackathons',
     icon: Trophy,
     gradient: 'from-[#1B3A2D]/5 to-[#D4AF37]/5',
-  },
-  {
-    title: "Teachers' Training",
-    description: 'Cohort-based programs designed to empower educators with innovation facilitation skills.',
-    href: '/student/innovation-club/teachers',
-    icon: GraduationCap,
-    gradient: 'from-[#D4AF37]/5 to-[#1B3A2D]/5',
   },
   {
     title: 'Resource Library',
@@ -97,7 +89,7 @@ export default function InnovationClubHub() {
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-3">Unlock Innovation Club</h2>
           <p className="text-gray-600 text-sm leading-relaxed mb-8">
-            The Innovation Club is available exclusively to paid members. Upgrade your account to access expert sessions, hackathons, training programs, and a curated resource library.
+            The Innovation Club is available exclusively to paid members. Upgrade your account to access expert sessions, hackathons, and a curated resource library.
           </p>
           <Link
             href="/student/dashboard"
@@ -134,7 +126,7 @@ export default function InnovationClubHub() {
             </div>
           </div>
           <p className="text-gray-600 text-sm mt-3 max-w-2xl leading-relaxed">
-            Your gateway to expert mentorship, competitive hackathons, educator training, and a curated resource library built for the next generation of innovators.
+            Your gateway to expert mentorship, competitive hackathons, and a curated resource library built for the next generation of innovators.
           </p>
         </div>
 
