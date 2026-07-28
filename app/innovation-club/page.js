@@ -2,230 +2,44 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import PublicNavbar from '@/components/shared/PublicNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 import {
   ArrowRight,
-  Play,
+  ArrowLeft,
   Users,
   Award,
-  Lightbulb,
   BookOpen,
   Trophy,
-  Clock,
   Calendar,
-  Search,
-  Filter,
   Download,
   Star,
-  Zap,
   Target,
   Rocket,
   GraduationCap,
-  Video,
-  FileText,
   ChevronRight,
-  Radio,
-  Eye,
-  MapPin,
-  Timer,
-  CheckCircle,
-  School,
+  ChevronLeft,
   Sparkles,
   BarChart3,
   TrendingUp,
   Mic,
+  Monitor,
+  Code,
+  Briefcase,
+  Palette,
+  Brain,
+  DollarSign,
+  FileText,
+  Wrench,
+  PenTool,
+  Globe,
+  Cpu,
+  CircleDot,
 } from 'lucide-react';
 
 /* ------------------------------------------------------------------ */
-/*  STATIC DATA                                                        */
-/* ------------------------------------------------------------------ */
-
-const STATS = [
-  { value: '340+', label: 'Schools Enrolled', icon: School },
-  { value: '58', label: 'Experts', icon: Users },
-  { value: '26', label: 'Hackathons Hosted', icon: Trophy },
-  { value: '1,200+', label: 'Innovations Exported', icon: Rocket },
-];
-
-const TABS = [
-  { id: 'experts', label: 'Expert Exposure' },
-  { id: 'hackathons', label: 'Hackathons' },
-  { id: 'teachers', label: 'Teachers' },
-  { id: 'resources', label: 'Resource Library' },
-];
-
-const EXPERT_SESSIONS = [
-  {
-    id: 1,
-    expert: 'Aarav Mehta',
-    credential: 'Co-Founder, TechNova Labs',
-    topic: 'From Classroom to Cap Table: Pitching Your First Venture',
-    viewers: 342,
-    duration: '45 min',
-    live: true,
-    avatar: 'AM',
-  },
-  {
-    id: 2,
-    expert: 'Priya Shankar',
-    credential: 'Director of Innovation, EduStar India',
-    topic: 'Design Thinking for Teen Entrepreneurs',
-    viewers: 128,
-    duration: '35 min',
-    live: false,
-    recorded: true,
-    avatar: 'PS',
-  },
-  {
-    id: 3,
-    expert: 'Rohan Kapoor',
-    credential: 'Angel Investor & Mentor',
-    topic: 'How to Validate Your Startup Idea in 72 Hours',
-    viewers: 89,
-    duration: '40 min',
-    live: false,
-    recorded: true,
-    avatar: 'RK',
-  },
-  {
-    id: 4,
-    expert: 'Dr. Neha Joshi',
-    credential: 'Professor, IIM Ahmedabad',
-    topic: 'Building a Business Model Canvas Step by Step',
-    viewers: 215,
-    duration: '50 min',
-    live: false,
-    upcoming: true,
-    date: 'Aug 2, 2026',
-    avatar: 'NJ',
-  },
-];
-
-const HACKATHONS = [
-  {
-    id: 1,
-    title: 'National Innovation Sprint 2026',
-    theme: 'Sustainable Cities & Communities',
-    registrationOpen: true,
-    prize: '5,00,000',
-    participants: 1200,
-    deadline: '2026-08-15',
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'HealthTech Challenge',
-    theme: 'AI for Rural Healthcare',
-    registrationOpen: true,
-    prize: '2,50,000',
-    participants: 480,
-    deadline: '2026-09-01',
-  },
-  {
-    id: 3,
-    title: 'EduHack 2026',
-    theme: 'Reinventing Learning Experiences',
-    registrationOpen: false,
-    prize: '3,00,000',
-    participants: 760,
-    deadline: '2026-07-30',
-  },
-  {
-    id: 4,
-    title: 'Green Ventures Hackathon',
-    theme: 'Climate Action & Clean Energy',
-    registrationOpen: true,
-    prize: '2,00,000',
-    participants: 320,
-    deadline: '2026-10-05',
-  },
-];
-
-const JOURNEY_STEPS = [
-  { step: 1, title: 'Register', desc: 'Sign up your team and pick a challenge track.' },
-  { step: 2, title: 'Ideate', desc: 'Brainstorm and validate your concept with mentors.' },
-  { step: 3, title: 'Build', desc: 'Prototype your solution over the sprint window.' },
-  { step: 4, title: 'Pitch', desc: 'Present to expert judges at the National Finals.' },
-];
-
-const TEACHER_FEATURES = [
-  'Cohort-Based',
-  '4-Week Program',
-  'Live + Recorded',
-  'Certificate of Completion',
-];
-
-const TEACHER_COHORTS = [
-  {
-    id: 1,
-    title: 'Innovation Mentorship Cohort 8',
-    starts: 'Aug 12, 2026',
-    seatsLeft: 14,
-    totalSeats: 40,
-    modules: 12,
-  },
-  {
-    id: 2,
-    title: 'Design Thinking for Educators',
-    starts: 'Sep 5, 2026',
-    seatsLeft: 28,
-    totalSeats: 40,
-    modules: 8,
-  },
-  {
-    id: 3,
-    title: 'STEM Innovation Leadership',
-    starts: 'Oct 1, 2026',
-    seatsLeft: 36,
-    totalSeats: 40,
-    modules: 10,
-  },
-];
-
-const RESOURCES = [
-  {
-    id: 1,
-    title: 'Business Model Canvas Template',
-    type: 'Template',
-    category: 'Strategy',
-    downloads: 2340,
-    featured: true,
-  },
-  {
-    id: 2,
-    title: 'Pitch Deck Masterclass',
-    type: 'Video',
-    category: 'Pitching',
-    downloads: 1890,
-  },
-  {
-    id: 3,
-    title: 'Market Research Toolkit',
-    type: 'Guide',
-    category: 'Research',
-    downloads: 1560,
-  },
-  {
-    id: 4,
-    title: 'Financial Modeling for Beginners',
-    type: 'Workbook',
-    category: 'Finance',
-    downloads: 980,
-  },
-  {
-    id: 5,
-    title: 'Customer Discovery Playbook',
-    type: 'Guide',
-    category: 'Strategy',
-    downloads: 1320,
-  },
-];
-
-const RESOURCE_CATEGORIES = ['All', 'Strategy', 'Pitching', 'Research', 'Finance'];
-
-/* ------------------------------------------------------------------ */
-/*  HELPERS                                                            */
+/*  SCROLL REVEAL HOOK                                                 */
 /* ------------------------------------------------------------------ */
 
 function useScrollReveal() {
@@ -237,7 +51,7 @@ function useScrollReveal() {
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setVisible(true); },
-      { threshold: 0.15 }
+      { threshold: 0.1 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -246,561 +60,527 @@ function useScrollReveal() {
   return [ref, visible];
 }
 
-function CountdownTimer({ deadline }) {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0 });
-
-  useEffect(() => {
-    function calc() {
-      const diff = new Date(deadline) - new Date();
-      if (diff <= 0) return { days: 0, hours: 0, mins: 0 };
-      return {
-        days: Math.floor(diff / 86400000),
-        hours: Math.floor((diff % 86400000) / 3600000),
-        mins: Math.floor((diff % 3600000) / 60000),
-      };
-    }
-    setTimeLeft(calc());
-    const id = setInterval(() => setTimeLeft(calc()), 60000);
-    return () => clearInterval(id);
-  }, [deadline]);
-
-  return (
-    <div className="flex gap-3">
-      {[
-        { v: timeLeft.days, l: 'Days' },
-        { v: timeLeft.hours, l: 'Hrs' },
-        { v: timeLeft.mins, l: 'Min' },
-      ].map((t) => (
-        <div key={t.l} className="text-center">
-          <div className="bg-white/10 backdrop-blur-sm rounded-lg px-3 py-1.5 text-white font-bold text-lg min-w-[44px]">
-            {String(t.v).padStart(2, '0')}
-          </div>
-          <span className="text-white/60 text-[10px] uppercase tracking-wider mt-1 block">{t.l}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 /* ------------------------------------------------------------------ */
-/*  TAB CONTENT PANELS                                                 */
+/*  STATIC DATA                                                        */
 /* ------------------------------------------------------------------ */
 
-function ExpertExposurePanel() {
-  const featured = EXPERT_SESSIONS[0];
-  const rest = EXPERT_SESSIONS.slice(1);
+const STATS = [
+  { value: '1200+', label: 'Innovations Exported' },
+  { value: '26+', label: 'Hackathons Hosted' },
+  { value: '58+', label: 'Industry Experts' },
+  { value: '5000+', label: 'Students Impacted' },
+];
 
-  return (
-    <div className="grid lg:grid-cols-3 gap-6">
-      {/* Featured Session */}
-      <div className="lg:col-span-2">
-        <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#1B3A2D] to-[#0F2218] p-6 sm:p-8 h-full">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
-          <div className="relative z-10">
-            <div className="flex items-center gap-2 mb-4">
-              <span className="inline-flex items-center gap-1.5 bg-red-500/90 text-white text-xs font-bold px-3 py-1 rounded-full">
-                <Radio className="w-3 h-3 animate-pulse" />
-                LIVE NOW
-              </span>
-              <span className="text-white/50 text-xs flex items-center gap-1">
-                <Eye className="w-3 h-3" />
-                {featured.viewers} watching
-              </span>
-            </div>
-            <div className="flex items-start gap-4 mb-6">
-              <div className="w-14 h-14 rounded-full bg-gold/20 border-2 border-gold/40 flex items-center justify-center text-gold font-bold text-sm shrink-0">
-                {featured.avatar}
-              </div>
-              <div>
-                <h4 className="text-white font-bold text-lg">{featured.expert}</h4>
-                <p className="text-white/60 text-sm">{featured.credential}</p>
-              </div>
-            </div>
-            <h3 className="text-white text-xl sm:text-2xl font-bold mb-4 leading-snug">
-              {featured.topic}
-            </h3>
-            <div className="flex items-center gap-4 text-white/50 text-sm">
-              <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{featured.duration}</span>
-              <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" />{featured.viewers} viewers</span>
-            </div>
-            <button className="mt-6 inline-flex items-center gap-2 bg-gold text-[#1B3A2D] font-bold px-6 py-2.5 rounded-full text-sm hover:bg-gold-light transition-colors">
-              <Play className="w-4 h-4" />
-              Join Session
-            </button>
-          </div>
-        </div>
-      </div>
+const EXPERIENCE_CARDS = [
+  {
+    icon: Users,
+    title: 'Expert Exposure',
+    desc: 'Learn from founders, CEOs and industry pioneers.',
+  },
+  {
+    icon: Rocket,
+    title: 'Startup Projects',
+    desc: 'Build real-world solutions and launch your own ideas.',
+  },
+  {
+    icon: Trophy,
+    title: 'Hackathons',
+    desc: 'Compete, collaborate and create impact at national level.',
+  },
+  {
+    icon: Palette,
+    title: 'Design Thinking',
+    desc: 'Solve problems with creativity, empathy and innovation.',
+  },
+  {
+    icon: Brain,
+    title: 'AI Learning',
+    desc: 'Explore AI tools, automation and future technologies.',
+  },
+  {
+    icon: Briefcase,
+    title: 'Entrepreneurship',
+    desc: 'Develop business skills to become future entrepreneurs.',
+  },
+];
 
-      {/* Sidebar -- Sessions This Week */}
-      <div className="space-y-4">
-        <h4 className="text-[#1B3A2D] font-bold text-sm uppercase tracking-wider">Sessions This Week</h4>
-        {rest.map((session) => (
-          <div
-            key={session.id}
-            className="bg-white/80 backdrop-blur-sm border border-neutral-border rounded-xl p-4 hover:shadow-glass-sm transition-all duration-200 cursor-pointer group"
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-9 h-9 rounded-full bg-cream-dark flex items-center justify-center text-[#1B3A2D] text-xs font-bold shrink-0">
-                {session.avatar}
-              </div>
-              <div className="min-w-0">
-                <p className="text-[#1B3A2D] font-semibold text-sm truncate">{session.expert}</p>
-                <p className="text-neutral-medium text-xs truncate">{session.credential}</p>
-              </div>
-            </div>
-            <p className="text-[#1B3A2D] text-sm font-medium leading-snug mb-2 line-clamp-2">{session.topic}</p>
-            <div className="flex items-center justify-between text-xs text-neutral-medium">
-              <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{session.duration}</span>
-              {session.recorded && (
-                <span className="flex items-center gap-1 text-semantic-success font-medium">
-                  <Video className="w-3 h-3" />Recorded
-                </span>
-              )}
-              {session.upcoming && (
-                <span className="flex items-center gap-1 text-gold-dark font-medium">
-                  <Calendar className="w-3 h-3" />{session.date}
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const EXPERTS = [
+  { name: 'Devika Majumder', credential: 'Founder & CEO', specialty: 'WSJ Featured, TedX Speaker', photo: '/images/yp/devika.jpg' },
+  { name: 'Prof. Fred Katz', credential: 'Johns Hopkins Carey Business School', specialty: 'Senior Professional Faculty', photo: '/images/yp/fred.jpeg' },
+  { name: 'Dr. Partha Ghosh', credential: 'IIT Kharagpur, Former McKinsey', specialty: 'Leadership Academy', photo: '/images/yp/partha.jpg' },
+  { name: 'Suman Bose', credential: 'Former CEO & MD, Siemens', specialty: 'Founder, Project KREEA', photo: '/images/yp/suman.jpg' },
+  { name: 'Sachin Kapoor', credential: 'Former Sr Director, LinkedIn India', specialty: 'Founder & CEO, Trumsy.Ai', photo: '/images/yp/sachin.jpeg' },
+  { name: 'Dr. Julia Stamm', credential: 'Founder, She Shapes AI', specialty: 'Responsible Tech & AI', photo: '/images/yp/juliya.jpeg' },
+  { name: 'Rajeev Barua', credential: 'Professor of CS, Univ. of Maryland', specialty: 'Founder & CEO, SecondWrite', photo: '/images/yp/rajeevbaura.jpeg' },
+];
 
-function HackathonsPanel() {
-  const featured = HACKATHONS[0];
-  const rest = HACKATHONS.slice(1);
+const JOURNEY_STEPS = [
+  { num: '01', label: 'Join the Club', icon: Users },
+  { num: '02', label: 'Attend Expert Sessions', icon: Mic },
+  { num: '03', label: 'Skill Challenges', icon: Target },
+  { num: '04', label: 'Hackathon Participation', icon: Trophy },
+  { num: '05', label: 'Prototype Development', icon: Wrench },
+  { num: '06', label: 'Mentor Review', icon: GraduationCap },
+  { num: '07', label: 'National Level Competition', icon: Globe },
+  { num: '08', label: 'Innovation Showcase', icon: Star },
+  { num: '09', label: 'Startup Review', icon: Rocket },
+];
 
-  return (
-    <div className="space-y-8">
-      {/* Featured Hackathon */}
-      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#1B3A2D] to-[#0F2218] p-6 sm:p-8">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-gold/5 rounded-full blur-3xl" />
-        <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            <span className="inline-flex items-center gap-1.5 bg-semantic-success/20 text-semantic-success text-xs font-bold px-3 py-1 rounded-full mb-4">
-              <CheckCircle className="w-3 h-3" />
-              REGISTRATION OPEN
-            </span>
-            <h3 className="text-white text-2xl sm:text-3xl font-bold mb-2">{featured.title}</h3>
-            <p className="text-white/60 text-sm mb-4">{featured.theme}</p>
-            <div className="flex flex-wrap gap-4 text-sm mb-6">
-              <span className="text-white/80 flex items-center gap-1.5">
-                <Trophy className="w-4 h-4 text-gold" />
-                Prize Pool: INR {featured.prize}
-              </span>
-              <span className="text-white/80 flex items-center gap-1.5">
-                <Users className="w-4 h-4 text-gold" />
-                {featured.participants} Registered
-              </span>
-            </div>
-            <button className="inline-flex items-center gap-2 bg-gold text-[#1B3A2D] font-bold px-6 py-2.5 rounded-full text-sm hover:bg-gold-light transition-colors">
-              Register Now
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-          <div className="flex flex-col items-center md:items-end gap-4">
-            <p className="text-white/50 text-xs uppercase tracking-wider">Registration Closes In</p>
-            <CountdownTimer deadline={featured.deadline} />
-          </div>
-        </div>
-      </div>
+const MAJOR_PROGRAMS = [
+  {
+    title: 'Inter-School Hackathons',
+    desc: 'Compete with the best minds and build groundbreaking solutions.',
+    color: 'from-emerald-900 to-emerald-950',
+  },
+  {
+    title: 'Zunnovate',
+    desc: "India's biggest student innovation challenge.",
+    color: 'from-amber-900 to-amber-950',
+  },
+  {
+    title: 'Innovation Competitions',
+    desc: 'Participate in thematic challenges and win exciting rewards.',
+    color: 'from-emerald-900 to-emerald-950',
+  },
+  {
+    title: 'Innovation Library',
+    desc: 'Access resources, research papers, case studies and innovation tools.',
+    color: 'from-amber-900 to-amber-950',
+  },
+];
 
-      {/* Hackathon Grid + Journey */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 grid sm:grid-cols-3 gap-4">
-          {rest.map((hack) => (
-            <div key={hack.id} className="bg-white/80 backdrop-blur-sm border border-neutral-border rounded-xl p-5 hover:shadow-glass-sm transition-all duration-200 group">
-              <div className="mb-3">
-                {hack.registrationOpen ? (
-                  <span className="text-semantic-success text-xs font-bold flex items-center gap-1">
-                    <CheckCircle className="w-3 h-3" />Open
-                  </span>
-                ) : (
-                  <span className="text-neutral-medium text-xs font-bold">Closed</span>
-                )}
-              </div>
-              <h4 className="text-[#1B3A2D] font-bold text-sm mb-1 leading-snug">{hack.title}</h4>
-              <p className="text-neutral-medium text-xs mb-3">{hack.theme}</p>
-              <div className="flex items-center justify-between text-xs text-neutral-medium">
-                <span className="flex items-center gap-1"><Trophy className="w-3 h-3 text-gold" />INR {hack.prize}</span>
-                <span>{hack.participants} teams</span>
-              </div>
-            </div>
-          ))}
-        </div>
+const TIMELINE_EVENTS = [
+  { month: 'AUG', label: 'Applications Open', color: 'bg-emerald-600' },
+  { month: 'SEP', label: 'Innovation Bootcamp', color: 'bg-emerald-600' },
+  { month: 'NOV', label: 'Inter-School Hackathon', color: 'bg-orange-500' },
+  { month: 'JAN', label: 'Demo Day', color: 'bg-amber-500' },
+  { month: 'APR', label: 'Grand Finale', color: 'bg-amber-400' },
+];
 
-        {/* Competition Journey */}
-        <div className="bg-cream/80 backdrop-blur-sm border border-neutral-border rounded-xl p-5">
-          <h4 className="text-[#1B3A2D] font-bold text-sm uppercase tracking-wider mb-4">Competition Journey</h4>
-          <div className="space-y-4">
-            {JOURNEY_STEPS.map((s, i) => (
-              <div key={s.step} className="flex gap-3">
-                <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-full bg-[#1B3A2D] text-white flex items-center justify-center text-xs font-bold shrink-0">
-                    {s.step}
-                  </div>
-                  {i < JOURNEY_STEPS.length - 1 && (
-                    <div className="w-px h-full bg-[#1B3A2D]/20 mt-1" />
-                  )}
-                </div>
-                <div className="pb-4">
-                  <p className="text-[#1B3A2D] font-bold text-sm">{s.title}</p>
-                  <p className="text-neutral-medium text-xs leading-relaxed">{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+const LEARNING_CATEGORIES = [
+  { icon: Brain, label: 'AI & ML' },
+  { icon: DollarSign, label: 'Finance' },
+  { icon: Palette, label: 'Design Thinking' },
+  { icon: BarChart3, label: 'Marketing' },
+  { icon: Code, label: 'Coding' },
+  { icon: Users, label: 'Leadership' },
+  { icon: Briefcase, label: 'Entrepreneurship' },
+];
 
-function TeachersPanel() {
-  return (
-    <div className="space-y-8">
-      {/* Hero text */}
-      <div className="bg-gradient-to-br from-[#1B3A2D] to-[#0F2218] rounded-2xl p-6 sm:p-10 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
-        <div className="relative z-10 max-w-2xl">
-          <span className="inline-flex items-center gap-1.5 bg-gold/20 text-gold text-xs font-bold px-3 py-1 rounded-full mb-4">
-            <GraduationCap className="w-3 h-3" />
-            TEACHER CERTIFICATION
-          </span>
-          <h3 className="text-white text-2xl sm:text-3xl font-bold mb-3 leading-snug">
-            Become a Certified Innovation Mentor
-          </h3>
-          <p className="text-white/70 text-sm sm:text-base leading-relaxed mb-6">
-            Our Train-the-Trainer program equips educators with practical frameworks in Design Thinking, the IDEA DNA engine, and venture-building methodology. Graduate ready to run your own school innovation lab.
-          </p>
-          {/* Feature pills */}
-          <div className="flex flex-wrap gap-2">
-            {TEACHER_FEATURES.map((f) => (
-              <span key={f} className="bg-white/10 backdrop-blur-sm text-white/90 text-xs font-medium px-4 py-1.5 rounded-full border border-white/10">
-                {f}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Upcoming cohorts */}
-      <div>
-        <h4 className="text-[#1B3A2D] font-bold text-sm uppercase tracking-wider mb-4">Upcoming Cohorts</h4>
-        <div className="grid sm:grid-cols-3 gap-4">
-          {TEACHER_COHORTS.map((cohort) => {
-            const seatPct = ((cohort.totalSeats - cohort.seatsLeft) / cohort.totalSeats) * 100;
-            return (
-              <div key={cohort.id} className="bg-white/80 backdrop-blur-sm border border-neutral-border rounded-xl p-5 hover:shadow-glass-sm transition-all duration-200 group">
-                <h4 className="text-[#1B3A2D] font-bold text-sm mb-2 leading-snug">{cohort.title}</h4>
-                <div className="flex items-center gap-2 text-xs text-neutral-medium mb-3">
-                  <Calendar className="w-3 h-3" />
-                  Starts {cohort.starts}
-                </div>
-                <div className="flex items-center gap-2 text-xs text-neutral-medium mb-3">
-                  <BookOpen className="w-3 h-3" />
-                  {cohort.modules} modules
-                </div>
-                {/* Seat bar */}
-                <div className="mb-2">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-neutral-medium">Seats</span>
-                    <span className="text-gold-dark font-bold">{cohort.seatsLeft} left</span>
-                  </div>
-                  <div className="h-1.5 bg-neutral-light rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gold rounded-full transition-all duration-500"
-                      style={{ width: `${seatPct}%` }}
-                    />
-                  </div>
-                </div>
-                <button className="mt-3 w-full text-center text-sm font-bold text-[#1B3A2D] border border-[#1B3A2D]/20 rounded-full py-2 hover:bg-[#1B3A2D] hover:text-white transition-colors">
-                  Enroll Now
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ResourceLibraryPanel() {
-  const [activeCategory, setActiveCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const filtered = RESOURCES.filter((r) => {
-    const matchCat = activeCategory === 'All' || r.category === activeCategory;
-    const matchSearch = r.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchCat && matchSearch;
-  });
-
-  const typeIcon = (type) => {
-    switch (type) {
-      case 'Video': return <Video className="w-4 h-4" />;
-      case 'Template': return <FileText className="w-4 h-4" />;
-      case 'Guide': return <BookOpen className="w-4 h-4" />;
-      case 'Workbook': return <FileText className="w-4 h-4" />;
-      default: return <FileText className="w-4 h-4" />;
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      {/* Search + Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-medium" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search resources..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-neutral-border bg-white/80 backdrop-blur-sm text-sm text-[#1B3A2D] placeholder:text-neutral-medium focus:outline-none focus:ring-2 focus:ring-gold/30 focus:border-gold transition-all"
-          />
-        </div>
-        <div className="flex gap-2 overflow-x-auto pb-1">
-          {RESOURCE_CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-                activeCategory === cat
-                  ? 'bg-[#1B3A2D] text-white'
-                  : 'bg-white/80 text-neutral-medium border border-neutral-border hover:border-[#1B3A2D]/30'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Featured resource */}
-      {activeCategory === 'All' && !searchQuery && (
-        <div className="bg-gradient-to-br from-[#1B3A2D] to-[#0F2218] rounded-2xl p-6 sm:p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="w-14 h-14 rounded-xl bg-gold/20 flex items-center justify-center shrink-0">
-              <FileText className="w-7 h-7 text-gold" />
-            </div>
-            <div className="flex-1">
-              <span className="text-gold text-xs font-bold uppercase tracking-wider">Featured Resource</span>
-              <h4 className="text-white font-bold text-lg mt-1">Business Model Canvas Template</h4>
-              <p className="text-white/60 text-sm mt-1">The most downloaded resource. Perfect for structuring your venture idea from day one.</p>
-            </div>
-            <button className="inline-flex items-center gap-2 bg-gold text-[#1B3A2D] font-bold px-5 py-2.5 rounded-full text-sm hover:bg-gold-light transition-colors shrink-0">
-              <Download className="w-4 h-4" />
-              Download
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Resource grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {filtered.map((res) => (
-          <div key={res.id} className="bg-white/80 backdrop-blur-sm border border-neutral-border rounded-xl p-5 hover:shadow-glass-sm transition-all duration-200 group cursor-pointer">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-cream flex items-center justify-center text-gold-dark">
-                {typeIcon(res.type)}
-              </div>
-              <span className="text-xs font-semibold text-neutral-medium uppercase tracking-wider">{res.type}</span>
-            </div>
-            <h4 className="text-[#1B3A2D] font-bold text-sm mb-2 leading-snug group-hover:text-gold-dark transition-colors">{res.title}</h4>
-            <div className="flex items-center justify-between text-xs text-neutral-medium">
-              <span className="bg-cream px-2 py-0.5 rounded-full">{res.category}</span>
-              <span className="flex items-center gap-1"><Download className="w-3 h-3" />{res.downloads.toLocaleString()}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
+const RESOURCES = [
+  { icon: FileText, label: 'Templates' },
+  { icon: Monitor, label: 'Pitch Decks' },
+  { icon: Briefcase, label: 'Business Canvas' },
+  { icon: DollarSign, label: 'Funding Guides' },
+  { icon: BookOpen, label: 'Research Papers' },
+  { icon: PenTool, label: 'Design Kits' },
+  { icon: Cpu, label: 'AI Tools' },
+  { icon: Globe, label: 'Startup Laws' },
+  { icon: TrendingUp, label: 'Marketing Resources' },
+  { icon: BarChart3, label: 'Finance Guides' },
+];
 
 /* ------------------------------------------------------------------ */
 /*  MAIN PAGE COMPONENT                                                */
 /* ------------------------------------------------------------------ */
 
 export default function InnovationClubPage() {
-  const [activeTab, setActiveTab] = useState('experts');
   const [heroRef, heroVisible] = useScrollReveal();
-  const [statsRef, statsVisible] = useScrollReveal();
-  const [tabsRef, tabsVisible] = useScrollReveal();
+  const [expRef, expVisible] = useScrollReveal();
+  const [expertRef, expertVisible] = useScrollReveal();
+  const [journeyRef, journeyVisible] = useScrollReveal();
+  const [timelineRef, timelineVisible] = useScrollReveal();
+  const [resourceRef, resourceVisible] = useScrollReveal();
   const [ctaRef, ctaVisible] = useScrollReveal();
+  const [expertScroll, setExpertScroll] = useState(0);
+  const expertContainerRef = useRef(null);
 
-  const tabPanels = {
-    experts: <ExpertExposurePanel />,
-    hackathons: <HackathonsPanel />,
-    teachers: <TeachersPanel />,
-    resources: <ResourceLibraryPanel />,
-  };
+  const scrollExperts = useCallback((dir) => {
+    const container = expertContainerRef.current;
+    if (!container) return;
+    const scrollAmount = 240;
+    container.scrollBy({ left: dir * scrollAmount, behavior: 'smooth' });
+  }, []);
 
   return (
     <div className="min-h-screen bg-cream">
       <PublicNavbar />
 
-      {/* ===== HERO ===== */}
+      {/* ===== HERO SECTION ===== */}
       <section
         ref={heroRef}
-        className="relative w-full overflow-hidden bg-gradient-to-br from-[#1B3A2D] via-[#1B3A2D] to-[#0F2218] pt-24 sm:pt-28 lg:pt-32 pb-16 sm:pb-20 lg:pb-28"
+        className="relative w-full overflow-hidden bg-[#0A0A0A] pt-24 sm:pt-28 lg:pt-32 pb-0"
       >
-        {/* Decorative elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-gold/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] bg-gold/3 rounded-full blur-3xl" />
-          <div className="absolute top-1/4 left-1/4 w-px h-32 bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
-          <div className="absolute top-1/3 right-1/3 w-px h-24 bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
+          <div className="absolute -top-40 right-0 w-[700px] h-[700px] bg-gold/5 rounded-full blur-[120px]" />
+          <div className="absolute bottom-0 left-1/4 w-[500px] h-[300px] bg-gold/3 rounded-full blur-[100px]" />
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className={`grid lg:grid-cols-5 gap-12 lg:gap-16 items-center transition-all duration-700 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-            {/* Left content -- spans 3 cols */}
-            <div className="lg:col-span-3 space-y-6">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 border border-gold/30 bg-gold/10 backdrop-blur-sm rounded-full px-4 py-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-gold" />
-                <span className="text-gold text-xs font-bold tracking-wider uppercase">
-                  Innovation Club &mdash; A Future Titans Program
-                </span>
+          <div className={`grid lg:grid-cols-2 gap-10 lg:gap-16 items-center transition-all duration-700 ${heroVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+            <div className="space-y-6 py-8 lg:py-12">
+              <div>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-white leading-[0.9] tracking-tight">
+                  INNOVATION
+                </h1>
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black text-gold leading-[0.9] tracking-tight">
+                  CLUB
+                </h1>
               </div>
 
-              {/* Headline */}
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-display-lg font-bold text-white leading-[1.1] tracking-tight">
-                Where Future Titans{' '}
-                <span className="text-gold">Build Real Ventures</span>
-              </h1>
+              <div className="space-y-1">
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug">
+                  Where Young Innovators
+                </p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-snug">
+                  Become <span className="text-gold">Future Founders.</span>
+                </p>
+              </div>
 
-              {/* Subhead */}
-              <p className="text-white/70 text-base sm:text-lg leading-relaxed max-w-xl">
-                Expert mentors, national challenges, teacher support, and practical venture-building &mdash; all inside one school innovation ecosystem.
+              <p className="text-white/60 text-sm sm:text-base leading-relaxed max-w-lg">
+                An exclusive ecosystem for students to learn, build, compete
+                and lead with the support of industry experts,
+                mentors and innovators.
               </p>
 
-              {/* CTA */}
               <div className="flex flex-wrap gap-3 pt-2">
                 <Link
-                  href="/student/innovation-club"
-                  className="inline-flex items-center gap-2 bg-gold text-[#1B3A2D] font-bold px-6 py-3 rounded-full text-sm hover:bg-gold-light transition-all duration-200 shadow-gold"
+                  href="/signup"
+                  className="inline-flex items-center gap-2 bg-white text-[#0A0A0A] font-bold px-6 py-3 rounded-full text-sm hover:bg-white/90 transition-all duration-200"
                 >
-                  Go to Innovation Club
+                  Join the Club
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link
+                  href="#explore"
+                  className="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-white/20 transition-all duration-200 backdrop-blur-sm"
+                >
+                  Explore Programs
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-
-              {/* Bottom note */}
-              <p className="text-white/40 text-xs tracking-wide pt-2">
-                Exclusively for paid members.
-              </p>
             </div>
 
-            {/* Right floating cards -- spans 2 cols */}
-            <div className="lg:col-span-2 space-y-4">
-              {/* Card 1 */}
-              <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 animate-float" style={{ animationDelay: '0s' }}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/60 text-xs font-medium">Live Sessions This Week</span>
-                  <Radio className="w-4 h-4 text-red-400 animate-pulse" />
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-white text-3xl font-bold">06</span>
-                  <span className="text-semantic-success text-xs font-bold uppercase tracking-wider">LIVE</span>
-                </div>
+            <div className="relative hidden lg:flex items-center justify-center">
+              <div className="relative w-full h-[420px] rounded-3xl overflow-hidden">
+                <Image
+                  src="/images/yp/hero-students.png"
+                  alt="Young innovators and future founders"
+                  fill
+                  className="object-cover object-top"
+                  sizes="(min-width: 1024px) 50vw, 0vw"
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-l from-transparent to-[#0A0A0A]/30" />
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Card 2 */}
-              <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 animate-float" style={{ animationDelay: '0.5s' }}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/60 text-xs font-medium">Ideas Moving to Prototype</span>
-                  <TrendingUp className="w-4 h-4 text-gold" />
+        {/* Stats Bar */}
+        <div className="relative z-10 mt-8 lg:mt-12 border-t border-white/10 bg-[#0A0A0A]/80 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {STATS.map((stat) => (
+                <div
+                  key={stat.label}
+                  className="bg-white/5 border border-white/10 rounded-xl px-4 py-4 text-center"
+                >
+                  <p className="text-2xl sm:text-3xl font-bold text-white">{stat.value}</p>
+                  <p className="text-white/50 text-xs sm:text-sm mt-1">{stat.label}</p>
                 </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-white text-3xl font-bold">72%</span>
-                  <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden ml-2">
-                    <div className="h-full bg-gold rounded-full" style={{ width: '72%' }} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 3 */}
-              <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-5 animate-float" style={{ animationDelay: '1s' }}>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white/60 text-xs font-medium">National Challenge Registration</span>
-                  <Zap className="w-4 h-4 text-gold" />
-                </div>
-                <div className="flex items-baseline gap-2">
-                  <span className="inline-flex items-center gap-1.5 bg-semantic-success/20 text-semantic-success text-sm font-bold px-3 py-1 rounded-full">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    OPEN NOW
-                  </span>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* ===== STATS STRIP ===== */}
-      <section ref={statsRef} className="relative -mt-8 z-20 px-4 sm:px-6 lg:px-8">
-        <div
-          className={`max-w-5xl mx-auto bg-white/90 backdrop-blur-lg border border-neutral-border rounded-2xl shadow-glass-lg py-8 px-6 sm:px-10 transition-all duration-700 delay-200 ${
-            statsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {STATS.map((stat) => {
-              const Icon = stat.icon;
+      {/* ===== WHAT YOU'LL EXPERIENCE ===== */}
+      <section ref={expRef} id="explore" className="py-16 sm:py-20 lg:py-24 bg-white">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700 ${expVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#1A1A1A] tracking-tight">
+              WHAT YOU&apos;LL EXPERIENCE
+            </h2>
+            <div className="w-16 h-1 bg-gold mx-auto mt-4" />
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-6">
+            {EXPERIENCE_CARDS.map((card) => {
+              const Icon = card.icon;
               return (
-                <div key={stat.label} className="text-center">
-                  <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-gold/10 mb-3">
-                    <Icon className="w-5 h-5 text-gold" />
+                <div
+                  key={card.title}
+                  className="bg-[#0F1A14] rounded-2xl p-5 text-center hover:bg-[#162820] transition-colors duration-200 group"
+                >
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-xl bg-gold/10 border border-gold/20 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                    <Icon className="w-6 h-6 text-gold" />
                   </div>
-                  <p className="text-2xl sm:text-3xl font-bold text-[#1B3A2D]">{stat.value}</p>
-                  <p className="text-neutral-medium text-xs sm:text-sm mt-1">{stat.label}</p>
+                  <h3 className="text-white font-bold text-sm mb-2">{card.title}</h3>
+                  <p className="text-white/50 text-xs leading-relaxed">{card.desc}</p>
                 </div>
               );
             })}
           </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/student/innovation-club"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-[#1A1A1A] transition-colors"
+            >
+              View All Programs
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ===== TABS SECTION ===== */}
-      <section ref={tabsRef} id="explore" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
-        <div className={`transition-all duration-700 delay-100 ${tabsVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-          {/* Section header */}
-          <div className="text-center mb-10">
-            <span className="text-gold text-xs font-bold tracking-widest uppercase">What We Offer</span>
-            <h2 className="text-3xl sm:text-4xl lg:text-display font-bold text-[#1B3A2D] mt-2">
-              Everything Inside the Club
-            </h2>
-          </div>
+      {/* ===== EXPERT EXPOSURE ===== */}
+      <section ref={expertRef} className="py-16 sm:py-20 bg-cream">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700 ${expertVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="border border-[#1A1A1A]/10 rounded-3xl bg-[#0F1A14] p-6 sm:p-8 lg:p-10 relative overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-gold/5 rounded-full blur-[100px]" />
+            </div>
 
-          {/* Tab bar */}
-          <div className="flex justify-center mb-10">
-            <div className="inline-flex bg-white/80 backdrop-blur-sm border border-neutral-border rounded-full p-1 overflow-x-auto max-w-full">
-              {TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`relative px-5 sm:px-6 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
-                    activeTab === tab.id
-                      ? 'bg-[#1B3A2D] text-white shadow-sm'
-                      : 'text-neutral-medium hover:text-[#1B3A2D]'
-                  }`}
+            <div className="relative z-10">
+              <div className="flex items-start sm:items-center justify-between mb-2 flex-col sm:flex-row gap-3">
+                <div>
+                  <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">EXPERT EXPOSURE</h2>
+                  <p className="text-white/50 text-sm mt-1">Learn directly from the people building the future.</p>
+                </div>
+                <Link
+                  href="/student/innovation-club/experts"
+                  className="inline-flex items-center gap-2 bg-gold/20 border border-gold/30 text-gold font-semibold px-4 py-2 rounded-full text-xs hover:bg-gold/30 transition-colors whitespace-nowrap"
                 >
-                  {tab.label}
+                  View All Experts
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+
+              <div className="relative mt-8">
+                <button
+                  onClick={() => scrollExperts(-1)}
+                  className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-20 w-9 h-9 bg-white/10 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
+                >
+                  <ChevronLeft className="w-4 h-4" />
                 </button>
-              ))}
+
+                <div
+                  ref={expertContainerRef}
+                  className="flex gap-6 sm:gap-8 overflow-x-auto scrollbar-hide py-4 px-2"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                  {EXPERTS.map((expert) => (
+                    <div key={expert.name} className="flex flex-col items-center shrink-0 min-w-[130px] max-w-[140px]">
+                      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-gold/50 overflow-hidden mb-3 relative bg-gold/10">
+                        <Image
+                          src={expert.photo}
+                          alt={expert.name}
+                          fill
+                          className="object-cover"
+                          sizes="96px"
+                        />
+                      </div>
+                      <h4 className="text-white font-bold text-sm text-center leading-tight">{expert.name}</h4>
+                      <p className="text-gold/70 text-xs text-center mt-0.5 leading-tight">{expert.credential}</p>
+                      <p className="text-white/40 text-[11px] text-center mt-0.5 leading-tight">{expert.specialty}</p>
+                      <span className="inline-flex items-center gap-1 mt-2 bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                        <CircleDot className="w-2.5 h-2.5" />
+                        Live Session
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => scrollExperts(1)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-20 w-9 h-9 bg-white/10 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Tab panel */}
-          <div className="animate-fade-in" key={activeTab}>
-            {tabPanels[activeTab]}
+      {/* ===== INNOVATION JOURNEY + MAJOR PROGRAMS ===== */}
+      <section ref={journeyRef} className="py-16 sm:py-20 bg-white">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700 ${journeyVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+            {/* Left - Innovation Journey */}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] tracking-tight">YOUR INNOVATION JOURNEY</h2>
+              <p className="text-neutral-medium text-sm mt-1 mb-8">From curiosity to impact &mdash; we guide every step.</p>
+
+              {/* Top row: steps 01 - 05 */}
+              <div className="relative">
+                <div className="grid grid-cols-5 gap-2 sm:gap-3">
+                  {JOURNEY_STEPS.slice(0, 5).map((step) => {
+                    const Icon = step.icon;
+                    return (
+                      <div key={step.num} className="flex flex-col items-center text-center">
+                        <div className="relative">
+                          <span className="text-gold/60 text-xs font-bold mb-1 block">{step.num}</span>
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0F1A14] border-2 border-gold/30 flex items-center justify-center mx-auto">
+                            <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gold" />
+                          </div>
+                        </div>
+                        <p className="text-[#1A1A1A] text-[10px] sm:text-xs font-semibold mt-2 leading-tight">{step.label}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Connecting line between rows */}
+                <div className="flex justify-end pr-6 my-2">
+                  <div className="w-px h-8 bg-gold/20" />
+                </div>
+
+                {/* Bottom row: steps 09 - 06 (reversed) */}
+                <div className="grid grid-cols-4 gap-2 sm:gap-3">
+                  {JOURNEY_STEPS.slice(5).reverse().map((step) => {
+                    const Icon = step.icon;
+                    return (
+                      <div key={step.num} className="flex flex-col items-center text-center">
+                        <div className="relative">
+                          <span className="text-gold/60 text-xs font-bold mb-1 block">{step.num}</span>
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0F1A14] border-2 border-gold/30 flex items-center justify-center mx-auto">
+                            <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gold" />
+                          </div>
+                        </div>
+                        <p className="text-[#1A1A1A] text-[10px] sm:text-xs font-semibold mt-2 leading-tight">{step.label}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Dashed connecting path */}
+                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 0 }}>
+                  <line x1="10%" y1="32%" x2="90%" y2="32%" stroke="rgba(212,175,55,0.15)" strokeWidth="2" strokeDasharray="6 4" />
+                  <line x1="10%" y1="82%" x2="80%" y2="82%" stroke="rgba(212,175,55,0.15)" strokeWidth="2" strokeDasharray="6 4" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Right - Major Programs */}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] tracking-tight">MAJOR PROGRAMS</h2>
+              <p className="text-neutral-medium text-sm mt-1 mb-8">Programs designed to challenge, inspire and elevate.</p>
+
+              <div className="grid grid-cols-2 gap-4">
+                {MAJOR_PROGRAMS.map((program) => (
+                  <div
+                    key={program.title}
+                    className={`bg-gradient-to-br ${program.color} rounded-2xl p-5 flex flex-col justify-between min-h-[180px] group hover:shadow-lg transition-shadow`}
+                  >
+                    <div>
+                      <h3 className="text-white font-bold text-sm sm:text-base leading-snug mb-2">{program.title}</h3>
+                      <p className="text-white/50 text-xs leading-relaxed">{program.desc}</p>
+                    </div>
+                    <button className="mt-4 inline-flex items-center gap-1.5 bg-gold/20 border border-gold/30 text-gold font-semibold px-3 py-1.5 rounded-full text-xs hover:bg-gold/30 transition-colors self-start">
+                      Explore
+                      <ArrowRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== ANNUAL TIMELINE + FEATURED LEARNING ===== */}
+      <section ref={timelineRef} className="py-16 sm:py-20 bg-cream">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700 ${timelineVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
+            {/* Left - Annual Timeline */}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] tracking-tight">ANNUAL TIMELINE</h2>
+              <p className="text-neutral-medium text-sm mt-1 mb-8">A year full of learning, building and winning.</p>
+
+              <div className="relative">
+                <div className="flex items-start gap-3 sm:gap-4 overflow-x-auto pb-4" style={{ scrollbarWidth: 'none' }}>
+                  {TIMELINE_EVENTS.map((event, i) => (
+                    <div key={event.month} className="flex flex-col items-center shrink-0 min-w-[70px] sm:min-w-[80px] relative">
+                      <div className={`${event.color} text-white font-bold text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg mb-3 shadow-sm`}>
+                        {event.month}
+                      </div>
+                      <div className="w-3 h-3 rounded-full bg-[#1A1A1A] border-2 border-gold relative z-10" />
+                      <p className="text-[#1A1A1A] text-[10px] sm:text-xs font-medium mt-3 text-center leading-tight max-w-[80px]">{event.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="absolute left-6 right-6 top-[52px] h-px bg-[#1A1A1A]/15" />
+              </div>
+            </div>
+
+            {/* Right - Featured Learning */}
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-[#1A1A1A] tracking-tight">FEATURED LEARNING</h2>
+              <p className="text-neutral-medium text-sm mt-1 mb-8">Future-ready skills for future leaders.</p>
+
+              <div className="flex gap-4 sm:gap-6 overflow-x-auto pb-4" style={{ scrollbarWidth: 'none' }}>
+                {LEARNING_CATEGORIES.map((cat) => {
+                  const Icon = cat.icon;
+                  return (
+                    <div key={cat.label} className="flex flex-col items-center shrink-0 min-w-[70px] group cursor-pointer">
+                      <div className="w-14 h-14 rounded-xl bg-[#0F1A14] border border-gold/20 flex items-center justify-center group-hover:border-gold/50 transition-colors mb-2">
+                        <Icon className="w-6 h-6 text-gold" />
+                      </div>
+                      <p className="text-[#1A1A1A] text-xs font-medium text-center">{cat.label}</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6">
+                <Link
+                  href="/student/innovation-club"
+                  className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-5 py-2.5 rounded-full text-sm hover:bg-[#1A1A1A] transition-colors"
+                >
+                  Explore All Learning Paths
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===== RESOURCE LIBRARY ===== */}
+      <section ref={resourceRef} className="py-16 sm:py-20 bg-white">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-700 ${resourceVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] tracking-tight">RESOURCE LIBRARY</h2>
+            <p className="text-neutral-medium text-sm mt-2">Everything you need to ideate, build and scale.</p>
+            <div className="w-16 h-1 bg-gold mx-auto mt-4" />
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4 sm:gap-6 lg:gap-8">
+            {RESOURCES.map((res) => {
+              const Icon = res.icon;
+              return (
+                <div key={res.label} className="flex flex-col items-center group cursor-pointer min-w-[80px]">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#0F1A14] border border-gold/20 flex items-center justify-center group-hover:border-gold/50 group-hover:bg-[#162820] transition-all duration-200">
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-gold" />
+                  </div>
+                  <p className="text-[#1A1A1A] text-xs font-medium mt-2 text-center max-w-[80px] leading-tight">{res.label}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              href="/student/innovation-club/resources"
+              className="inline-flex items-center gap-2 bg-[#0A0A0A] text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-[#1A1A1A] transition-colors"
+            >
+              Explore Library
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
         </div>
       </section>
@@ -808,32 +588,37 @@ export default function InnovationClubPage() {
       {/* ===== BOTTOM CTA ===== */}
       <section
         ref={ctaRef}
-        className="relative overflow-hidden bg-gradient-to-br from-[#1B3A2D] via-[#1B3A2D] to-[#0F2218] py-16 sm:py-20 lg:py-24"
+        className="relative overflow-hidden bg-[#0A0A0A] py-16 sm:py-20 lg:py-24"
       >
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gold/5 rounded-full blur-3xl" />
-          <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-gold/3 rounded-full blur-3xl" />
+          <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-gold/5 rounded-full blur-[120px]" />
+          <div className="absolute -bottom-40 -left-40 w-[400px] h-[400px] bg-gold/3 rounded-full blur-[100px]" />
         </div>
         <div
           className={`max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 transition-all duration-700 ${
             ctaVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
           }`}
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-display font-bold text-white mb-4 leading-tight">
-            Your Innovation Club.{' '}
-            <span className="text-gold">All in One Place.</span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white mb-4 leading-tight tracking-tight">
+            READY TO BUILD THE FUTURE?
           </h2>
-          <p className="text-white/60 text-base sm:text-lg leading-relaxed mb-8 max-w-xl mx-auto">
-            Expert mentors, national competitions, and a community of young builders &mdash; exclusively for paid members.
+          <p className="text-white/50 text-sm sm:text-base leading-relaxed mb-8 max-w-xl mx-auto">
+            Join thousands of young innovators and turn your ideas into impact.
           </p>
-          <div className="flex flex-wrap justify-center gap-3">
-            <Link
-              href="/student/innovation-club"
-              className="inline-flex items-center gap-2 bg-gold text-[#1B3A2D] font-bold px-8 py-3.5 rounded-full text-sm hover:bg-gold-light transition-all duration-200 shadow-gold"
-            >
-              Go to Innovation Club
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 bg-gold text-[#0A0A0A] font-bold px-8 py-3.5 rounded-full text-sm hover:bg-gold-light transition-all duration-200 shadow-gold"
+          >
+            Join Innovation Club
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+          <div className="flex items-center justify-center gap-4 sm:gap-6 mt-8">
+            {['LEARN', 'BUILD', 'INNOVATE', 'LEAD'].map((word, i) => (
+              <div key={word} className="flex items-center gap-4 sm:gap-6">
+                {i > 0 && <span className="text-gold text-xs">&#9670;</span>}
+                <span className="text-white/70 text-xs sm:text-sm font-bold tracking-wider">{word}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
