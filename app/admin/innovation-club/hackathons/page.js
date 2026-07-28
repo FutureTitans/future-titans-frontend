@@ -8,13 +8,19 @@ import {
 import { adminIC } from '@/lib/api';
 import { upload } from '@vercel/blob/client';
 
-const HACKATHON_STATUSES = ['draft', 'upcoming', 'active', 'judging', 'completed'];
+const HACKATHON_STATUSES = ['draft', 'upcoming', 'registration_open', 'active', 'ongoing', 'judging', 'results_out', 'completed'];
 const BADGE_OPTIONS = ['', 'winner', 'finalist', 'spotlight'];
+const SCORE_FIELDS = [
+  { key: 'problemSolving', label: 'Problem' },
+  { key: 'innovation', label: 'Innovation' },
+  { key: 'impact', label: 'Impact' },
+  { key: 'presentation', label: 'Pitch' },
+];
 
 const emptyHackathon = {
   title: '', description: '', startDate: '', endDate: '', classes: '',
   prizePool: '', status: 'draft', rulebookUrl: '', coverImage: '', maxTeams: 50,
-  timeline: [],
+  timeline: [], isPublished: true,
 };
 
 export default function HackathonsManagerPage() {
@@ -54,12 +60,13 @@ export default function HackathonsManagerPage() {
         startDate: hackathon.startDate ? hackathon.startDate.slice(0, 10) : '',
         endDate: hackathon.endDate ? hackathon.endDate.slice(0, 10) : '',
         classes: Array.isArray(hackathon.classes) ? hackathon.classes.join(', ') : hackathon.classes || '',
-        prizePool: hackathon.prizePool || '',
+        prizePool: hackathon.prizePool ?? '',
         status: hackathon.status || 'draft',
         rulebookUrl: hackathon.rulebookUrl || '',
         coverImage: hackathon.coverImage || '',
         maxTeams: hackathon.maxTeams || 50,
         timeline: hackathon.timeline || [],
+        isPublished: hackathon.isPublished !== false,
       });
     } else {
       setEditingId(null);
@@ -90,8 +97,11 @@ export default function HackathonsManagerPage() {
       const payload = {
         ...form,
         coverImage,
+        prizePool: Number(String(form.prizePool).replace(/[^\d.]/g, '')) || 0,
         classes: typeof form.classes === 'string' ? form.classes.split(',').map(c => c.trim()).filter(Boolean) : form.classes,
+        timeline: form.timeline.filter((t) => t.label && t.date),
       };
+      if (!payload.startDate || !payload.endDate) { alert('Start and end dates are required.'); setSaving(false); return; }
       if (editingId) {
         await adminIC.updateHackathon(editingId, payload);
       } else {
@@ -135,9 +145,9 @@ export default function HackathonsManagerPage() {
   };
 
   // Team management
-  const handleScoreChange = async (teamId, score) => {
+  const handleScoreChange = async (teamId, field, value) => {
     try {
-      await adminIC.updateTeamScore(teamId, { score: parseInt(score) || 0 });
+      await adminIC.updateTeamScore(teamId, { [field]: parseInt(value) || 0 });
       await fetchData();
     } catch (err) {
       console.error('Error updating score:', err);
@@ -210,14 +220,21 @@ export default function HackathonsManagerPage() {
               <input type="text" value={form.classes} onChange={(e) => setForm({ ...form, classes: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="6, 7, 8, 9, 10" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Prize Pool</label>
-              <input type="text" value={form.prizePool} onChange={(e) => setForm({ ...form, prizePool: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="INR 50,000" />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Prize Pool (INR)</label>
+              <input type="number" value={form.prizePool} onChange={(e) => setForm({ ...form, prizePool: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="50000" min={0} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
               <select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37] bg-white">
-                {HACKATHON_STATUSES.map((s) => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
+                {HACKATHON_STATUSES.map((s) => <option key={s} value={s}>{s.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}</option>)}
               </select>
+            </div>
+            <div className="flex items-center gap-3 pt-6">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" checked={form.isPublished} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} className="sr-only peer" />
+                <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#D4AF37]/40 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#D4AF37]"></div>
+              </label>
+              <span className="text-sm text-gray-700">Visible to students</span>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Max Teams</label>
@@ -350,19 +367,25 @@ export default function HackathonsManagerPage() {
                                   <thead className="text-gray-500 font-medium">
                                     <tr>
                                       <th className="px-3 py-2">Team Name</th>
+                                      <th className="px-3 py-2">School</th>
                                       <th className="px-3 py-2">Members</th>
-                                      <th className="px-3 py-2">Score</th>
+                                      {SCORE_FIELDS.map((f) => <th key={f.key} className="px-3 py-2">{f.label}</th>)}
+                                      <th className="px-3 py-2">Total</th>
                                       <th className="px-3 py-2">Badge</th>
                                     </tr>
                                   </thead>
                                   <tbody className="divide-y divide-gray-200">
                                     {teams.map((team) => (
                                       <tr key={team._id}>
-                                        <td className="px-3 py-2 font-medium text-gray-800">{team.name}</td>
+                                        <td className="px-3 py-2 font-medium text-gray-800">{team.teamName}</td>
+                                        <td className="px-3 py-2 max-w-[140px] truncate">{team.school || '--'}</td>
                                         <td className="px-3 py-2">{team.members?.length || 0}</td>
-                                        <td className="px-3 py-2">
-                                          <input type="number" defaultValue={team.score || 0} onBlur={(e) => handleScoreChange(team._id, e.target.value)} className="w-20 border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#D4AF37]/40" min={0} />
-                                        </td>
+                                        {SCORE_FIELDS.map((f) => (
+                                          <td key={f.key} className="px-3 py-2">
+                                            <input type="number" defaultValue={team.scores?.[f.key] || 0} onBlur={(e) => handleScoreChange(team._id, f.key, e.target.value)} className="w-16 border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#D4AF37]/40" min={0} max={100} />
+                                          </td>
+                                        ))}
+                                        <td className="px-3 py-2 font-semibold text-gray-800">{team.scores?.total || 0}</td>
                                         <td className="px-3 py-2">
                                           <select defaultValue={team.badge || ''} onChange={(e) => handleBadgeChange(team._id, e.target.value)} className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#D4AF37]/40 bg-white">
                                             {BADGE_OPTIONS.map((b) => <option key={b} value={b}>{b ? b.charAt(0).toUpperCase() + b.slice(1) : 'None'}</option>)}

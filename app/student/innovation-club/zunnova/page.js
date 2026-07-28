@@ -106,6 +106,29 @@ export default function ZunnovaJourneyPage() {
     }
   };
 
+  const [advancing, setAdvancing] = useState(false);
+
+  // Marks the next module of the given phase as complete and persists it
+  const advancePhase = async (phase, currentCompletion, moduleCount) => {
+    if (advancing) return;
+    setAdvancing(true);
+    try {
+      const completedModules = Math.round((currentCompletion / 100) * moduleCount);
+      const nextCompletion = Math.min(100, Math.round(((completedModules + 1) / moduleCount) * 100));
+      const res = await innovationClub.updateZunnovaProgress({ phase, completion: nextCompletion });
+      if (res?.zunnovaPhase != null) {
+        setProgress(res);
+      } else {
+        await fetchProgress();
+      }
+    } catch (err) {
+      console.error('Failed to update Zunnova progress:', err);
+      setError('Unable to update your progress. Please try again.');
+    } finally {
+      setAdvancing(false);
+    }
+  };
+
   if (loading) {
     return <LoadingSpinner message="Loading Zunnova++ Journey..." />;
   }
@@ -297,8 +320,12 @@ export default function ZunnovaJourneyPage() {
 
               {/* Action Button */}
               {p1 < 100 && (
-                <button className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all">
-                  {p1 > 0 ? 'Continue Learning' : 'Start Phase 1'}
+                <button
+                  onClick={() => advancePhase(1, p1, PHASE_1_MODULES.length)}
+                  disabled={advancing}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#D4AF37]/20 transition-all disabled:opacity-50"
+                >
+                  {advancing ? 'Saving...' : p1 > 0 ? 'Complete Next Module' : 'Start Phase 1'}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
@@ -386,8 +413,12 @@ export default function ZunnovaJourneyPage() {
 
               {/* Action Button */}
               {phase2Unlocked && p2 < 100 && (
-                <button className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#1B3A2D] to-[#2D5A42] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#1B3A2D]/20 transition-all">
-                  {p2 > 0 ? 'Continue Phase 2' : 'Start Phase 2'}
+                <button
+                  onClick={() => advancePhase(2, p2, PHASE_2_MODULES.length)}
+                  disabled={advancing}
+                  className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-gradient-to-r from-[#1B3A2D] to-[#2D5A42] text-white rounded-xl text-sm font-semibold hover:shadow-lg hover:shadow-[#1B3A2D]/20 transition-all disabled:opacity-50"
+                >
+                  {advancing ? 'Saving...' : p2 > 0 ? 'Complete Next Module' : 'Start Phase 2'}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}

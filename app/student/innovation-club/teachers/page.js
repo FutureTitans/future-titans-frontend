@@ -127,13 +127,18 @@ export default function TeachersTrainingPage() {
     setReserveError(null);
     setReserveSuccess(null);
     try {
-      await innovationClub.reserveSeat(cohortId);
+      const currentUser = getUser();
+      await innovationClub.reserveSeat(cohortId, {
+        name: currentUser?.name,
+        email: currentUser?.email,
+        school: currentUser?.school,
+      });
       setReserveSuccess(cohortId);
       fetchCohorts();
       setTimeout(() => setReserveSuccess(null), 4000);
     } catch (error) {
       console.error('Failed to reserve seat:', error);
-      setReserveError(error?.response?.data?.message || 'Failed to reserve seat. Please try again.');
+      setReserveError(error?.error || error?.message || 'Failed to reserve seat. Please try again.');
       setTimeout(() => setReserveError(null), 4000);
     } finally {
       setReservingId(null);
@@ -236,7 +241,8 @@ export default function TeachersTrainingPage() {
           {cohorts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {cohorts.map((cohort) => {
-                const seatsLeft = (cohort.totalSeats || 30) - (cohort.reservedSeats || 0);
+                const totalSeats = cohort.capacity || cohort.totalSeats || 30;
+                const seatsLeft = totalSeats - (cohort.seatsBooked || cohort.reservedSeats || 0);
                 return (
                   <div
                     key={cohort._id || cohort.id}
@@ -245,7 +251,9 @@ export default function TeachersTrainingPage() {
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-base font-semibold text-gray-900 mb-1">
-                          {cohort.title || `Cohort ${cohort.cohortNumber || ''}`}
+                          {cohort.title || (cohort.startDate
+                            ? `${new Date(cohort.startDate).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })} Cohort`
+                            : 'Training Cohort')}
                         </h3>
                         <div className="flex items-center gap-1.5 text-xs text-gray-500">
                           <Calendar className="w-3 h-3" />
@@ -263,7 +271,7 @@ export default function TeachersTrainingPage() {
                     )}
 
                     <div className="mb-4">
-                      <SeatsIndicator seatsLeft={seatsLeft} totalSeats={cohort.totalSeats || 30} />
+                      <SeatsIndicator seatsLeft={seatsLeft} totalSeats={totalSeats} />
                     </div>
 
                     <div className="mt-auto pt-2">

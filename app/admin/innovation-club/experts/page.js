@@ -8,8 +8,8 @@ import { adminIC } from '@/lib/api';
 import { upload } from '@vercel/blob/client';
 
 const TRACKS = ['ai', 'business', 'design', 'finance'];
-const FORMATS = ['live', 'recorded', 'hybrid'];
-const SESSION_STATUSES = ['scheduled', 'live', 'completed', 'cancelled'];
+const FORMATS = ['live', 'recorded'];
+const SESSION_STATUSES = ['scheduled', 'upcoming', 'live', 'completed', 'past', 'cancelled'];
 
 const emptyExpert = { name: '', credential: '', bio: '', photo: '', track: 'ai' };
 const emptySession = { expert: '', title: '', topic: '', scheduledDate: '', duration: 60, format: 'live', status: 'scheduled', videoUrl: '', thumbnailUrl: '' };
@@ -137,6 +137,8 @@ export default function ExpertsManagerPage() {
 
   const saveSession = async () => {
     if (!sessionForm.title || !sessionForm.expert) return;
+    if (!sessionForm.scheduledDate) { alert('Scheduled date is required.'); return; }
+    if (!sessionForm.topic) { alert('Topic is required.'); return; }
     setSaving(true);
     try {
       let thumbnailUrl = sessionForm.thumbnailUrl || '';
@@ -293,7 +295,7 @@ export default function ExpertsManagerPage() {
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#D4AF37]/10 text-[#B8952E] capitalize">{expert.track}</span>
                       </td>
-                      <td className="px-6 py-4">{expert.sessionsCount ?? 0}</td>
+                      <td className="px-6 py-4">{expert.sessionCount ?? 0}</td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <button onClick={() => openExpertForm(expert)} className="p-1.5 text-gray-400 hover:text-[#D4AF37] transition" title="Edit"><Edit className="w-4 h-4" /></button>

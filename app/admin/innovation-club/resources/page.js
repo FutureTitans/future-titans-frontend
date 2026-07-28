@@ -8,12 +8,12 @@ import {
 import { adminIC } from '@/lib/api';
 import { upload } from '@vercel/blob/client';
 
-const RESOURCE_TYPES = ['pdf', 'video', 'article', 'worksheet', 'template', 'toolkit', 'infographic'];
+const RESOURCE_TYPES = ['book', 'pdf', 'worksheet', 'video'];
 const RESOURCE_LEVELS = ['beginner', 'intermediate', 'advanced'];
-const RESOURCE_STAGES = ['ideation', 'validation', 'prototype', 'launch', 'growth', 'general'];
+const RESOURCE_STAGES = ['discover', 'build', 'pitch', 'scale'];
 
 const emptyResource = {
-  title: '', description: '', author: '', type: 'pdf', level: 'beginner', stage: 'general',
+  title: '', description: '', author: '', type: 'pdf', level: 'beginner', stage: 'discover',
   fileUrl: '', coverImage: '', duration: '', featured: false, tags: '',
 };
 
@@ -56,7 +56,7 @@ export default function ResourceLibraryPage() {
         author: resource.author || '',
         type: resource.type || 'pdf',
         level: resource.level || 'beginner',
-        stage: resource.stage || 'general',
+        stage: resource.stage || 'discover',
         fileUrl: resource.fileUrl || '',
         coverImage: resource.coverImage || '',
         duration: resource.duration || '',
@@ -80,6 +80,7 @@ export default function ResourceLibraryPage() {
 
   const saveResource = async () => {
     if (!form.title) return;
+    if (!form.fileUrl && !resourceFile) { alert('A resource file (or file URL) is required.'); return; }
     setSaving(true);
     try {
       let fileUrl = form.fileUrl || '';
@@ -131,7 +132,7 @@ export default function ResourceLibraryPage() {
   };
 
   const displayedResources = sortByDownloads
-    ? [...resources].sort((a, b) => (b.downloads || 0) - (a.downloads || 0))
+    ? [...resources].sort((a, b) => (b.downloadCount || 0) - (a.downloadCount || 0))
     : resources;
 
   if (loading) {
@@ -320,7 +321,7 @@ export default function ResourceLibraryPage() {
                     </td>
                     <td className="px-6 py-4 capitalize">{resource.level}</td>
                     <td className="px-6 py-4 capitalize">{resource.stage}</td>
-                    <td className="px-6 py-4">{resource.downloads || 0}</td>
+                    <td className="px-6 py-4">{resource.downloadCount || 0}</td>
                     <td className="px-6 py-4">
                       {resource.featured ? <Star className="w-4 h-4 text-[#D4AF37] fill-[#D4AF37]" /> : <Star className="w-4 h-4 text-gray-300" />}
                     </td>

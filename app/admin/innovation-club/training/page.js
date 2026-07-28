@@ -13,7 +13,7 @@ const FORMATS = ['online', 'offline', 'hybrid'];
 const emptyModule = { title: '', description: '', order: 1 };
 
 const emptyCohort = {
-  startDate: '', endDate: '', capacity: 30, format: 'online',
+  title: '', startDate: '', endDate: '', capacity: 30, format: 'online',
   certificateTemplate: '', autoIssueCertificate: false,
   modules: [
     { title: '', description: '', order: 1 },
@@ -58,6 +58,7 @@ export default function TrainingManagerPage() {
         ? cohort.modules.map((m, i) => ({ title: m.title || '', description: m.description || '', order: m.order || i + 1 }))
         : emptyCohort.modules;
       setForm({
+        title: cohort.title || '',
         startDate: cohort.startDate ? cohort.startDate.slice(0, 10) : '',
         endDate: cohort.endDate ? cohort.endDate.slice(0, 10) : '',
         capacity: cohort.capacity || 30,
@@ -169,6 +170,10 @@ export default function TrainingManagerPage() {
             <button onClick={closeForm} className="text-gray-400 hover:text-gray-600"><X className="w-5 h-5" /></button>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Cohort Title</label>
+              <input type="text" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" placeholder="e.g. Innovation Mentorship Cohort 8" />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Start Date *</label>
               <input type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/40 focus:border-[#D4AF37]" />
@@ -288,7 +293,10 @@ export default function TrainingManagerPage() {
                     <>
                       <tr key={cohort._id} className="hover:bg-gray-50/50 transition">
                         <td className="px-6 py-4 font-medium text-gray-900">
-                          {cohort.startDate ? new Date(cohort.startDate).toLocaleDateString() : '--'} - {cohort.endDate ? new Date(cohort.endDate).toLocaleDateString() : '--'}
+                          {cohort.title && <span className="block">{cohort.title}</span>}
+                          <span className={cohort.title ? 'text-xs text-gray-500 font-normal' : ''}>
+                            {cohort.startDate ? new Date(cohort.startDate).toLocaleDateString() : '--'} - {cohort.endDate ? new Date(cohort.endDate).toLocaleDateString() : '--'}
+                          </span>
                         </td>
                         <td className="px-6 py-4">{cohort.capacity || '--'}</td>
                         <td className="px-6 py-4">{teachers.length}</td>

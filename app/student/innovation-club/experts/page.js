@@ -75,9 +75,9 @@ export default function ExpertExposurePage() {
   const fetchSessions = async (appliedFilters = {}) => {
     try {
       const params = {};
-      if (appliedFilters.track && appliedFilters.track !== 'All') params.track = appliedFilters.track;
-      if (appliedFilters.format && appliedFilters.format !== 'All') params.format = appliedFilters.format;
-      if (appliedFilters.status && appliedFilters.status !== 'All') params.status = appliedFilters.status;
+      if (appliedFilters.track && appliedFilters.track !== 'All') params.track = appliedFilters.track.toLowerCase();
+      if (appliedFilters.format && appliedFilters.format !== 'All') params.format = appliedFilters.format.toLowerCase();
+      if (appliedFilters.status && appliedFilters.status !== 'All') params.status = appliedFilters.status.toLowerCase();
       if (appliedFilters.search) params.search = appliedFilters.search;
 
       const res = await innovationClub.getSessions(params);
@@ -101,7 +101,11 @@ export default function ExpertExposurePage() {
     if (!requestForm.schoolName || !requestForm.email || !requestForm.topic) return;
     setSubmitting(true);
     try {
-      await innovationClub.requestExpert(requestForm);
+      await innovationClub.requestExpert({
+        schoolName: requestForm.schoolName,
+        contactEmail: requestForm.email,
+        topicNeeded: requestForm.topic,
+      });
       setRequestSent(true);
       setRequestForm({ schoolName: '', email: '', topic: '' });
     } catch (error) {
@@ -315,10 +319,10 @@ export default function ExpertExposurePage() {
                       {new Date(session.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                     </span>
                   )}
-                  {session.time && (
+                  {session.date && (
                     <span className="flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {session.time}
+                      {new Date(session.date).toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit' })}
                     </span>
                   )}
                   {session.duration && (

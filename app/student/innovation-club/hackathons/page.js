@@ -29,15 +29,18 @@ import {
 
 function StatusBadge({ status }) {
   const styles = {
-    'registration open': 'bg-green-50 text-green-700 border-green-200',
+    registration_open: 'bg-green-50 text-green-700 border-green-200',
+    upcoming: 'bg-blue-50 text-blue-700 border-blue-200',
+    active: 'bg-[#D4AF37]/10 text-[#B8952E] border-[#D4AF37]/20',
     ongoing: 'bg-[#D4AF37]/10 text-[#B8952E] border-[#D4AF37]/20',
-    'results out': 'bg-blue-50 text-blue-700 border-blue-200',
+    judging: 'bg-amber-50 text-amber-700 border-amber-200',
+    results_out: 'bg-blue-50 text-blue-700 border-blue-200',
     completed: 'bg-gray-100 text-gray-600 border-gray-200',
   };
   const key = status?.toLowerCase() || '';
   return (
     <span className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${styles[key] || styles.ongoing}`}>
-      {status}
+      {status?.replace(/_/g, ' ')}
     </span>
   );
 }
@@ -116,7 +119,7 @@ export default function HackathonsPage() {
   const [loading, setLoading] = useState(true);
   const [hackathons, setHackathons] = useState([]);
   const [registerModal, setRegisterModal] = useState(null);
-  const [registerForm, setRegisterForm] = useState({ teamName: '', members: '' });
+  const [registerForm, setRegisterForm] = useState({ teamName: '', school: '', members: '' });
   const [registering, setRegistering] = useState(false);
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [registerError, setRegisterError] = useState(null);
@@ -154,14 +157,15 @@ export default function HackathonsPage() {
         .filter(Boolean);
       await innovationClub.registerTeam(hackathonId, {
         teamName: registerForm.teamName.trim(),
+        school: registerForm.school.trim() || user?.school || undefined,
         members: membersArray,
       });
       setRegisterSuccess(true);
-      setRegisterForm({ teamName: '', members: '' });
+      setRegisterForm({ teamName: '', school: '', members: '' });
       fetchHackathons();
     } catch (error) {
       console.error('Failed to register team:', error);
-      setRegisterError(error?.response?.data?.message || 'Registration failed. Please try again.');
+      setRegisterError(error?.error || error?.message || 'Registration failed. Please try again.');
     } finally {
       setRegistering(false);
     }
@@ -169,7 +173,7 @@ export default function HackathonsPage() {
 
   const closeRegisterModal = () => {
     setRegisterModal(null);
-    setRegisterForm({ teamName: '', members: '' });
+    setRegisterForm({ teamName: '', school: '', members: '' });
     setRegisterSuccess(false);
     setRegisterError(null);
   };
@@ -256,23 +260,23 @@ export default function HackathonsPage() {
                     {featured.classes && (
                       <span className="flex items-center gap-1.5">
                         <Users className="w-4 h-4 text-gray-400" />
-                        {featured.classes}
+                        Classes {Array.isArray(featured.classes) ? featured.classes.join(', ') : featured.classes}
                       </span>
                     )}
                     {featured.prizePool && (
                       <span className="flex items-center gap-1.5 font-semibold text-[#B8952E]">
                         <Trophy className="w-4 h-4" />
-                        {featured.prizePool}
+                        INR {Number(featured.prizePool).toLocaleString('en-IN')}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Countdown */}
-                {featured.deadlineDate && (
+                {/* Countdown to start (only while upcoming) */}
+                {featured.startDate && new Date(featured.startDate) > new Date() && (
                   <div className="flex-shrink-0">
-                    <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-2">Time Remaining</p>
-                    <CountdownTimer targetDate={featured.deadlineDate} />
+                    <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-2">Starts In</p>
+                    <CountdownTimer targetDate={featured.startDate} />
                   </div>
                 )}
               </div>
@@ -363,7 +367,7 @@ export default function HackathonsPage() {
                   {h.prizePool && (
                     <span className="flex items-center gap-1 text-[#B8952E] font-semibold">
                       <Trophy className="w-3 h-3" />
-                      {h.prizePool}
+                      INR {Number(h.prizePool).toLocaleString('en-IN')}
                     </span>
                   )}
                   {h.registeredTeams != null && (
@@ -489,6 +493,18 @@ export default function HackathonsPage() {
                       placeholder="Enter your team name"
                       className="w-full px-4 py-3 bg-white/60 border border-white/40 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/50 transition-all"
                       required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-wider text-gray-500 font-semibold mb-1.5">
+                      School
+                    </label>
+                    <input
+                      type="text"
+                      value={registerForm.school}
+                      onChange={(e) => setRegisterForm({ ...registerForm, school: e.target.value })}
+                      placeholder={user?.school || 'Your school name'}
+                      className="w-full px-4 py-3 bg-white/60 border border-white/40 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/30 focus:border-[#D4AF37]/50 transition-all"
                     />
                   </div>
                   <div>
