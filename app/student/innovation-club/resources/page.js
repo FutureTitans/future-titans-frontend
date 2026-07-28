@@ -26,7 +26,7 @@ import {
   Sparkles,
   Download,
   Compass,
-  Blocks,
+  Boxes,
   Megaphone,
   BarChart3,
   Rocket,
@@ -46,7 +46,7 @@ const TYPE_ICONS = { book: BookOpen, pdf: FileText, worksheet: File, video: Vide
 
 const STAGE_META = {
   discover: { icon: Compass, label: 'Discover' },
-  build: { icon: Blocks, label: 'Build' },
+  build: { icon: Boxes, label: 'Build' },
   pitch: { icon: Megaphone, label: 'Pitch' },
   scale: { icon: BarChart3, label: 'Scale' },
 };
