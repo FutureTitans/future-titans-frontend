@@ -50,7 +50,7 @@ export default function Navbar() {
 
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
-  const publicPages = ['/', '/about-us', '/team', '/for-parents', '/for-schools', '/future-titans', '/academy', '/success-stories', '/media', '/contact'];
+  const publicPages = ['/', '/about-us', '/team', '/for-parents', '/for-schools', '/future-titans', '/academy', '/success-stories', '/media', '/contact', '/innovation-club'];
   if (publicPages.includes(pathname) || pathname?.startsWith('/school-poc') || pathname?.startsWith('/association')) return null;
   if (!mounted) return null;
 
