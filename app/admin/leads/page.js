@@ -237,47 +237,73 @@ export default function AdminLeadsPage() {
         const ws = wb.Sheets[wb.SheetNames[0]];
         const rows = xlsxLib.utils.sheet_to_json(ws, { defval: '' });
 
-        const mapped = rows.map((row) => {
-          const get = (keys) => {
-            for (const k of keys) {
-              if (row[k] !== undefined && row[k] !== '') return String(row[k]).trim();
-            }
-            for (const k of keys) {
-              const lower = k.toLowerCase();
-              const upper = k.toUpperCase();
-              if (row[lower] !== undefined && row[lower] !== '') return String(row[lower]).trim();
-              if (row[upper] !== undefined && row[upper] !== '') return String(row[upper]).trim();
-            }
-            for (const rowKey of Object.keys(row)) {
-              for (const k of keys) {
-                if (rowKey.toLowerCase() === k.toLowerCase()) {
-                  if (row[rowKey] !== undefined && row[rowKey] !== '') return String(row[rowKey]).trim();
-                }
-              }
-            }
-            return '';
-          };
-          return {
-            name: get(['Name', 'Principal', 'First Name', 'FirstName', 'name', 'principal']) ||
-                  `${get(['First Name', 'FirstName'])} ${get(['Last Name', 'LastName'])}`.trim(),
-            designation: get(['Designation', 'designation', 'Role', 'role']),
-            school: get(['School', 'School Name', 'SchoolName', 'school', 'school name']),
-            city: get(['City', 'city', 'Location', 'location']),
-            phone: get(['Phone', 'phone', 'Mobile', 'mobile', 'Contact', 'Phone Number']),
-            email: get(['Email', 'email', 'Email ID', 'EmailID', 'email id', 'Email Address']),
-            leadSource: get(['Lead source', 'LeadSource', 'Source', 'lead source']),
-            contactMethod: get(['Contact method', 'ContactMethod', 'contact method']) || 'email',
-            response: get(['Response', 'response']),
-            assignedTo: get(['Assigned to', 'AssignedTo', 'assigned to']),
-          };
-        }).filter((r) => r.name && r.name.trim());
+        const colKeys = rows.length > 0 ? Object.keys(rows[0]) : [];
 
+        const findCol = (patterns) => {
+          for (const p of patterns) {
+            const found = colKeys.find((k) => k.toLowerCase().trim() === p.toLowerCase().trim());
+            if (found) return found;
+          }
+          for (const p of patterns) {
+            const found = colKeys.find((k) => k.toLowerCase().includes(p.toLowerCase()));
+            if (found) return found;
+          }
+          return null;
+        };
+
+        const nameCol = findCol(['Name', 'Principal', 'Student Name']);
+        const firstNameCol = findCol(['First Name', 'FirstName']);
+        const lastNameCol = findCol(['Last Name', 'LastName']);
+        const designationCol = findCol(['Designation', 'Role']);
+        const schoolCol = findCol(['School Name', 'School', 'SchoolName']);
+        const cityCol = findCol(['City', 'Location']);
+        const stateCol = findCol(['State']);
+        const phoneCol = findCol(['Phone', 'Mobile', 'Contact', 'Phone Number']);
+        const emailCol = findCol(['Email ID', 'Email', 'Email Address', 'EmailID']);
+        const sourceCol = findCol(['Lead Source', 'Source', 'LeadSource']);
+        const classCol = findCol(['Class', 'Grade', 'Standard']);
+        const responseCol = findCol(['Response']);
+        const assignedCol = findCol(['Assigned To', 'AssignedTo']);
+
+        const mapped = rows.map((row) => {
+          const val = (col) => {
+            if (!col) return '';
+            const v = row[col];
+            if (v === null || v === undefined || v === '') return '';
+            return String(v).trim();
+          };
+
+          let name = val(nameCol);
+          if (!name && (firstNameCol || lastNameCol)) {
+            name = [val(firstNameCol), val(lastNameCol)].filter(Boolean).join(' ');
+          }
+
+          const designation = val(designationCol) || (classCol ? val(classCol) : '');
+
+          return {
+            name,
+            designation,
+            school: val(schoolCol),
+            city: val(cityCol),
+            state: val(stateCol),
+            phone: val(phoneCol),
+            email: val(emailCol),
+            leadSource: val(sourceCol),
+            contactMethod: 'email',
+            response: val(responseCol),
+            assignedTo: val(assignedCol),
+          };
+        }).filter((r) => r.name);
+
+        if (mapped.length === 0) {
+          alert(`No leads found. The file has ${rows.length} rows but no name column was detected.\n\nDetected columns: ${colKeys.join(', ')}`);
+        }
         setImportData(mapped);
         setImportPreview(mapped.slice(0, 5));
         setImportResult(null);
       } catch (err) {
         console.error('Excel parse error:', err);
-        alert('Failed to parse file: ' + err.message);
+        alert('Failed to parse file: ' + (err.message || err));
       } finally {
         setImportLoading(false);
       }
