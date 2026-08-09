@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { getUser } from '@/lib/auth';
-import { LayoutDashboard, Users, BookOpen, FileText, BarChart3, School, Building2, Settings, Rocket, Menu, X, Home, Newspaper, Lightbulb } from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, FileText, BarChart3, School, Building2, Settings, Rocket, Menu, X, Home, Newspaper, Lightbulb, Contact } from 'lucide-react';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -16,6 +16,7 @@ const navItems = [
   { href: '/admin/schools', label: 'Schools', icon: School },
   { href: '/admin/associations', label: 'Associations', icon: Building2 },
   { href: '/admin/blogs', label: 'Blogs', icon: Newspaper },
+  { href: '/admin/leads', label: 'Lead Management', icon: Contact },
   { href: '/admin/innovation-club', label: 'Innovation Club', icon: Lightbulb },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
