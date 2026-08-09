@@ -8,7 +8,6 @@ import {
   Filter, X, FileSpreadsheet, ArrowUpDown,
 } from 'lucide-react';
 import { adminLeads } from '@/lib/api';
-import * as XLSX from 'xlsx';
 
 const STATUS_OPTIONS = [
   { value: 'new', label: 'New', color: 'bg-gray-100 text-gray-700' },
@@ -221,45 +220,73 @@ export default function AdminLeadsPage() {
   };
 
   // Import
-  const handleFileUpload = async (e) => {
+  const [importLoading, setImportLoading] = useState(false);
+
+  const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    try {
-    const buf = await file.arrayBuffer();
-    const wb = XLSX.read(buf, { type: 'array' });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+    setImportLoading(true);
 
-    const mapped = rows.map((row) => {
-      const get = (keys) => {
-        for (const k of keys) {
-          const val = row[k] || row[k.toLowerCase()] || row[k.toUpperCase()];
-          if (val) return String(val).trim();
-        }
-        return '';
-      };
-      return {
-        name: get(['Name', 'Principal', 'First Name', 'FirstName', 'name', 'principal']) ||
-              `${get(['First Name', 'FirstName'])} ${get(['Last Name', 'LastName'])}`.trim(),
-        designation: get(['Designation', 'designation', 'Role', 'role']),
-        school: get(['School', 'School Name', 'SchoolName', 'school', 'school name']),
-        city: get(['City', 'city', 'Location', 'location']),
-        phone: get(['Phone', 'phone', 'Mobile', 'mobile', 'Contact']),
-        email: get(['Email', 'email', 'Email ID', 'EmailID', 'email id']),
-        leadSource: get(['Lead source', 'LeadSource', 'Source', 'lead source']),
-        contactMethod: get(['Contact method', 'ContactMethod', 'contact method']) || 'email',
-        response: get(['Response', 'response', 'Status']),
-        assignedTo: get(['Assigned to', 'AssignedTo', 'assigned to']),
-      };
-    }).filter((r) => r.name && r.name.trim());
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const XLSX = await import('xlsx');
+        const xlsxLib = XLSX.default || XLSX;
+        const data = new Uint8Array(evt.target.result);
+        const wb = xlsxLib.read(data, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const rows = xlsxLib.utils.sheet_to_json(ws, { defval: '' });
 
-    setImportData(mapped);
-    setImportPreview(mapped.slice(0, 5));
-    setImportResult(null);
-    } catch (err) {
-      console.error('Excel parse error:', err);
-      alert('Failed to parse file. Please check the format.');
-    }
+        const mapped = rows.map((row) => {
+          const get = (keys) => {
+            for (const k of keys) {
+              if (row[k] !== undefined && row[k] !== '') return String(row[k]).trim();
+            }
+            for (const k of keys) {
+              const lower = k.toLowerCase();
+              const upper = k.toUpperCase();
+              if (row[lower] !== undefined && row[lower] !== '') return String(row[lower]).trim();
+              if (row[upper] !== undefined && row[upper] !== '') return String(row[upper]).trim();
+            }
+            for (const rowKey of Object.keys(row)) {
+              for (const k of keys) {
+                if (rowKey.toLowerCase() === k.toLowerCase()) {
+                  if (row[rowKey] !== undefined && row[rowKey] !== '') return String(row[rowKey]).trim();
+                }
+              }
+            }
+            return '';
+          };
+          return {
+            name: get(['Name', 'Principal', 'First Name', 'FirstName', 'name', 'principal']) ||
+                  `${get(['First Name', 'FirstName'])} ${get(['Last Name', 'LastName'])}`.trim(),
+            designation: get(['Designation', 'designation', 'Role', 'role']),
+            school: get(['School', 'School Name', 'SchoolName', 'school', 'school name']),
+            city: get(['City', 'city', 'Location', 'location']),
+            phone: get(['Phone', 'phone', 'Mobile', 'mobile', 'Contact', 'Phone Number']),
+            email: get(['Email', 'email', 'Email ID', 'EmailID', 'email id', 'Email Address']),
+            leadSource: get(['Lead source', 'LeadSource', 'Source', 'lead source']),
+            contactMethod: get(['Contact method', 'ContactMethod', 'contact method']) || 'email',
+            response: get(['Response', 'response']),
+            assignedTo: get(['Assigned to', 'AssignedTo', 'assigned to']),
+          };
+        }).filter((r) => r.name && r.name.trim());
+
+        setImportData(mapped);
+        setImportPreview(mapped.slice(0, 5));
+        setImportResult(null);
+      } catch (err) {
+        console.error('Excel parse error:', err);
+        alert('Failed to parse file: ' + err.message);
+      } finally {
+        setImportLoading(false);
+      }
+    };
+    reader.onerror = () => {
+      alert('Failed to read file.');
+      setImportLoading(false);
+    };
+    reader.readAsArrayBuffer(file);
     if (fileRef.current) fileRef.current.value = '';
   };
 
@@ -682,12 +709,18 @@ export default function AdminLeadsPage() {
 
               {!importResult ? (
                 <>
-                  <label className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center mb-4 block cursor-pointer hover:border-[#D4AF37]/40 transition">
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center mb-4">
                     <FileSpreadsheet className="w-10 h-10 text-gray-300 mx-auto mb-3" />
                     <p className="text-sm text-gray-500 mb-3">Upload CSV or Excel file (.csv, .xlsx, .xls)</p>
-                    <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls" onChange={handleFileUpload} className="sr-only" />
-                    <span className="glass-button text-sm inline-block pointer-events-none">Choose File</span>
-                  </label>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept=".csv,.xlsx,.xls"
+                      onChange={handleFileUpload}
+                      className="block mx-auto text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer cursor-pointer"
+                    />
+                    {importLoading && <p className="text-sm text-[#D4AF37] mt-3 font-medium">Parsing file...</p>}
+                  </div>
 
                   {importPreview.length > 0 && (
                     <>
