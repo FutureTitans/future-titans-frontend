@@ -682,12 +682,12 @@ export default function AdminLeadsPage() {
 
               {!importResult ? (
                 <>
-                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center mb-4">
+                  <label className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center mb-4 block cursor-pointer hover:border-[#D4AF37]/40 transition">
                     <FileSpreadsheet className="w-10 h-10 text-gray-300 mx-auto mb-3" />
                     <p className="text-sm text-gray-500 mb-3">Upload CSV or Excel file (.csv, .xlsx, .xls)</p>
-                    <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls" onChange={handleFileUpload} className="hidden" />
-                    <button onClick={() => fileRef.current?.click()} className="glass-button text-sm">Choose File</button>
-                  </div>
+                    <input ref={fileRef} type="file" accept=".csv,.xlsx,.xls" onChange={handleFileUpload} className="sr-only" />
+                    <span className="glass-button text-sm inline-block pointer-events-none">Choose File</span>
+                  </label>
 
                   {importPreview.length > 0 && (
                     <>
