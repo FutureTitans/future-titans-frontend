@@ -8,6 +8,7 @@ import {
   Filter, X, FileSpreadsheet, ArrowUpDown,
 } from 'lucide-react';
 import { adminLeads } from '@/lib/api';
+import * as XLSX from 'xlsx';
 
 const STATUS_OPTIONS = [
   { value: 'new', label: 'New', color: 'bg-gray-100 text-gray-700' },
@@ -223,7 +224,7 @@ export default function AdminLeadsPage() {
   const handleFileUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    const XLSX = await import('xlsx');
+    try {
     const buf = await file.arrayBuffer();
     const wb = XLSX.read(buf, { type: 'array' });
     const ws = wb.Sheets[wb.SheetNames[0]];
@@ -255,6 +256,11 @@ export default function AdminLeadsPage() {
     setImportData(mapped);
     setImportPreview(mapped.slice(0, 5));
     setImportResult(null);
+    } catch (err) {
+      console.error('Excel parse error:', err);
+      alert('Failed to parse file. Please check the format.');
+    }
+    if (fileRef.current) fileRef.current.value = '';
   };
 
   const handleImportSubmit = async () => {
