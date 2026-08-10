@@ -28,6 +28,36 @@ const PRIORITY_OPTIONS = [
 const CONTACT_METHODS = ['email', 'call', 'whatsapp', 'meeting', 'other'];
 const NOTE_TYPES = ['note', 'email_sent', 'call_made', 'meeting', 'status_change'];
 
+const SYSTEM_FIELDS = [
+  { key: 'name', label: 'Name', required: true },
+  { key: 'firstName', label: 'First Name' },
+  { key: 'lastName', label: 'Last Name' },
+  { key: 'designation', label: 'Designation' },
+  { key: 'school', label: 'School' },
+  { key: 'city', label: 'City' },
+  { key: 'state', label: 'State' },
+  { key: 'phone', label: 'Phone' },
+  { key: 'email', label: 'Email' },
+  { key: 'leadSource', label: 'Lead Source' },
+  { key: 'response', label: 'Response' },
+  { key: 'assignedTo', label: 'Assigned To' },
+];
+
+const SUGGEST_PATTERNS = {
+  name: ['name', 'full name', 'fullname', 'principal', 'student name', 'contact name', 'person name'],
+  firstName: ['first name', 'firstname', 'first_name', 'fname'],
+  lastName: ['last name', 'lastname', 'last_name', 'lname', 'surname'],
+  designation: ['designation', 'role', 'title', 'position', 'class', 'grade', 'standard'],
+  school: ['school name', 'school', 'schoolname', 'institution', 'organization', 'college', 'institute'],
+  city: ['city', 'location', 'town', 'district'],
+  state: ['state', 'province', 'region'],
+  phone: ['phone', 'mobile', 'contact number', 'phone number', 'contact no', 'mobile no', 'phone no', 'cell', 'telephone', 'mob no', 'mob'],
+  email: ['email id', 'email', 'email address', 'emailid', 'e-mail', 'mail id', 'mail'],
+  leadSource: ['lead source', 'source', 'leadsource', 'lead_source', 'channel'],
+  response: ['response', 'remark', 'remarks', 'comment', 'comments', 'feedback'],
+  assignedTo: ['assigned to', 'assignedto', 'assigned', 'owner', 'sales rep', 'salesperson'],
+};
+
 const statusColor = (s) => STATUS_OPTIONS.find((o) => o.value === s)?.color || 'bg-gray-100 text-gray-700';
 const statusLabel = (s) => STATUS_OPTIONS.find((o) => o.value === s)?.label || s;
 
@@ -76,8 +106,10 @@ export default function AdminLeadsPage() {
   const [bulkAssign, setBulkAssign] = useState('');
 
   // Import
-  const [importData, setImportData] = useState([]);
-  const [importPreview, setImportPreview] = useState([]);
+  const [importStep, setImportStep] = useState(1);
+  const [fileColumns, setFileColumns] = useState([]);
+  const [fileRows, setFileRows] = useState([]);
+  const [columnMapping, setColumnMapping] = useState({});
   const [importResult, setImportResult] = useState(null);
   const fileRef = useRef(null);
 
@@ -237,70 +269,32 @@ export default function AdminLeadsPage() {
         const ws = wb.Sheets[wb.SheetNames[0]];
         const rows = xlsxLib.utils.sheet_to_json(ws, { defval: '' });
 
-        const colKeys = rows.length > 0 ? Object.keys(rows[0]) : [];
-
-        const findCol = (patterns) => {
-          for (const p of patterns) {
-            const found = colKeys.find((k) => k.toLowerCase().trim() === p.toLowerCase().trim());
-            if (found) return found;
-          }
-          for (const p of patterns) {
-            const found = colKeys.find((k) => k.toLowerCase().includes(p.toLowerCase()));
-            if (found) return found;
-          }
-          return null;
-        };
-
-        const nameCol = findCol(['Name', 'Principal', 'Student Name']);
-        const firstNameCol = findCol(['First Name', 'FirstName']);
-        const lastNameCol = findCol(['Last Name', 'LastName']);
-        const designationCol = findCol(['Designation', 'Role']);
-        const schoolCol = findCol(['School Name', 'School', 'SchoolName']);
-        const cityCol = findCol(['City', 'Location']);
-        const stateCol = findCol(['State']);
-        const phoneCol = findCol(['Phone', 'Mobile', 'Contact', 'Phone Number']);
-        const emailCol = findCol(['Email ID', 'Email', 'Email Address', 'EmailID']);
-        const sourceCol = findCol(['Lead Source', 'Source', 'LeadSource']);
-        const classCol = findCol(['Class', 'Grade', 'Standard']);
-        const responseCol = findCol(['Response']);
-        const assignedCol = findCol(['Assigned To', 'AssignedTo']);
-
-        const mapped = rows.map((row) => {
-          const val = (col) => {
-            if (!col) return '';
-            const v = row[col];
-            if (v === null || v === undefined || v === '') return '';
-            return String(v).trim();
-          };
-
-          let name = val(nameCol);
-          if (!name && (firstNameCol || lastNameCol)) {
-            name = [val(firstNameCol), val(lastNameCol)].filter(Boolean).join(' ');
-          }
-
-          const designation = val(designationCol) || (classCol ? val(classCol) : '');
-
-          return {
-            name,
-            designation,
-            school: val(schoolCol),
-            city: val(cityCol),
-            state: val(stateCol),
-            phone: val(phoneCol),
-            email: val(emailCol),
-            leadSource: val(sourceCol),
-            contactMethod: 'email',
-            response: val(responseCol),
-            assignedTo: val(assignedCol),
-          };
-        }).filter((r) => r.name);
-
-        if (mapped.length === 0) {
-          alert(`No leads found. The file has ${rows.length} rows but no name column was detected.\n\nDetected columns: ${colKeys.join(', ')}`);
+        if (rows.length === 0) {
+          alert('No data found in the file.');
+          setImportLoading(false);
+          return;
         }
-        setImportData(mapped);
-        setImportPreview(mapped.slice(0, 5));
-        setImportResult(null);
+
+        const cols = Object.keys(rows[0]);
+        setFileColumns(cols);
+        setFileRows(rows);
+
+        const mapping = {};
+        const usedCols = new Set();
+        for (const field of SYSTEM_FIELDS) {
+          const patterns = SUGGEST_PATTERNS[field.key];
+          if (!patterns) continue;
+          let match = cols.find((c) => !usedCols.has(c) && patterns.some((p) => c.toLowerCase().trim() === p));
+          if (!match) {
+            match = cols.find((c) => !usedCols.has(c) && patterns.some((p) => c.toLowerCase().includes(p)));
+          }
+          if (match) {
+            mapping[field.key] = match;
+            usedCols.add(match);
+          }
+        }
+        setColumnMapping(mapping);
+        setImportStep(2);
       } catch (err) {
         console.error('Excel parse error:', err);
         alert('Failed to parse file: ' + (err.message || err));
@@ -316,10 +310,58 @@ export default function AdminLeadsPage() {
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  const handleImportSubmit = async () => {
+  const resolveValue = (row, key) => {
+    const col = columnMapping[key];
+    if (!col) return '';
+    const v = row[col];
+    return v === null || v === undefined || v === '' ? '' : String(v).trim();
+  };
+
+  const resolveName = (row) => {
+    let name = resolveValue(row, 'name');
+    if (!name) {
+      name = [resolveValue(row, 'firstName'), resolveValue(row, 'lastName')].filter(Boolean).join(' ');
+    }
+    return name;
+  };
+
+  const getMappedPreview = () => {
+    return fileRows.slice(0, 5).map((row) => ({
+      name: resolveName(row),
+      designation: resolveValue(row, 'designation'),
+      school: resolveValue(row, 'school'),
+      city: resolveValue(row, 'city'),
+      phone: resolveValue(row, 'phone'),
+      email: resolveValue(row, 'email'),
+    }));
+  };
+
+  const getValidLeadCount = () => fileRows.filter((row) => resolveName(row)).length;
+
+  const handleMappingImport = async () => {
+    const mapped = fileRows.map((row) => ({
+      name: resolveName(row),
+      designation: resolveValue(row, 'designation'),
+      school: resolveValue(row, 'school'),
+      city: resolveValue(row, 'city'),
+      state: resolveValue(row, 'state'),
+      phone: resolveValue(row, 'phone'),
+      email: resolveValue(row, 'email'),
+      leadSource: resolveValue(row, 'leadSource'),
+      contactMethod: 'email',
+      response: resolveValue(row, 'response'),
+      assignedTo: resolveValue(row, 'assignedTo'),
+    })).filter((r) => r.name);
+
+    if (mapped.length === 0) {
+      alert('No valid leads found. Make sure the Name field (or First Name + Last Name) is mapped.');
+      return;
+    }
+
     try {
-      const result = await adminLeads.bulkImport(importData);
+      const result = await adminLeads.bulkImport(mapped);
       setImportResult(result);
+      setImportStep(3);
       fetchLeads();
       fetchDashboard();
     } catch (err) {
@@ -369,7 +411,7 @@ export default function AdminLeadsPage() {
           <button onClick={() => { setShowForm(true); setEditingLead(null); setFormData(emptyLead); }} className="glass-button flex items-center gap-2 text-sm">
             <Plus className="w-4 h-4" /> Add Lead
           </button>
-          <button onClick={() => { setShowImport(true); setImportData([]); setImportPreview([]); setImportResult(null); }} className="glass-button-secondary flex items-center gap-2 text-sm">
+          <button onClick={() => { setShowImport(true); setImportStep(1); setFileColumns([]); setFileRows([]); setColumnMapping({}); setImportResult(null); }} className="glass-button-secondary flex items-center gap-2 text-sm">
             <Upload className="w-4 h-4" /> Import
           </button>
           <button onClick={handleExport} className="glass-button-secondary flex items-center gap-2 text-sm">
@@ -724,34 +766,100 @@ export default function AdminLeadsPage() {
       {showImport && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowImport(false)} />
-          <div className="glass-strong rounded-2xl w-full max-w-3xl relative z-10 shadow-2xl border border-white/30 max-h-[90vh] overflow-y-auto">
+          <div className="glass-strong rounded-2xl w-full max-w-4xl relative z-10 shadow-2xl border border-white/30 max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold gradient-text">Import Leads</h2>
+                <div>
+                  <h2 className="text-lg font-bold gradient-text">Import Leads</h2>
+                  {importStep === 2 && (
+                    <p className="text-sm text-gray-500 mt-1">{fileRows.length} rows found -- map columns to system fields</p>
+                  )}
+                </div>
                 <button onClick={() => setShowImport(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition">
                   <X className="w-5 h-5 text-gray-500" />
                 </button>
               </div>
 
-              {!importResult ? (
-                <>
-                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center mb-4">
-                    <FileSpreadsheet className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                    <p className="text-sm text-gray-500 mb-3">Upload CSV or Excel file (.csv, .xlsx, .xls)</p>
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      accept=".csv,.xlsx,.xls"
-                      onChange={handleFileUpload}
-                      className="block mx-auto text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer cursor-pointer"
-                    />
-                    {importLoading && <p className="text-sm text-[#D4AF37] mt-3 font-medium">Parsing file...</p>}
-                  </div>
+              {/* Step 1: Upload */}
+              {importStep === 1 && (
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
+                  <FileSpreadsheet className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 mb-3">Upload CSV or Excel file (.csv, .xlsx, .xls)</p>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    accept=".csv,.xlsx,.xls"
+                    onChange={handleFileUpload}
+                    className="block mx-auto text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer cursor-pointer"
+                  />
+                  {importLoading && <p className="text-sm text-[#D4AF37] mt-3 font-medium">Parsing file...</p>}
+                </div>
+              )}
 
-                  {importPreview.length > 0 && (
-                    <>
-                      <p className="text-sm font-semibold text-gray-700 mb-2">Preview ({importData.length} leads detected)</p>
-                      <div className="overflow-x-auto mb-4">
+              {/* Step 2: Map Columns */}
+              {importStep === 2 && (() => {
+                const preview = getMappedPreview();
+                const validCount = getValidLeadCount();
+                return (
+                  <>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-700 mb-3">Column Mapping</h3>
+                        <div className="space-y-2">
+                          {SYSTEM_FIELDS.map((field) => (
+                            <div key={field.key} className="flex items-center gap-3">
+                              <label className="text-sm text-gray-600 w-28 shrink-0">
+                                {field.label}{field.required && <span className="text-red-500 ml-0.5">*</span>}
+                              </label>
+                              <select
+                                value={columnMapping[field.key] || ''}
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  setColumnMapping((prev) => {
+                                    const next = { ...prev };
+                                    if (val) { next[field.key] = val; } else { delete next[field.key]; }
+                                    return next;
+                                  });
+                                }}
+                                className={`glass-input flex-1 text-sm !py-1.5 ${columnMapping[field.key] ? 'border-green-300' : ''}`}
+                              >
+                                <option value="">-- Skip --</option>
+                                {fileColumns.map((col) => (
+                                  <option key={col} value={col}>{col}</option>
+                                ))}
+                              </select>
+                            </div>
+                          ))}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-3">
+                          If &quot;Name&quot; is not available, map &quot;First Name&quot; + &quot;Last Name&quot; instead
+                        </p>
+                      </div>
+
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-700 mb-3">File Columns ({fileColumns.length})</h3>
+                        <div className="flex flex-wrap gap-1.5">
+                          {fileColumns.map((col) => {
+                            const isMapped = Object.values(columnMapping).includes(col);
+                            return (
+                              <span
+                                key={col}
+                                className={`inline-block px-2.5 py-1 rounded-full text-xs font-medium ${
+                                  isMapped ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                                }`}
+                              >
+                                {col}
+                              </span>
+                            );
+                          })}
+                        </div>
+                        <p className="text-xs text-gray-400 mt-2">Green = mapped, Gray = unmapped</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <h3 className="text-sm font-semibold text-gray-700 mb-2">Preview (first 5 rows)</h3>
+                      <div className="overflow-x-auto">
                         <table className="w-full text-xs border border-gray-100 rounded-lg overflow-hidden">
                           <thead>
                             <tr className="bg-gray-50">
@@ -764,24 +872,37 @@ export default function AdminLeadsPage() {
                             </tr>
                           </thead>
                           <tbody>
-                            {importPreview.map((row, i) => (
+                            {preview.map((row, i) => (
                               <tr key={i} className="border-t border-gray-50">
-                                <td className="p-2">{row.name}</td>
-                                <td className="p-2">{row.designation}</td>
-                                <td className="p-2">{row.school}</td>
-                                <td className="p-2">{row.city}</td>
-                                <td className="p-2">{row.phone}</td>
-                                <td className="p-2">{row.email}</td>
+                                <td className="p-2">{row.name || <span className="text-red-400 italic">empty</span>}</td>
+                                <td className="p-2">{row.designation || '-'}</td>
+                                <td className="p-2">{row.school || '-'}</td>
+                                <td className="p-2">{row.city || '-'}</td>
+                                <td className="p-2">{row.phone || '-'}</td>
+                                <td className="p-2">{row.email || '-'}</td>
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
-                      <button onClick={handleImportSubmit} className="glass-button text-sm w-full">Import {importData.length} Leads</button>
-                    </>
-                  )}
-                </>
-              ) : (
+                    </div>
+
+                    <div className="flex items-center justify-between mt-6">
+                      <button onClick={() => setImportStep(1)} className="glass-button-secondary text-sm">Back</button>
+                      <button
+                        onClick={handleMappingImport}
+                        disabled={validCount === 0}
+                        className="glass-button text-sm disabled:opacity-50"
+                      >
+                        Import {validCount} Leads
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+
+              {/* Step 3: Results */}
+              {importStep === 3 && importResult && (
                 <div className="text-center py-6">
                   <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
                   <p className="text-lg font-bold text-gray-900">Import Complete</p>
