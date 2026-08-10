@@ -111,6 +111,8 @@ export default function AdminLeadsPage() {
   const [fileRows, setFileRows] = useState([]);
   const [columnMapping, setColumnMapping] = useState({});
   const [importResult, setImportResult] = useState(null);
+  const [importingLeads, setImportingLeads] = useState(false);
+  const [importProgress, setImportProgress] = useState({ current: 0, total: 0 });
   const fileRef = useRef(null);
 
   const fetchLeads = useCallback(async () => {
@@ -358,14 +360,37 @@ export default function AdminLeadsPage() {
       return;
     }
 
+    setImportingLeads(true);
+    setImportProgress({ current: 0, total: mapped.length });
+
+    const BATCH_SIZE = 200;
+    const totals = { inserted: 0, skipped: 0, errors: [] };
+
     try {
-      const result = await adminLeads.bulkImport(mapped);
-      setImportResult(result);
+      for (let i = 0; i < mapped.length; i += BATCH_SIZE) {
+        const batch = mapped.slice(i, i + BATCH_SIZE);
+        const result = await adminLeads.bulkImport(batch);
+        totals.inserted += result.inserted || 0;
+        totals.skipped += result.skipped || 0;
+        if (result.errors?.length) {
+          totals.errors.push(...result.errors.map((e) => ({ ...e, row: (e.row || 0) + i })));
+        }
+        setImportProgress({ current: Math.min(i + BATCH_SIZE, mapped.length), total: mapped.length });
+      }
+      setImportResult(totals);
       setImportStep(3);
       fetchLeads();
       fetchDashboard();
     } catch (err) {
       console.error('Import failed:', err);
+      setImportResult(totals.inserted > 0 ? totals : null);
+      if (totals.inserted > 0) {
+        setImportStep(3);
+        fetchLeads();
+        fetchDashboard();
+      }
+    } finally {
+      setImportingLeads(false);
     }
   };
 
@@ -765,19 +790,21 @@ export default function AdminLeadsPage() {
       {/* Import Modal */}
       {showImport && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setShowImport(false)} />
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => { if (!importingLeads) setShowImport(false); }} />
           <div className="glass-strong rounded-2xl w-full max-w-4xl relative z-10 shadow-2xl border border-white/30 max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-lg font-bold gradient-text">Import Leads</h2>
-                  {importStep === 2 && (
+                  {importStep === 2 && !importingLeads && (
                     <p className="text-sm text-gray-500 mt-1">{fileRows.length} rows found -- map columns to system fields</p>
                   )}
                 </div>
-                <button onClick={() => setShowImport(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition">
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
+                {!importingLeads && (
+                  <button onClick={() => setShowImport(false)} className="p-1.5 rounded-lg hover:bg-gray-100 transition">
+                    <X className="w-5 h-5 text-gray-500" />
+                  </button>
+                )}
               </div>
 
               {/* Step 1: Upload */}
@@ -887,16 +914,36 @@ export default function AdminLeadsPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between mt-6">
-                      <button onClick={() => setImportStep(1)} className="glass-button-secondary text-sm">Back</button>
-                      <button
-                        onClick={handleMappingImport}
-                        disabled={validCount === 0}
-                        className="glass-button text-sm disabled:opacity-50"
-                      >
-                        Import {validCount} Leads
-                      </button>
-                    </div>
+                    {importingLeads ? (
+                      <div className="mt-6 space-y-3">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="font-semibold text-gray-700">Importing leads...</span>
+                          <span className="text-gray-500">
+                            {importProgress.current.toLocaleString()} / {importProgress.total.toLocaleString()}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                          <div
+                            className="h-full rounded-full bg-gradient-to-r from-[#D4AF37] to-[#B8952E] transition-all duration-300"
+                            style={{ width: `${importProgress.total ? (importProgress.current / importProgress.total) * 100 : 0}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-400 text-center">
+                          {Math.round(importProgress.total ? (importProgress.current / importProgress.total) * 100 : 0)}% complete -- please do not close this window
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-between mt-6">
+                        <button onClick={() => setImportStep(1)} className="glass-button-secondary text-sm">Back</button>
+                        <button
+                          onClick={handleMappingImport}
+                          disabled={validCount === 0}
+                          className="glass-button text-sm disabled:opacity-50"
+                        >
+                          Import {validCount} Leads
+                        </button>
+                      </div>
+                    )}
                   </>
                 );
               })()}
