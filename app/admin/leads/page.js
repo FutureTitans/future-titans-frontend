@@ -669,7 +669,10 @@ export default function AdminLeadsPage() {
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => { setShowForm(false); setEditingLead(null); }} />
-          <div className="glass-strong rounded-2xl w-full max-w-2xl relative z-10 shadow-2xl border border-white/30 max-h-[90vh] overflow-y-auto">
+          <div
+            className="glass-strong rounded-2xl w-full max-w-2xl relative z-10 shadow-2xl border border-white/30 max-h-[90vh] overflow-y-auto"
+            onKeyDown={(e) => { if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA' && formData.name.trim()) { e.preventDefault(); handleSave(); } }}
+          >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold gradient-text">{editingLead ? 'Edit Lead' : 'Add New Lead'}</h2>
