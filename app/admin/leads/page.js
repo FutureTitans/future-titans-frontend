@@ -5,7 +5,7 @@ import {
   Search, Plus, Upload, Download, Pencil, Trash2, MessageSquare,
   ChevronLeft, ChevronRight, Users, UserPlus, Phone, Mail,
   Calendar, AlertCircle, CheckCircle, XCircle, Clock, Target,
-  Filter, X, FileSpreadsheet, ArrowUpDown,
+  Filter, X, FileSpreadsheet, ArrowUpDown, ChevronUp, ChevronDown,
 } from 'lucide-react';
 import { adminLeads } from '@/lib/api';
 
@@ -83,12 +83,14 @@ export default function AdminLeadsPage() {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
 
-  // Filters
+  // Filters & Sorting
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [filterCity, setFilterCity] = useState('');
   const [filterAssigned, setFilterAssigned] = useState('');
+  const [sortField, setSortField] = useState('createdAt');
+  const [sortDir, setSortDir] = useState('desc');
 
   // Modals
   const [showForm, setShowForm] = useState(false);
@@ -99,6 +101,16 @@ export default function AdminLeadsPage() {
   const [noteText, setNoteText] = useState('');
   const [noteType, setNoteType] = useState('note');
   const [leadDetail, setLeadDetail] = useState(null);
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortField(field);
+      setSortDir('asc');
+    }
+    setPagination((p) => ({ ...p, page: 1 }));
+  };
 
   // Bulk
   const [selected, setSelected] = useState(new Set());
@@ -124,6 +136,7 @@ export default function AdminLeadsPage() {
       if (filterPriority) filters.priority = filterPriority;
       if (filterCity) filters.city = filterCity;
       if (filterAssigned) filters.assignedTo = filterAssigned;
+      filters.sort = `${sortDir === 'desc' ? '-' : ''}${sortField}`;
       const data = await adminLeads.getAll(filters);
       setLeads(data.leads || []);
       setPagination(data.pagination || { page: 1, totalPages: 1, total: 0 });
@@ -132,7 +145,7 @@ export default function AdminLeadsPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, search, filterStatus, filterPriority, filterCity, filterAssigned]);
+  }, [pagination.page, search, filterStatus, filterPriority, filterCity, filterAssigned, sortField, sortDir]);
 
   const fetchDashboard = useCallback(async () => {
     try {
@@ -540,15 +553,32 @@ export default function AdminLeadsPage() {
                 <th className="p-3 w-10">
                   <input type="checkbox" checked={selected.size === leads.length && leads.length > 0} onChange={toggleSelectAll} className="rounded border-gray-300" />
                 </th>
-                <th className="text-left p-3 font-semibold text-gray-600">Name</th>
-                <th className="text-left p-3 font-semibold text-gray-600 hidden md:table-cell">Designation</th>
-                <th className="text-left p-3 font-semibold text-gray-600 hidden lg:table-cell">School</th>
-                <th className="text-left p-3 font-semibold text-gray-600 hidden md:table-cell">City</th>
-                <th className="text-left p-3 font-semibold text-gray-600 hidden lg:table-cell">Phone</th>
-                <th className="text-left p-3 font-semibold text-gray-600 hidden xl:table-cell">Email</th>
-                <th className="text-left p-3 font-semibold text-gray-600">Status</th>
-                <th className="text-left p-3 font-semibold text-gray-600 hidden lg:table-cell">Follow-up</th>
-                <th className="text-left p-3 font-semibold text-gray-600 hidden xl:table-cell">Assigned</th>
+                {[
+                  { key: 'name', label: 'Name', hide: '' },
+                  { key: 'designation', label: 'Designation', hide: 'hidden md:table-cell' },
+                  { key: 'school', label: 'School', hide: 'hidden lg:table-cell' },
+                  { key: 'city', label: 'City', hide: 'hidden md:table-cell' },
+                  { key: 'phone', label: 'Phone', hide: 'hidden lg:table-cell' },
+                  { key: 'email', label: 'Email', hide: 'hidden xl:table-cell' },
+                  { key: 'status', label: 'Status', hide: '' },
+                  { key: 'nextFollowUp', label: 'Follow-up', hide: 'hidden lg:table-cell' },
+                  { key: 'assignedTo', label: 'Assigned', hide: 'hidden xl:table-cell' },
+                ].map((col) => (
+                  <th
+                    key={col.key}
+                    onClick={() => handleSort(col.key)}
+                    className={`text-left p-3 font-semibold text-gray-600 cursor-pointer select-none hover:text-gray-900 transition-colors ${col.hide}`}
+                  >
+                    <span className="inline-flex items-center gap-1">
+                      {col.label}
+                      {sortField === col.key ? (
+                        sortDir === 'asc' ? <ChevronUp className="w-3.5 h-3.5 text-[#D4AF37]" /> : <ChevronDown className="w-3.5 h-3.5 text-[#D4AF37]" />
+                      ) : (
+                        <ArrowUpDown className="w-3 h-3 text-gray-300" />
+                      )}
+                    </span>
+                  </th>
+                ))}
                 <th className="text-left p-3 font-semibold text-gray-600">Actions</th>
               </tr>
             </thead>
