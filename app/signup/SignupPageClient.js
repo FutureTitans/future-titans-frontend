@@ -7,9 +7,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { auth } from '@/lib/api';
 import { useAuthStore } from '@/store/useAuthStore';
 import { setAuthToken, setRefreshToken, setUser } from '@/lib/auth';
-import { 
-  Eye, 
-  EyeOff, 
+import {
+  Eye,
+  EyeOff,
   ArrowLeft,
   ArrowRight,
   CheckCircle2,
@@ -60,7 +60,7 @@ export default function SignupPageClient() {
   const searchParams = useSearchParams();
   const initialSlug = searchParams.get('slug') || '';
   const { setUser: storeSetUser, setTokens } = useAuthStore();
-  
+
   const [showForm, setShowForm] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 21, hrs: 18, mins: 23, secs: 47 });
 
@@ -270,13 +270,13 @@ export default function SignupPageClient() {
               <Zap className="w-4 h-4 text-amber-500" />
               <span className="text-xs font-bold text-gray-600 tracking-wider">FOR TEENS WHO DREAM BIG & BUILD BIGGER</span>
             </div>
-            
+
             <h1 className="text-5xl lg:text-[4rem] font-extrabold leading-[1.1] tracking-tight mb-6 text-gray-900">
               Build the Future.<br />
               Lead with Confidence.<br />
               <span className="text-[#087F5B]">Create Real Impact.</span>
             </h1>
-            
+
             <p className="text-gray-600 text-lg mb-8 max-w-xl leading-relaxed">
               India&apos;s most loved innovation & entrepreneurship program for teens. Build real projects, master future skills, and get recognized across India.
             </p>
@@ -298,12 +298,12 @@ export default function SignupPageClient() {
               <button onClick={handleStartJourney} className="bg-[#087F5B] text-white px-8 py-3.5 rounded-full font-bold shadow-xl shadow-[#087F5B]/30 hover:bg-[#065f46] transition-all flex items-center gap-2">
                 Start My Journey <ArrowRight className="w-4 h-4" />
               </button>
-              <button className="bg-white text-gray-800 border border-gray-200 px-6 py-3.5 rounded-full font-semibold shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2">
+              {/* <button className="bg-white text-gray-800 border border-gray-200 px-6 py-3.5 rounded-full font-semibold shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2">
                 <Play className="w-4 h-4 text-[#087F5B]" /> Watch 90-sec overview
-              </button>
+              </button> */}
             </div>
 
-            <div className="flex items-center gap-4">
+            {/* <div className="flex items-center gap-4">
               <div className="flex -space-x-3">
                 {['devika.jpg', 'fred.jpeg', 'partha.jpg', 'suman.jpg'].map((img) => (
                   <div key={img} className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden relative">
@@ -313,32 +313,32 @@ export default function SignupPageClient() {
               </div>
               <div>
                 <div className="flex text-amber-400 mb-0.5">
-                  {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
+                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
                 </div>
                 <p className="text-xs font-semibold text-gray-600">Loved by 10,000+ students across 40+ cities</p>
               </div>
-            </div>
+            </div> */}
           </div>
 
           {/* Right Image area */}
           <div className="relative z-0 h-[400px] lg:h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl">
             <Image src="/students_signup.png" alt="Students" fill className="object-cover" priority />
-            
-            <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-100">
+
+            {/* <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-100">
               <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Next Cohort Starts In</p>
               <div className="flex gap-3 text-center">
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.days).padStart(2,'0')}</div><div className="text-[10px] text-gray-500">Days</div></div>
+                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.days).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Days</div></div>
                 <div className="text-2xl font-bold text-gray-300">:</div>
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.hrs).padStart(2,'0')}</div><div className="text-[10px] text-gray-500">Hrs</div></div>
+                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.hrs).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Hrs</div></div>
                 <div className="text-2xl font-bold text-gray-300">:</div>
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.mins).padStart(2,'0')}</div><div className="text-[10px] text-gray-500">Mins</div></div>
+                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.mins).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Mins</div></div>
                 <div className="text-2xl font-bold text-gray-300">:</div>
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.secs).padStart(2,'0')}</div><div className="text-[10px] text-gray-500">Secs</div></div>
+                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.secs).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Secs</div></div>
               </div>
-            </div>
+            </div> */}
 
             <div className="absolute bottom-10 right-6 bg-[#087F5B] text-white w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-2xl border-4 border-white transform rotate-12 font-bold text-center leading-tight">
-              Future<br/>Starts<br/>Here!
+              Future<br />Starts<br />Here!
             </div>
           </div>
         </div>
@@ -376,7 +376,7 @@ export default function SignupPageClient() {
           ].map((inst, i) => (
             <div key={i} className="flex flex-col gap-4 p-5 rounded-2xl bg-gray-50 border border-gray-100/50 hover:bg-gray-100 transition-colors">
               <div className="h-10 relative w-auto self-start">
-                 <Image src={`/images/yp/${inst.img}`} alt={inst.name} width={120} height={40} className="object-contain h-10 w-auto mix-blend-multiply" />
+                <Image src={`/images/yp/${inst.img}`} alt={inst.name} width={120} height={40} className="object-contain h-10 w-auto mix-blend-multiply" />
               </div>
               <p className="text-xs text-gray-500 font-medium leading-relaxed">{inst.desc}</p>
             </div>
@@ -407,9 +407,9 @@ export default function SignupPageClient() {
                 </div>
                 <h3 className={`text-xl font-bold mb-2 ${card.titleColor}`}>{card.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">{card.desc}</p>
-                <button className={`text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all ${card.titleColor}`}>
+                {/* <button className={`text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all ${card.titleColor}`}>
                   Learn more <ArrowRight className="w-4 h-4" />
-                </button>
+                </button> */}
               </div>
             ))}
           </div>
@@ -420,10 +420,10 @@ export default function SignupPageClient() {
       <section className="py-16 max-w-[1200px] mx-auto px-6 border-b border-gray-100">
         <div className="flex flex-col lg:flex-row items-center gap-10">
           <div className="lg:w-1/4">
-            <h2 className="text-3xl font-extrabold text-[#087F5B] mb-2 leading-tight">Why Parents<br/>Say Yes</h2>
+            <h2 className="text-3xl font-extrabold text-[#087F5B] mb-2 leading-tight">Why Parents<br />Say Yes</h2>
             <p className="text-sm text-gray-500">We partner with parents to help teenagers grow into confident leaders.</p>
           </div>
-          
+
           <div className="lg:w-3/4 grid grid-cols-2 sm:grid-cols-5 gap-6">
             {[
               { icon: ShieldCheck, label: 'Builds Confidence' },
@@ -441,7 +441,7 @@ export default function SignupPageClient() {
             ))}
           </div>
         </div>
-        
+
         <div className="mt-10 bg-green-50 rounded-2xl p-4 flex items-center justify-center gap-2 border border-green-100">
           <ShieldCheck className="w-5 h-5 text-[#087F5B]" />
           <p className="text-sm font-bold text-gray-900">
@@ -456,11 +456,11 @@ export default function SignupPageClient() {
           <h2 className="text-3xl lg:text-4xl font-extrabold text-center text-gray-900 mb-16">
             Your <span className="text-[#087F5B]">Transformation</span> Journey
           </h2>
-          
+
           <div className="relative">
             {/* Connecting Line */}
             <div className="hidden md:block absolute top-10 left-10 right-10 h-1.5 bg-gradient-to-r from-gray-200 via-[#087F5B]/30 to-[#087F5B] rounded-full z-0"></div>
-            
+
             <div className="grid md:grid-cols-5 gap-6 relative z-10">
               {[
                 { step: '01', title: 'Curious Start', role: 'LEVEL 1 EXPLORER', color: 'bg-emerald-500' },
@@ -488,12 +488,12 @@ export default function SignupPageClient() {
       <section className="py-20 bg-gray-50">
         <div className="max-w-[1200px] mx-auto px-6">
           <h2 className="text-3xl font-extrabold text-center text-gray-900 mb-12">Voices That Inspire</h2>
-          
-          <div className="grid md:grid-cols-3 gap-8">
+
+          <div className="grid md:grid-cols-2 max-w-4xl mx-auto gap-8">
             {[
-              { type: 'STUDENT', name: 'Arnav Mehta', role: 'Grade 11, Pathways', quote: '"Future Titans helped me turn my idea into a working prototype. Now, I believe I can build anything!"', color: 'bg-green-100 text-green-700' },
-              { type: 'PARENT', name: 'Mrs. Priya Sharma', role: 'Parent', quote: '"It\'s exciting to watch confidence in my child. She now tackles big ideas projects so truly world class."', color: 'bg-purple-100 text-purple-700' },
-              { type: 'SCHOOL', name: 'Mr. Rajeev Sinha', role: 'Principal, GD Goenka', quote: '"The program brings innovation and purpose to our students. Highly recommended!"', color: 'bg-blue-100 text-blue-700' },
+              { type: 'STUDENT', name: 'Ronobir', role: 'Grade 12, Pathways', quote: '"Future Titans helped me turn my idea into a working prototype. Now, I believe I can build anything!"', color: 'bg-green-100 text-green-700' },
+              { type: 'PARENT', name: 'Mrs. Tanuja', role: 'Parent', quote: '"It\'s exciting to watch confidence in my child. She now tackles big ideas projects so truly world class."', color: 'bg-purple-100 text-purple-700' },
+              // { type: 'SCHOOL', name: 'Mr. Rajeev Sinha', role: 'Principal, GD Goenka', quote: '"The program brings innovation and purpose to our students. Highly recommended!"', color: 'bg-blue-100 text-blue-700' },
             ].map((test, i) => (
               <div key={i} className="bg-white rounded-3xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100 relative">
                 <div className={`absolute top-0 right-8 -translate-y-1/2 px-3 py-1 rounded-full text-[10px] font-bold ${test.color}`}>
@@ -519,14 +519,16 @@ export default function SignupPageClient() {
       <section className="bg-[#0A1A12] text-white py-16 px-6 relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/images/innovation-club/hero-bg.jpeg')] opacity-10 bg-cover bg-center mix-blend-overlay"></div>
         <div className="max-w-[1200px] mx-auto relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10">
-          
+
           <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20 w-full lg:w-1/3 text-center">
             <div className="inline-block bg-amber-500 text-black text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full mb-4">
               Limited Seats Per Cohort!
             </div>
             <p className="text-white/80 font-semibold mb-1">Everything Included</p>
-            <h2 className="text-5xl font-black text-[#D4AF37] mb-2">₹ 1,770</h2>
-            <p className="text-sm text-white/60">One-time program | Lifetime Access</p>
+            <h2 className="text-5xl font-black text-[#D4AF37] mb-2">
+              ₹ 1,500 <span className="text-xl font-bold text-white/80 align-middle">+ 18% GST</span>
+            </h2>
+            <p className="text-sm text-white/60">Year long program</p>
           </div>
 
           <div className="w-full lg:w-2/3 grid sm:grid-cols-2 gap-x-8 gap-y-4">
@@ -542,7 +544,7 @@ export default function SignupPageClient() {
               </div>
             ))}
           </div>
-          
+
         </div>
 
         <div className="max-w-[1200px] mx-auto mt-12 text-center relative z-10">
@@ -550,7 +552,7 @@ export default function SignupPageClient() {
           <button onClick={handleStartJourney} className="bg-[#087F5B] text-white px-10 py-5 rounded-full text-xl font-bold shadow-2xl shadow-[#087F5B]/40 hover:bg-[#065f46] hover:scale-105 transition-all flex items-center gap-3 mx-auto">
             Yes, I'm Ready! <ArrowRight className="w-6 h-6" />
           </button>
-          
+
           <div className="flex items-center justify-center gap-4 mt-6 opacity-60">
             <span className="text-xs font-semibold">🔒 Secure Checkout</span>
             <span className="text-xs font-semibold">💯 100% Refund Guarantee</span>
