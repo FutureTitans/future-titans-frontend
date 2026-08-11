@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getUser } from '@/lib/auth';
-import { innovationClub } from '@/lib/api';
+import { innovationClub, payment } from '@/lib/api';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import {
   Users,
@@ -20,6 +20,7 @@ export default function InnovationClubHub() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const [isPaid, setIsPaid] = useState(false);
   const [stats, setStats] = useState({ sessions: 0, hackathons: 0, resources: 0 });
 
   useEffect(() => {
@@ -29,23 +30,25 @@ export default function InnovationClubHub() {
       return;
     }
     setUser(currentUser);
-    fetchStats();
+    fetchData(currentUser);
   }, [router]);
 
-  const fetchStats = async () => {
+  const fetchData = async (currentUser) => {
     try {
-      const [sessionsRes, hackathonsRes, resourcesRes] = await Promise.all([
+      const [sessionsRes, hackathonsRes, resourcesRes, paymentRes] = await Promise.all([
         innovationClub.getSessions({}).catch(() => []),
         innovationClub.getHackathons().catch(() => []),
         innovationClub.getResourceStats().catch(() => ({})),
+        payment.getPaymentStatus().catch(() => ({ isPaid: false })),
       ]);
       setStats({
         sessions: Array.isArray(sessionsRes) ? sessionsRes.length : 0,
         hackathons: Array.isArray(hackathonsRes) ? hackathonsRes.length : 0,
         resources: resourcesRes?.totalResources || 0,
       });
+      setIsPaid(currentUser?.isPaid || paymentRes?.isPaid || false);
     } catch (error) {
-      console.error('Failed to fetch innovation club stats:', error);
+      console.error('Failed to fetch data:', error);
     } finally {
       setLoading(false);
     }
@@ -55,7 +58,7 @@ export default function InnovationClubHub() {
     return <LoadingSpinner message="Loading Innovation Hub..." />;
   }
 
-  if (!user?.isPaid) {
+  if (!isPaid) {
     return (
       <div className="min-h-[calc(100dvh-4rem)] flex items-center justify-center bg-[#FAF8F3] px-4 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
