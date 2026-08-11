@@ -263,82 +263,67 @@ export default function SignupPageClient() {
       </nav>
 
       {/* Hero Section */}
-      <header className="relative pt-12 pb-24 lg:pt-20 lg:pb-32 px-6 lg:px-12 max-w-[1400px] mx-auto overflow-hidden">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 bg-gray-100 rounded-full px-4 py-1.5 mb-6 border border-gray-200 shadow-sm">
-              <Zap className="w-4 h-4 text-amber-500" />
-              <span className="text-xs font-bold text-gray-600 tracking-wider">FOR TEENS WHO DREAM BIG & BUILD BIGGER</span>
+      {/* Hero Section */}
+      <header className="relative px-0 lg:pl-16 lg:pr-0 max-w-[1440px] mx-auto overflow-hidden">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-0 items-stretch">
+          <div className="relative z-10 px-6 lg:px-0 pb-16 lg:pr-12 lg:py-24 flex flex-col justify-center">
+            <div className="inline-flex self-start items-center gap-2 bg-[#f4faf6] rounded-full px-3 py-1.5 mb-8 border border-[#d1e6db] shadow-sm">
+              <span className="text-amber-500 text-xs">⚡</span>
+              <span className="text-[9px] font-black text-[#173e2d] tracking-widest uppercase">India's National Innovation & Entrepreneurship Journey</span>
             </div>
 
-            <h1 className="text-5xl lg:text-[4rem] font-extrabold leading-[1.1] tracking-tight mb-6 text-gray-900">
-              Build the Future.<br />
-              Lead with Confidence.<br />
-              <span className="text-[#087F5B]">Create Real Impact.</span>
+            <h1 className="text-[3.2rem] lg:text-[4.5rem] font-extrabold leading-[1.02] tracking-tight mb-8 text-[#14241c]">
+              Think Like an<br />
+              Innovator.<br />
+              Build Like a Titan.<br />
+              <span className="text-[#3a7553] font-medium italic">Create Real Impact.</span>
             </h1>
 
-            <p className="text-gray-600 text-lg mb-8 max-w-xl leading-relaxed">
-              India&apos;s most loved innovation & entrepreneurship program for teens. Build real projects, master future skills, and get recognized across India.
+            <p className="text-gray-600 text-[17px] mb-8 max-w-[580px] leading-relaxed font-medium">
+              Future Titans is a year-long innovation and entrepreneurship journey for
+              Classes 8–12. Through hands-on workshops, structured frameworks and
+              expert mentorship, students learn to spot real problems, build solutions and
+              pitch their ideas with confidence.
             </p>
 
-            <ul className="space-y-3 mb-10">
+            <ul className="space-y-3.5 mb-10 max-w-[600px]">
               {[
-                'Learn AI, Innovation & Entrepreneurship',
-                'Build real projects that solve real problems',
-                'Compete, Win, Get recognized across India.'
+                'Build problem-solving, entrepreneurial thinking and future-ready AI skills',
+                'Turn real-world challenges into prototypes and compelling pitches',
+                'Learn from practitioners, compete nationally and earn recognition'
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#087F5B] shrink-0 mt-0.5" />
-                  <span className="text-gray-700 font-medium">{item}</span>
+                  <div className="bg-[#3a7553] rounded-full mt-1 shrink-0 p-[3px]">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-white stroke-[3]" />
+                  </div>
+                  <span className="text-[#14241c] font-bold text-[14.5px] leading-snug">{item}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="flex flex-wrap items-center gap-4 mb-8">
-              <button onClick={handleStartJourney} className="bg-[#087F5B] text-white px-8 py-3.5 rounded-full font-bold shadow-xl shadow-[#087F5B]/30 hover:bg-[#065f46] transition-all flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-6">
+              <button onClick={handleStartJourney} className="bg-gradient-to-br from-[#4a7c59] to-[#2c523a] text-white px-7 py-3.5 rounded-[14px] font-bold shadow-lg shadow-green-900/20 hover:scale-[1.02] transition-all flex items-center gap-2 text-sm">
                 Start My Journey <ArrowRight className="w-4 h-4" />
               </button>
-              {/* <button className="bg-white text-gray-800 border border-gray-200 px-6 py-3.5 rounded-full font-semibold shadow-sm hover:bg-gray-50 transition-all flex items-center gap-2">
-                <Play className="w-4 h-4 text-[#087F5B]" /> Watch 90-sec overview
+              {/* <button className="text-[#2b4234] font-bold text-[14px] flex items-center gap-3 hover:text-[#3a7553] transition-colors">
+                <span className="w-8 h-8 rounded-full border border-[#d3ddd7] flex items-center justify-center text-[#3a7553] text-[10px] pl-[2px]">
+                  ▶
+                </span>
+                See how the journey works
               </button> */}
             </div>
-
-            {/* <div className="flex items-center gap-4">
-              <div className="flex -space-x-3">
-                {['devika.jpg', 'fred.jpeg', 'partha.jpg', 'suman.jpg'].map((img) => (
-                  <div key={img} className="w-10 h-10 rounded-full border-2 border-white bg-gray-200 overflow-hidden relative">
-                    <Image src={`/images/yp/${img}`} alt="Student" fill className="object-cover" onError={(e) => { e.currentTarget.style.display = 'none' }} />
-                  </div>
-                ))}
-              </div>
-              <div>
-                <div className="flex text-amber-400 mb-0.5">
-                  {[1, 2, 3, 4, 5].map(i => <Star key={i} className="w-4 h-4 fill-current" />)}
-                </div>
-                <p className="text-xs font-semibold text-gray-600">Loved by 10,000+ students across 40+ cities</p>
-              </div>
-            </div> */}
           </div>
 
           {/* Right Image area */}
-          <div className="relative z-0 h-[400px] lg:h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-2xl">
-            <Image src="/students_signup.png" alt="Students" fill className="object-cover" priority />
+          <div className="relative z-0 h-[450px] lg:h-[750px] w-full bg-[#08281c]">
+            <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-white via-white/80 to-transparent z-10 hidden lg:block"></div>
+            <Image src="/images/yp/hero-bg-ft.png" alt="Students" fill className="object-cover object-[80%_center] opacity-95" priority />
 
-            {/* <div className="absolute top-6 left-6 bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-gray-100">
-              <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Next Cohort Starts In</p>
-              <div className="flex gap-3 text-center">
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.days).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Days</div></div>
-                <div className="text-2xl font-bold text-gray-300">:</div>
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.hrs).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Hrs</div></div>
-                <div className="text-2xl font-bold text-gray-300">:</div>
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.mins).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Mins</div></div>
-                <div className="text-2xl font-bold text-gray-300">:</div>
-                <div><div className="text-2xl font-black text-[#087F5B]">{String(timeLeft.secs).padStart(2, '0')}</div><div className="text-[10px] text-gray-500">Secs</div></div>
-              </div>
-            </div> */}
-
-            <div className="absolute bottom-10 right-6 bg-[#087F5B] text-white w-24 h-24 rounded-full flex flex-col items-center justify-center shadow-2xl border-4 border-white transform rotate-12 font-bold text-center leading-tight">
-              Future<br />Starts<br />Here!
+            {/* Top Left Floating Card */}
+            <div className="absolute top-6 left-6 lg:top-10 lg:left-10 z-20 bg-white/95 backdrop-blur-xl px-5 py-3.5 rounded-3xl shadow-[0_18px_50px_rgba(4,25,17,0.2)] border border-white/40">
+              <p className="text-[8.5px] font-black text-[#c9a84c] mb-0.5 uppercase tracking-[0.14em]">Future Titans 2026</p>
+              <p className="text-[20px] font-bold text-[#3a7553] mb-1 leading-tight">Enrolments Open</p>
+              <p className="text-[10px] text-[#667269] font-medium">Ages 12-19 • All schools • All cities</p>
             </div>
           </div>
         </div>
@@ -417,36 +402,34 @@ export default function SignupPageClient() {
       </section>
 
       {/* Parents Section */}
-      <section className="py-16 max-w-[1200px] mx-auto px-6 border-b border-gray-100">
-        <div className="flex flex-col lg:flex-row items-center gap-10">
-          <div className="lg:w-1/4">
-            <h2 className="text-3xl font-extrabold text-[#087F5B] mb-2 leading-tight">Why Parents<br />Say Yes</h2>
-            <p className="text-sm text-gray-500">We partner with parents to help teenagers grow into confident leaders.</p>
-          </div>
-
-          <div className="lg:w-3/4 grid grid-cols-2 sm:grid-cols-5 gap-6">
-            {[
-              { icon: ShieldCheck, label: 'Builds Confidence' },
-              { icon: Users, label: 'Develops Leadership' },
-              { icon: MessageCircle, label: 'Improves Communication' },
-              { icon: Lightbulb, label: 'Solves Real-World Problems' },
-              { icon: Zap, label: 'Future-Ready with AI' },
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col items-center text-center">
-                <div className="w-14 h-14 rounded-full bg-green-50 border border-green-100 flex items-center justify-center mb-3">
-                  <item.icon className="w-6 h-6 text-[#087F5B]" strokeWidth={1.5} />
-                </div>
-                <p className="text-xs font-bold text-gray-800 leading-tight">{item.label}</p>
-              </div>
-            ))}
-          </div>
+      <section className="bg-gradient-to-br from-[#123d2a] to-[#0a2d1f] text-white rounded-[30px] grid lg:grid-cols-[0.82fr_1.58fr] gap-10 lg:gap-16 max-w-[1400px] mx-auto px-8 lg:px-16 py-12 lg:py-16 my-16 relative overflow-hidden shadow-2xl shadow-[#08281c]/20">
+        <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full border border-[#f5d76e]/20 shadow-[0_0_0_45px_rgba(245,215,110,0.04),0_0_0_90px_rgba(245,215,110,0.02)] pointer-events-none"></div>
+        <div className="relative z-10 self-center">
+          <p className="text-[#f5d76e] tracking-[0.18em] text-[10px] font-black mb-3">WHY PARENTS SAY YES</p>
+          <h2 className="text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 leading-tight text-white">Because the future needs more than good marks.</h2>
+          <p className="text-[#cbd8d0] text-[15px] leading-relaxed mb-6">Future Titans gives teenagers a safe, structured and purposeful environment to grow into confident thinkers, builders and leaders.</p>
+          <a href="/for-parents" className="text-[#f5d76e] text-[13px] font-extrabold hover:underline inline-flex items-center gap-1">See what your child will gain <span className="font-bold">→</span></a>
         </div>
 
-        <div className="mt-10 bg-green-50 rounded-2xl p-4 flex items-center justify-center gap-2 border border-green-100">
-          <ShieldCheck className="w-5 h-5 text-[#087F5B]" />
-          <p className="text-sm font-bold text-gray-900">
-            Safe. Structured. Impactful. <span className="text-gray-500 font-normal">Trusted by schools & parents across India.</span>
-          </p>
+        <div className="relative z-10 grid sm:grid-cols-2 gap-4">
+          {[
+            { icon: '✦', title: 'Clearer Thinking', desc: 'Learns to frame problems before rushing to answers.' },
+            { icon: '↗', title: 'Visible Confidence', desc: 'Expresses ideas with clarity, structure and conviction.' },
+            { icon: '◎', title: 'Leadership Through Action', desc: 'Takes ownership, collaborates and learns by doing.' },
+            { icon: '◌', title: 'Better Communication', desc: 'Builds the ability to explain, present and persuade.' },
+            { icon: '◇', title: 'Real-World Problem Solving', desc: 'Connects classroom learning to meaningful challenges.' },
+            { icon: '△', title: 'Healthy Use of AI', desc: 'Uses technology as a thinking partner—not a shortcut.' }
+          ].map((benefit, i) => (
+            <div key={i} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-5 flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-[#f5d76e]/15 text-[#f5d76e] flex items-center justify-center text-xl shrink-0">
+                {benefit.icon}
+              </div>
+              <div>
+                <h3 className="font-bold text-[15px] mb-1 text-white">{benefit.title}</h3>
+                <p className="text-[#bfcfc5] text-xs leading-relaxed m-0">{benefit.desc}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
