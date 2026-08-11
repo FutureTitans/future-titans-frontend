@@ -268,12 +268,12 @@ export default function SignupPageClient() {
       <header className="relative w-full max-w-[1440px] mx-auto overflow-hidden min-h-[450px] lg:min-h-[640px]">
         {/* Full Background Image */}
         <div className="absolute inset-0 z-0 bg-white">
-          <Image 
-            src="/images/yp/Future-Titans-Hero-4K.png" 
-            alt="Future Titans Background" 
-            fill 
-            className="object-contain object-right-top" 
-            priority 
+          <Image
+            src="/images/yp/Future-Titans-Hero-4K.png"
+            alt="Future Titans Background"
+            fill
+            className="object-contain object-right-top"
+            priority
           />
         </div>
 
@@ -285,9 +285,8 @@ export default function SignupPageClient() {
               <span className="text-[9px] font-black text-[#173e2d] tracking-widest uppercase">India's National Innovation & Entrepreneurship Journey</span>
             </div>
 
-            <h1 className="text-[3.2rem] lg:text-[4.5rem] font-extrabold leading-[1.02] tracking-tight mb-8 text-[#14241c]">
-              Think Like an<br />
-              Innovator.<br />
+            <h1 className="text-[2.2rem] lg:text-[2.8rem] font-extrabold leading-[1.08] tracking-tight mb-8 text-[#14241c]">
+              Think Like an Innovator.<br />
               Build Like a Titan.<br />
               <span className="text-[#3a7553] font-medium">Create Real Impact.</span>
             </h1>
@@ -326,7 +325,7 @@ export default function SignupPageClient() {
             <div className="absolute top-6 left-6 lg:top-10 lg:left-10 z-20 bg-white/95 backdrop-blur-xl px-5 py-3.5 rounded-3xl shadow-[0_18px_50px_rgba(4,25,17,0.2)] border border-white/40">
               <p className="text-[8.5px] font-black text-[#c9a84c] mb-0.5 uppercase tracking-[0.14em]">Future Titans 2026</p>
               <p className="text-[20px] font-bold text-[#3a7553] mb-1 leading-tight">Enrolments Open</p>
-              <p className="text-[10px] text-[#667269] font-medium">Ages 12-19 • All schools • All cities</p>
+              <p className="text-[10px] text-[#667269] font-medium">All schools • All cities</p>
             </div>
           </div>
         </div>
@@ -391,12 +390,12 @@ export default function SignupPageClient() {
                 className="relative border border-[#1A3A28] rounded-3xl p-6 sm:p-8 hover:border-[#D4AF37]/40 hover:shadow-lg transition-all overflow-hidden flex flex-col justify-between min-h-[260px]"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#0A1C12] to-[#040C07]" />
-                
+
                 <div className="relative z-10 w-[65%]">
                   <h3 className="text-white font-bold text-lg sm:text-xl leading-snug mb-3">{program.title}</h3>
                   <p className="text-[#8c9f95] text-sm leading-relaxed">{program.desc}</p>
                 </div>
-                
+
                 <div className="relative z-10 mt-8">
                   <button className="inline-flex items-center gap-2 border border-[#D4AF37] text-[#D4AF37] font-semibold px-5 py-2 rounded-full text-sm hover:bg-[#D4AF37]/10 transition-colors">
                     Explore
