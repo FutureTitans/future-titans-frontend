@@ -22,7 +22,8 @@ import {
   MessageCircle,
   Lightbulb,
   Zap,
-  Star
+  Star,
+  ChevronRight
 } from 'lucide-react';
 
 function InputField({ label, name, type = 'text', placeholder, isPassword = false, value, onChange, error, disabled, showPw, onTogglePw }) {
@@ -264,9 +265,21 @@ export default function SignupPageClient() {
 
       {/* Hero Section */}
       {/* Hero Section */}
-      <header className="relative px-0 lg:pl-16 lg:pr-0 max-w-[1440px] mx-auto overflow-hidden">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-0 items-stretch">
-          <div className="relative z-10 px-6 lg:px-0 pb-16 lg:pr-12 lg:py-24 flex flex-col justify-center">
+      <header className="relative w-full max-w-[1440px] mx-auto overflow-hidden min-h-[450px] lg:min-h-[640px]">
+        {/* Full Background Image */}
+        <div className="absolute inset-0 z-0 bg-white">
+          <Image 
+            src="/images/yp/Future-Titans-Hero-4K.png" 
+            alt="Future Titans Background" 
+            fill 
+            className="object-contain object-right-top" 
+            priority 
+          />
+        </div>
+
+        {/* Content Container */}
+        <div className="relative z-10 grid lg:grid-cols-2 gap-12 lg:gap-0 items-stretch h-full">
+          <div className="px-6 lg:pl-16 pt-6 lg:pt-10 pb-16 lg:pr-12 flex flex-col justify-start h-full">
             <div className="inline-flex self-start items-center gap-2 bg-[#f4faf6] rounded-full px-3 py-1.5 mb-8 border border-[#d1e6db] shadow-sm">
               <span className="text-amber-500 text-xs">⚡</span>
               <span className="text-[9px] font-black text-[#173e2d] tracking-widest uppercase">India's National Innovation & Entrepreneurship Journey</span>
@@ -276,7 +289,7 @@ export default function SignupPageClient() {
               Think Like an<br />
               Innovator.<br />
               Build Like a Titan.<br />
-              <span className="text-[#3a7553] font-medium italic">Create Real Impact.</span>
+              <span className="text-[#3a7553] font-medium">Create Real Impact.</span>
             </h1>
 
             <p className="text-gray-600 text-[17px] mb-8 max-w-[580px] leading-relaxed font-medium">
@@ -305,20 +318,10 @@ export default function SignupPageClient() {
               <button onClick={handleStartJourney} className="bg-gradient-to-br from-[#4a7c59] to-[#2c523a] text-white px-7 py-3.5 rounded-[14px] font-bold shadow-lg shadow-green-900/20 hover:scale-[1.02] transition-all flex items-center gap-2 text-sm">
                 Start My Journey <ArrowRight className="w-4 h-4" />
               </button>
-              {/* <button className="text-[#2b4234] font-bold text-[14px] flex items-center gap-3 hover:text-[#3a7553] transition-colors">
-                <span className="w-8 h-8 rounded-full border border-[#d3ddd7] flex items-center justify-center text-[#3a7553] text-[10px] pl-[2px]">
-                  ▶
-                </span>
-                See how the journey works
-              </button> */}
             </div>
           </div>
 
-          {/* Right Image area */}
-          <div className="relative z-0 h-[450px] lg:h-[750px] w-full bg-[#08281c]">
-            <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-white via-white/80 to-transparent z-10 hidden lg:block"></div>
-            <Image src="/images/yp/hero-bg-ft.png" alt="Students" fill className="object-cover object-[80%_center] opacity-95" priority />
-
+          <div className="relative hidden lg:block">
             {/* Top Left Floating Card */}
             <div className="absolute top-6 left-6 lg:top-10 lg:left-10 z-20 bg-white/95 backdrop-blur-xl px-5 py-3.5 rounded-3xl shadow-[0_18px_50px_rgba(4,25,17,0.2)] border border-white/40">
               <p className="text-[8.5px] font-black text-[#c9a84c] mb-0.5 uppercase tracking-[0.14em]">Future Titans 2026</p>
@@ -330,7 +333,7 @@ export default function SignupPageClient() {
       </header>
 
       {/* Stats Bar */}
-      <div className="max-w-[1200px] mx-auto px-6 relative -mt-16 lg:-mt-20 z-20 mb-16">
+      <div className="max-w-[1200px] mx-auto px-6 relative z-20 my-10">
         <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 border border-gray-100 p-6 lg:p-8 flex flex-wrap lg:flex-nowrap justify-between items-center gap-6">
           {[
             { icon: Users, num: '10,000+', label: 'Students', color: 'text-blue-500', bg: 'bg-blue-50' },
@@ -376,25 +379,43 @@ export default function SignupPageClient() {
             Why <span className="text-[#087F5B]">Students</span> Love Future Titans
           </h2>
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 xl:grid-cols-2 gap-6 max-w-[1000px] mx-auto">
             {[
-              { num: '01', title: 'Build Something Real', desc: 'Design prototypes, solve real-world problems, and create projects that make a difference.', img: 'robot.png', color: 'bg-emerald-50 text-[#087F5B]', titleColor: 'text-[#087F5B]' },
-              { num: '02', title: 'Learn AI Early', desc: 'Master future-ready skills like AI, No-Code, Data & Automation through hands-on learning.', img: 'books.png', color: 'bg-blue-50 text-blue-600', titleColor: 'text-blue-600' },
-              { num: '03', title: 'Compete Nationally', desc: 'Participate in exciting challenges and showcase your ideas on national stages.', img: 'trophy.png', color: 'bg-amber-50 text-amber-600', titleColor: 'text-amber-600' },
-              { num: '04', title: 'Stand Out Anywhere', desc: 'Build a strong portfolio and the confidence to lead well in college and beyond.', img: 'rocket.png', color: 'bg-purple-50 text-purple-600', titleColor: 'text-purple-600' },
-            ].map((card, i) => (
-              <div key={i} className="bg-white rounded-3xl p-6 shadow-xl shadow-gray-200/50 border border-gray-100 flex flex-col">
-                <div className={`w-10 h-10 rounded-full ${card.color} flex items-center justify-center font-bold text-sm mb-6`}>
-                  {card.num}
+              { title: 'Build Something Real', desc: 'Design prototypes, solve real-world problems, and create projects that make a difference.', img: 'robot.png' },
+              { title: 'Learn AI Early', desc: 'Master future-ready skills like AI, No-Code, Data & Automation through hands-on learning.', img: 'books.png' },
+              { title: 'Compete Nationally', desc: 'Participate in exciting challenges and showcase your ideas on national stages.', img: 'trophy.png' },
+              { title: 'Stand Out Anywhere', desc: 'Build a strong portfolio and the confidence to lead well in college and beyond.', img: 'rocket.png' },
+            ].map((program, i) => (
+              <div
+                key={i}
+                className="relative border border-[#1A3A28] rounded-3xl p-6 sm:p-8 hover:border-[#D4AF37]/40 hover:shadow-lg transition-all overflow-hidden flex flex-col justify-between min-h-[260px]"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0A1C12] to-[#040C07]" />
+                
+                <div className="relative z-10 w-[65%]">
+                  <h3 className="text-white font-bold text-lg sm:text-xl leading-snug mb-3">{program.title}</h3>
+                  <p className="text-[#8c9f95] text-sm leading-relaxed">{program.desc}</p>
                 </div>
-                <div className="h-40 relative w-full mb-6 rounded-2xl overflow-hidden">
-                  <Image src={`/images/innovation-club/${card.img}`} alt={card.title} fill className="object-cover" />
+                
+                <div className="relative z-10 mt-8">
+                  <button className="inline-flex items-center gap-2 border border-[#D4AF37] text-[#D4AF37] font-semibold px-5 py-2 rounded-full text-sm hover:bg-[#D4AF37]/10 transition-colors">
+                    Explore
+                    <div className="w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center">
+                      <ChevronRight className="w-3 h-3 text-[#07160E]" />
+                    </div>
+                  </button>
                 </div>
-                <h3 className={`text-xl font-bold mb-2 ${card.titleColor}`}>{card.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6 flex-1">{card.desc}</p>
-                {/* <button className={`text-sm font-bold flex items-center gap-1 hover:gap-2 transition-all ${card.titleColor}`}>
-                  Learn more <ArrowRight className="w-4 h-4" />
-                </button> */}
+
+                <div className="absolute right-0 bottom-[-10%] top-[-10%] w-[65%] flex items-center justify-end pointer-events-none opacity-80 mix-blend-lighten">
+                  <div className="relative w-full h-[125%]">
+                    <Image
+                      src={`/images/innovation-club/${program.img}`}
+                      alt={program.title}
+                      fill
+                      className="object-contain object-right scale-110 origin-right"
+                    />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
