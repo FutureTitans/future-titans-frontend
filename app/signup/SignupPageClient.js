@@ -406,7 +406,7 @@ export default function SignupPageClient() {
         <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full border border-[#f5d76e]/20 shadow-[0_0_0_45px_rgba(245,215,110,0.04),0_0_0_90px_rgba(245,215,110,0.02)] pointer-events-none"></div>
         <div className="relative z-10 self-center">
           <p className="text-[#f5d76e] tracking-[0.18em] text-[10px] font-black mb-3">WHY PARENTS SAY YES</p>
-          <h2 className="text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 leading-tight text-white">Because the future needs more than good marks.</h2>
+          {/* <h2 className="text-3xl lg:text-4xl font-extrabold tracking-tight mb-4 leading-tight text-white">Because the future needs more than good marks.</h2> */}
           <p className="text-[#cbd8d0] text-[15px] leading-relaxed mb-6">Future Titans gives teenagers a safe, structured and purposeful environment to grow into confident thinkers, builders and leaders.</p>
           <a href="/for-parents" className="text-[#f5d76e] text-[13px] font-extrabold hover:underline inline-flex items-center gap-1">See what your child will gain <span className="font-bold">→</span></a>
         </div>
