@@ -87,19 +87,15 @@ export default function InnovationClubHub() {
     <div className="min-h-[calc(100dvh-4rem)] relative overflow-hidden bg-[#FAF8F3]">
       {/* Background Image Container */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute inset-0 md:left-[25%] opacity-100 mix-blend-normal">
+        <div className="absolute inset-0">
           <Image
-            src="/images/innovation-club/hero-bg.jpeg"
+            src="/images/innovation-club/hero-section-bg.png"
             alt="Innovation Hub Background"
             fill
-            className="object-cover object-[80%_center] opacity-100"
+            className="object-cover object-center opacity-100"
             priority
           />
         </div>
-        {/* Gradients to blend the image into the #FAF8F3 background */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#FAF8F3] via-[#FAF8F3]/95 to-transparent w-[75%]" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#FAF8F3] via-transparent to-transparent opacity-80 h-[30%] bottom-0" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#FAF8F3] via-transparent to-transparent opacity-60 h-[20%] top-0" />
       </div>
 
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 relative z-10 flex flex-col justify-center min-h-[calc(100dvh-4rem)]">
