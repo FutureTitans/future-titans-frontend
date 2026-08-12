@@ -125,7 +125,7 @@ export default function PublicNavbar() {
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-1">
-              {NAV_LINKS.map((link) =>
+              {NAV_LINKS.filter(link => link.href !== '/innovation-club' || loggedIn).map((link) =>
                 link.dropdown ? (
                   <div
                     key={link.label}
@@ -279,7 +279,7 @@ export default function PublicNavbar() {
           />
           <div className="relative bg-white border-t border-gray-100 shadow-xl max-h-[80vh] overflow-y-auto">
             <div className="px-4 py-4 space-y-1">
-              {NAV_LINKS.map((link) =>
+              {NAV_LINKS.filter(link => link.href !== '/innovation-club' || loggedIn).map((link) =>
                 link.dropdown ? (
                   <div key={link.label}>
                     <button

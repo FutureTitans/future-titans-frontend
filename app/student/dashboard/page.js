@@ -380,7 +380,7 @@ export default function StudentDashboard() {
                   { label: 'Learning Modules', icon: BookOpen, subtitle: `${modulesList.length} available`, href: '/student/modules' },
                   { label: 'Achievements', icon: Trophy, subtitle: `${achievementsData?.stats?.total || 0} earned`, href: '/student/profile' },
                   { label: 'SSI Breakdown', icon: Brain, subtitle: `Score: ${ssiScore?.overallSSI || 0}` },
-                  { label: 'Innovation Club', icon: Lightbulb, subtitle: 'Expert sessions, hackathons, resources, and more', href: '/student/innovation-club' },
+                  ...(user?.email !== 'demo@futuretitans.com' ? [{ label: 'Innovation Club', icon: Lightbulb, subtitle: 'Expert sessions, hackathons, resources, and more', href: '/student/innovation-club' }] : []),
                 ].map((item, idx) => (
                   <li key={idx}>
                     <Link href={item.href || '#'} className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-white/60 transition-colors text-left group">

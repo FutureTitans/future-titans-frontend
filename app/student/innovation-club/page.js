@@ -29,6 +29,10 @@ export default function InnovationClubHub() {
       router.push('/login');
       return;
     }
+    if (currentUser.email === 'demo@futuretitans.com') {
+      router.push('/student/dashboard');
+      return;
+    }
     setUser(currentUser);
     fetchData(currentUser);
   }, [router]);

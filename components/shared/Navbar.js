@@ -124,9 +124,11 @@ export default function Navbar() {
                       <NavLink href="/student/modules" active={isActive('/student/modules')} icon={<BookOpen className="w-4 h-4" />}>
                         Modules
                       </NavLink>
-                      <NavLink href="/student/innovation-club" active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-4 h-4" />}>
-                        Innovation Club
-                      </NavLink>
+                      {user?.email !== 'demo@futuretitans.com' && (
+                        <NavLink href="/student/innovation-club" active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-4 h-4" />}>
+                          Innovation Club
+                        </NavLink>
+                      )}
                     </>
                   )}
                   {isAdmin() && (
@@ -228,9 +230,11 @@ export default function Navbar() {
                       <MobileNavLink href="/student/modules" onClick={closeMobileMenu} active={isActive('/student/modules')} icon={<BookOpen className="w-5 h-5" />}>
                         Modules
                       </MobileNavLink>
-                      <MobileNavLink href="/student/innovation-club" onClick={closeMobileMenu} active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-5 h-5" />}>
-                        Innovation Club
-                      </MobileNavLink>
+                      {user?.email !== 'demo@futuretitans.com' && (
+                        <MobileNavLink href="/student/innovation-club" onClick={closeMobileMenu} active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-5 h-5" />}>
+                          Innovation Club
+                        </MobileNavLink>
+                      )}
                       <MobileNavLink href="/student/profile" onClick={closeMobileMenu} active={isActive('/student/profile')} icon={<User className="w-5 h-5" />}>
                         Profile
                       </MobileNavLink>

@@ -556,10 +556,10 @@ export default function SignupPageClient() {
             Yes, I'm Ready! <ArrowRight className="w-6 h-6" />
           </button>
 
-          <div className="flex items-center justify-center gap-4 mt-6 opacity-60">
+          {/* <div className="flex items-center justify-center gap-4 mt-6 opacity-60">
             <span className="text-xs font-semibold">🔒 Secure Checkout</span>
             <span className="text-xs font-semibold">💯 100% Refund Guarantee</span>
-          </div>
+          </div> */}
         </div>
       </section>
 
