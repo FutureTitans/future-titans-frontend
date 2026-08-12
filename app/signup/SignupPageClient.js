@@ -265,9 +265,9 @@ export default function SignupPageClient() {
 
       {/* Hero Section */}
       {/* Hero Section */}
-      <header className="relative w-full max-w-[1440px] mx-auto overflow-hidden min-h-[450px] lg:min-h-[640px]">
+      <header className="relative w-full max-w-[1440px] mx-auto overflow-hidden lg:min-h-[640px]">
         {/* Full Background Image */}
-        <div className="absolute inset-0 z-0 bg-white">
+        <div className="absolute inset-0 z-0 bg-white hidden lg:block">
           <Image
             src="/images/yp/Future-Titans-Hero-4K.png"
             alt="Future Titans Background"
