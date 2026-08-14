@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -62,8 +62,8 @@ export default function SignupPageClient() {
   const initialSlug = searchParams.get('slug') || '';
   const { setUser: storeSetUser, setTokens } = useAuthStore();
 
-  const [showForm, setShowForm] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: 21, hrs: 18, mins: 23, secs: 47 });
+  const formRef = useRef(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -158,96 +158,10 @@ export default function SignupPageClient() {
   };
 
   const handleStartJourney = () => {
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    formRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  if (showForm) {
-    return (
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden px-4 py-6 sm:py-10 bg-[#FAF8F3]">
-        <div className="w-full max-w-5xl relative z-10 grid md:grid-cols-5 gap-0 bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-100">
-          <div className="hidden md:flex md:col-span-2 relative overflow-hidden">
-            <Image src="/students_signup.png" alt="Students" fill className="object-cover" />
-          </div>
 
-          <div className="md:col-span-3 p-6 sm:p-8 md:p-10">
-            <div className="mb-5">
-              <button onClick={() => setShowForm(false)} className="inline-flex items-center gap-2 text-gray-500 hover:text-[#087F5B] transition mb-4 group text-sm">
-                <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                Back to Program Details
-              </button>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h1>
-              <p className="text-gray-500 text-sm">Join Future Titans and start your innovation journey</p>
-              {initialSlug && (
-                <div className="mt-3 inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full px-4 py-1 text-xs text-[#B8952E] font-medium">
-                  Special Offer applied via <span className="font-mono font-bold">{initialSlug}</span>
-                </div>
-              )}
-            </div>
-
-            {errors.submit && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-5 text-sm" role="alert">
-                {errors.submit}
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-              <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-                <InputField label="Full Name" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} error={errors.name} disabled={isLoading} />
-                <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
-                <InputField label="Phone" name="phone" type="tel" placeholder="98XXXXXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
-                <InputField label="School/Institution or Slug Code" name="school" placeholder="Your School or Slug Code" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
-                <div>
-                  <label htmlFor="signup-class" className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Class/Grade</label>
-                  <select
-                    id="signup-class"
-                    name="class"
-                    value={formData.class}
-                    onChange={handleChange}
-                    disabled={isLoading}
-                    className={`w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#087F5B] outline-none transition-all ${errors.class ? 'border-red-500 bg-red-50' : 'bg-gray-50'}`}
-                  >
-                    <option value="">Select your class</option>
-                    <option value="8">Class 8</option>
-                    <option value="9">Class 9</option>
-                    <option value="10">Class 10</option>
-                    <option value="11">Class 11</option>
-                    <option value="12">Class 12</option>
-                  </select>
-                  {errors.class && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.class}</p>}
-                </div>
-                <InputField label="Section" name="section" placeholder="e.g. A, B, C" value={formData.section} onChange={handleChange} error={errors.section} disabled={isLoading} />
-                <InputField label="Roll Number" name="rollNumber" placeholder="e.g. 42" value={formData.rollNumber} onChange={handleChange} error={errors.rollNumber} disabled={isLoading} />
-                <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
-                <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />
-                <InputField label="Password" name="password" placeholder="Min 6 characters" isPassword value={formData.password} onChange={handleChange} error={errors.password} disabled={isLoading} showPw={showPassword} onTogglePw={() => setShowPassword(!showPassword)} />
-                <InputField label="Confirm Password" name="confirmPassword" placeholder="Re-enter password" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} disabled={isLoading} showPw={showConfirmPassword} onTogglePw={() => setShowConfirmPassword(!showConfirmPassword)} />
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-4 text-base bg-[#087F5B] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#065f46] transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-4"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
-                ) : (
-                  'Create Account'
-                )}
-              </button>
-            </form>
-
-            <p className="text-center text-gray-500 mt-5 text-sm">
-              Already have an account?{' '}
-              <Link href="/login" className="text-[#087F5B] font-semibold hover:underline transition">
-                Log In
-              </Link>
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-white text-gray-900 font-sans selection:bg-[#087F5B] selection:text-white">
@@ -560,6 +474,86 @@ export default function SignupPageClient() {
             <span className="text-xs font-semibold">🔒 Secure Checkout</span>
             <span className="text-xs font-semibold">💯 100% Refund Guarantee</span>
           </div> */}
+        </div>
+      </section>
+
+      {/* Signup Form Section */}
+      <section ref={formRef} id="signup-form" className="py-20 bg-[#FAF8F3]">
+        <div className="w-full max-w-5xl mx-auto px-4 relative z-10 grid md:grid-cols-5 gap-0 bg-white rounded-3xl overflow-hidden shadow-2xl border border-gray-100">
+          <div className="hidden md:flex md:col-span-2 relative overflow-hidden">
+            <Image src="/students_signup.png" alt="Students" fill className="object-cover" />
+          </div>
+
+          <div className="md:col-span-3 p-6 sm:p-8 md:p-10">
+            <div className="mb-5">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">Create Account</h2>
+              <p className="text-gray-500 text-sm">Join Future Titans and start your innovation journey</p>
+              {initialSlug && (
+                <div className="mt-3 inline-block bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-full px-4 py-1 text-xs text-[#B8952E] font-medium">
+                  Special Offer applied via <span className="font-mono font-bold">{initialSlug}</span>
+                </div>
+              )}
+            </div>
+
+            {errors.submit && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-5 text-sm" role="alert">
+                {errors.submit}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+              <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                <InputField label="Full Name" name="name" placeholder="John Doe" value={formData.name} onChange={handleChange} error={errors.name} disabled={isLoading} />
+                <InputField label="Email" name="email" type="email" placeholder="john@example.com" value={formData.email} onChange={handleChange} error={errors.email} disabled={isLoading} />
+                <InputField label="Phone" name="phone" type="tel" placeholder="98XXXXXXXX" value={formData.phone} onChange={handleChange} error={errors.phone} disabled={isLoading} />
+                <InputField label="School/Institution or Slug Code" name="school" placeholder="Your School or Slug Code" value={formData.school} onChange={handleChange} error={errors.school} disabled={isLoading} />
+                <div>
+                  <label htmlFor="signup-class" className="block text-sm font-semibold text-gray-700 mb-2 ml-1">Class/Grade</label>
+                  <select
+                    id="signup-class"
+                    name="class"
+                    value={formData.class}
+                    onChange={handleChange}
+                    disabled={isLoading}
+                    className={`w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#087F5B] outline-none transition-all ${errors.class ? 'border-red-500 bg-red-50' : 'bg-gray-50'}`}
+                  >
+                    <option value="">Select your class</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                  </select>
+                  {errors.class && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.class}</p>}
+                </div>
+                <InputField label="Section" name="section" placeholder="e.g. A, B, C" value={formData.section} onChange={handleChange} error={errors.section} disabled={isLoading} />
+                <InputField label="Roll Number" name="rollNumber" placeholder="e.g. 42" value={formData.rollNumber} onChange={handleChange} error={errors.rollNumber} disabled={isLoading} />
+                <InputField label="City" name="city" placeholder="Mumbai" value={formData.city} onChange={handleChange} error={errors.city} disabled={isLoading} />
+                <InputField label="Country" name="country" placeholder="India" value={formData.country} onChange={handleChange} error={errors.country} disabled={isLoading} />
+                <InputField label="Password" name="password" placeholder="Min 6 characters" isPassword value={formData.password} onChange={handleChange} error={errors.password} disabled={isLoading} showPw={showPassword} onTogglePw={() => setShowPassword(!showPassword)} />
+                <InputField label="Confirm Password" name="confirmPassword" placeholder="Re-enter password" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} disabled={isLoading} showPw={showConfirmPassword} onTogglePw={() => setShowConfirmPassword(!showConfirmPassword)} />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-4 text-base bg-[#087F5B] text-white font-bold rounded-xl shadow-lg hover:shadow-xl hover:bg-[#065f46] transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-4"
+              >
+                {isLoading ? (
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mx-auto" />
+                ) : (
+                  'Create Account'
+                )}
+              </button>
+            </form>
+
+            <p className="text-center text-gray-500 mt-5 text-sm">
+              Already have an account?{' '}
+              <Link href="/login" className="text-[#087F5B] font-semibold hover:underline transition">
+                Log In
+              </Link>
+            </p>
+          </div>
         </div>
       </section>
 

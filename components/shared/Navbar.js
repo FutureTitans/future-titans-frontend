@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { auth } from '@/lib/api';
-import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield, Newspaper, Lightbulb } from 'lucide-react';
+import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield, Newspaper, Lightbulb, Lock } from 'lucide-react';
 import Image from 'next/image';
 
 export default function Navbar() {
@@ -124,7 +124,13 @@ export default function Navbar() {
                       <NavLink href="/student/modules" active={isActive('/student/modules')} icon={<BookOpen className="w-4 h-4" />}>
                         Modules
                       </NavLink>
-                      {user?.email !== 'demo@futuretitans.com' && (
+                      {user?.email === 'demo@futuretitans.com' ? (
+                        <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white/40 cursor-not-allowed" title="Premium Feature">
+                          <Lightbulb className="w-4 h-4 text-white/40" />
+                          Innovation Club
+                          <Lock className="w-3.5 h-3.5 ml-1" />
+                        </div>
+                      ) : (
                         <NavLink href="/student/innovation-club" active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-4 h-4" />}>
                           Innovation Club
                         </NavLink>
@@ -230,7 +236,15 @@ export default function Navbar() {
                       <MobileNavLink href="/student/modules" onClick={closeMobileMenu} active={isActive('/student/modules')} icon={<BookOpen className="w-5 h-5" />}>
                         Modules
                       </MobileNavLink>
-                      {user?.email !== 'demo@futuretitans.com' && (
+                      {user?.email === 'demo@futuretitans.com' ? (
+                        <div className="flex items-center justify-between px-4 py-3.5 rounded-2xl font-medium text-white/40 cursor-not-allowed">
+                          <div className="flex items-center gap-3">
+                            <span className="text-white/40"><Lightbulb className="w-5 h-5" /></span>
+                            Innovation Club
+                          </div>
+                          <Lock className="w-4 h-4 opacity-70" />
+                        </div>
+                      ) : (
                         <MobileNavLink href="/student/innovation-club" onClick={closeMobileMenu} active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-5 h-5" />}>
                           Innovation Club
                         </MobileNavLink>
