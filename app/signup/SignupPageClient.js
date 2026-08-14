@@ -310,14 +310,14 @@ export default function SignupPageClient() {
                   <p className="text-[#8c9f95] text-sm leading-relaxed">{program.desc}</p>
                 </div>
 
-                <div className="relative z-10 mt-8">
+                {/* <div className="relative z-10 mt-8">
                   <button className="inline-flex items-center gap-2 border border-[#D4AF37] text-[#D4AF37] font-semibold px-5 py-2 rounded-full text-sm hover:bg-[#D4AF37]/10 transition-colors">
                     Explore
                     <div className="w-5 h-5 rounded-full bg-[#D4AF37] flex items-center justify-center">
                       <ChevronRight className="w-3 h-3 text-[#07160E]" />
                     </div>
                   </button>
-                </div>
+                </div> */}
 
                 <div className="absolute right-0 bottom-[-10%] top-[-10%] w-[65%] flex items-center justify-end pointer-events-none opacity-80 mix-blend-lighten">
                   <div className="relative w-full h-[125%]">
