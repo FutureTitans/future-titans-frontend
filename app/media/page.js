@@ -51,8 +51,8 @@ export default function Media() {
                 </div>
                 
                 {/* Logo */}
-                <div className="h-10 flex flex-col justify-center items-start mb-6 w-[80%]">
-                  <Image src={item.logo} alt="Media" width={140} height={40} className="max-h-full w-auto object-contain object-left mix-blend-multiply" />
+                <div className="h-16 flex flex-col justify-center items-start mb-6 w-[90%]">
+                  <Image src={item.logo} alt="Media" width={180} height={64} className="max-h-full w-auto object-contain object-left mix-blend-multiply" />
                 </div>
                 
                 {/* Description */}
