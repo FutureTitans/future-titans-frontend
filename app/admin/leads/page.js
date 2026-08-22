@@ -125,6 +125,7 @@ export default function AdminLeadsPage() {
   const [importResult, setImportResult] = useState(null);
   const [importingLeads, setImportingLeads] = useState(false);
   const [importProgress, setImportProgress] = useState({ current: 0, total: 0 });
+  const [importDescription, setImportDescription] = useState('');
   const fileRef = useRef(null);
 
   const fetchLeads = useCallback(async () => {
@@ -382,7 +383,7 @@ export default function AdminLeadsPage() {
     try {
       for (let i = 0; i < mapped.length; i += BATCH_SIZE) {
         const batch = mapped.slice(i, i + BATCH_SIZE);
-        const result = await adminLeads.bulkImport(batch);
+        const result = await adminLeads.bulkImport(batch, importDescription);
         totals.inserted += result.inserted || 0;
         totals.skipped += result.skipped || 0;
         if (result.errors?.length) {
@@ -449,7 +450,7 @@ export default function AdminLeadsPage() {
           <button onClick={() => { setShowForm(true); setEditingLead(null); setFormData(emptyLead); }} className="glass-button flex items-center gap-2 text-sm">
             <Plus className="w-4 h-4" /> Add Lead
           </button>
-          <button onClick={() => { setShowImport(true); setImportStep(1); setFileColumns([]); setFileRows([]); setColumnMapping({}); setImportResult(null); }} className="glass-button-secondary flex items-center gap-2 text-sm">
+          <button onClick={() => { setShowImport(true); setImportStep(1); setFileColumns([]); setFileRows([]); setColumnMapping({}); setImportResult(null); setImportDescription(''); }} className="glass-button-secondary flex items-center gap-2 text-sm">
             <Upload className="w-4 h-4" /> Import
           </button>
           <button onClick={handleExport} className="glass-button-secondary flex items-center gap-2 text-sm">
@@ -862,6 +863,18 @@ export default function AdminLeadsPage() {
                 const validCount = getValidLeadCount();
                 return (
                   <>
+                    <div className="mb-5">
+                      <label className="text-xs font-semibold text-gray-500 mb-1 block">Import Description</label>
+                      <input
+                        type="text"
+                        value={importDescription}
+                        onChange={(e) => setImportDescription(e.target.value)}
+                        className="glass-input w-full"
+                        placeholder="e.g. TOI Event March 2026, Edushine Partnership, School Fair Leads..."
+                      />
+                      <p className="text-xs text-gray-400 mt-1">Annotation for where these leads came from. Applied as lead source and logged as a note on each lead.</p>
+                    </div>
+
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       <div>
                         <h3 className="text-sm font-semibold text-gray-700 mb-3">Column Mapping</h3>
