@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Script from 'next/script';
@@ -33,7 +33,8 @@ import {
   Search,
   MessageSquare,
   Sparkles,
-  Lightbulb
+  Lightbulb,
+  Lock
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import TopupPopup from '@/components/student/TopupPopup';
@@ -102,6 +103,100 @@ export default function StudentDashboard() {
   const [activeFaqTab, setActiveFaqTab] = useState('Students');
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const videoRef = useRef(null);
+
+  // Catch Zunnova game state
+  const [gameActive, setGameActive] = useState(false);
+  const [gameTimer, setGameTimer] = useState(20);
+  const [gameCaught, setGameCaught] = useState(0);
+  const [gamePoints, setGamePoints] = useState(0);
+  const [gameBestToday, setGameBestToday] = useState(0);
+  const [zunnovaPos, setZunnovaPos] = useState({ x: 50, y: 50 });
+  const [zunnovaVisible, setZunnovaVisible] = useState(true);
+  const [catchFlash, setCatchFlash] = useState(false);
+  const gameAreaRef = useRef(null);
+  const gameTimerRef = useRef(null);
+  const moveIntervalRef = useRef(null);
+
+  const moveZunnova = useCallback(() => {
+    setZunnovaVisible(false);
+    setTimeout(() => {
+      setZunnovaPos({
+        x: 10 + Math.random() * 70,
+        y: 10 + Math.random() * 60,
+      });
+      setZunnovaVisible(true);
+    }, 300);
+  }, []);
+
+  const endGame = useCallback(() => {
+    clearInterval(gameTimerRef.current);
+    clearInterval(moveIntervalRef.current);
+    setGameActive(false);
+    setZunnovaVisible(true);
+    setZunnovaPos({ x: 50, y: 50 });
+    setGameCaught(prev => {
+      setGamePoints(pts => {
+        let bonus = 0;
+        if (prev >= 8) bonus = 50;
+        else if (prev >= 5) bonus = 20;
+        const total = pts + bonus;
+        setGameBestToday(best => Math.max(best, total));
+        return total;
+      });
+      return prev;
+    });
+  }, []);
+
+  const startGame = useCallback(() => {
+    setGameTimer(20);
+    setGameCaught(0);
+    setGamePoints(0);
+    setGameActive(true);
+    setZunnovaVisible(true);
+
+    gameTimerRef.current = setInterval(() => {
+      setGameTimer(t => {
+        if (t <= 1) {
+          endGame();
+          return 0;
+        }
+        return t - 1;
+      });
+    }, 1000);
+
+    moveIntervalRef.current = setInterval(() => {
+      moveZunnova();
+    }, 1800);
+  }, [endGame, moveZunnova]);
+
+  const catchZunnova = useCallback(() => {
+    if (!gameActive || !zunnovaVisible) return;
+    setGameCaught(c => c + 1);
+    setGamePoints(p => p + 5);
+    setCatchFlash(true);
+    setTimeout(() => setCatchFlash(false), 300);
+    moveZunnova();
+  }, [gameActive, zunnovaVisible, moveZunnova]);
+
+  useEffect(() => {
+    return () => {
+      clearInterval(gameTimerRef.current);
+      clearInterval(moveIntervalRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    const todayKey = `ft_game_best_${new Date().toDateString()}`;
+    const saved = localStorage.getItem(todayKey);
+    if (saved) setGameBestToday(parseInt(saved, 10));
+  }, []);
+
+  useEffect(() => {
+    if (gameBestToday > 0) {
+      const todayKey = `ft_game_best_${new Date().toDateString()}`;
+      localStorage.setItem(todayKey, gameBestToday.toString());
+    }
+  }, [gameBestToday]);
 
   const closeFaqModal = () => {
     setShowFAQ(false);
@@ -641,6 +736,131 @@ export default function StudentDashboard() {
                     No badges available yet.
                   </div>
                 )}
+              </div>
+            </div>
+
+            {/* Sneak Peek – Zunnova Video */}
+            <div className="flex items-center gap-3 mt-2">
+              <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] font-bold">Sneak Peek</p>
+              <div className="flex-1 h-px bg-gray-200"></div>
+            </div>
+            <div className="bg-[#1A1A1A] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-2xl border border-gray-800 relative">
+              <div className="relative w-full aspect-video">
+                <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10">
+                  <Lock className="w-3 h-3 text-[#D4AF37]" />
+                  <span className="text-[10px] text-[#D4AF37] uppercase tracking-wider font-bold">Members Only</span>
+                </div>
+                <video
+                  className="w-full h-full object-cover"
+                  controls
+                  playsInline
+                  webkit-playsinline="true"
+                  preload="metadata"
+                  poster=""
+                  src="https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/zunnova%20dashboard%20video.mp4"
+                />
+              </div>
+              <div className="p-5 sm:p-6">
+                <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold mb-2">Zunnova AI &middot; Our Own AI</p>
+                <h3 className="text-lg sm:text-xl font-semibold text-white mb-2 tracking-wide">Watch what Zunnova can do for your startup</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-5">
+                  A 2-minute look at Zunnova building pitch decks, business plans and market research on command. Full members get unlimited word balance.
+                </p>
+                <Link
+                  href="/student/innovation-club/zunnova"
+                  className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl font-semibold text-sm hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all"
+                >
+                  Unlock Zunnova AI
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* Catch Zunnova Mini Game */}
+            <div className="bg-[#1A1A1A] rounded-[24px] sm:rounded-[32px] p-5 sm:p-6 shadow-2xl border border-gray-800 relative overflow-hidden">
+              <div className="absolute top-0 left-1/4 right-1/4 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-30 blur-sm"></div>
+
+              <p className="text-[10px] text-[#D4AF37] uppercase tracking-[0.2em] font-bold mb-1">Mini Game</p>
+              <h3 className="text-xl font-semibold text-white mb-4 tracking-wide">Catch Zunnova</h3>
+
+              <div className="flex items-center gap-2 flex-wrap mb-4">
+                <span className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-white text-xs font-mono">
+                  {gameActive ? `0:${gameTimer.toString().padStart(2, '0')}` : '0:20'}
+                </span>
+                <span className="px-3 py-1.5 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold">
+                  Caught {gameCaught}
+                </span>
+                <span className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-white text-xs font-mono">
+                  {gamePoints} pts
+                </span>
+                <button
+                  onClick={startGame}
+                  disabled={gameActive}
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                    gameActive
+                      ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                      : 'bg-[#D4AF37] text-black hover:bg-[#F5D76E] hover:shadow-md hover:shadow-[#D4AF37]/30'
+                  }`}
+                >
+                  {gameActive ? 'Playing...' : gameCaught > 0 && !gameActive ? 'Restart' : 'Start'}
+                </button>
+              </div>
+
+              <div
+                ref={gameAreaRef}
+                className={`relative w-full aspect-[4/3] rounded-2xl border-2 border-dashed transition-colors duration-300 ${
+                  catchFlash ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-gray-700 bg-black/40'
+                } overflow-hidden select-none`}
+              >
+                {gameActive && zunnovaVisible && (
+                  <div
+                    className="absolute w-20 h-20 sm:w-24 sm:h-24 transition-all duration-200 ease-out cursor-pointer"
+                    style={{ left: `${zunnovaPos.x}%`, top: `${zunnovaPos.y}%`, transform: 'translate(-50%, -50%)' }}
+                    onClick={catchZunnova}
+                  >
+                    <div className="w-full h-full rounded-full border-2 border-[#D4AF37]/40 bg-black/60 overflow-hidden shadow-lg shadow-[#D4AF37]/10 hover:scale-110 transition-transform active:scale-90">
+                      <img
+                        src="/idle_animation.webp"
+                        alt="Zunnova"
+                        className="w-full h-full object-cover pointer-events-none"
+                        draggable={false}
+                      />
+                    </div>
+                  </div>
+                )}
+                {!gameActive && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-[#D4AF37]/30 bg-black/60 overflow-hidden mb-4 shadow-lg shadow-[#D4AF37]/10">
+                      <img
+                        src="/idle_animation.webp"
+                        alt="Zunnova"
+                        className="w-full h-full object-cover"
+                        draggable={false}
+                      />
+                    </div>
+                    <p className="text-gray-500 text-sm text-center px-6 leading-relaxed">
+                      Press Start, then click Zunnova before it slips away. Every catch is 5 points.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-gray-400">
+                  Best today <span className="text-white font-semibold">{gameBestToday}</span>
+                </span>
+                <span className="text-gray-600">&middot;</span>
+                <span className="px-2.5 py-1 rounded-full border border-gray-700 text-[10px] text-gray-400 font-medium">
+                  1 catch = 5 points
+                </span>
+              </div>
+              <div className="mt-2 flex items-center gap-2 flex-wrap">
+                <span className="px-2.5 py-1 rounded-full border border-[#D4AF37]/20 text-[10px] text-[#D4AF37]/70 font-medium">
+                  5 catches = +20 bonus
+                </span>
+                <span className="px-2.5 py-1 rounded-full border border-[#D4AF37]/20 text-[10px] text-[#D4AF37]/70 font-medium">
+                  8+ = +50 bonus
+                </span>
               </div>
             </div>
 
