@@ -106,51 +106,63 @@ export default function StudentDashboard() {
 
   // Catch Zunnova game state
   const [gameActive, setGameActive] = useState(false);
-  const [gameTimer, setGameTimer] = useState(20);
+  const [gameTimer, setGameTimer] = useState(15);
   const [gameCaught, setGameCaught] = useState(0);
   const [gamePoints, setGamePoints] = useState(0);
   const [gameBestToday, setGameBestToday] = useState(0);
   const [zunnovaPos, setZunnovaPos] = useState({ x: 50, y: 50 });
   const [zunnovaVisible, setZunnovaVisible] = useState(true);
+  const [zunnovaSize, setZunnovaSize] = useState(1);
   const [catchFlash, setCatchFlash] = useState(false);
   const gameAreaRef = useRef(null);
   const gameTimerRef = useRef(null);
-  const moveIntervalRef = useRef(null);
+  const moveTimeoutRef = useRef(null);
+  const gameCaughtRef = useRef(0);
 
-  const moveZunnova = useCallback(() => {
-    setZunnovaVisible(false);
-    setTimeout(() => {
-      setZunnovaPos({
-        x: 10 + Math.random() * 70,
-        y: 10 + Math.random() * 60,
-      });
-      setZunnovaVisible(true);
-    }, 300);
+  const scheduleMove = useCallback(() => {
+    const caught = gameCaughtRef.current;
+    const baseDelay = 1400;
+    const speed = Math.max(600, baseDelay - caught * 100);
+    const vanishTime = Math.min(500, 250 + caught * 30);
+
+    moveTimeoutRef.current = setTimeout(() => {
+      setZunnovaVisible(false);
+      setTimeout(() => {
+        setZunnovaPos({
+          x: 5 + Math.random() * 80,
+          y: 5 + Math.random() * 70,
+        });
+        setZunnovaSize(Math.max(0.55, 1 - caught * 0.06));
+        setZunnovaVisible(true);
+        scheduleMove();
+      }, vanishTime);
+    }, speed);
   }, []);
 
   const endGame = useCallback(() => {
     clearInterval(gameTimerRef.current);
-    clearInterval(moveIntervalRef.current);
+    clearTimeout(moveTimeoutRef.current);
     setGameActive(false);
     setZunnovaVisible(true);
     setZunnovaPos({ x: 50, y: 50 });
-    setGameCaught(prev => {
-      setGamePoints(pts => {
-        let bonus = 0;
-        if (prev >= 8) bonus = 50;
-        else if (prev >= 5) bonus = 20;
-        const total = pts + bonus;
-        setGameBestToday(best => Math.max(best, total));
-        return total;
-      });
-      return prev;
+    setZunnovaSize(1);
+    const caught = gameCaughtRef.current;
+    setGamePoints(pts => {
+      let bonus = 0;
+      if (caught >= 8) bonus = 50;
+      else if (caught >= 5) bonus = 20;
+      const total = pts + bonus;
+      setGameBestToday(best => Math.max(best, total));
+      return total;
     });
   }, []);
 
   const startGame = useCallback(() => {
-    setGameTimer(20);
+    setGameTimer(15);
     setGameCaught(0);
     setGamePoints(0);
+    setZunnovaSize(1);
+    gameCaughtRef.current = 0;
     setGameActive(true);
     setZunnovaVisible(true);
 
@@ -164,24 +176,35 @@ export default function StudentDashboard() {
       });
     }, 1000);
 
-    moveIntervalRef.current = setInterval(() => {
-      moveZunnova();
-    }, 1800);
-  }, [endGame, moveZunnova]);
+    scheduleMove();
+  }, [endGame, scheduleMove]);
 
   const catchZunnova = useCallback(() => {
     if (!gameActive || !zunnovaVisible) return;
+    gameCaughtRef.current += 1;
     setGameCaught(c => c + 1);
     setGamePoints(p => p + 5);
     setCatchFlash(true);
     setTimeout(() => setCatchFlash(false), 300);
-    moveZunnova();
-  }, [gameActive, zunnovaVisible, moveZunnova]);
+    clearTimeout(moveTimeoutRef.current);
+    setZunnovaVisible(false);
+    const caught = gameCaughtRef.current;
+    const vanishTime = Math.min(500, 250 + caught * 30);
+    setTimeout(() => {
+      setZunnovaPos({
+        x: 5 + Math.random() * 80,
+        y: 5 + Math.random() * 70,
+      });
+      setZunnovaSize(Math.max(0.55, 1 - caught * 0.06));
+      setZunnovaVisible(true);
+      scheduleMove();
+    }, vanishTime);
+  }, [gameActive, zunnovaVisible, scheduleMove]);
 
   useEffect(() => {
     return () => {
       clearInterval(gameTimerRef.current);
-      clearInterval(moveIntervalRef.current);
+      clearTimeout(moveTimeoutRef.current);
     };
   }, []);
 
@@ -746,10 +769,12 @@ export default function StudentDashboard() {
             </div>
             <div className="bg-[#1A1A1A] rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-2xl border border-gray-800 relative">
               <div className="relative w-full aspect-video">
-                <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10">
-                  <Lock className="w-3 h-3 text-[#D4AF37]" />
-                  <span className="text-[10px] text-[#D4AF37] uppercase tracking-wider font-bold">Members Only</span>
-                </div>
+                {!isUserPaid && (
+                  <div className="absolute top-4 right-4 z-10 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/10">
+                    <Lock className="w-3 h-3 text-[#D4AF37]" />
+                    <span className="text-[10px] text-[#D4AF37] uppercase tracking-wider font-bold">Members Only</span>
+                  </div>
+                )}
                 <video
                   className="w-full h-full object-cover"
                   controls
@@ -766,13 +791,15 @@ export default function StudentDashboard() {
                 <p className="text-sm text-gray-400 leading-relaxed mb-5">
                   A 2-minute look at Zunnova building pitch decks, business plans and market research on command. Full members get unlimited word balance.
                 </p>
-                <Link
-                  href="/student/innovation-club/zunnova"
-                  className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl font-semibold text-sm hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all"
-                >
-                  Unlock Zunnova AI
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
+                {!isUserPaid && (
+                  <Link
+                    href="/student/modules"
+                    className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-2xl font-semibold text-sm hover:shadow-lg hover:shadow-[#D4AF37]/30 transition-all"
+                  >
+                    Unlock Zunnova AI
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -785,7 +812,7 @@ export default function StudentDashboard() {
 
               <div className="flex items-center gap-2 flex-wrap mb-4">
                 <span className="px-3 py-1.5 rounded-full border border-white/10 bg-white/5 text-white text-xs font-mono">
-                  {gameActive ? `0:${gameTimer.toString().padStart(2, '0')}` : '0:20'}
+                  {gameActive ? `0:${gameTimer.toString().padStart(2, '0')}` : '0:15'}
                 </span>
                 <span className="px-3 py-1.5 rounded-full border border-[#D4AF37]/30 bg-[#D4AF37]/10 text-[#D4AF37] text-xs font-semibold">
                   Caught {gameCaught}
@@ -814,8 +841,8 @@ export default function StudentDashboard() {
               >
                 {gameActive && zunnovaVisible && (
                   <div
-                    className="absolute w-20 h-20 sm:w-24 sm:h-24 transition-all duration-200 ease-out cursor-pointer"
-                    style={{ left: `${zunnovaPos.x}%`, top: `${zunnovaPos.y}%`, transform: 'translate(-50%, -50%)' }}
+                    className="absolute transition-all duration-200 ease-out cursor-pointer"
+                    style={{ left: `${zunnovaPos.x}%`, top: `${zunnovaPos.y}%`, transform: 'translate(-50%, -50%)', width: `${zunnovaSize * 96}px`, height: `${zunnovaSize * 96}px` }}
                     onClick={catchZunnova}
                   >
                     <div className="w-full h-full rounded-full border-2 border-[#D4AF37]/40 bg-black/60 overflow-hidden shadow-lg shadow-[#D4AF37]/10 hover:scale-110 transition-transform active:scale-90">
