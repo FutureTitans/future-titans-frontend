@@ -113,11 +113,41 @@ export default function StudentDashboard() {
   const [zunnovaPos, setZunnovaPos] = useState({ x: 50, y: 50 });
   const [zunnovaVisible, setZunnovaVisible] = useState(true);
   const [zunnovaSize, setZunnovaSize] = useState(1);
+  const [sneakVideoPlaying, setSneakVideoPlaying] = useState(false);
+  const sneakVideoRef = useRef(null);
   const [catchFlash, setCatchFlash] = useState(false);
   const gameAreaRef = useRef(null);
   const gameTimerRef = useRef(null);
   const moveTimeoutRef = useRef(null);
   const gameCaughtRef = useRef(0);
+  const zPosRef = useRef({ x: 50, y: 50 });
+  const dodgeCooldownRef = useRef(false);
+  const gameActiveRef = useRef(false);
+  const zunnovaVisibleRef = useRef(true);
+
+  const handleGameMouseMove = useCallback((e) => {
+    if (!gameActiveRef.current || !zunnovaVisibleRef.current || dodgeCooldownRef.current) return;
+    const area = gameAreaRef.current;
+    if (!area) return;
+    const rect = area.getBoundingClientRect();
+    const cursorX = ((e.clientX - rect.left) / rect.width) * 100;
+    const cursorY = ((e.clientY - rect.top) / rect.height) * 100;
+    const pos = zPosRef.current;
+    const dx = pos.x - cursorX;
+    const dy = pos.y - cursorY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+
+    if (dist < 18) {
+      dodgeCooldownRef.current = true;
+      const angle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
+      const push = 25 + Math.random() * 15;
+      const newX = Math.min(85, Math.max(5, pos.x + Math.cos(angle) * push));
+      const newY = Math.min(75, Math.max(5, pos.y + Math.sin(angle) * push));
+      zPosRef.current = { x: newX, y: newY };
+      setZunnovaPos({ x: newX, y: newY });
+      setTimeout(() => { dodgeCooldownRef.current = false; }, 200);
+    }
+  }, []);
 
   const scheduleMove = useCallback(() => {
     const caught = gameCaughtRef.current;
@@ -127,13 +157,14 @@ export default function StudentDashboard() {
 
     moveTimeoutRef.current = setTimeout(() => {
       setZunnovaVisible(false);
+      zunnovaVisibleRef.current = false;
       setTimeout(() => {
-        setZunnovaPos({
-          x: 5 + Math.random() * 80,
-          y: 5 + Math.random() * 70,
-        });
+        const newPos = { x: 5 + Math.random() * 80, y: 5 + Math.random() * 70 };
+        zPosRef.current = newPos;
+        setZunnovaPos(newPos);
         setZunnovaSize(Math.max(0.55, 1 - caught * 0.06));
         setZunnovaVisible(true);
+        zunnovaVisibleRef.current = true;
         scheduleMove();
       }, vanishTime);
     }, speed);
@@ -143,7 +174,10 @@ export default function StudentDashboard() {
     clearInterval(gameTimerRef.current);
     clearTimeout(moveTimeoutRef.current);
     setGameActive(false);
+    gameActiveRef.current = false;
     setZunnovaVisible(true);
+    zunnovaVisibleRef.current = true;
+    zPosRef.current = { x: 50, y: 50 };
     setZunnovaPos({ x: 50, y: 50 });
     setZunnovaSize(1);
     const caught = gameCaughtRef.current;
@@ -164,7 +198,10 @@ export default function StudentDashboard() {
     setZunnovaSize(1);
     gameCaughtRef.current = 0;
     setGameActive(true);
+    gameActiveRef.current = true;
     setZunnovaVisible(true);
+    zunnovaVisibleRef.current = true;
+    dodgeCooldownRef.current = false;
 
     gameTimerRef.current = setInterval(() => {
       setGameTimer(t => {
@@ -180,7 +217,7 @@ export default function StudentDashboard() {
   }, [endGame, scheduleMove]);
 
   const catchZunnova = useCallback(() => {
-    if (!gameActive || !zunnovaVisible) return;
+    if (!gameActiveRef.current || !zunnovaVisibleRef.current) return;
     gameCaughtRef.current += 1;
     setGameCaught(c => c + 1);
     setGamePoints(p => p + 5);
@@ -188,18 +225,19 @@ export default function StudentDashboard() {
     setTimeout(() => setCatchFlash(false), 300);
     clearTimeout(moveTimeoutRef.current);
     setZunnovaVisible(false);
+    zunnovaVisibleRef.current = false;
     const caught = gameCaughtRef.current;
     const vanishTime = Math.min(500, 250 + caught * 30);
     setTimeout(() => {
-      setZunnovaPos({
-        x: 5 + Math.random() * 80,
-        y: 5 + Math.random() * 70,
-      });
+      const newPos = { x: 5 + Math.random() * 80, y: 5 + Math.random() * 70 };
+      zPosRef.current = newPos;
+      setZunnovaPos(newPos);
       setZunnovaSize(Math.max(0.55, 1 - caught * 0.06));
       setZunnovaVisible(true);
+      zunnovaVisibleRef.current = true;
       scheduleMove();
     }, vanishTime);
-  }, [gameActive, zunnovaVisible, scheduleMove]);
+  }, [scheduleMove]);
 
   useEffect(() => {
     return () => {
@@ -776,14 +814,30 @@ export default function StudentDashboard() {
                   </div>
                 )}
                 <video
-                  className="w-full h-full object-cover"
-                  controls
+                  ref={sneakVideoRef}
+                  className="w-full h-full object-contain bg-black"
+                  controls={sneakVideoPlaying}
                   playsInline
                   webkit-playsinline="true"
                   preload="metadata"
-                  poster=""
                   src="https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/zunnova%20dashboard%20video.mp4"
+                  onPlay={() => setSneakVideoPlaying(true)}
+                  onPause={() => setSneakVideoPlaying(false)}
+                  onEnded={() => setSneakVideoPlaying(false)}
                 />
+                {!sneakVideoPlaying && (
+                  <button
+                    onClick={() => {
+                      const v = sneakVideoRef.current;
+                      if (v) { v.play().catch(() => {}); }
+                    }}
+                    className="absolute inset-0 z-[5] flex items-center justify-center bg-black/30 hover:bg-black/20 transition-colors group/play"
+                  >
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#D4AF37] flex items-center justify-center shadow-xl shadow-[#D4AF37]/30 group-hover/play:scale-110 transition-transform">
+                      <Play className="w-7 h-7 sm:w-8 sm:h-8 text-black ml-1" />
+                    </div>
+                  </button>
+                )}
               </div>
               <div className="p-5 sm:p-6">
                 <p className="text-[10px] text-gray-500 uppercase tracking-widest font-semibold mb-2">Zunnova AI &middot; Our Own AI</p>
@@ -835,13 +889,14 @@ export default function StudentDashboard() {
 
               <div
                 ref={gameAreaRef}
+                onMouseMove={handleGameMouseMove}
                 className={`relative w-full aspect-[4/3] rounded-2xl border-2 border-dashed transition-colors duration-300 ${
                   catchFlash ? 'border-[#D4AF37] bg-[#D4AF37]/5' : 'border-gray-700 bg-black/40'
                 } overflow-hidden select-none`}
               >
                 {gameActive && zunnovaVisible && (
                   <div
-                    className="absolute transition-all duration-200 ease-out cursor-pointer"
+                    className="absolute transition-all duration-100 ease-out cursor-pointer"
                     style={{ left: `${zunnovaPos.x}%`, top: `${zunnovaPos.y}%`, transform: 'translate(-50%, -50%)', width: `${zunnovaSize * 96}px`, height: `${zunnovaSize * 96}px` }}
                     onClick={catchZunnova}
                   >
