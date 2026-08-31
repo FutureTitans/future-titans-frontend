@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -8,6 +8,14 @@ import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { auth } from '@/lib/api';
 import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield, Newspaper, Lightbulb, Lock } from 'lucide-react';
 import Image from 'next/image';
+
+const studentNavItems = [
+  { href: '/student/dashboard', label: 'Dashboard', emoji: null },
+  { href: '/student/modules', label: 'Learn', emoji: '\u{1F9E0}' },
+  { href: '/student/innovation-club', label: 'Innovation Club', emoji: '\u{1F680}', lockForDemo: true },
+  { href: '/student/submission', label: 'Build an Idea', emoji: '\u{1F4A1}' },
+  { href: '/student/profile', label: 'My Titan Journey', emoji: '\u{1F464}' },
+];
 
 export default function Navbar() {
   const router = useRouter();
@@ -17,6 +25,8 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [profileName, setProfileName] = useState(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef(null);
 
   useEffect(() => {
     hydrateUser();
@@ -48,6 +58,16 @@ export default function Navbar() {
     return () => { document.body.style.overflow = ''; };
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setShowUserMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const closeMobileMenu = useCallback(() => setIsMobileMenuOpen(false), []);
 
   const publicPages = ['/', '/about-us', '/team', '/for-parents', '/for-schools', '/future-titans', '/academy', '/success-stories', '/media', '/contact', '/innovation-club', '/signup'];
@@ -58,13 +78,199 @@ export default function Navbar() {
     logout();
     removeAuthToken();
     closeMobileMenu();
+    setShowUserMenu(false);
     router.push('/');
   };
 
   const isActive = (path) => pathname === path;
+  const isActivePrefix = (path) => pathname?.startsWith(path);
 
   const displayName = profileName || user?.name;
+  const userInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
+  const isStudentUser = user && isStudent();
 
+  if (isStudentUser) {
+    return (
+      <>
+        <nav
+          className={`sticky top-0 z-50 transition-all duration-300 border-b ${scrolled
+            ? 'bg-[#0f1628]/98 backdrop-blur-2xl shadow-[0_1px_24px_rgba(0,0,0,0.4)] border-[#2a3352]'
+            : 'bg-[#141b2d] border-[#1e2740]'
+            }`}
+        >
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              {/* Logo */}
+              <Link href="/student/dashboard" className="flex items-center gap-3 flex-shrink-0" onClick={closeMobileMenu}>
+                <div className="w-9 h-9 rounded-full border-2 border-[#D4AF37] flex items-center justify-center bg-transparent">
+                  <span className="text-[#D4AF37] font-bold text-sm">Y</span>
+                </div>
+                <div className="hidden sm:block">
+                  <div className="text-white font-bold text-sm tracking-[0.2em] leading-tight">YOUNGPRENEURS</div>
+                  <div className="text-[#7b8aa8] text-[9px] tracking-[0.22em] font-medium leading-tight">MINDSET IS THE ULTIMATE EDGE</div>
+                </div>
+              </Link>
+
+              {/* Desktop Navigation */}
+              <div className="hidden lg:flex items-center gap-1">
+                {studentNavItems.map((item) => {
+                  const isDemoLocked = item.lockForDemo && user?.email === 'demo@futuretitans.com';
+                  if (isDemoLocked) {
+                    return (
+                      <div
+                        key={item.href}
+                        className="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium text-white/30 cursor-not-allowed"
+                        title="Premium Feature"
+                      >
+                        {item.emoji && <span className="text-sm opacity-40">{item.emoji}</span>}
+                        {item.label}
+                        <Lock className="w-3.5 h-3.5 ml-0.5 opacity-60" />
+                      </div>
+                    );
+                  }
+                  const active = isActivePrefix(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${active
+                        ? 'border border-[#D4AF37]/70 text-white'
+                        : 'text-[#c8cdd8] hover:text-white'
+                        }`}
+                    >
+                      {item.emoji && <span className="text-sm">{item.emoji}</span>}
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* User Profile Pill */}
+              <div className="hidden lg:flex items-center">
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#D4AF37]/60 hover:border-[#D4AF37] transition-all"
+                  >
+                    <div className="w-7 h-7 rounded-full bg-[#D4AF37] flex items-center justify-center flex-shrink-0">
+                      <span className="text-white font-semibold text-xs">{userInitial}</span>
+                    </div>
+                    <span className="text-white text-sm font-medium max-w-[140px] truncate">{displayName}</span>
+                  </button>
+
+                  {showUserMenu && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a2138] border border-[#2a3352] rounded-xl shadow-xl py-1 z-50">
+                      <Link
+                        href="/student/profile"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#c8cdd8] hover:text-white hover:bg-white/[0.06] transition-colors"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <User className="w-4 h-4" />
+                        Profile
+                      </Link>
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 transition-colors"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/[0.08] text-gray-300 transition-colors"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+                aria-expanded={isMobileMenuOpen}
+              >
+                {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Student Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-0 z-40 lg:hidden" aria-modal="true" role="dialog">
+            <div
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              onClick={closeMobileMenu}
+              style={{ animation: 'fadeInOverlay 0.2s ease-out' }}
+            />
+            <div
+              className="absolute top-16 right-0 left-0 bg-[#141b2d] border-b border-[#1e2740] shadow-2xl safe-bottom"
+              style={{ animation: 'slideDown 0.25s ease-out' }}
+            >
+              <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 space-y-1">
+                {/* User info */}
+                <div className="flex items-center gap-3 px-4 py-3 mb-2">
+                  <div className="w-10 h-10 rounded-full bg-[#D4AF37] flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-base">{userInitial}</span>
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-white font-semibold truncate">{displayName}</p>
+                    <p className="text-[#7b8aa8] text-sm truncate">{user?.email}</p>
+                  </div>
+                </div>
+
+                <div className="h-px bg-[#2a3352] mx-3 mb-2" />
+
+                {studentNavItems.map((item) => {
+                  const isDemoLocked = item.lockForDemo && user?.email === 'demo@futuretitans.com';
+                  if (isDemoLocked) {
+                    return (
+                      <div
+                        key={item.href}
+                        className="flex items-center justify-between px-4 py-3.5 rounded-2xl font-medium text-white/30 cursor-not-allowed"
+                      >
+                        <div className="flex items-center gap-3">
+                          {item.emoji && <span className="text-lg opacity-40">{item.emoji}</span>}
+                          {item.label}
+                        </div>
+                        <Lock className="w-4 h-4 opacity-60" />
+                      </div>
+                    );
+                  }
+                  const active = isActivePrefix(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors font-medium ${active
+                        ? 'bg-[#D4AF37]/10 text-white border border-[#D4AF37]/30'
+                        : 'text-[#c8cdd8] hover:bg-white/[0.06]'
+                        }`}
+                      onClick={closeMobileMenu}
+                    >
+                      {item.emoji && <span className="text-lg">{item.emoji}</span>}
+                      {item.label}
+                    </Link>
+                  );
+                })}
+
+                <div className="h-px bg-[#2a3352] mx-3 my-2" />
+
+                <button
+                  onClick={handleLogout}
+                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl text-red-400 hover:bg-red-500/10 transition-colors font-medium"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Non-student navbar (admin, logged out)
   return (
     <>
       <nav
@@ -116,27 +322,6 @@ export default function Navbar() {
                   <NavLink href="/blog" active={isActive('/blog')} icon={<Newspaper className="w-4 h-4" />}>
                     Blog
                   </NavLink>
-                  {isStudent() && (
-                    <>
-                      <NavLink href="/student/dashboard" active={isActive('/student/dashboard')} icon={<LayoutDashboard className="w-4 h-4" />}>
-                        Dashboard
-                      </NavLink>
-                      <NavLink href="/student/modules" active={isActive('/student/modules')} icon={<BookOpen className="w-4 h-4" />}>
-                        Modules
-                      </NavLink>
-                      {user?.email === 'demo@futuretitans.com' ? (
-                        <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-white/40 cursor-not-allowed" title="Premium Feature">
-                          <Lightbulb className="w-4 h-4 text-white/40" />
-                          Innovation Club
-                          <Lock className="w-3.5 h-3.5 ml-1" />
-                        </div>
-                      ) : (
-                        <NavLink href="/student/innovation-club" active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-4 h-4" />}>
-                          Innovation Club
-                        </NavLink>
-                      )}
-                    </>
-                  )}
                   {isAdmin() && (
                     <NavLink href="/admin" active={isActive('/admin')} icon={<Shield className="w-4 h-4" />}>
                       Admin
@@ -147,8 +332,7 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (isStudent()) router.push('/student/profile');
-                        else if (isAdmin()) router.push('/admin');
+                        if (isAdmin()) router.push('/admin');
                       }}
                       className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.08] border border-white/[0.08] hover:bg-white/[0.12] transition-all text-sm font-medium text-gray-200"
                     >
@@ -228,32 +412,6 @@ export default function Navbar() {
 
                   <div className="h-px bg-white/[0.06] mx-3 mb-2" />
 
-                  {isStudent() && (
-                    <>
-                      <MobileNavLink href="/student/dashboard" onClick={closeMobileMenu} active={isActive('/student/dashboard')} icon={<LayoutDashboard className="w-5 h-5" />}>
-                        Dashboard
-                      </MobileNavLink>
-                      <MobileNavLink href="/student/modules" onClick={closeMobileMenu} active={isActive('/student/modules')} icon={<BookOpen className="w-5 h-5" />}>
-                        Modules
-                      </MobileNavLink>
-                      {user?.email === 'demo@futuretitans.com' ? (
-                        <div className="flex items-center justify-between px-4 py-3.5 rounded-2xl font-medium text-white/40 cursor-not-allowed">
-                          <div className="flex items-center gap-3">
-                            <span className="text-white/40"><Lightbulb className="w-5 h-5" /></span>
-                            Innovation Club
-                          </div>
-                          <Lock className="w-4 h-4 opacity-70" />
-                        </div>
-                      ) : (
-                        <MobileNavLink href="/student/innovation-club" onClick={closeMobileMenu} active={isActive('/student/innovation-club')} icon={<Lightbulb className="w-5 h-5" />}>
-                          Innovation Club
-                        </MobileNavLink>
-                      )}
-                      <MobileNavLink href="/student/profile" onClick={closeMobileMenu} active={isActive('/student/profile')} icon={<User className="w-5 h-5" />}>
-                        Profile
-                      </MobileNavLink>
-                    </>
-                  )}
                   {isAdmin() && (
                     <MobileNavLink href="/admin" onClick={closeMobileMenu} active={isActive('/admin')} icon={<Shield className="w-5 h-5" />}>
                       Admin Dashboard
