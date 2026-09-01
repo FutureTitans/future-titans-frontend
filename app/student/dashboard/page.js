@@ -798,11 +798,6 @@ export default function StudentDashboard() {
 
           {/* AI CO-FOUNDER section - character centered and massive */}
           <div className="bg-gradient-to-b from-[#EDE9E0] to-[#F5F3EE] rounded-b-3xl relative overflow-visible pb-8 sm:pb-12">
-            <div className="absolute inset-0 flex items-end justify-center pointer-events-none select-none overflow-hidden pb-8">
-              <h2 className="text-[4.5rem] sm:text-[7rem] md:text-[9rem] lg:text-[11rem] xl:text-[14rem] font-extrabold text-[#141b2d]/[0.05] tracking-tighter whitespace-nowrap leading-none">
-                AI CO-FOUNDER
-              </h2>
-            </div>
             <div className="relative z-10 flex justify-center">
               <img
                 src="/AIcofounderzunnva.png"
@@ -978,8 +973,8 @@ export default function StudentDashboard() {
                   const unlocked = badge.moduleIndex >= 0 && sortedModules[badge.moduleIndex]
                     ? (sortedModules[badge.moduleIndex].userProgress?.completionPercentage || 0) >= 100
                     : badge.name === 'Launcher' ? completedModules >= 3
-                    : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
-                    : false;
+                      : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
+                        : false;
                   return (
                     <div key={i} className="flex flex-col items-center gap-2">
                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${unlocked ? 'bg-[#D4AF37]/15 shadow-gold' : 'bg-gray-100'}`}>
