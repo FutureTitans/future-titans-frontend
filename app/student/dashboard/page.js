@@ -710,13 +710,25 @@ export default function StudentDashboard() {
           </div>
         </section>
 
-        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER ── */}
-        <section className="mb-10">
+        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER (character spans across) ── */}
+        <section className="mb-10 relative">
+          {/* Massive Zunnova character - absolutely positioned on the right, spanning dark + cream sections */}
+          <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[55%] z-30 pointer-events-none">
+            <div className="sticky top-20 flex justify-center">
+              <img
+                src="/AIcofounderzunnva.png"
+                alt="Zunnova AI Co-Founder"
+                className="w-[600px] xl:w-[700px] h-auto object-contain drop-shadow-2xl"
+              />
+            </div>
+          </div>
+
+          {/* Dark top section - text left, character overflows right */}
           <div className="bg-gradient-to-br from-[#141b2d] to-[#1a2240] rounded-t-3xl p-6 sm:p-8 relative overflow-visible">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 blur-[150px] rounded-full pointer-events-none" />
-            <div className="flex flex-col lg:flex-row gap-6 items-start relative z-10">
-              <div className="flex-1 pt-4 pb-8">
-                <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em] mb-3">Zunnova AI &middot; Your Own AI</p>
+            <div className="relative z-10 lg:w-[50%]">
+              <div className="pt-4 pb-8">
+                <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em] mb-3">Zunnova AI &middot; Our Own AI</p>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">Watch what Zunnova can do for your startup</h2>
                 <p className="text-gray-400 text-sm leading-relaxed mb-6">
                   A 2-minute look at Zunnova building pitch decks, business plans and market research on command. Full members get unlimited word balance.
@@ -731,6 +743,10 @@ export default function StudentDashboard() {
                   </Link>
                 )}
               </div>
+            </div>
+            {/* Mobile character (shows only on small screens) */}
+            <div className="lg:hidden flex justify-center -mb-4">
+              <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-[280px] sm:w-[360px] h-auto object-contain drop-shadow-2xl" />
             </div>
           </div>
 
@@ -761,19 +777,12 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          {/* AI CO-FOUNDER cream section */}
-          <div className="bg-gradient-to-b from-[#F0EDE5] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ minHeight: '750px' }}>
+          {/* AI CO-FOUNDER cream section - watermark text, character overlaps from above */}
+          <div className="bg-gradient-to-b from-[#F0EDE5] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ minHeight: '420px' }}>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
               <h2 className="text-[6rem] sm:text-[9rem] lg:text-[13rem] font-extrabold text-[#141b2d]/[0.06] tracking-tighter whitespace-nowrap leading-none">
                 AI CO-FOUNDER
               </h2>
-            </div>
-            <div className="relative z-10 flex items-end justify-center h-full" style={{ minHeight: '750px' }}>
-              <img
-                src="/AIcofounderzunnva.png"
-                alt="Zunnova AI Co-Founder"
-                className="w-[550px] sm:w-[700px] lg:w-[900px] h-auto object-contain drop-shadow-2xl relative -mb-2"
-              />
             </div>
           </div>
         </section>
