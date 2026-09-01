@@ -214,12 +214,46 @@ export default function StudentDashboard() {
     }
   };
 
+  const zunnovaPosRef = useRef({ x: 50, y: 50 });
+  const evadeCooldownRef = useRef(false);
+
   const moveZunnova = useCallback(() => {
     const x = Math.random() * 70 + 10;
     const y = Math.random() * 70 + 10;
+    zunnovaPosRef.current = { x, y };
     setZunnovaPos({ x, y });
     setShowZunnova(true);
   }, []);
+
+  const evadeZunnova = useCallback((mouseX, mouseY) => {
+    if (evadeCooldownRef.current) return;
+    const area = gameAreaRef.current;
+    if (!area) return;
+    const rect = area.getBoundingClientRect();
+    const mousePctX = ((mouseX - rect.left) / rect.width) * 100;
+    const mousePctY = ((mouseY - rect.top) / rect.height) * 100;
+    const cur = zunnovaPosRef.current;
+    const dx = cur.x - mousePctX;
+    const dy = cur.y - mousePctY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 18) {
+      evadeCooldownRef.current = true;
+      const angle = Math.atan2(dy, dx);
+      const jumpDist = 25 + Math.random() * 20;
+      let newX = cur.x + Math.cos(angle) * jumpDist;
+      let newY = cur.y + Math.sin(angle) * jumpDist;
+      newX = Math.max(8, Math.min(88, newX));
+      newY = Math.max(8, Math.min(88, newY));
+      zunnovaPosRef.current = { x: newX, y: newY };
+      setZunnovaPos({ x: newX, y: newY });
+      setTimeout(() => { evadeCooldownRef.current = false; }, 200);
+    }
+  }, []);
+
+  const handleGameMouseMove = useCallback((e) => {
+    if (gameState !== 'playing' || !showZunnova) return;
+    evadeZunnova(e.clientX, e.clientY);
+  }, [gameState, showZunnova, evadeZunnova]);
 
   const startGame = useCallback(() => {
     setGameState('playing');
@@ -249,7 +283,7 @@ export default function StudentDashboard() {
         return prev + 1;
       });
       moveZunnova();
-    }, 1500);
+    }, 2000);
   }, [moveZunnova]);
 
   const endGame = useCallback(() => {
@@ -776,15 +810,6 @@ export default function StudentDashboard() {
               </div>
             </div>
           </div>
-
-          {/* AI CO-FOUNDER cream section - watermark text, character overlaps from above */}
-          <div className="bg-gradient-to-b from-[#F0EDE5] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ minHeight: '420px' }}>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-              <h2 className="text-[6rem] sm:text-[9rem] lg:text-[13rem] font-extrabold text-[#141b2d]/[0.06] tracking-tighter whitespace-nowrap leading-none">
-                AI CO-FOUNDER
-              </h2>
-            </div>
-          </div>
         </section>
 
         {/* ── SECTION 11: CATCH ZUNNOVA GAME ── */}
@@ -813,29 +838,31 @@ export default function StudentDashboard() {
 
               <div
                 ref={gameAreaRef}
+                onMouseMove={handleGameMouseMove}
                 className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0d1321] border border-white/10 mb-6 select-none"
                 style={{ cursor: gameState === 'playing' ? 'crosshair' : 'default' }}
               >
                 {gameState === 'idle' && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-28 h-28 sm:w-36 sm:h-36 object-contain opacity-40 mb-4 animate-float" />
+                    <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-32 h-32 sm:w-40 sm:h-40 object-contain opacity-40 mb-4 animate-float" />
                     <p className="text-gray-500 text-xs text-center px-8">Press Start, then click Zunnova before it slips away. Every catch is 5 points.</p>
                   </div>
                 )}
                 {gameState === 'playing' && showZunnova && (
                   <button
                     onClick={catchZunnova}
-                    className="absolute transition-all duration-150 hover:scale-110 active:scale-75"
+                    className="absolute duration-100 active:scale-75"
                     style={{
                       left: `${zunnovaPos.x}%`,
                       top: `${zunnovaPos.y}%`,
                       transform: 'translate(-50%, -50%)',
+                      transition: 'left 0.15s ease-out, top 0.15s ease-out',
                     }}
                   >
                     <img
                       src="/AIcofounderzunnva.png"
                       alt="Catch me!"
-                      className={`w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
+                      className={`w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
                     />
                   </button>
                 )}
@@ -950,8 +977,8 @@ export default function StudentDashboard() {
                   const unlocked = badge.moduleIndex >= 0 && sortedModules[badge.moduleIndex]
                     ? (sortedModules[badge.moduleIndex].userProgress?.completionPercentage || 0) >= 100
                     : badge.name === 'Launcher' ? completedModules >= 3
-                    : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
-                    : false;
+                      : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
+                        : false;
                   return (
                     <div key={i} className="flex flex-col items-center gap-2">
                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${unlocked ? 'bg-[#D4AF37]/15 shadow-gold' : 'bg-gray-100'}`}>
