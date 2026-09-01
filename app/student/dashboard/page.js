@@ -95,12 +95,12 @@ function YouTubeEmbed({ id, className = '', aspectClass = 'aspect-video', title 
 function StoryThumbnail({ story }) {
   return (
     <div className="rounded-xl overflow-hidden border-2 border-transparent hover:border-[#D4AF37]/50 transition-all">
-      <div className="relative aspect-video bg-[#0d1321] rounded-xl overflow-hidden">
+      <div className="aspect-video bg-black rounded-t-xl overflow-hidden">
         <video src={story.url} controls playsInline className="w-full h-full object-cover" preload="metadata" />
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5 pointer-events-none">
-          <p className="text-white text-[11px] font-bold">{story.name}</p>
-          <p className="text-white/50 text-[9px]">{story.label}</p>
-        </div>
+      </div>
+      <div className="bg-[#0d1321] px-2 py-1.5">
+        <p className="text-white text-[11px] font-bold leading-tight">{story.name}</p>
+        <p className="text-white/50 text-[9px]">{story.label}</p>
       </div>
     </div>
   );
