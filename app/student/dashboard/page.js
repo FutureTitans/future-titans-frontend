@@ -811,38 +811,49 @@ export default function StudentDashboard() {
 
         {/* ── SECTION 11: CATCH ZUNNOVA GAME ── */}
         <section className="mb-10">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            <div className="lg:col-span-3 bg-[#141b2d] rounded-3xl p-6 shadow-lg">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37] mb-1">Mini Game</p>
-              <h3 className="text-2xl font-extrabold text-white mb-4">Catch Zunnova</h3>
-
-              <div className="flex flex-wrap items-center gap-3 mb-6">
-                <span className="px-3 py-1.5 bg-white/10 rounded-lg text-xs font-bold text-white">{catches}/20</span>
-                <span className="px-3 py-1.5 bg-white/10 rounded-lg text-xs font-medium text-gray-300">Caught {catches}</span>
-                <span className="px-3 py-1.5 bg-white/10 rounded-lg text-xs font-medium text-gray-300">{gameScore} pts</span>
-                {gameState === 'playing' && (
-                  <span className="px-3 py-1.5 bg-red-500/20 rounded-lg text-xs font-bold text-red-400">{gameTimeLeft}s</span>
-                )}
-                {gameState !== 'playing' && (
-                  <button
-                    onClick={startGame}
-                    className="px-5 py-1.5 bg-[#D4AF37] text-white rounded-lg text-xs font-bold hover:bg-[#B8952E] transition-colors"
-                  >
-                    {gameState === 'ended' ? 'Play Again' : 'Start'}
-                  </button>
-                )}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-[#0F172A] rounded-[32px] p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col border border-white/5">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E5C872] mb-2">Mini Game</p>
+              
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Catch Zunnova</h3>
+                
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="px-4 py-2 bg-transparent rounded-full border border-white/20 text-xs font-bold text-red-400">
+                    {gameState === 'playing' ? `0:${gameTimeLeft.toString().padStart(2, '0')}` : '0:20'}
+                  </span>
+                  <span className="px-4 py-2 bg-transparent rounded-full border border-white/20 text-xs font-medium text-white">
+                    Caught {catches}
+                  </span>
+                  <span className="px-4 py-2 bg-transparent rounded-full border border-white/20 text-xs font-medium text-white">
+                    {gameScore} pts
+                  </span>
+                  {gameState !== 'playing' && (
+                    <button
+                      onClick={startGame}
+                      className="px-6 py-2 bg-[#E5C872] text-[#141b2d] rounded-full text-xs font-bold hover:bg-[#D4AF37] transition-all shadow-[0_0_15px_rgba(229,200,114,0.2)]"
+                    >
+                      {gameState === 'ended' ? 'Play Again' : 'Start'}
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div
                 ref={gameAreaRef}
                 onMouseMove={handleGameMouseMove}
-                className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0d1321] border border-white/10 mb-6 select-none"
+                className="relative w-full aspect-[21/9] sm:aspect-[21/9] rounded-[24px] overflow-hidden bg-[#090D18] border border-white/5 mb-6 select-none flex-1 min-h-[250px]"
                 style={{ cursor: gameState === 'playing' ? 'crosshair' : 'default' }}
               >
                 {gameState === 'idle' && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-32 h-32 sm:w-40 sm:h-40 object-contain opacity-40 mb-4 animate-float" />
-                    <p className="text-gray-500 text-xs text-center px-8">Press Start, then click Zunnova before it slips away. Every catch is 5 points.</p>
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-[#E5C872]/20 blur-xl rounded-full" />
+                      <img src="/AIcofounderzunnva.png" alt="Zunnova" className="relative w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-80 mb-6 animate-float" />
+                    </div>
+                    <p className="text-gray-400 text-xs text-center px-8 font-medium">
+                      Press Start, then click Zunnova before it slips away. Every catch is 5 points.
+                    </p>
                   </div>
                 )}
                 {gameState === 'playing' && showZunnova && (
@@ -856,69 +867,71 @@ export default function StudentDashboard() {
                       transition: 'left 0.15s ease-out, top 0.15s ease-out',
                     }}
                   >
-                    <img
-                      src="/AIcofounderzunnva.png"
-                      alt="Catch me!"
-                      className={`w-24 h-24 sm:w-28 sm:h-28 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
-                    />
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-[#E5C872]/30 blur-lg rounded-full" />
+                      <img
+                        src="/AIcofounderzunnva.png"
+                        alt="Catch me!"
+                        className={`relative w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
+                      />
+                    </div>
                   </button>
                 )}
                 {gameState === 'ended' && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0d1321]/90 backdrop-blur-sm">
-                    <Trophy className="w-12 h-12 text-[#D4AF37] mb-3" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#090D18]/90 backdrop-blur-sm">
+                    <Trophy className="w-12 h-12 text-[#E5C872] mb-3" />
                     <p className="text-2xl font-extrabold text-white">{gameScore} pts</p>
-                    <p className="text-sm text-gray-400 mt-1">You caught {catches} Zunnovas!</p>
-                    {catches >= 5 && <p className="text-xs text-[#D4AF37] font-bold mt-2">Bonus earned!</p>}
+                    <p className="text-sm text-gray-300 mt-1">You caught {catches} Zunnovas!</p>
+                    {catches >= 5 && <p className="text-xs text-[#E5C872] font-bold mt-2">Bonus earned!</p>}
                   </div>
                 )}
               </div>
 
               <div className="flex flex-wrap items-center gap-3 text-xs">
-                <span className="text-gray-400">Best today <span className="text-[#D4AF37] font-bold">{catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}</span></span>
-                <span className="px-3 py-1.5 bg-white/5 rounded-lg text-gray-400 border border-white/10">1 catch = 5 points</span>
-                <span className="px-3 py-1.5 bg-white/5 rounded-lg text-gray-400 border border-white/10">5 catches = +20 bonus</span>
-                <span className="px-3 py-1.5 bg-white/5 rounded-lg text-gray-400 border border-white/10">8+ = +50 bonus</span>
+                <span className="text-gray-400 mr-2">Best today <span className="text-[#E5C872] font-bold">{catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}</span></span>
+                <span className="px-4 py-2 bg-transparent rounded-full text-gray-300 border border-white/10">1 catch = 5 points</span>
+                <span className="px-4 py-2 bg-transparent rounded-full text-gray-300 border border-white/10">5 catches = +20 bonus</span>
+                <span className="px-4 py-2 bg-transparent rounded-full text-gray-300 border border-white/10">8+ = +50 bonus</span>
               </div>
             </div>
 
             {/* Top Catchers */}
-            <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-[#141b2d] text-lg">Top Catchers</h3>
-                <span className="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-gray-400">Today</span>
+            <div className="lg:col-span-1 bg-[#0F172A] rounded-[32px] p-6 sm:p-8 border border-white/5 shadow-xl flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="font-bold text-white text-xl">Top Catchers</h3>
+                <span className="px-3 py-1 bg-transparent border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-300">
+                  Today
+                </span>
               </div>
-              <p className="text-xs text-gray-400 mb-4">Catch Zunnova high scores</p>
+              <p className="text-xs text-gray-400 mb-6 font-medium">Catch Zunnova high scores</p>
 
-              <div className="space-y-1 flex-1">
-                {catchGameScores.length > 0 ? (
-                  catchGameScores.slice(0, 5).map((entry, i) => (
-                    <div key={i} className="flex items-center gap-3 py-2.5 px-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
-                      <span className={`w-6 h-6 rounded flex items-center justify-center text-[11px] font-bold flex-shrink-0
-                        ${i === 0 ? 'bg-[#D4AF37] text-white' : 'bg-gray-100 text-gray-500'}`}>
-                        {i + 1}
-                      </span>
-                      <span className="text-sm text-[#141b2d] font-medium flex-1">{entry.name}</span>
-                      <span className="text-sm font-bold text-[#141b2d]">{entry.score}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-                    <Target className="w-10 h-10 text-gray-200 mb-3" />
-                    <p className="text-sm text-gray-400 font-medium">No scores yet</p>
-                    <p className="text-xs text-gray-300 mt-1">Play the game to see your scores here</p>
+              <div className="space-y-2 flex-1">
+                {[
+                  { name: 'Aarav M.', score: 195 },
+                  { name: 'Ishita R.', score: 170 },
+                  { name: 'Kabir S.', score: 155 },
+                  { name: 'Meher D.', score: 140 },
+                  { name: 'Rehan T.', score: 120 },
+                ].map((entry, i) => (
+                  <div key={i} className="flex items-center gap-4 py-3 px-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                    <span className="w-4 text-center text-xs font-semibold text-gray-400 flex-shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm text-gray-200 font-medium flex-1">{entry.name}</span>
+                    <span className={`text-sm font-bold ${i === 0 ? 'text-[#E5C872]' : 'text-gray-300'}`}>{entry.score}</span>
                   </div>
-                )}
+                ))}
               </div>
 
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-3 py-2.5 px-3 bg-[#D4AF37]/10 rounded-xl border border-[#D4AF37]/20">
-                  <span className="w-6 h-6 rounded bg-[#D4AF37]/20 flex items-center justify-center text-[11px] font-bold text-[#B8952E]">&ndash;</span>
-                  <span className="text-sm text-[#B8952E] font-semibold flex-1">You</span>
-                  <span className="text-sm font-bold text-[#B8952E]">
+              <div className="mt-4 pt-4">
+                <div className="flex items-center gap-4 py-3 px-4 bg-[#E5C872] rounded-[16px] shadow-lg">
+                  <span className="w-4 text-center text-xs font-bold text-[#141b2d] flex-shrink-0">&ndash;</span>
+                  <span className="text-sm text-[#141b2d] font-bold flex-1">You</span>
+                  <span className="text-sm font-extrabold text-[#141b2d]">
                     {catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}
                   </span>
                 </div>
-                <p className="text-[10px] text-gray-400 mt-2">Beat 120 pts to enter the top 5.</p>
+                <p className="text-[10px] text-gray-400 mt-4 font-medium">Beat 120 pts to enter the top 5.</p>
               </div>
             </div>
           </div>
