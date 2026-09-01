@@ -762,17 +762,17 @@ export default function StudentDashboard() {
           </div>
 
           {/* AI CO-FOUNDER cream section */}
-          <div className="bg-gradient-to-b from-[#F0EDE5] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ minHeight: '600px' }}>
+          <div className="bg-gradient-to-b from-[#F0EDE5] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ minHeight: '750px' }}>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
               <h2 className="text-[6rem] sm:text-[9rem] lg:text-[13rem] font-extrabold text-[#141b2d]/[0.06] tracking-tighter whitespace-nowrap leading-none">
                 AI CO-FOUNDER
               </h2>
             </div>
-            <div className="relative z-10 flex items-end justify-center h-full" style={{ minHeight: '600px' }}>
+            <div className="relative z-10 flex items-end justify-center h-full" style={{ minHeight: '750px' }}>
               <img
                 src="/AIcofounderzunnva.png"
                 alt="Zunnova AI Co-Founder"
-                className="w-[400px] sm:w-[500px] lg:w-[650px] h-auto object-contain drop-shadow-2xl relative -mb-2"
+                className="w-[550px] sm:w-[700px] lg:w-[900px] h-auto object-contain drop-shadow-2xl relative -mb-2"
               />
             </div>
           </div>
