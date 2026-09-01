@@ -129,6 +129,7 @@ export default function StudentDashboard() {
   const [ssiData, setSsiData] = useState(null);
   const [wordBalance, setWordBalance] = useState(null);
   const [submissionData, setSubmissionData] = useState(null);
+  const [leaderboardData, setLeaderboardData] = useState(null);
   const [activeStoryIndex, setActiveStoryIndex] = useState(null);
 
   const [gameState, setGameState] = useState('idle');
@@ -158,13 +159,14 @@ export default function StudentDashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const [modulesData, paymentData, profileData, ssi, wordBal, sub] = await Promise.all([
+      const [modulesData, paymentData, profileData, ssi, wordBal, sub, lb] = await Promise.all([
         modulesApi.getAll().catch(() => []),
         payment.getPaymentStatus().catch(() => ({ isPaid: false })),
         auth.getProfile().catch(() => null),
         aiChat.getSSI().catch(() => null),
         aiChat.getWordBalance().catch(() => null),
         submission.get().catch(() => null),
+        modulesApi.getLeaderboard(10).catch(() => null),
       ]);
       setModulesList(modulesData);
       setPaymentStatus(paymentData);
@@ -172,6 +174,7 @@ export default function StudentDashboard() {
       setSsiData(ssi);
       setWordBalance(wordBal);
       setSubmissionData(sub);
+      setLeaderboardData(lb);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     } finally {
@@ -349,11 +352,11 @@ export default function StudentDashboard() {
 
   return (
     <div className="min-h-screen bg-[#F0F2F5] font-sans pb-20">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
 
         {/* ── SECTION 1: UNLOCK FULL ACCESS BANNER (dark navy like design) ── */}
         {!isUserPaid && (
-          <div className="mt-4 bg-[#141b2d] rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
+          <div className="mb-8 bg-[#141b2d] rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <Zap className="w-4 h-4 text-[#D4AF37]" />
@@ -373,7 +376,7 @@ export default function StudentDashboard() {
         )}
 
         {/* ── SECTION 2: GREETING ── */}
-        <div className="mt-8 mb-6 flex flex-col md:flex-row md:items-start justify-between gap-4">
+        <div className="mb-6 flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-[#141b2d] tracking-tight leading-tight">
               Hey, {firstName}
@@ -956,30 +959,30 @@ export default function StudentDashboard() {
                   SSI
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mb-6 font-medium">This week &middot; all cohorts</p>
+              <p className="text-xs text-gray-400 mb-6 font-medium">All time &middot; all cohorts</p>
 
               <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
-                  <span className="text-xs font-semibold text-gray-400 w-4 text-center">1</span>
-                  <div className="w-8 h-8 rounded-full bg-[#E5C872] flex items-center justify-center text-[#141b2d] text-xs font-bold">A</div>
-                  <span className="text-sm font-bold text-[#141b2d] flex-1">Aarav M.</span>
-                  <span className="text-sm font-extrabold text-[#141b2d]">4,820</span>
-                </div>
-                <div className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
-                  <span className="text-xs font-semibold text-gray-400 w-4 text-center">2</span>
-                  <div className="w-8 h-8 rounded-full bg-[#E8EAE6] flex items-center justify-center text-gray-500 text-xs font-bold">I</div>
-                  <span className="text-sm font-bold text-[#141b2d] flex-1">Ishita R.</span>
-                  <span className="text-sm font-extrabold text-[#141b2d]">4,410</span>
-                </div>
-                <div className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
-                  <span className="text-xs font-semibold text-gray-400 w-4 text-center">3</span>
-                  <div className="w-8 h-8 rounded-full bg-[#E8EAE6] flex items-center justify-center text-gray-500 text-xs font-bold">K</div>
-                  <span className="text-sm font-bold text-[#141b2d] flex-1">Kabir S.</span>
-                  <span className="text-sm font-extrabold text-[#141b2d]">3,975</span>
-                </div>
+                {leaderboardData?.leaderboard?.length > 0 ? (
+                  leaderboardData.leaderboard.slice(0, 5).map((entry, i) => (
+                    <div key={i} className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
+                      <span className="text-xs font-semibold text-gray-400 w-4 text-center">{entry.rank}</span>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-[#E5C872] text-[#141b2d]' : 'bg-[#E8EAE6] text-gray-500'}`}>
+                        {entry.initial}
+                      </div>
+                      <span className="text-sm font-bold text-[#141b2d] flex-1">{entry.name}</span>
+                      <span className="text-sm font-extrabold text-[#141b2d]">{entry.ssiScore.toLocaleString()}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-6">
+                    <Trophy className="w-10 h-10 text-gray-200 mx-auto mb-2" />
+                    <p className="text-sm text-gray-400 font-medium">No scores yet</p>
+                    <p className="text-xs text-gray-300 mt-1">Complete modules to appear on the leaderboard</p>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-4 px-4 py-3 bg-[#141b2d] rounded-[16px] shadow-lg mt-2">
-                  <span className="text-xs font-bold text-[#E5C872] w-6 text-center">128</span>
+                  <span className="text-xs font-bold text-[#E5C872] w-6 text-center">{leaderboardData?.currentUser?.rank ?? '--'}</span>
                   <div className="w-8 h-8 rounded-full bg-[#E5C872] flex items-center justify-center text-[#141b2d] text-xs font-bold">
                     {firstName.charAt(0)}
                   </div>
@@ -1048,9 +1051,9 @@ export default function StudentDashboard() {
                 <span className="text-sm text-gray-400 font-medium">Auto-updates from our socials</span>
               </div>
               <div className="flex items-center gap-3 w-full sm:w-auto">
-                <button className="flex-1 sm:flex-none px-5 py-2.5 rounded-full border border-gray-200 text-sm font-semibold text-[#141b2d] hover:bg-gray-50 transition-colors">
+                <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==" target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full border border-gray-200 text-sm font-semibold text-[#141b2d] hover:bg-gray-50 transition-colors">
                   Follow us
-                </button>
+                </a>
                 <Link href="/student/innovation-club" className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-[#141b2d] text-[#e5c872] text-sm font-semibold shadow-[0_8px_24px_rgba(20,27,45,0.25)] hover:shadow-[0_12px_28px_rgba(20,27,45,0.35)] hover:bg-[#1a2240] transition-all">
                   See all posts
                 </Link>
@@ -1058,35 +1061,35 @@ export default function StudentDashboard() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
+              <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==" target="_blank" rel="noopener noreferrer" className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
                 <div className="w-11 h-11 rounded-[14px] bg-[#C1354C] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
                   <Instagram className="w-5 h-5" />
                 </div>
                 <div>
                   <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">Cohort 4 demo day highlights</h4>
-                  <p className="text-xs text-gray-400 font-medium">Instagram &middot; 2h ago</p>
+                  <p className="text-xs text-gray-400 font-medium">Instagram</p>
                 </div>
-              </div>
+              </a>
 
-              <div className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
+              <a href="https://www.facebook.com/share/16jUKyEemq/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
                 <div className="w-11 h-11 rounded-[14px] bg-[#1A2847] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
                   <Facebook className="w-5 h-5 fill-current" />
                 </div>
                 <div>
                   <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">Zunnova AI just crossed 10k asks</h4>
-                  <p className="text-xs text-gray-400 font-medium">Facebook &middot; 1d ago</p>
+                  <p className="text-xs text-gray-400 font-medium">Facebook</p>
                 </div>
-              </div>
+              </a>
 
-              <div className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
+              <a href="https://www.linkedin.com/company/youngpreneurs-ai/" target="_blank" rel="noopener noreferrer" className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
                 <div className="w-11 h-11 rounded-[14px] bg-[#142845] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
                   <Linkedin className="w-5 h-5 fill-current" />
                 </div>
                 <div>
                   <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">IIT mentor AMA &mdash; recap and slides</h4>
-                  <p className="text-xs text-gray-400 font-medium">LinkedIn &middot; 3d ago</p>
+                  <p className="text-xs text-gray-400 font-medium">LinkedIn</p>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </section>
