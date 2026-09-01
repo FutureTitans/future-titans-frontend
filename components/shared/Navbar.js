@@ -94,7 +94,7 @@ export default function Navbar() {
       <>
         <nav
           className={`sticky top-0 z-50 transition-all duration-300 border-b ${scrolled
-            ? 'bg-[#0f1628]/98 backdrop-blur-2xl shadow-[0_1px_24px_rgba(0,0,0,0.4)] border-[#2a3352]'
+            ? 'bg-[#0f1628] backdrop-blur-2xl shadow-[0_1px_24px_rgba(0,0,0,0.4)] border-[#2a3352]'
             : 'bg-[#141b2d] border-[#1e2740]'
             }`}
         >
