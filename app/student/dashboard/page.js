@@ -29,100 +29,23 @@ const SUCCESS_STORIES = [
 const STARTING_YOUNG_VIDEO = 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/this%20is%20what%20starting%20young%20looks%20like.mp4';
 const INCUBATION_VIDEO = 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/Incubation%20video%20.mp4';
 
-function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video', poster }) {
-  const videoRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const handlePlay = async () => {
-    if (videoRef.current) {
-      try {
-        await videoRef.current.play();
-      } catch {
-        // Fallback: show native controls so user can tap play directly
-        setIsPlaying(true);
-      }
-    }
-  };
-
+function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video' }) {
   return (
-    <div className={`relative group ${aspectClass} bg-black rounded-2xl overflow-hidden ${className}`}>
-      <video
-        ref={videoRef}
-        controls={isPlaying}
-        playsInline
-        webkit-playsinline=""
-        className="w-full h-full object-cover"
-        poster={poster}
-        src={`${src}#t=0.001`}
-        preload="metadata"
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
-      />
-      {!isPlaying && (
-        <button
-          onClick={handlePlay}
-          className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors cursor-pointer z-10"
-        >
-          <div className="w-16 h-16 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-2xl transition-transform hover:scale-110">
-            <Play className="w-6 h-6 text-gray-900 fill-gray-900 ml-1" />
-          </div>
-        </button>
-      )}
+    <div className={`${aspectClass} bg-black rounded-2xl overflow-hidden ${className}`}>
+      <video src={src} controls playsInline className="w-full h-full object-cover" preload="metadata" />
     </div>
   );
 }
 
-function StoryThumbnail({ story, isActive, onPlay, onEnd }) {
-  const videoRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    if (!isActive && videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-      setIsPlaying(false);
-    }
-  }, [isActive]);
-
-  const handlePlay = async () => {
-    onPlay();
-    if (videoRef.current) {
-      try {
-        await videoRef.current.play();
-      } catch {
-        setIsPlaying(true);
-      }
-    }
-  };
-
+function StoryThumbnail({ story }) {
   return (
-    <div className="rounded-xl overflow-hidden border-2 border-transparent hover:border-[#D4AF37]/50 transition-all cursor-pointer">
+    <div className="rounded-xl overflow-hidden border-2 border-transparent hover:border-[#D4AF37]/50 transition-all">
       <div className="relative aspect-video bg-[#0d1321] rounded-xl overflow-hidden">
-        <video
-          ref={videoRef}
-          className="w-full h-full object-cover"
-          preload="metadata"
-          playsInline
-          webkit-playsinline=""
-          src={`${story.url}#t=0.001`}
-          controls={isActive && isPlaying}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          onEnded={() => { setIsPlaying(false); onEnd(); }}
-        />
-        {!(isActive && isPlaying) && (
-          <button
-            onClick={handlePlay}
-            className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 hover:bg-black/50 transition-colors"
-          >
-            <div className="w-9 h-9 rounded-full bg-white/90 flex items-center justify-center mb-1.5 shadow-lg">
-              <Play className="w-3.5 h-3.5 text-gray-900 fill-gray-900 ml-0.5" />
-            </div>
-            <p className="text-white text-[11px] font-bold">{story.name}</p>
-            <p className="text-white/50 text-[9px]">{story.label}</p>
-          </button>
-        )}
+        <video src={story.url} controls playsInline className="w-full h-full object-cover" preload="metadata" />
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1.5 pointer-events-none">
+          <p className="text-white text-[11px] font-bold">{story.name}</p>
+          <p className="text-white/50 text-[9px]">{story.label}</p>
+        </div>
       </div>
     </div>
   );
@@ -139,8 +62,6 @@ export default function StudentDashboard() {
   const [wordBalance, setWordBalance] = useState(null);
   const [submissionData, setSubmissionData] = useState(null);
   const [leaderboardData, setLeaderboardData] = useState(null);
-  const [activeStoryIndex, setActiveStoryIndex] = useState(null);
-
   const [gameState, setGameState] = useState('idle');
   const [gameScore, setGameScore] = useState(0);
   const [catches, setCatches] = useState(0);
@@ -229,6 +150,7 @@ export default function StudentDashboard() {
 
   const zunnovaPosRef = useRef({ x: 50, y: 50 });
   const evadeCooldownRef = useRef(false);
+  const flickerTimerRef = useRef(null);
 
   const moveZunnova = useCallback(() => {
     const x = Math.random() * 70 + 10;
@@ -236,6 +158,18 @@ export default function StudentDashboard() {
     zunnovaPosRef.current = { x, y };
     setZunnovaPos({ x, y });
     setShowZunnova(true);
+    // Flicker: briefly vanish and reappear at a new spot
+    if (flickerTimerRef.current) clearTimeout(flickerTimerRef.current);
+    flickerTimerRef.current = setTimeout(() => {
+      setShowZunnova(false);
+      setTimeout(() => {
+        const fx = Math.random() * 70 + 10;
+        const fy = Math.random() * 70 + 10;
+        zunnovaPosRef.current = { x: fx, y: fy };
+        setZunnovaPos({ x: fx, y: fy });
+        setShowZunnova(true);
+      }, 150 + Math.random() * 200);
+    }, 400 + Math.random() * 400);
   }, []);
 
   const evadeZunnova = useCallback((mouseX, mouseY) => {
@@ -249,17 +183,17 @@ export default function StudentDashboard() {
     const dx = cur.x - mousePctX;
     const dy = cur.y - mousePctY;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist < 18) {
+    if (dist < 40) {
       evadeCooldownRef.current = true;
-      const angle = Math.atan2(dy, dx);
-      const jumpDist = 25 + Math.random() * 20;
+      const angle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.2;
+      const jumpDist = 40 + Math.random() * 35;
       let newX = cur.x + Math.cos(angle) * jumpDist;
       let newY = cur.y + Math.sin(angle) * jumpDist;
-      newX = Math.max(8, Math.min(88, newX));
-      newY = Math.max(8, Math.min(88, newY));
+      newX = Math.max(5, Math.min(92, newX));
+      newY = Math.max(5, Math.min(92, newY));
       zunnovaPosRef.current = { x: newX, y: newY };
       setZunnovaPos({ x: newX, y: newY });
-      setTimeout(() => { evadeCooldownRef.current = false; }, 200);
+      setTimeout(() => { evadeCooldownRef.current = false; }, 30);
     }
   }, []);
 
@@ -267,6 +201,29 @@ export default function StudentDashboard() {
     if (gameState !== 'playing' || !showZunnova) return;
     evadeZunnova(e.clientX, e.clientY);
   }, [gameState, showZunnova, evadeZunnova]);
+
+  const handleGameClick = useCallback((e) => {
+    if (gameState !== 'playing' || !showZunnova) return;
+    const area = gameAreaRef.current;
+    if (!area) return;
+    const rect = area.getBoundingClientRect();
+    const clickPctX = ((e.clientX - rect.left) / rect.width) * 100;
+    const clickPctY = ((e.clientY - rect.top) / rect.height) * 100;
+    const cur = zunnovaPosRef.current;
+    const dx = cur.x - clickPctX;
+    const dy = cur.y - clickPctY;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < 50) {
+      const angle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 0.8;
+      const jumpDist = 45 + Math.random() * 30;
+      let newX = cur.x + Math.cos(angle) * jumpDist;
+      let newY = cur.y + Math.sin(angle) * jumpDist;
+      newX = Math.max(5, Math.min(92, newX));
+      newY = Math.max(5, Math.min(92, newY));
+      zunnovaPosRef.current = { x: newX, y: newY };
+      setZunnovaPos({ x: newX, y: newY });
+    }
+  }, [gameState, showZunnova]);
 
   const startGame = useCallback(() => {
     setGameState('playing');
@@ -289,20 +246,21 @@ export default function StudentDashboard() {
 
     moveTimerRef.current = setInterval(() => {
       setGameRound(prev => {
-        if (prev >= 19) {
+        if (prev >= 39) {
           endGame();
           return prev;
         }
         return prev + 1;
       });
       moveZunnova();
-    }, 2000);
+    }, 700);
   }, [moveZunnova]);
 
   const endGame = useCallback(() => {
     setGameState('ended');
     clearInterval(gameTimerRef.current);
     clearInterval(moveTimerRef.current);
+    clearTimeout(flickerTimerRef.current);
     setShowZunnova(false);
   }, []);
 
@@ -322,6 +280,7 @@ export default function StudentDashboard() {
     return () => {
       clearInterval(gameTimerRef.current);
       clearInterval(moveTimerRef.current);
+      clearTimeout(flickerTimerRef.current);
     };
   }, []);
 
@@ -465,13 +424,7 @@ export default function StudentDashboard() {
             {/* Success Story Video Thumbnails */}
             <div className="grid grid-cols-3 gap-3">
               {SUCCESS_STORIES.map((story, i) => (
-                <StoryThumbnail
-                  key={i}
-                  story={story}
-                  isActive={activeStoryIndex === i}
-                  onPlay={() => setActiveStoryIndex(i)}
-                  onEnd={() => setActiveStoryIndex(null)}
-                />
+                <StoryThumbnail key={i} story={story} />
               ))}
             </div>
           </div>
@@ -858,6 +811,7 @@ export default function StudentDashboard() {
               <div
                 ref={gameAreaRef}
                 onMouseMove={handleGameMouseMove}
+                onClick={handleGameClick}
                 className="relative w-full aspect-[21/9] sm:aspect-[21/9] rounded-[24px] overflow-hidden bg-[#090D18] border border-white/5 mb-6 select-none flex-1 min-h-[250px]"
                 style={{ cursor: gameState === 'playing' ? 'crosshair' : 'default' }}
               >
@@ -874,21 +828,22 @@ export default function StudentDashboard() {
                 )}
                 {gameState === 'playing' && showZunnova && (
                   <button
-                    onClick={catchZunnova}
-                    className="absolute duration-100 active:scale-75"
+                    onClick={(e) => { e.stopPropagation(); catchZunnova(); }}
+                    className="absolute active:scale-75"
                     style={{
                       left: `${zunnovaPos.x}%`,
                       top: `${zunnovaPos.y}%`,
                       transform: 'translate(-50%, -50%)',
-                      transition: 'left 0.15s ease-out, top 0.15s ease-out',
+                      transition: 'left 0.05s linear, top 0.05s linear',
+                      padding: 0,
                     }}
                   >
                     <div className="relative">
-                      <div className="absolute inset-0 bg-[#E5C872]/30 blur-lg rounded-full" />
+                      <div className="absolute inset-0 bg-[#E5C872]/15 blur-md rounded-full" />
                       <img
                         src="/zunnova.svg"
                         alt="Catch me!"
-                        className={`relative w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
+                        className={`relative w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-100`}
                       />
                     </div>
                   </button>
