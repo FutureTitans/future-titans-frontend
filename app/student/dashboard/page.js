@@ -9,7 +9,8 @@ import { isStudent, getUser } from '@/lib/auth';
 import {
   Lock, ChevronRight, ArrowRight, CheckCircle, Zap, Play,
   Compass, Trophy, Award, Star, Clock, TrendingUp,
-  MessageCircle, Flame, Target, Users, Volume2
+  MessageCircle, Flame, Target, Users, Volume2,
+  Instagram, Facebook, Linkedin
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
@@ -925,79 +926,81 @@ export default function StudentDashboard() {
 
         {/* ── SECTION 12: LEADERBOARD & BADGES ── */}
         <section className="mb-10">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-5">Leaderboard & Badges</p>
+          <div className="flex items-center gap-4 mb-6">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#B8952E] whitespace-nowrap">Leaderboard & Badges</p>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+          
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-5">
-                <Trophy className="w-6 h-6 text-[#D4AF37]" />
+            <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-gray-100 shadow-sm flex flex-col">
+              <div className="flex items-center justify-between mb-1">
                 <h3 className="text-xl font-extrabold text-[#141b2d]">Leaderboard</h3>
+                <span className="px-3 py-1 bg-[#FDF8E7] text-[#B8952E] rounded-full text-[10px] font-bold uppercase tracking-widest border border-[#F5D76E]/30">
+                  SSI
+                </span>
               </div>
-              <p className="text-xs text-gray-400 mb-4">This week &middot; all students</p>
+              <p className="text-xs text-gray-400 mb-6 font-medium">This week &middot; all cohorts</p>
 
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <Trophy className="w-12 h-12 text-gray-200 mb-3" />
-                <p className="text-sm font-medium text-gray-400">Leaderboard coming soon</p>
-                <p className="text-xs text-gray-300 mt-1">Complete modules and improve your SSI to climb the ranks</p>
-              </div>
-
-              <div className="border-t border-gray-100 pt-3">
-                <div className="flex items-center gap-3 py-3 px-4 bg-[#D4AF37]/10 rounded-xl border border-[#D4AF37]/20">
-                  <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center text-white text-xs font-bold">
+              <div className="space-y-2 mb-4">
+                <div className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
+                  <span className="text-xs font-semibold text-gray-400 w-4 text-center">1</span>
+                  <div className="w-8 h-8 rounded-full bg-[#E5C872] flex items-center justify-center text-[#141b2d] text-xs font-bold">A</div>
+                  <span className="text-sm font-bold text-[#141b2d] flex-1">Aarav M.</span>
+                  <span className="text-sm font-extrabold text-[#141b2d]">4,820</span>
+                </div>
+                <div className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
+                  <span className="text-xs font-semibold text-gray-400 w-4 text-center">2</span>
+                  <div className="w-8 h-8 rounded-full bg-[#E8EAE6] flex items-center justify-center text-gray-500 text-xs font-bold">I</div>
+                  <span className="text-sm font-bold text-[#141b2d] flex-1">Ishita R.</span>
+                  <span className="text-sm font-extrabold text-[#141b2d]">4,410</span>
+                </div>
+                <div className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
+                  <span className="text-xs font-semibold text-gray-400 w-4 text-center">3</span>
+                  <div className="w-8 h-8 rounded-full bg-[#E8EAE6] flex items-center justify-center text-gray-500 text-xs font-bold">K</div>
+                  <span className="text-sm font-bold text-[#141b2d] flex-1">Kabir S.</span>
+                  <span className="text-sm font-extrabold text-[#141b2d]">3,975</span>
+                </div>
+                
+                <div className="flex items-center gap-4 px-4 py-3 bg-[#141b2d] rounded-[16px] shadow-lg mt-2">
+                  <span className="text-xs font-bold text-[#E5C872] w-6 text-center">128</span>
+                  <div className="w-8 h-8 rounded-full bg-[#E5C872] flex items-center justify-center text-[#141b2d] text-xs font-bold">
                     {firstName.charAt(0)}
                   </div>
-                  <span className="text-sm text-[#B8952E] font-semibold flex-1">You &rarr; {firstName}</span>
-                  <span className="text-sm font-bold text-[#B8952E]">SSI: {Math.round(ssiScore)}</span>
+                  <span className="text-sm font-bold text-white flex-1">You &mdash; {firstName}</span>
+                  <span className="text-sm font-extrabold text-white">{Math.round(ssiScore)}</span>
                 </div>
-                <p className="text-[10px] text-gray-400 mt-3">Complete all modules to appear on the leaderboard.</p>
               </div>
+
+              {!isUserPaid && (
+                <p className="text-[10px] text-gray-400 mt-auto flex items-center gap-1.5 font-medium">
+                  <Lock className="w-3 h-3 text-[#E5C872]" /> Full members complete all modules and climb the board faster.
+                </p>
+              )}
             </div>
 
-            <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-              <div className="flex items-center justify-between mb-5">
-                <div className="flex items-center gap-3">
-                  <Award className="w-6 h-6 text-[#D4AF37]" />
-                  <h3 className="text-xl font-extrabold text-[#141b2d]">Your Badges</h3>
-                </div>
-                <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-400">{completedModules}/5</span>
+            <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-gray-100 shadow-sm relative overflow-hidden flex flex-col">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-xl font-extrabold text-[#141b2d]">Your Badges</h3>
+                <span className="px-3 py-1 bg-[#FDF8E7] text-[#B8952E] rounded-full text-[10px] font-bold uppercase tracking-widest border border-[#F5D76E]/30 flex items-center gap-1.5">
+                  <Trophy className="w-3 h-3" /> {completedModules}/3
+                </span>
               </div>
-              <p className="text-xs text-gray-400 mb-6">Earned by completing modules</p>
+              <p className="text-xs text-gray-400 mb-6 font-medium">Earned by completing modules</p>
 
-              <div className="grid grid-cols-5 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 {[
-                  { name: 'Founder', moduleIndex: 0 },
-                  { name: 'Seeker', moduleIndex: 1 },
-                  { name: 'Builder', moduleIndex: 2 },
-                  { name: 'Launcher', moduleIndex: -1 },
-                  { name: 'Titan', moduleIndex: -1 },
-                ].map((badge, i) => {
-                  const unlocked = badge.moduleIndex >= 0 && sortedModules[badge.moduleIndex]
-                    ? (sortedModules[badge.moduleIndex].userProgress?.completionPercentage || 0) >= 100
-                    : badge.name === 'Launcher' ? completedModules >= 3
-                      : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
-                        : false;
+                  { title: "The Founder's Mindset...", img: '/FounderMindset.png' },
+                  { title: "The Solution Seeker's...", img: '/SolutionSeekerJourney.png' },
+                  { title: "The Entrepreneur'...", img: '/TheEntreprenuerLaunch.png' },
+                ].map((module, i) => {
+                  const unlocked = (sortedModules[i]?.userProgress?.completionPercentage || 0) >= 100;
                   return (
-                    <div key={i} className="flex flex-col items-center gap-2">
-                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${unlocked ? 'bg-[#D4AF37]/15 shadow-gold' : 'bg-gray-100'}`}>
-                        {unlocked ? (
-                          <Star className="w-6 h-6 text-[#D4AF37]" />
-                        ) : (
-                          <Lock className="w-5 h-5 text-gray-300" />
-                        )}
-                      </div>
-                      <span className={`text-[10px] font-medium ${unlocked ? 'text-[#141b2d]' : 'text-gray-400'}`}>{badge.name}</span>
+                    <div key={i} className={`bg-[#F4F6F4] rounded-[16px] p-4 flex flex-col items-center justify-center text-center border border-gray-100/50 transition-all ${unlocked ? 'opacity-100 shadow-sm' : 'opacity-50 grayscale'}`}>
+                      <img src={module.img} alt={module.title} className="w-12 h-12 sm:w-16 sm:h-16 object-contain mb-3 drop-shadow-sm" />
+                      <span className="text-[9px] sm:text-[10px] font-semibold text-gray-400 leading-tight">{module.title}</span>
                     </div>
                   );
                 })}
-              </div>
-
-              <div className="mt-8 bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5 rounded-2xl p-5 flex items-center gap-4 border border-[#D4AF37]/20">
-                <div className="w-16 h-16 flex-shrink-0">
-                  <Star className="w-full h-full text-[#D4AF37] drop-shadow-lg" />
-                </div>
-                <div>
-                  <p className="font-bold text-[#141b2d] text-sm">Complete modules to earn badges</p>
-                  <p className="text-xs text-gray-400 mt-1">Each module unlocks a unique badge. Collect all 5 to become a Future Titan.</p>
-                </div>
               </div>
             </div>
           </div>
@@ -1005,35 +1008,57 @@ export default function StudentDashboard() {
 
         {/* ── SECTION 13: LATEST FROM US ── */}
         <section className="mb-10">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <h3 className="text-xl font-extrabold text-[#141b2d]">Latest From Us</h3>
-              <span className="flex items-center gap-1.5 px-2.5 py-1 bg-[#DC2626] text-white rounded-full text-[10px] font-bold uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-                Live
-              </span>
-              <span className="text-xs text-gray-400 hidden sm:inline">Audio updates from our world</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-400 cursor-pointer hover:text-[#D4AF37]">Follow us</span>
-              <Link href="/student/innovation-club" className="text-xs font-semibold text-[#D4AF37] hover:text-[#B8952E]">See all posts</Link>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { title: 'Cohort 4 demo day highlights', color: 'from-[#DC2626] to-[#991b1b]' },
-              { title: 'Zunnova AI just crossed 10k asks', color: 'from-[#D4AF37] to-[#B8952E]' },
-              { title: 'IIT mentor AMA -- recap and slides', color: 'from-[#141b2d] to-[#1a2240]' },
-            ].map((post, i) => (
-              <div key={i} className={`bg-gradient-to-br ${post.color} rounded-2xl p-5 text-white cursor-pointer hover:scale-[1.02] transition-transform`}>
-                <div className="flex items-center gap-2 mb-3">
-                  <Volume2 className="w-4 h-4 text-white/60" />
-                  <span className="text-[10px] font-medium text-white/60 uppercase tracking-wider">Update</span>
-                </div>
-                <h4 className="font-bold text-sm leading-snug">{post.title}</h4>
+          <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-gray-100 shadow-sm">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-7 gap-4">
+              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                <h3 className="text-lg sm:text-xl font-extrabold text-[#141b2d]">Latest From Us</h3>
+                <span className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#DC2626] rounded-full text-[10px] font-bold uppercase tracking-wider border border-red-100">
+                  <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full animate-pulse" />
+                  Live
+                </span>
+                <span className="text-sm text-gray-400 font-medium">Auto-updates from our socials</span>
               </div>
-            ))}
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <button className="flex-1 sm:flex-none px-5 py-2.5 rounded-full border border-gray-200 text-sm font-semibold text-[#141b2d] hover:bg-gray-50 transition-colors">
+                  Follow us
+                </button>
+                <Link href="/student/innovation-club" className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-[#141b2d] text-[#e5c872] text-sm font-semibold shadow-[0_8px_24px_rgba(20,27,45,0.25)] hover:shadow-[0_12px_28px_rgba(20,27,45,0.35)] hover:bg-[#1a2240] transition-all">
+                  See all posts
+                </Link>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
+                <div className="w-11 h-11 rounded-[14px] bg-[#C1354C] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
+                  <Instagram className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">Cohort 4 demo day highlights</h4>
+                  <p className="text-xs text-gray-400 font-medium">Instagram &middot; 2h ago</p>
+                </div>
+              </div>
+              
+              <div className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
+                <div className="w-11 h-11 rounded-[14px] bg-[#1A2847] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
+                  <Facebook className="w-5 h-5 fill-current" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">Zunnova AI just crossed 10k asks</h4>
+                  <p className="text-xs text-gray-400 font-medium">Facebook &middot; 1d ago</p>
+                </div>
+              </div>
+
+              <div className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
+                <div className="w-11 h-11 rounded-[14px] bg-[#142845] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
+                  <Linkedin className="w-5 h-5 fill-current" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">IIT mentor AMA &mdash; recap and slides</h4>
+                  <p className="text-xs text-gray-400 font-medium">LinkedIn &middot; 3d ago</p>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
