@@ -744,23 +744,12 @@ export default function StudentDashboard() {
           </div>
         </section>
 
-        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER (character spans across) ── */}
-        <section className="mb-10 relative">
-          {/* Massive Zunnova character - absolutely positioned, spanning dark section through AI CO-FOUNDER area */}
-          <div className="hidden lg:block absolute right-[5%] top-0 z-30 pointer-events-none" style={{ height: 'calc(100% + 20px)' }}>
-            <div className="flex items-end justify-center h-full">
-              <img
-                src="/AIcofounderzunnva.png"
-                alt="Zunnova AI Co-Founder"
-                className="w-[500px] xl:w-[600px] 2xl:w-[680px] h-auto object-contain drop-shadow-2xl"
-              />
-            </div>
-          </div>
-
-          {/* Dark top section - text left, character overflows right */}
-          <div className="bg-gradient-to-br from-[#141b2d] to-[#1a2240] rounded-t-3xl p-6 sm:p-8 relative overflow-visible">
+        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER ── */}
+        <section className="mb-10">
+          {/* Dark top section */}
+          <div className="bg-gradient-to-br from-[#141b2d] to-[#1a2240] rounded-t-3xl p-6 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 blur-[150px] rounded-full pointer-events-none" />
-            <div className="relative z-10 lg:w-[50%]">
+            <div className="relative z-10 lg:w-[55%]">
               <div className="pt-4 pb-8">
                 <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em] mb-3">Zunnova AI &middot; Our Own AI</p>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">Watch what Zunnova can do for your startup</h2>
@@ -777,10 +766,6 @@ export default function StudentDashboard() {
                   </Link>
                 )}
               </div>
-            </div>
-            {/* Mobile character */}
-            <div className="lg:hidden flex justify-center -mb-4">
-              <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-[280px] sm:w-[360px] h-auto object-contain drop-shadow-2xl" />
             </div>
           </div>
 
@@ -811,16 +796,19 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          {/* AI CO-FOUNDER watermark area - character fills this */}
-          <div className="bg-gradient-to-b from-[#EDE9E0] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ height: '380px' }}>
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-              <h2 className="text-[5rem] sm:text-[8rem] lg:text-[11rem] font-extrabold text-[#141b2d]/[0.06] tracking-tighter whitespace-nowrap leading-none">
+          {/* AI CO-FOUNDER section - character centered and massive */}
+          <div className="bg-gradient-to-b from-[#EDE9E0] to-[#F5F3EE] rounded-b-3xl relative overflow-visible pb-8 sm:pb-12">
+            <div className="absolute inset-0 flex items-end justify-center pointer-events-none select-none overflow-hidden pb-8">
+              <h2 className="text-[4.5rem] sm:text-[7rem] md:text-[9rem] lg:text-[11rem] xl:text-[14rem] font-extrabold text-[#141b2d]/[0.05] tracking-tighter whitespace-nowrap leading-none">
                 AI CO-FOUNDER
               </h2>
             </div>
-            {/* Mobile character in watermark area */}
-            <div className="lg:hidden flex items-end justify-center h-full">
-              <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-[350px] sm:w-[450px] h-auto object-contain drop-shadow-2xl -mb-2" />
+            <div className="relative z-10 flex justify-center">
+              <img
+                src="/AIcofounderzunnva.png"
+                alt="Zunnova AI Co-Founder"
+                className="w-[420px] sm:w-[550px] md:w-[650px] lg:w-[780px] xl:w-[880px] h-auto object-contain drop-shadow-2xl -mt-20 sm:-mt-28 md:-mt-36 lg:-mt-44"
+              />
             </div>
           </div>
         </section>
