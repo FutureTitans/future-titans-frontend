@@ -29,7 +29,7 @@ const SUCCESS_STORIES = [
 // YouTube video IDs (hosted on YouTube for reliable mobile playback)
 const YT_STARTING_YOUNG = 'J2CXXOB7eGs';
 const YT_INCUBATION = 'HrUvb2mrbH8';
-const YT_SNEAK_PEEK = 'AR9vPT55CAs';
+const YT_SNEAK_PEEK = 'JKeL1nJySzM';
 const YT_CLICK_ME_FIRST = 'GiqT3Ulbdxg';
 
 function YouTubeEmbed({ id, className = '', aspectClass = 'aspect-video', title = 'Video' }) {
@@ -676,7 +676,7 @@ export default function StudentDashboard() {
                   ? 'You have completed a module. Submit your idea now!'
                   : 'Complete at least one module to unlock idea submission.'}
               </p>
-              
+
               <div className="flex items-center gap-3">
                 <div className="w-16 sm:w-20 h-[2px] bg-gray-200 rounded-full overflow-hidden">
                   <div className="h-full bg-[#D4AF37] rounded-full transition-all duration-500" style={{ width: `${completedModules > 0 ? 100 : 0}%` }} />
@@ -697,7 +697,7 @@ export default function StudentDashboard() {
                   <span className="text-sm font-bold">Locked</span>
                 </div>
               )}
-              
+
               {!canSubmitIdea && (
                 <Link href="/student/modules" className="text-xs text-[#B8952E] font-bold hover:underline whitespace-nowrap flex items-center gap-1 transition-colors hover:text-[#9c7a21]">
                   Start The Founder&apos;s Mindset &rarr;
