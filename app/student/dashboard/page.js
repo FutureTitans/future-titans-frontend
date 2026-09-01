@@ -93,10 +93,39 @@ function YouTubeEmbed({ id, className = '', aspectClass = 'aspect-video', title 
 }
 
 function StoryThumbnail({ story }) {
+  const videoRef = useRef(null);
+  const [started, setStarted] = useState(false);
+
+  const handlePlay = () => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+      setStarted(true);
+    }
+  };
+
   return (
     <div className="rounded-xl overflow-hidden border-2 border-transparent hover:border-[#D4AF37]/50 transition-all">
-      <div className="aspect-video bg-black rounded-t-xl overflow-hidden">
-        <video src={story.url} controls playsInline className="w-full h-full object-cover" preload="metadata" />
+      <div className="relative aspect-video bg-black rounded-t-xl overflow-hidden">
+        <video
+          ref={videoRef}
+          src={story.url}
+          controls={started}
+          playsInline
+          preload="metadata"
+          className="w-full h-full object-cover"
+          onPlay={() => setStarted(true)}
+        />
+        {!started && (
+          <button
+            onClick={handlePlay}
+            aria-label={`Play ${story.name}`}
+            className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
+          >
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+              <Play className="w-4 h-4 text-gray-900 fill-gray-900 ml-0.5" />
+            </div>
+          </button>
+        )}
       </div>
       <div className="bg-[#0d1321] px-2 py-1.5">
         <p className="text-white text-[11px] font-bold leading-tight">{story.name}</p>
