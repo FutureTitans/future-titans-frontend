@@ -20,9 +20,9 @@ const MODULE_IMAGES = [
 ];
 
 const SUCCESS_STORIES = [
-  { name: 'Krishika', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/KrishikaVoice.mp4', label: 'Success Story 01', color: 'from-pink-500 to-rose-600' },
-  { name: 'Naisha', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/naishaVoice.mp4', label: 'Success Story 02', color: 'from-violet-500 to-purple-600' },
-  { name: 'Shivay', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/ShivayVoice.mp4', label: 'Success Story 03', color: 'from-blue-500 to-indigo-600' },
+  { name: 'Krishika', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/KrishikaVoice.mp4', label: 'Success Story 01' },
+  { name: 'Naisha', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/naishaVoice.mp4', label: 'Success Story 02' },
+  { name: 'Shivay', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/ShivayVoice.mp4', label: 'Success Story 03' },
 ];
 
 const STARTING_YOUNG_VIDEO = 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/this%20is%20what%20starting%20young%20looks%20like.mp4';
@@ -46,6 +46,7 @@ function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video'
         controls={isPlaying}
         className="w-full h-full object-cover"
         poster={poster}
+        preload="metadata"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
@@ -66,6 +67,57 @@ function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video'
   );
 }
 
+function StoryThumbnail({ story, isActive, onPlay, onEnd }) {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    if (!isActive && videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      setIsPlaying(false);
+    }
+  }, [isActive]);
+
+  const handlePlay = () => {
+    onPlay();
+    if (videoRef.current) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  return (
+    <div className="rounded-xl overflow-hidden border-2 border-transparent hover:border-[#D4AF37]/50 transition-all cursor-pointer">
+      <div className="relative aspect-video bg-[#0d1321] rounded-xl overflow-hidden">
+        <video
+          ref={videoRef}
+          className="w-full h-full object-cover"
+          preload="metadata"
+          controls={isActive && isPlaying}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          onEnded={() => { setIsPlaying(false); onEnd(); }}
+        >
+          <source src={story.url} type="video/mp4" />
+        </video>
+        {!(isActive && isPlaying) && (
+          <button
+            onClick={handlePlay}
+            className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 hover:bg-black/50 transition-colors"
+          >
+            <div className="w-9 h-9 rounded-full bg-white/90 flex items-center justify-center mb-1.5 shadow-lg">
+              <Play className="w-3.5 h-3.5 text-gray-900 fill-gray-900 ml-0.5" />
+            </div>
+            <p className="text-white text-[11px] font-bold">{story.name}</p>
+            <p className="text-white/50 text-[9px]">{story.label}</p>
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function StudentDashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -78,7 +130,6 @@ export default function StudentDashboard() {
   const [submissionData, setSubmissionData] = useState(null);
   const [activeStoryIndex, setActiveStoryIndex] = useState(null);
 
-  // Catch Zunnova game state
   const [gameState, setGameState] = useState('idle');
   const [gameScore, setGameScore] = useState(0);
   const [catches, setCatches] = useState(0);
@@ -163,7 +214,6 @@ export default function StudentDashboard() {
     }
   };
 
-  // ── CATCH ZUNNOVA GAME LOGIC ──
   const moveZunnova = useCallback(() => {
     const x = Math.random() * 70 + 10;
     const y = Math.random() * 70 + 10;
@@ -266,21 +316,21 @@ export default function StudentDashboard() {
     <div className="min-h-screen bg-[#F5F3EE] font-sans pb-20">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* ── SECTION 1: UNLOCK FULL ACCESS BANNER ── */}
+        {/* ── SECTION 1: UNLOCK FULL ACCESS BANNER (dark navy like design) ── */}
         {!isUserPaid && (
-          <div className="mt-4 bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+          <div className="mt-4 bg-[#141b2d] rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Zap className="w-4 h-4 text-white" />
+              <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <Zap className="w-4 h-4 text-[#D4AF37]" />
               </div>
               <div>
                 <h3 className="text-white font-bold text-base">Unlock Full Access</h3>
-                <p className="text-white/80 text-sm mt-0.5">All 3 modules, unlimited Zunnova AI, IIT mentorship and the Innovation Club -- everything below is waiting for you.</p>
+                <p className="text-gray-400 text-sm mt-0.5">All 3 modules, unlimited Zunnova AI, IIT mentorship and the Innovation Club -- everything below is waiting for you.</p>
               </div>
             </div>
             <button
               onClick={handlePayment}
-              className="bg-[#141b2d] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-[#1a2240] transition-colors flex-shrink-0 shadow-lg"
+              className="bg-[#D4AF37] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-[#B8952E] transition-colors flex-shrink-0 shadow-gold"
             >
               Pay &#8377;1500 + 18% GST
             </button>
@@ -290,15 +340,15 @@ export default function StudentDashboard() {
         {/* ── SECTION 2: GREETING ── */}
         <div className="mt-8 mb-6 flex flex-col md:flex-row md:items-start justify-between gap-4">
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
-              Hey, <span className="text-gray-900">{firstName}</span>
+            <h1 className="text-4xl md:text-5xl font-extrabold text-[#141b2d] tracking-tight leading-tight">
+              Hey, {firstName}
             </h1>
-            <p className="text-[#DC2626] font-bold text-sm uppercase tracking-[0.15em] mt-2">What&apos;s your next move?</p>
+            <p className="text-[#DC2626] font-bold text-sm uppercase tracking-[0.15em] mt-2 font-heading-now">WHAT&apos;S YOUR NEXT MOVE?</p>
           </div>
           <div className="flex items-center gap-3">
             <Link
               href="/student/modules"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-gray-200 bg-white text-gray-700 text-sm font-semibold hover:border-[#D4AF37] hover:text-[#B8952E] transition-all"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-gray-200 bg-white text-[#141b2d] text-sm font-semibold hover:border-[#D4AF37] hover:text-[#B8952E] transition-all"
             >
               <MessageCircle className="w-4 h-4" />
               Got Questions ?
@@ -316,37 +366,37 @@ export default function StudentDashboard() {
         {/* ── SECTION 3: QUICK ACTION CARDS ── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           <Link href="/student/modules" className="group">
-            <div className="bg-[#FFF9E6] border border-[#F5D76E]/30 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/40 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center flex-shrink-0">
+            <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
+              <div className="w-12 h-12 rounded-xl bg-[#FFF9E6] flex items-center justify-center flex-shrink-0">
                 <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-[15px]">Learn something new</h3>
-                <p className="text-gray-500 text-xs mt-0.5">{sortedModules.length} modules waiting</p>
+                <h3 className="font-bold text-[#141b2d] text-[15px]">Learn something new</h3>
+                <p className="text-gray-400 text-xs mt-0.5">{sortedModules.length} modules waiting</p>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-300 ml-auto group-hover:text-[#D4AF37] transition-colors" />
             </div>
           </Link>
           <Link href="/student/submission" className="group">
-            <div className="bg-[#FFF9E6] border border-[#F5D76E]/30 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/40 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center flex-shrink-0">
+            <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
+              <div className="w-12 h-12 rounded-xl bg-[#FFF9E6] flex items-center justify-center flex-shrink-0">
                 <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-[15px]">Build an Idea</h3>
-                <p className="text-gray-500 text-xs mt-0.5">submit your first submission</p>
+                <h3 className="font-bold text-[#141b2d] text-[15px]">Build an Idea</h3>
+                <p className="text-gray-400 text-xs mt-0.5">submit your first submission</p>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-300 ml-auto group-hover:text-[#D4AF37] transition-colors" />
             </div>
           </Link>
           <Link href="/student/innovation-club" className="group">
-            <div className="bg-[#FFF9E6] border border-[#F5D76E]/30 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/40 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center flex-shrink-0">
+            <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
+              <div className="w-12 h-12 rounded-xl bg-[#FFF9E6] flex items-center justify-center flex-shrink-0">
                 <img src="/compass.png" alt="" className="w-7 h-7 object-contain" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 text-[15px]">Explore the Club</h3>
-                <p className="text-gray-500 text-xs mt-0.5">Mentors & community</p>
+                <h3 className="font-bold text-[#141b2d] text-[15px]">Explore the Club</h3>
+                <p className="text-gray-400 text-xs mt-0.5">Mentors & community</p>
               </div>
               <ChevronRight className="w-5 h-5 text-gray-300 ml-auto group-hover:text-[#D4AF37] transition-colors" />
             </div>
@@ -355,7 +405,6 @@ export default function StudentDashboard() {
 
         {/* ── SECTION 4: SUCCESS STORIES + MY TITAN JOURNEY ── */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10">
-          {/* Success Stories - Left (3 cols) */}
           <div className="lg:col-span-3 bg-[#141b2d] rounded-3xl p-6 sm:p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/10 blur-[120px] rounded-full pointer-events-none" />
             <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em] mb-4">Success Stories</p>
@@ -366,52 +415,39 @@ export default function StudentDashboard() {
 
             <VideoWithPlayButton src={STARTING_YOUNG_VIDEO} className="shadow-2xl mb-5" />
 
-            {/* Success Story Thumbnails */}
+            {/* Success Story Video Thumbnails */}
             <div className="grid grid-cols-3 gap-3">
               {SUCCESS_STORIES.map((story, i) => (
-                <div key={i} className="rounded-xl overflow-hidden border-2 border-transparent hover:border-[#D4AF37]/50 transition-all cursor-pointer">
-                  {activeStoryIndex === i ? (
-                    <div className="aspect-video bg-black relative rounded-xl overflow-hidden">
-                      <video controls autoPlay className="w-full h-full object-cover" onEnded={() => setActiveStoryIndex(null)}>
-                        <source src={story.url} type="video/mp4" />
-                      </video>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setActiveStoryIndex(i)}
-                      className={`w-full aspect-video bg-gradient-to-br ${story.color} relative flex flex-col items-center justify-center rounded-xl`}
-                    >
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mb-2">
-                        <Play className="w-4 h-4 text-white fill-white ml-0.5" />
-                      </div>
-                      <p className="text-white text-xs font-bold">{story.name}</p>
-                      <p className="text-white/60 text-[9px] mt-0.5">{story.label}</p>
-                    </button>
-                  )}
-                </div>
+                <StoryThumbnail
+                  key={i}
+                  story={story}
+                  isActive={activeStoryIndex === i}
+                  onPlay={() => setActiveStoryIndex(i)}
+                  onEnd={() => setActiveStoryIndex(null)}
+                />
               ))}
             </div>
           </div>
 
-          {/* My Titan Journey - Right (2 cols) */}
+          {/* My Titan Journey */}
           <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col">
             <div className="flex items-center gap-2 mb-5">
               <Star className="w-5 h-5 text-[#D4AF37]" />
-              <h3 className="font-bold text-gray-900 text-lg">My Titan Journey</h3>
+              <h3 className="font-bold text-[#141b2d] text-lg">My Titan Journey</h3>
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-5">
               <div className="bg-[#F5F3EE] rounded-xl p-3 text-center">
-                <p className="text-2xl font-extrabold text-gray-900">{Math.round(ssiScore)}</p>
-                <p className="text-[10px] text-gray-500 font-medium uppercase mt-1">SSI</p>
+                <p className="text-2xl font-extrabold text-[#141b2d]">{Math.round(ssiScore)}</p>
+                <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">SSI</p>
               </div>
               <div className="bg-[#F5F3EE] rounded-xl p-3 text-center">
-                <p className="text-2xl font-extrabold text-gray-900">{totalTimeMinutes > 0 ? `${(totalTimeMinutes / 60).toFixed(1)}h` : '0.0h'}</p>
-                <p className="text-[10px] text-gray-500 font-medium uppercase mt-1">Time</p>
+                <p className="text-2xl font-extrabold text-[#141b2d]">{totalTimeMinutes > 0 ? `${(totalTimeMinutes / 60).toFixed(1)}h` : '0.0h'}</p>
+                <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">Time</p>
               </div>
               <div className="bg-[#F5F3EE] rounded-xl p-3 text-center">
-                <p className="text-2xl font-extrabold text-gray-900">{overallProgress}%</p>
-                <p className="text-[10px] text-gray-500 font-medium uppercase mt-1">Done</p>
+                <p className="text-2xl font-extrabold text-[#141b2d]">{overallProgress}%</p>
+                <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">Done</p>
               </div>
             </div>
 
@@ -426,22 +462,22 @@ export default function StudentDashboard() {
                 const val = profile?.ssiBreakdown?.[dim.key] || ssiData?.breakdown?.[dim.key] || 0;
                 return (
                   <div key={dim.key} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-500 w-24 flex-shrink-0">{dim.label}</span>
+                    <span className="text-xs text-gray-400 w-24 flex-shrink-0">{dim.label}</span>
                     <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
                       <div className="h-full bg-[#D4AF37] rounded-full transition-all duration-700" style={{ width: `${val}%` }} />
                     </div>
-                    <span className="text-xs font-semibold text-gray-700 w-8 text-right">{Math.round(val)}</span>
+                    <span className="text-xs font-semibold text-[#141b2d] w-8 text-right">{Math.round(val)}</span>
                   </div>
                 );
               })}
             </div>
 
             <div className="border-t border-gray-100 pt-4 mb-4">
-              <p className="text-sm font-bold text-gray-900 mb-3">Recent Activity</p>
+              <p className="text-sm font-bold text-[#141b2d] mb-3">Recent Activity</p>
               {sortedModules.some(m => (m.userProgress?.completionPercentage || 0) > 0) ? (
                 <div className="space-y-2">
                   {sortedModules.filter(m => (m.userProgress?.completionPercentage || 0) > 0).slice(0, 3).map((m, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-gray-600">
+                    <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
                       <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
                       <span className="truncate">{m.title} - {m.userProgress?.completionPercentage || 0}%</span>
                     </div>
@@ -455,9 +491,9 @@ export default function StudentDashboard() {
             <div className="border-t border-gray-100 pt-4 mb-4">
               <div className="flex items-center gap-2 mb-2">
                 <Flame className="w-4 h-4 text-orange-400" />
-                <p className="text-sm font-bold text-gray-900">Learning Streak</p>
+                <p className="text-sm font-bold text-[#141b2d]">Learning Streak</p>
               </div>
-              <p className="text-xs text-gray-500">Complete a module to start your streak</p>
+              <p className="text-xs text-gray-400">Complete a module to start your streak</p>
             </div>
 
             <div className="mt-auto pt-3">
@@ -475,9 +511,9 @@ export default function StudentDashboard() {
         <section className="mb-10">
           <div className="flex items-center gap-3 mb-2">
             <img src="/compass.png" alt="" className="w-8 h-8 object-contain drop-shadow-md" />
-            <h2 className="text-3xl font-extrabold text-gray-900">Learn</h2>
+            <h2 className="text-3xl font-extrabold text-[#141b2d]">Learn</h2>
           </div>
-          <p className="text-gray-500 text-sm mb-6 ml-11">Three modules: from founder mindset to launch.</p>
+          <p className="text-gray-400 text-sm mb-6 ml-11">Three modules: from founder mindset to launch.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {sortedModules.map((module, index) => {
@@ -503,11 +539,11 @@ export default function StudentDashboard() {
                       </div>
                     )}
 
-                    <div className="w-full h-48 bg-gray-100 relative overflow-hidden">
+                    <div className="w-full h-48 bg-[#141b2d] relative overflow-hidden flex items-center justify-center">
                       <img src={coverImg} alt={module.title} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#141b2d]/70 via-transparent to-transparent" />
                       <div className="absolute top-3 left-3">
-                        <span className="text-[10px] px-3 py-1 rounded-full uppercase tracking-wider font-bold bg-white/90 text-gray-700 shadow-sm">
+                        <span className="text-[10px] px-3 py-1 rounded-full uppercase tracking-wider font-bold bg-white/90 text-[#141b2d] shadow-sm">
                           Module {String(index + 1).padStart(2, '0')}
                         </span>
                       </div>
@@ -519,10 +555,10 @@ export default function StudentDashboard() {
                     </div>
 
                     <div className="p-5 flex flex-col flex-1">
-                      <h3 className="font-extrabold text-lg text-gray-900 mb-1 line-clamp-2">{module.title}</h3>
-                      <p className="text-gray-500 text-sm line-clamp-2 mb-4">{module.description}</p>
+                      <h3 className="font-extrabold text-lg text-[#141b2d] mb-1 line-clamp-2">{module.title}</h3>
+                      <p className="text-gray-400 text-sm line-clamp-2 mb-4">{module.description}</p>
 
-                      <div className="flex items-center gap-3 text-xs text-gray-500 mb-4 mt-auto">
+                      <div className="flex items-center gap-3 text-xs text-gray-400 mb-4 mt-auto">
                         <span>{chaptersCount} chapters</span>
                         <span className="w-1 h-1 bg-gray-300 rounded-full" />
                         <span>{lockedChapters > 0 ? `${lockedChapters} locked` : 'All unlocked'}</span>
@@ -573,9 +609,9 @@ export default function StudentDashboard() {
         <section className="mb-10">
           <div className="flex items-center gap-3 mb-2">
             <img src="/bulbrocket.png" alt="" className="w-8 h-8 object-contain drop-shadow-md" />
-            <h2 className="text-3xl font-extrabold text-gray-900">Build an Idea</h2>
+            <h2 className="text-3xl font-extrabold text-[#141b2d]">Build an Idea</h2>
           </div>
-          <p className="text-gray-500 text-sm mb-6 ml-11">Let&apos;s see what&apos;s next in your next submission.</p>
+          <p className="text-gray-400 text-sm mb-6 ml-11">Let&apos;s see what&apos;s next in your next submission.</p>
 
           <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -585,13 +621,13 @@ export default function StudentDashboard() {
                 </div>
                 <div>
                   <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Idea Submission</p>
-                  <h3 className="font-bold text-gray-900 text-lg">Submit Your Idea</h3>
-                  <p className="text-gray-500 text-sm mt-1">
+                  <h3 className="font-bold text-[#141b2d] text-lg">Submit Your Idea</h3>
+                  <p className="text-gray-400 text-sm mt-1">
                     {canSubmitIdea
                       ? 'You have completed a module. Submit your idea now!'
                       : 'Complete at least one module to unlock idea submission.'}
                   </p>
-                  <p className="text-gray-400 text-xs mt-2">{completedModules} of {sortedModules.length} modules complete</p>
+                  <p className="text-gray-300 text-xs mt-2">{completedModules} of {sortedModules.length} modules complete</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -624,18 +660,18 @@ export default function StudentDashboard() {
             <div className="w-8 h-8 rounded-full bg-[#D4AF37]/15 flex items-center justify-center">
               <Star className="w-4 h-4 text-[#D4AF37]" />
             </div>
-            <h2 className="text-3xl font-extrabold text-gray-900">Innovation Club</h2>
+            <h2 className="text-3xl font-extrabold text-[#141b2d]">Innovation Club</h2>
           </div>
-          <p className="text-gray-500 text-sm mb-6 ml-11">Mentorship, incubation and the wider Youngpreneurs community.</p>
+          <p className="text-gray-400 text-sm mb-6 ml-11">Mentorship, incubation and the wider Youngpreneurs community.</p>
 
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm">
-            <span className="inline-block px-4 py-1.5 bg-[#D4AF37] text-white rounded-full text-xs font-bold uppercase tracking-wider mb-6">
+            <span className="inline-block px-4 py-1.5 bg-[#141b2d] text-white rounded-full text-xs font-bold uppercase tracking-wider mb-6">
               Mentorship & Incubation
             </span>
 
             <VideoWithPlayButton src={INCUBATION_VIDEO} className="shadow-lg mb-6" />
 
-            <h3 className="font-bold text-gray-900 text-xl mb-4">Incubated and mentored by IIT mentors</h3>
+            <h3 className="font-bold text-[#141b2d] text-xl mb-4">Incubated and mentored by IIT mentors</h3>
             <div className="space-y-3 mb-6">
               {[
                 'One-on-one incubation sessions',
@@ -646,7 +682,7 @@ export default function StudentDashboard() {
                   <div className="w-5 h-5 rounded-full bg-[#D4AF37]/15 flex items-center justify-center flex-shrink-0">
                     <CheckCircle className="w-3 h-3 text-[#D4AF37]" />
                   </div>
-                  <p className="text-gray-600 text-sm">{item}</p>
+                  <p className="text-gray-500 text-sm">{item}</p>
                 </div>
               ))}
             </div>
@@ -666,17 +702,16 @@ export default function StudentDashboard() {
         {/* ── SECTION 8: SNEAK PEEK ── */}
         <section className="mb-10">
           <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500">Sneak Peek</p>
-            <span className="px-3 py-1 bg-[#DC2626] text-white rounded-full text-[10px] font-bold uppercase tracking-wider">Students Only</span>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">Sneak Peek</p>
+            <span className="px-3 py-1 bg-[#DC2626] text-white rounded-full text-[10px] font-bold uppercase tracking-wider">Members Only</span>
           </div>
           <div className="bg-[#141b2d] rounded-3xl p-4 sm:p-6 overflow-hidden">
             <VideoWithPlayButton src={STARTING_YOUNG_VIDEO} className="shadow-2xl" />
           </div>
         </section>
 
-        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER (seamless flow like design) ── */}
+        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER ── */}
         <section className="mb-10">
-          {/* Dark top section */}
           <div className="bg-gradient-to-br from-[#141b2d] to-[#1a2240] rounded-t-3xl p-6 sm:p-8 relative overflow-visible">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 blur-[150px] rounded-full pointer-events-none" />
             <div className="flex flex-col lg:flex-row gap-6 items-start relative z-10">
@@ -699,7 +734,7 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          {/* Word Balance Bar - bridges dark and cream sections */}
+          {/* Word Balance Bar */}
           <div className="relative z-20 mx-4 sm:mx-8 -mt-6">
             <div className="bg-white rounded-2xl p-4 shadow-xl border border-gray-100">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
@@ -708,10 +743,10 @@ export default function StudentDashboard() {
                     <MessageCircle className="w-5 h-5 text-[#D4AF37]" />
                   </div>
                   <div>
-                    <span className="font-bold text-gray-900 text-sm">Zunnova AI</span>
+                    <span className="font-bold text-[#141b2d] text-sm">Zunnova AI</span>
                     <p className="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider">Word Balance</p>
                   </div>
-                  <span className="text-gray-900 font-extrabold text-3xl ml-4">{totalWords.toLocaleString()}</span>
+                  <span className="text-[#141b2d] font-extrabold text-3xl ml-4">{totalWords.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-gray-400">{wordPercent}% asks left on free plan</span>
@@ -726,15 +761,13 @@ export default function StudentDashboard() {
             </div>
           </div>
 
-          {/* AI CO-FOUNDER cream section with massive character */}
+          {/* AI CO-FOUNDER cream section */}
           <div className="bg-gradient-to-b from-[#F0EDE5] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ minHeight: '600px' }}>
-            {/* Background watermark text */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-              <h2 className="text-[6rem] sm:text-[9rem] lg:text-[13rem] font-extrabold text-gray-400/15 tracking-tighter whitespace-nowrap leading-none">
+              <h2 className="text-[6rem] sm:text-[9rem] lg:text-[13rem] font-extrabold text-[#141b2d]/[0.06] tracking-tighter whitespace-nowrap leading-none">
                 AI CO-FOUNDER
               </h2>
             </div>
-            {/* Massive Zunnova character centered and large */}
             <div className="relative z-10 flex items-end justify-center h-full" style={{ minHeight: '600px' }}>
               <img
                 src="/AIcofounderzunnva.png"
@@ -745,10 +778,9 @@ export default function StudentDashboard() {
           </div>
         </section>
 
-        {/* ── SECTION 11: CATCH ZUNNOVA GAME (dark navy style) ── */}
+        {/* ── SECTION 11: CATCH ZUNNOVA GAME ── */}
         <section className="mb-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-            {/* Game Area - Left */}
             <div className="lg:col-span-3 bg-[#141b2d] rounded-3xl p-6 shadow-lg">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37] mb-1">Mini Game</p>
               <h3 className="text-2xl font-extrabold text-white mb-4">Catch Zunnova</h3>
@@ -770,7 +802,6 @@ export default function StudentDashboard() {
                 )}
               </div>
 
-              {/* Game Area */}
               <div
                 ref={gameAreaRef}
                 className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0d1321] border border-white/10 mb-6 select-none"
@@ -778,7 +809,7 @@ export default function StudentDashboard() {
               >
                 {gameState === 'idle' && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-16 h-16 object-contain opacity-30 mb-3" />
+                    <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-28 h-28 sm:w-36 sm:h-36 object-contain opacity-40 mb-4 animate-float" />
                     <p className="text-gray-500 text-xs text-center px-8">Press Start, then click Zunnova before it slips away. Every catch is 5 points.</p>
                   </div>
                 )}
@@ -795,7 +826,7 @@ export default function StudentDashboard() {
                     <img
                       src="/AIcofounderzunnva.png"
                       alt="Catch me!"
-                      className={`w-14 h-14 sm:w-18 sm:h-18 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
+                      className={`w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
                     />
                   </button>
                 )}
@@ -817,11 +848,11 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            {/* Top Catchers - Right */}
+            {/* Top Catchers */}
             <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-bold text-gray-900 text-lg">Top Catchers</h3>
-                <span className="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-gray-500">Today</span>
+                <h3 className="font-bold text-[#141b2d] text-lg">Top Catchers</h3>
+                <span className="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-gray-400">Today</span>
               </div>
               <p className="text-xs text-gray-400 mb-4">Catch Zunnova high scores</p>
 
@@ -833,8 +864,8 @@ export default function StudentDashboard() {
                         ${i === 0 ? 'bg-[#D4AF37] text-white' : 'bg-gray-100 text-gray-500'}`}>
                         {i + 1}
                       </span>
-                      <span className="text-sm text-gray-700 font-medium flex-1">{entry.name}</span>
-                      <span className="text-sm font-bold text-gray-900">{entry.score}</span>
+                      <span className="text-sm text-[#141b2d] font-medium flex-1">{entry.name}</span>
+                      <span className="text-sm font-bold text-[#141b2d]">{entry.score}</span>
                     </div>
                   ))
                 ) : (
@@ -862,20 +893,19 @@ export default function StudentDashboard() {
 
         {/* ── SECTION 12: LEADERBOARD & BADGES ── */}
         <section className="mb-10">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-500 mb-5">Leaderboard & Badges</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400 mb-5">Leaderboard & Badges</p>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Leaderboard */}
             <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
               <div className="flex items-center gap-3 mb-5">
                 <Trophy className="w-6 h-6 text-[#D4AF37]" />
-                <h3 className="text-xl font-extrabold text-gray-900">Leaderboard</h3>
+                <h3 className="text-xl font-extrabold text-[#141b2d]">Leaderboard</h3>
               </div>
               <p className="text-xs text-gray-400 mb-4">This week &middot; all students</p>
 
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <Trophy className="w-12 h-12 text-gray-200 mb-3" />
-                <p className="text-sm font-medium text-gray-500">Leaderboard coming soon</p>
-                <p className="text-xs text-gray-400 mt-1">Complete modules and improve your SSI to climb the ranks</p>
+                <p className="text-sm font-medium text-gray-400">Leaderboard coming soon</p>
+                <p className="text-xs text-gray-300 mt-1">Complete modules and improve your SSI to climb the ranks</p>
               </div>
 
               <div className="border-t border-gray-100 pt-3">
@@ -890,14 +920,13 @@ export default function StudentDashboard() {
               </div>
             </div>
 
-            {/* Badges */}
             <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-3">
                   <Award className="w-6 h-6 text-[#D4AF37]" />
-                  <h3 className="text-xl font-extrabold text-gray-900">Your Badges</h3>
+                  <h3 className="text-xl font-extrabold text-[#141b2d]">Your Badges</h3>
                 </div>
-                <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-500">{completedModules}/5</span>
+                <span className="px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-400">{completedModules}/5</span>
               </div>
               <p className="text-xs text-gray-400 mb-6">Earned by completing modules</p>
 
@@ -923,7 +952,7 @@ export default function StudentDashboard() {
                           <Lock className="w-5 h-5 text-gray-300" />
                         )}
                       </div>
-                      <span className={`text-[10px] font-medium ${unlocked ? 'text-gray-700' : 'text-gray-400'}`}>{badge.name}</span>
+                      <span className={`text-[10px] font-medium ${unlocked ? 'text-[#141b2d]' : 'text-gray-400'}`}>{badge.name}</span>
                     </div>
                   );
                 })}
@@ -934,8 +963,8 @@ export default function StudentDashboard() {
                   <Star className="w-full h-full text-[#D4AF37] drop-shadow-lg" />
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900 text-sm">Complete modules to earn badges</p>
-                  <p className="text-xs text-gray-500 mt-1">Each module unlocks a unique badge. Collect all 5 to become a Future Titan.</p>
+                  <p className="font-bold text-[#141b2d] text-sm">Complete modules to earn badges</p>
+                  <p className="text-xs text-gray-400 mt-1">Each module unlocks a unique badge. Collect all 5 to become a Future Titan.</p>
                 </div>
               </div>
             </div>
@@ -946,7 +975,7 @@ export default function StudentDashboard() {
         <section className="mb-10">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-3">
-              <h3 className="text-xl font-extrabold text-gray-900">Latest From Us</h3>
+              <h3 className="text-xl font-extrabold text-[#141b2d]">Latest From Us</h3>
               <span className="flex items-center gap-1.5 px-2.5 py-1 bg-[#DC2626] text-white rounded-full text-[10px] font-bold uppercase tracking-wider">
                 <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
                 Live
@@ -954,7 +983,7 @@ export default function StudentDashboard() {
               <span className="text-xs text-gray-400 hidden sm:inline">Audio updates from our world</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-xs text-gray-500 cursor-pointer hover:text-[#D4AF37]">Follow us</span>
+              <span className="text-xs text-gray-400 cursor-pointer hover:text-[#D4AF37]">Follow us</span>
               <Link href="/student/innovation-club" className="text-xs font-semibold text-[#D4AF37] hover:text-[#B8952E]">See all posts</Link>
             </div>
           </div>
