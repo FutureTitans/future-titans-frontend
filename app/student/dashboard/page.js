@@ -995,22 +995,34 @@ export default function StudentDashboard() {
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-xl font-extrabold text-[#141b2d]">Your Badges</h3>
                 <span className="px-3 py-1 bg-[#FDF8E7] text-[#B8952E] rounded-full text-[10px] font-bold uppercase tracking-widest border border-[#F5D76E]/30 flex items-center gap-1.5">
-                  <Trophy className="w-3 h-3" /> {completedModules}/3
+                  <Trophy className="w-3 h-3" /> {completedModules}/5
                 </span>
               </div>
               <p className="text-xs text-gray-400 mb-6 font-medium">Earned by completing modules</p>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-5 gap-2 sm:gap-3 mt-2">
                 {[
-                  { title: "The Founder's Mindset...", img: '/FounderMindset.png' },
-                  { title: "The Solution Seeker's...", img: '/SolutionSeekerJourney.png' },
-                  { title: "The Entrepreneur'...", img: '/TheEntreprenuerLaunch.png' },
-                ].map((module, i) => {
-                  const unlocked = (sortedModules[i]?.userProgress?.completionPercentage || 0) >= 100;
+                  { name: 'Founder', moduleIndex: 0 },
+                  { name: 'Seeker', moduleIndex: 1 },
+                  { name: 'Builder', moduleIndex: 2 },
+                  { name: 'Launcher', moduleIndex: -1 },
+                  { name: 'Titan', moduleIndex: -1 },
+                ].map((badge, i) => {
+                  const unlocked = badge.moduleIndex >= 0 && sortedModules[badge.moduleIndex]
+                    ? (sortedModules[badge.moduleIndex].userProgress?.completionPercentage || 0) >= 100
+                    : badge.name === 'Launcher' ? completedModules >= 3
+                      : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
+                        : false;
                   return (
-                    <div key={i} className={`bg-[#F4F6F4] rounded-[16px] p-4 flex flex-col items-center justify-center text-center border border-gray-100/50 transition-all ${unlocked ? 'opacity-100 shadow-sm' : 'opacity-50 grayscale'}`}>
-                      <img src={module.img} alt={module.title} className="w-12 h-12 sm:w-16 sm:h-16 object-contain mb-3 drop-shadow-sm" />
-                      <span className="text-[9px] sm:text-[10px] font-semibold text-gray-400 leading-tight">{module.title}</span>
+                    <div key={i} className="flex flex-col items-center gap-2">
+                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center transition-all ${unlocked ? 'bg-[#FDF8E7] border border-[#F5D76E]/40 shadow-sm' : 'bg-[#F4F6F4] border border-gray-100/50 grayscale opacity-60'}`}>
+                        {unlocked ? (
+                          <Star className="w-5 h-5 sm:w-7 sm:h-7 text-[#D4AF37]" fill="currentColor" />
+                        ) : (
+                          <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+                        )}
+                      </div>
+                      <span className={`text-[9px] sm:text-[11px] font-bold text-center leading-tight ${unlocked ? 'text-[#141b2d]' : 'text-gray-400'}`}>{badge.name}</span>
                     </div>
                   );
                 })}
