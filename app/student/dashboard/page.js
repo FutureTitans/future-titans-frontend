@@ -913,21 +913,23 @@ export default function StudentDashboard() {
               <p className="text-xs text-gray-400 mb-6 font-medium">Catch Zunnova high scores</p>
 
               <div className="space-y-2 flex-1">
-                {[
-                  { name: 'Aarav M.', score: 195 },
-                  { name: 'Ishita R.', score: 170 },
-                  { name: 'Kabir S.', score: 155 },
-                  { name: 'Meher D.', score: 140 },
-                  { name: 'Rehan T.', score: 120 },
-                ].map((entry, i) => (
-                  <div key={i} className="flex items-center gap-4 py-3 px-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                    <span className="w-4 text-center text-xs font-semibold text-gray-400 flex-shrink-0">
-                      {i + 1}
-                    </span>
-                    <span className="text-sm text-gray-200 font-medium flex-1">{entry.name}</span>
-                    <span className={`text-sm font-bold ${i === 0 ? 'text-[#E5C872]' : 'text-gray-300'}`}>{entry.score}</span>
+                {catchGameScores.length > 0 ? (
+                  catchGameScores.slice(0, 5).map((entry, i) => (
+                    <div key={i} className="flex items-center gap-4 py-3 px-4 rounded-2xl bg-white/[0.03] border border-white/5">
+                      <span className="w-4 text-center text-xs font-semibold text-gray-400 flex-shrink-0">
+                        {i + 1}
+                      </span>
+                      <span className="text-sm text-gray-200 font-medium flex-1">{entry.name}</span>
+                      <span className={`text-sm font-bold ${i === 0 ? 'text-[#E5C872]' : 'text-gray-300'}`}>{entry.score}</span>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+                    <Target className="w-10 h-10 text-gray-600 mb-3" />
+                    <p className="text-sm text-gray-400 font-medium">No scores yet</p>
+                    <p className="text-xs text-gray-500 mt-1">Play the game to see your scores here</p>
                   </div>
-                ))}
+                )}
               </div>
 
               <div className="mt-4 pt-4">
