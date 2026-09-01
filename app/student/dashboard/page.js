@@ -746,13 +746,13 @@ export default function StudentDashboard() {
 
         {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER (character spans across) ── */}
         <section className="mb-10 relative">
-          {/* Massive Zunnova character - absolutely positioned on the right, spanning dark + cream sections */}
-          <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[55%] z-30 pointer-events-none">
-            <div className="sticky top-20 flex justify-center">
+          {/* Massive Zunnova character - absolutely positioned, spanning dark section through AI CO-FOUNDER area */}
+          <div className="hidden lg:block absolute right-[5%] top-0 z-30 pointer-events-none" style={{ height: 'calc(100% + 20px)' }}>
+            <div className="flex items-end justify-center h-full">
               <img
                 src="/AIcofounderzunnva.png"
                 alt="Zunnova AI Co-Founder"
-                className="w-[600px] xl:w-[700px] h-auto object-contain drop-shadow-2xl"
+                className="w-[500px] xl:w-[600px] 2xl:w-[680px] h-auto object-contain drop-shadow-2xl"
               />
             </div>
           </div>
@@ -778,7 +778,7 @@ export default function StudentDashboard() {
                 )}
               </div>
             </div>
-            {/* Mobile character (shows only on small screens) */}
+            {/* Mobile character */}
             <div className="lg:hidden flex justify-center -mb-4">
               <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-[280px] sm:w-[360px] h-auto object-contain drop-shadow-2xl" />
             </div>
@@ -808,6 +808,19 @@ export default function StudentDashboard() {
               <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] rounded-full transition-all duration-700" style={{ width: `${wordPercent}%` }} />
               </div>
+            </div>
+          </div>
+
+          {/* AI CO-FOUNDER watermark area - character fills this */}
+          <div className="bg-gradient-to-b from-[#EDE9E0] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ height: '380px' }}>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+              <h2 className="text-[5rem] sm:text-[8rem] lg:text-[11rem] font-extrabold text-[#141b2d]/[0.06] tracking-tighter whitespace-nowrap leading-none">
+                AI CO-FOUNDER
+              </h2>
+            </div>
+            {/* Mobile character in watermark area */}
+            <div className="lg:hidden flex items-end justify-center h-full">
+              <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-[350px] sm:w-[450px] h-auto object-contain drop-shadow-2xl -mb-2" />
             </div>
           </div>
         </section>
@@ -977,8 +990,8 @@ export default function StudentDashboard() {
                   const unlocked = badge.moduleIndex >= 0 && sortedModules[badge.moduleIndex]
                     ? (sortedModules[badge.moduleIndex].userProgress?.completionPercentage || 0) >= 100
                     : badge.name === 'Launcher' ? completedModules >= 3
-                      : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
-                        : false;
+                    : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
+                    : false;
                   return (
                     <div key={i} className="flex flex-col items-center gap-2">
                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all ${unlocked ? 'bg-[#D4AF37]/15 shadow-gold' : 'bg-gray-100'}`}>
