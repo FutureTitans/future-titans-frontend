@@ -231,12 +231,24 @@ export default function GlobalAIChat() {
     }
   };
 
-  if (shouldHide || !enabled || isHidden) return null;
+  if (shouldHide || !enabled) return null;
 
   return (
     <>
+      {/* Minimized icon when Zunnova is dismissed */}
+      {isHidden && !isOpen && (
+        <button
+          type="button"
+          onClick={() => setIsHidden(false)}
+          className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 w-12 h-12 rounded-full bg-[#141b2d] shadow-lg flex items-center justify-center hover:scale-110 transition-transform border-2 border-[#D4AF37]/40"
+          title="Open Zunnova"
+        >
+          <MessageCircle className="w-5 h-5 text-[#D4AF37]" />
+        </button>
+      )}
+
       {/* Floating button + chat bubble - Mobile friendly */}
-      {!isOpen && (
+      {!isOpen && !isHidden && (
         <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-0">
 
           <div className="relative mb-[-20px] mr-28 md:mr-44 self-start animate-fade-in-up origin-bottom">
@@ -249,19 +261,28 @@ export default function GlobalAIChat() {
             <div className="absolute -right-2 bottom-3 w-3 h-3 bg-white/90 rotate-45 border-r border-b border-white/50"></div>
           </div>
 
-          {/* Avatar button */}
-          {/* Avatar button */}
-          <button
-            type="button"
-            onClick={() => setIsOpen(true)}
-            className="text-white rounded-full w-52 h-36 md:w-60 md:h-44 flex items-center justify-center hover:scale-110 transition-transform duration-300 hover-glow flex-shrink-0"
-            title="Chat with Zunnova"
-          >
-            <ZunnovaAvatar
-              isTalking={false}
-              className="w-full h-full scale-[1.6] md:scale-[1.8] transform origin-bottom"
-            />
-          </button>
+          {/* Avatar button with dismiss */}
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setIsHidden(true)}
+              className="absolute -top-1 -right-1 z-10 w-7 h-7 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+              title="Dismiss Zunnova"
+            >
+              <X className="w-3.5 h-3.5 text-gray-500" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsOpen(true)}
+              className="text-white rounded-full w-52 h-36 md:w-60 md:h-44 flex items-center justify-center hover:scale-110 transition-transform duration-300 hover-glow flex-shrink-0"
+              title="Chat with Zunnova"
+            >
+              <ZunnovaAvatar
+                isTalking={false}
+                className="w-full h-full scale-[1.6] md:scale-[1.8] transform origin-bottom"
+              />
+            </button>
+          </div>
 
         </div>
       )}
