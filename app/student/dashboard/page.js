@@ -21,18 +21,28 @@ const MODULE_IMAGES = [
 ];
 
 const SUCCESS_STORIES = [
-  { name: 'Krishika', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/KrishikaVoice.mp4', label: 'Success Story 01' },
-  { name: 'Naisha', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/naishaVoice.mp4', label: 'Success Story 02' },
-  { name: 'Shivay', url: 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/ShivayVoice.mp4', label: 'Success Story 03' },
+  { name: 'Krishika', url: '/images/yp/KrishikaVoice.mp4', label: 'Success Story 01' },
+  { name: 'Naisha', url: '/images/yp/naishaVoice.mp4', label: 'Success Story 02' },
+  { name: 'Shivay', url: '/images/yp/ShivayVoice.mp4', label: 'Success Story 03' },
 ];
 
-const STARTING_YOUNG_VIDEO = 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/this%20is%20what%20starting%20young%20looks%20like.mp4';
-const INCUBATION_VIDEO = 'https://7zyndjjpfgoyixzt.public.blob.vercel-storage.com/Incubation%20video%20.mp4';
+// YouTube video IDs (hosted on YouTube for reliable mobile playback)
+const YT_STARTING_YOUNG = 'J2CXXOB7eGs';
+const YT_INCUBATION = 'HrUvb2mrbH8';
+const YT_SNEAK_PEEK = 'AR9vPT55CAs';
+const YT_CLICK_ME_FIRST = 'GiqT3Ulbdxg';
 
-function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video' }) {
+function YouTubeEmbed({ id, className = '', aspectClass = 'aspect-video', title = 'Video' }) {
   return (
     <div className={`${aspectClass} bg-black rounded-2xl overflow-hidden ${className}`}>
-      <video src={src} controls playsInline className="w-full h-full object-cover" preload="metadata" />
+      <iframe
+        className="w-full h-full"
+        src={`https://www.youtube-nocookie.com/embed/${id}?rel=0&playsinline=1&modestbranding=1`}
+        title={title}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowFullScreen
+      />
     </div>
   );
 }
@@ -51,6 +61,43 @@ function StoryThumbnail({ story }) {
   );
 }
 
+function YouTubeModal({ id, title, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <div className="relative w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+        <button
+          onClick={onClose}
+          className="absolute -top-10 right-0 text-white/80 hover:text-white text-sm font-semibold flex items-center gap-1.5"
+        >
+          Close &#10005;
+        </button>
+        <div className="aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
+          <iframe
+            className="w-full h-full"
+            src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&playsinline=1&modestbranding=1`}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function StudentDashboard() {
   const router = useRouter();
   const [user, setUser] = useState(null);
@@ -62,6 +109,8 @@ export default function StudentDashboard() {
   const [wordBalance, setWordBalance] = useState(null);
   const [submissionData, setSubmissionData] = useState(null);
   const [leaderboardData, setLeaderboardData] = useState(null);
+  const [showIntroVideo, setShowIntroVideo] = useState(false);
+
   const [gameState, setGameState] = useState('idle');
   const [gameScore, setGameScore] = useState(0);
   const [catches, setCatches] = useState(0);
@@ -359,13 +408,13 @@ export default function StudentDashboard() {
               <MessageCircle className="w-4 h-4" />
               Got Questions ?
             </Link>
-            <Link
-              href="/student/modules"
+            <button
+              onClick={() => setShowIntroVideo(true)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#141b2d] text-white text-sm font-semibold hover:bg-[#1a2240] transition-colors"
             >
               <Play className="w-4 h-4" />
               Click Me First
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -419,7 +468,7 @@ export default function StudentDashboard() {
             </h2>
             <p className="text-gray-400 text-sm mb-5">Meet the youngpreneurs who turned<br className="hidden sm:block" />their ideas into something real</p>
 
-            <VideoWithPlayButton src={STARTING_YOUNG_VIDEO} className="shadow-2xl mb-5" />
+            <YouTubeEmbed id={YT_STARTING_YOUNG} title="This is What Starting Young Looks Like" className="shadow-2xl mb-5" />
 
             {/* Success Story Video Thumbnails */}
             <div className="grid grid-cols-3 gap-3">
@@ -673,7 +722,7 @@ export default function StudentDashboard() {
               Mentorship & Incubation
             </span>
 
-            <VideoWithPlayButton src={INCUBATION_VIDEO} className="shadow-lg mb-6" />
+            <YouTubeEmbed id={YT_INCUBATION} title="Incubation" className="shadow-lg mb-6" />
 
             <h3 className="font-bold text-[#141b2d] text-xl mb-4">Incubated and mentored by IIT mentors</h3>
             <div className="space-y-3 mb-6">
@@ -710,7 +759,7 @@ export default function StudentDashboard() {
             <span className="px-3 py-1 bg-[#DC2626] text-white rounded-full text-[10px] font-bold uppercase tracking-wider">Members Only</span>
           </div>
           <div className="bg-[#141b2d] rounded-3xl p-4 sm:p-6 overflow-hidden">
-            <VideoWithPlayButton src={STARTING_YOUNG_VIDEO} className="shadow-2xl" />
+            <YouTubeEmbed id={YT_SNEAK_PEEK} title="Sneak Peek" className="shadow-2xl" />
           </div>
         </section>
 
@@ -1061,6 +1110,10 @@ export default function StudentDashboard() {
         </section>
 
       </div>
+
+      {showIntroVideo && (
+        <YouTubeModal id={YT_CLICK_ME_FIRST} title="Click Me First" onClose={() => setShowIntroVideo(false)} />
+      )}
 
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
 
