@@ -641,51 +641,55 @@ export default function StudentDashboard() {
         </section>
 
         {/* ── SECTION 6: BUILD AN IDEA ── */}
-        <section className="mb-10">
-          <div className="flex items-center gap-3 mb-2">
-            <img src="/bulbrocket.png" alt="" className="w-8 h-8 object-contain drop-shadow-md" />
-            <h2 className="text-3xl font-extrabold text-[#141b2d]">Build an Idea</h2>
+        <section className="mb-10 sm:pl-2 pt-4">
+          <div className="mb-6">
+            <h2 className="text-3xl font-extrabold text-[#141b2d] mb-1">Build an Idea</h2>
+            <p className="text-gray-400 text-sm">Turn what you learn into a real submission.</p>
           </div>
-          <p className="text-gray-400 text-sm mb-6 ml-11">Let&apos;s see what&apos;s next in your next submission.</p>
 
-          <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
-                  <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
-                </div>
-                <div>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">Idea Submission</p>
-                  <h3 className="font-bold text-[#141b2d] text-lg">Submit Your Idea</h3>
-                  <p className="text-gray-400 text-sm mt-1">
-                    {canSubmitIdea
-                      ? 'You have completed a module. Submit your idea now!'
-                      : 'Complete at least one module to unlock idea submission.'}
-                  </p>
-                  <p className="text-gray-300 text-xs mt-2">{completedModules} of {sortedModules.length} modules complete</p>
-                </div>
-              </div>
+          <div className="bg-white rounded-[24px] sm:rounded-[32px] p-6 sm:p-7 border border-gray-100 shadow-sm relative flex flex-col sm:flex-row items-center justify-between gap-6 ml-6 sm:ml-16 mt-8">
+            {/* The 3D image protruding left */}
+            <div className="absolute -left-10 sm:-left-[76px] top-1/2 -translate-y-1/2 w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] drop-shadow-xl z-10 pointer-events-none">
+              <img src="/bulbrocket.png" alt="Idea" className="w-full h-full object-contain" />
+            </div>
+
+            {/* Left Content */}
+            <div className="pl-16 sm:pl-20 flex-1 w-full relative z-20">
+              <p className="text-[10px] text-[#B8952E] font-extrabold uppercase tracking-widest mb-1.5">Innovation Submission</p>
+              <h3 className="font-extrabold text-[#141b2d] text-xl mb-1.5">Submit Your Idea</h3>
+              <p className="text-gray-400 text-sm mb-4">
+                {canSubmitIdea
+                  ? 'You have completed a module. Submit your idea now!'
+                  : 'Complete at least one module to unlock idea submission.'}
+              </p>
+              
               <div className="flex items-center gap-3">
-                {submissionData ? (
-                  <Link href="/student/submission" className="px-5 py-2.5 bg-[#D4AF37] text-white rounded-xl font-bold text-sm hover:bg-[#B8952E] transition-colors">
-                    View Submission
-                  </Link>
-                ) : canSubmitIdea ? (
-                  <Link href="/student/submission" className="px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white rounded-xl font-bold text-sm hover:shadow-gold transition-all">
-                    Submit Now
-                  </Link>
-                ) : (
-                  <span className="px-4 py-2 bg-red-50 text-[#DC2626] rounded-full text-xs font-bold border border-red-100">locked</span>
-                )}
+                <div className="w-16 sm:w-20 h-[2px] bg-gray-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#D4AF37] rounded-full transition-all duration-500" style={{ width: `${completedModules > 0 ? 100 : 0}%` }} />
+                </div>
+                <span className="text-gray-400 text-[11px] sm:text-xs font-medium">{completedModules > 0 ? 1 : 0} of 1 modules complete</span>
               </div>
             </div>
-            {!canSubmitIdea && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <Link href="/student/modules" className="text-sm text-[#DC2626] font-semibold flex items-center gap-1.5 hover:underline">
-                  Start The Founder&apos;s Mindset <ArrowRight className="w-4 h-4" />
+
+            {/* Right Action */}
+            <div className="flex flex-col items-center sm:items-end gap-2.5 w-full sm:w-auto mt-2 sm:mt-0 relative z-20">
+              {canSubmitIdea ? (
+                <Link href="/student/submission" className="px-7 py-2.5 bg-[#141b2d] text-[#e5c872] rounded-full text-sm font-bold shadow-lg hover:shadow-xl hover:bg-[#1a2240] transition-all whitespace-nowrap w-full sm:w-auto text-center">
+                  Submit Now
                 </Link>
-              </div>
-            )}
+              ) : (
+                <div className="px-6 py-2.5 bg-[#FFF0F0] text-[#DC2626] border border-[#FFE4E4] rounded-full flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto shadow-sm">
+                  <Lock className="w-3.5 h-3.5 text-[#DC2626]" />
+                  <span className="text-sm font-bold">Locked</span>
+                </div>
+              )}
+              
+              {!canSubmitIdea && (
+                <Link href="/student/modules" className="text-xs text-[#B8952E] font-bold hover:underline whitespace-nowrap flex items-center gap-1 transition-colors hover:text-[#9c7a21]">
+                  Start The Founder&apos;s Mindset &rarr;
+                </Link>
+              )}
+            </div>
           </div>
         </section>
 
@@ -799,7 +803,7 @@ export default function StudentDashboard() {
 
           {/* AI CO-FOUNDER section - character centered and massive */}
           <div className="bg-gradient-to-b from-[#E4E8F0] to-[#F0F2F5] rounded-b-3xl relative overflow-visible pb-8 sm:pb-12">
-            <div className="relative z-10 flex justify-center">
+            <div className="relative z-30 flex justify-center pointer-events-none">
               <img
                 src="/AIcofounderzunnva.png"
                 alt="Zunnova AI Co-Founder"
