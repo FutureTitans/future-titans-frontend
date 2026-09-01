@@ -814,10 +814,10 @@ export default function StudentDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 bg-[#0F172A] rounded-[32px] p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col border border-white/5">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E5C872] mb-2">Mini Game</p>
-              
+
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Catch Zunnova</h3>
-                
+
                 <div className="flex flex-wrap items-center gap-3">
                   <span className="px-4 py-2 bg-transparent rounded-full border border-white/20 text-xs font-bold text-red-400">
                     {gameState === 'playing' ? `0:${gameTimeLeft.toString().padStart(2, '0')}` : '0:20'}
@@ -870,7 +870,7 @@ export default function StudentDashboard() {
                     <div className="relative">
                       <div className="absolute inset-0 bg-[#E5C872]/30 blur-lg rounded-full" />
                       <img
-                        src="/AIcofounderzunnva.png"
+                        src="/zunnova.svg"
                         alt="Catch me!"
                         className={`relative w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
                       />
@@ -943,7 +943,7 @@ export default function StudentDashboard() {
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#B8952E] whitespace-nowrap">Leaderboard & Badges</p>
             <div className="flex-1 h-px bg-gray-200" />
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-gray-100 shadow-sm flex flex-col">
               <div className="flex items-center justify-between mb-1">
@@ -973,7 +973,7 @@ export default function StudentDashboard() {
                   <span className="text-sm font-bold text-[#141b2d] flex-1">Kabir S.</span>
                   <span className="text-sm font-extrabold text-[#141b2d]">3,975</span>
                 </div>
-                
+
                 <div className="flex items-center gap-4 px-4 py-3 bg-[#141b2d] rounded-[16px] shadow-lg mt-2">
                   <span className="text-xs font-bold text-[#E5C872] w-6 text-center">128</span>
                   <div className="w-8 h-8 rounded-full bg-[#E5C872] flex items-center justify-center text-[#141b2d] text-xs font-bold">
@@ -1051,7 +1051,7 @@ export default function StudentDashboard() {
                   <p className="text-xs text-gray-400 font-medium">Instagram &middot; 2h ago</p>
                 </div>
               </div>
-              
+
               <div className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
                 <div className="w-11 h-11 rounded-[14px] bg-[#1A2847] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
                   <Facebook className="w-5 h-5 fill-current" />
