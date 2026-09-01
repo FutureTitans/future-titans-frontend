@@ -35,7 +35,8 @@ function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video'
 
   const handlePlay = () => {
     if (videoRef.current) {
-      videoRef.current.play();
+      const p = videoRef.current.play();
+      if (p) p.catch(() => {});
       setIsPlaying(true);
     }
   };
@@ -45,6 +46,8 @@ function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video'
       <video
         ref={videoRef}
         controls={isPlaying}
+        playsInline
+        webkit-playsinline=""
         className="w-full h-full object-cover"
         poster={poster}
         preload="metadata"
@@ -83,7 +86,8 @@ function StoryThumbnail({ story, isActive, onPlay, onEnd }) {
   const handlePlay = () => {
     onPlay();
     if (videoRef.current) {
-      videoRef.current.play();
+      const p = videoRef.current.play();
+      if (p) p.catch(() => {});
       setIsPlaying(true);
     }
   };
@@ -95,6 +99,8 @@ function StoryThumbnail({ story, isActive, onPlay, onEnd }) {
           ref={videoRef}
           className="w-full h-full object-cover"
           preload="metadata"
+          playsInline
+          webkit-playsinline=""
           controls={isActive && isPlaying}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}

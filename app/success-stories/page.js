@@ -59,7 +59,7 @@ export default function SuccessStories() {
               <p className="text-[#C8960C] text-xs font-bold tracking-widest uppercase mb-3">{a.name}</p>
               <p className="text-[#1B2A4A] text-[15px] font-bold mb-4 flex-grow">&ldquo;{a.quote}&rdquo;</p>
               <div className="w-full aspect-[4/3] sm:aspect-video lg:aspect-[4/3] rounded-xl overflow-hidden bg-black mb-4 relative flex-shrink-0 shadow-sm">
-                <video src={a.video} controls className="w-full h-full object-cover" preload="metadata" />
+                <video src={a.video} controls playsInline className="w-full h-full object-cover" preload="metadata" />
               </div>
               <p className="text-gray-500 leading-relaxed text-xs sm:text-sm">{a.description}</p>
             </div>

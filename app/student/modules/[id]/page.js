@@ -314,6 +314,7 @@ export default function ModulePlayerPage() {
             {isHTML5Video ? (
               <video
                 controls
+                playsInline
                 src={content.videoUrl}
                 className="w-full h-full absolute inset-0 object-contain"
                 controlsList="nodownload"
