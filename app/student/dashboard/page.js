@@ -33,11 +33,14 @@ function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video'
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
     if (videoRef.current) {
-      const p = videoRef.current.play();
-      if (p) p.catch(() => {});
-      setIsPlaying(true);
+      try {
+        await videoRef.current.play();
+      } catch {
+        // Fallback: show native controls so user can tap play directly
+        setIsPlaying(true);
+      }
     }
   };
 
@@ -50,13 +53,12 @@ function VideoWithPlayButton({ src, className = '', aspectClass = 'aspect-video'
         webkit-playsinline=""
         className="w-full h-full object-cover"
         poster={poster}
+        src={`${src}#t=0.001`}
         preload="metadata"
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onEnded={() => setIsPlaying(false)}
-      >
-        <source src={src} type="video/mp4" />
-      </video>
+      />
       {!isPlaying && (
         <button
           onClick={handlePlay}
@@ -83,12 +85,14 @@ function StoryThumbnail({ story, isActive, onPlay, onEnd }) {
     }
   }, [isActive]);
 
-  const handlePlay = () => {
+  const handlePlay = async () => {
     onPlay();
     if (videoRef.current) {
-      const p = videoRef.current.play();
-      if (p) p.catch(() => {});
-      setIsPlaying(true);
+      try {
+        await videoRef.current.play();
+      } catch {
+        setIsPlaying(true);
+      }
     }
   };
 
@@ -101,13 +105,12 @@ function StoryThumbnail({ story, isActive, onPlay, onEnd }) {
           preload="metadata"
           playsInline
           webkit-playsinline=""
+          src={`${story.url}#t=0.001`}
           controls={isActive && isPlaying}
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onEnded={() => { setIsPlaying(false); onEnd(); }}
-        >
-          <source src={story.url} type="video/mp4" />
-        </video>
+        />
         {!(isActive && isPlaying) && (
           <button
             onClick={handlePlay}
