@@ -674,12 +674,13 @@ export default function StudentDashboard() {
           </div>
         </section>
 
-        {/* ── SECTION 9: ZUNNOVA AI + AI CO-FOUNDER HERO (combined like design) ── */}
+        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER (seamless flow like design) ── */}
         <section className="mb-10">
-          <div className="bg-gradient-to-br from-[#141b2d] to-[#1a2240] rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+          {/* Dark top section */}
+          <div className="bg-gradient-to-br from-[#141b2d] to-[#1a2240] rounded-t-3xl p-6 sm:p-8 relative overflow-visible">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 blur-[150px] rounded-full pointer-events-none" />
             <div className="flex flex-col lg:flex-row gap-6 items-start relative z-10">
-              <div className="flex-1 pt-4">
+              <div className="flex-1 pt-4 pb-8">
                 <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em] mb-3">Zunnova AI &middot; Your Own AI</p>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">Watch what Zunnova can do for your startup</h2>
                 <p className="text-gray-400 text-sm leading-relaxed mb-6">
@@ -695,100 +696,96 @@ export default function StudentDashboard() {
                   </Link>
                 )}
               </div>
-              <div className="w-full lg:w-auto flex justify-center lg:justify-end">
-                <img
-                  src="/AIcofounderzunnva.png"
-                  alt="Zunnova AI"
-                  className="w-72 sm:w-80 lg:w-[420px] h-auto object-contain drop-shadow-2xl animate-float relative z-10"
-                />
-              </div>
             </div>
+          </div>
 
-            {/* Word Balance Bar */}
-            <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10 relative z-10">
-              <div className="flex items-center justify-between mb-3">
+          {/* Word Balance Bar - bridges dark and cream sections */}
+          <div className="relative z-20 mx-4 sm:mx-8 -mt-6">
+            <div className="bg-white rounded-2xl p-4 shadow-xl border border-gray-100">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#D4AF37]/20 flex items-center justify-center">
-                    <MessageCircle className="w-4 h-4 text-[#D4AF37]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center">
+                    <MessageCircle className="w-5 h-5 text-[#D4AF37]" />
                   </div>
                   <div>
-                    <span className="font-bold text-white text-sm">Zunnova AI</span>
+                    <span className="font-bold text-gray-900 text-sm">Zunnova AI</span>
                     <p className="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider">Word Balance</p>
                   </div>
-                  <span className="text-white font-extrabold text-2xl ml-4">{totalWords.toLocaleString()}</span>
+                  <span className="text-gray-900 font-extrabold text-3xl ml-4">{totalWords.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400">{wordPercent}% left on free plan</span>
-                  <Link href="/student/modules" className="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg text-xs font-bold hover:bg-white/20 transition-colors">
+                  <span className="text-xs text-gray-400">{wordPercent}% asks left on free plan</span>
+                  <Link href="/student/modules" className="px-4 py-2 bg-[#141b2d] text-white rounded-lg text-xs font-bold hover:bg-[#1a2240] transition-colors">
                     View Packages
                   </Link>
                 </div>
               </div>
-              <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] rounded-full transition-all duration-700" style={{ width: `${wordPercent}%` }} />
               </div>
             </div>
           </div>
-        </section>
 
-        {/* ── SECTION 10: AI CO-FOUNDER HERO ── */}
-        <section className="mb-10 relative">
-          <div className="bg-gradient-to-br from-[#F5F3EE] to-[#E8E3D8] rounded-3xl overflow-hidden relative min-h-[500px] sm:min-h-[600px] flex items-end justify-center">
+          {/* AI CO-FOUNDER cream section with massive character */}
+          <div className="bg-gradient-to-b from-[#F0EDE5] to-[#F5F3EE] rounded-b-3xl relative overflow-hidden" style={{ minHeight: '600px' }}>
+            {/* Background watermark text */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-              <h2 className="text-[7rem] sm:text-[10rem] lg:text-[14rem] font-extrabold text-gray-300/30 tracking-tighter whitespace-nowrap leading-none">
+              <h2 className="text-[6rem] sm:text-[9rem] lg:text-[13rem] font-extrabold text-gray-400/15 tracking-tighter whitespace-nowrap leading-none">
                 AI CO-FOUNDER
               </h2>
             </div>
-            <div className="relative z-10 flex flex-col items-center">
+            {/* Massive Zunnova character centered and large */}
+            <div className="relative z-10 flex items-end justify-center h-full" style={{ minHeight: '600px' }}>
               <img
                 src="/AIcofounderzunnva.png"
                 alt="Zunnova AI Co-Founder"
-                className="w-80 sm:w-[420px] lg:w-[520px] h-auto object-contain drop-shadow-2xl"
+                className="w-[400px] sm:w-[500px] lg:w-[650px] h-auto object-contain drop-shadow-2xl relative -mb-2"
               />
             </div>
           </div>
         </section>
 
-        {/* ── SECTION 11: CATCH ZUNNOVA GAME ── */}
+        {/* ── SECTION 11: CATCH ZUNNOVA GAME (dark navy style) ── */}
         <section className="mb-10">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* Game Area - Left */}
-            <div className="lg:col-span-3 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-1">Mini Game</p>
-              <h3 className="text-2xl font-extrabold text-gray-900 mb-4">Catch Zunnova</h3>
+            <div className="lg:col-span-3 bg-[#141b2d] rounded-3xl p-6 shadow-lg">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#D4AF37] mb-1">Mini Game</p>
+              <h3 className="text-2xl font-extrabold text-white mb-4">Catch Zunnova</h3>
 
               <div className="flex flex-wrap items-center gap-3 mb-6">
-                <span className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-bold text-gray-700">{catches}/20</span>
-                <span className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-medium text-gray-500">Caught: {catches}</span>
-                <span className="px-3 py-1.5 bg-gray-100 rounded-lg text-xs font-medium text-gray-500">{gameScore} pts</span>
+                <span className="px-3 py-1.5 bg-white/10 rounded-lg text-xs font-bold text-white">{catches}/20</span>
+                <span className="px-3 py-1.5 bg-white/10 rounded-lg text-xs font-medium text-gray-300">Caught {catches}</span>
+                <span className="px-3 py-1.5 bg-white/10 rounded-lg text-xs font-medium text-gray-300">{gameScore} pts</span>
                 {gameState === 'playing' && (
-                  <span className="px-3 py-1.5 bg-red-50 rounded-lg text-xs font-bold text-red-600">{gameTimeLeft}s</span>
+                  <span className="px-3 py-1.5 bg-red-500/20 rounded-lg text-xs font-bold text-red-400">{gameTimeLeft}s</span>
                 )}
-                {gameState !== 'playing' ? (
+                {gameState !== 'playing' && (
                   <button
                     onClick={startGame}
                     className="px-5 py-1.5 bg-[#D4AF37] text-white rounded-lg text-xs font-bold hover:bg-[#B8952E] transition-colors"
                   >
                     {gameState === 'ended' ? 'Play Again' : 'Start'}
                   </button>
-                ) : null}
+                )}
               </div>
 
-              {/* Game Circle */}
+              {/* Game Area */}
               <div
                 ref={gameAreaRef}
-                className="relative w-full aspect-square max-w-[400px] mx-auto rounded-full border-4 border-dashed border-gray-200 overflow-hidden bg-gray-50 mb-6 select-none"
+                className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-[#0d1321] border border-white/10 mb-6 select-none"
                 style={{ cursor: gameState === 'playing' ? 'crosshair' : 'default' }}
               >
                 {gameState === 'idle' && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-28 h-28 object-contain opacity-20" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <img src="/AIcofounderzunnva.png" alt="Zunnova" className="w-16 h-16 object-contain opacity-30 mb-3" />
+                    <p className="text-gray-500 text-xs text-center px-8">Press Start, then click Zunnova before it slips away. Every catch is 5 points.</p>
                   </div>
                 )}
                 {gameState === 'playing' && showZunnova && (
                   <button
                     onClick={catchZunnova}
-                    className="absolute transition-all duration-200 hover:scale-110 active:scale-90"
+                    className="absolute transition-all duration-150 hover:scale-110 active:scale-75"
                     style={{
                       left: `${zunnovaPos.x}%`,
                       top: `${zunnovaPos.y}%`,
@@ -798,46 +795,42 @@ export default function StudentDashboard() {
                     <img
                       src="/AIcofounderzunnva.png"
                       alt="Catch me!"
-                      className={`w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-200`}
+                      className={`w-14 h-14 sm:w-18 sm:h-18 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-150`}
                     />
                   </button>
                 )}
                 {gameState === 'ended' && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#0d1321]/90 backdrop-blur-sm">
                     <Trophy className="w-12 h-12 text-[#D4AF37] mb-3" />
-                    <p className="text-2xl font-extrabold text-gray-900">{gameScore} pts</p>
-                    <p className="text-sm text-gray-500 mt-1">You caught {catches} Zunnovas!</p>
+                    <p className="text-2xl font-extrabold text-white">{gameScore} pts</p>
+                    <p className="text-sm text-gray-400 mt-1">You caught {catches} Zunnovas!</p>
                     {catches >= 5 && <p className="text-xs text-[#D4AF37] font-bold mt-2">Bonus earned!</p>}
                   </div>
                 )}
               </div>
 
-              <div className="bg-gray-50 rounded-xl p-4">
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  Press Start, then click Zunnova before it jumps away. Every catch is 5 points.
-                </p>
-                <div className="flex flex-wrap gap-3 mt-3 text-[10px] font-medium text-gray-400">
-                  <span>1 catch = 5 points</span>
-                  <span>5 catches = 100 bonus</span>
-                  <span>10+ = VIP status</span>
-                </div>
+              <div className="flex flex-wrap items-center gap-3 text-xs">
+                <span className="text-gray-400">Best today <span className="text-[#D4AF37] font-bold">{catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}</span></span>
+                <span className="px-3 py-1.5 bg-white/5 rounded-lg text-gray-400 border border-white/10">1 catch = 5 points</span>
+                <span className="px-3 py-1.5 bg-white/5 rounded-lg text-gray-400 border border-white/10">5 catches = +20 bonus</span>
+                <span className="px-3 py-1.5 bg-white/5 rounded-lg text-gray-400 border border-white/10">8+ = +50 bonus</span>
               </div>
             </div>
 
             {/* Top Catchers - Right */}
             <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-900">Top Catchers</h3>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Scores</span>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="font-bold text-gray-900 text-lg">Top Catchers</h3>
+                <span className="px-3 py-1 bg-gray-100 rounded-full text-[10px] font-bold uppercase tracking-wider text-gray-500">Today</span>
               </div>
-              <p className="text-xs text-gray-400 mb-4">Your best games</p>
+              <p className="text-xs text-gray-400 mb-4">Catch Zunnova high scores</p>
 
-              <div className="space-y-2 flex-1">
+              <div className="space-y-1 flex-1">
                 {catchGameScores.length > 0 ? (
                   catchGameScores.slice(0, 5).map((entry, i) => (
-                    <div key={i} className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-gray-50 transition-colors">
-                      <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0
-                        ${i === 0 ? 'bg-[#D4AF37] text-white' : i === 1 ? 'bg-gray-300 text-gray-700' : i === 2 ? 'bg-amber-600 text-white' : 'bg-gray-100 text-gray-500'}`}>
+                    <div key={i} className="flex items-center gap-3 py-2.5 px-3 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                      <span className={`w-6 h-6 rounded flex items-center justify-center text-[11px] font-bold flex-shrink-0
+                        ${i === 0 ? 'bg-[#D4AF37] text-white' : 'bg-gray-100 text-gray-500'}`}>
                         {i + 1}
                       </span>
                       <span className="text-sm text-gray-700 font-medium flex-1">{entry.name}</span>
@@ -854,15 +847,14 @@ export default function StudentDashboard() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-3 py-2 px-3 bg-[#FFF9E6] rounded-xl border border-[#D4AF37]/20">
-                  <span className="w-7 h-7 rounded-full bg-[#D4AF37]/20 flex items-center justify-center text-xs font-bold text-[#B8952E]">
-                    {firstName.charAt(0)}
-                  </span>
-                  <span className="text-sm text-[#B8952E] font-semibold flex-1">{firstName}</span>
+                <div className="flex items-center gap-3 py-2.5 px-3 bg-[#FFF9E6] rounded-xl border border-[#D4AF37]/20">
+                  <span className="w-6 h-6 rounded bg-[#D4AF37]/20 flex items-center justify-center text-[11px] font-bold text-[#B8952E]">&ndash;</span>
+                  <span className="text-sm text-[#B8952E] font-semibold flex-1">You</span>
                   <span className="text-sm font-bold text-[#B8952E]">
-                    {catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0} best
+                    {catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}
                   </span>
                 </div>
+                <p className="text-[10px] text-gray-400 mt-2">Beat 120 pts to enter the top 5.</p>
               </div>
             </div>
           </div>
