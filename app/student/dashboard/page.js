@@ -347,7 +347,7 @@ export default function StudentDashboard() {
   const canSubmitIdea = completedModules >= 1;
 
   return (
-    <div className="min-h-screen bg-[#F5F3EE] font-sans pb-20">
+    <div className="min-h-screen bg-[#F0F2F5] font-sans pb-20">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* ── SECTION 1: UNLOCK FULL ACCESS BANNER (dark navy like design) ── */}
@@ -401,7 +401,7 @@ export default function StudentDashboard() {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           <Link href="/student/modules" className="group">
             <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#FFF9E6] flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
                 <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
               </div>
               <div>
@@ -413,7 +413,7 @@ export default function StudentDashboard() {
           </Link>
           <Link href="/student/submission" className="group">
             <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#FFF9E6] flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
                 <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
               </div>
               <div>
@@ -425,7 +425,7 @@ export default function StudentDashboard() {
           </Link>
           <Link href="/student/innovation-club" className="group">
             <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#FFF9E6] flex items-center justify-center flex-shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
                 <img src="/compass.png" alt="" className="w-7 h-7 object-contain" />
               </div>
               <div>
@@ -471,15 +471,15 @@ export default function StudentDashboard() {
             </div>
 
             <div className="grid grid-cols-3 gap-3 mb-5">
-              <div className="bg-[#F5F3EE] rounded-xl p-3 text-center">
+              <div className="bg-[#F0F2F5] rounded-xl p-3 text-center">
                 <p className="text-2xl font-extrabold text-[#141b2d]">{Math.round(ssiScore)}</p>
                 <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">SSI</p>
               </div>
-              <div className="bg-[#F5F3EE] rounded-xl p-3 text-center">
+              <div className="bg-[#F0F2F5] rounded-xl p-3 text-center">
                 <p className="text-2xl font-extrabold text-[#141b2d]">{totalTimeMinutes > 0 ? `${(totalTimeMinutes / 60).toFixed(1)}h` : '0.0h'}</p>
                 <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">Time</p>
               </div>
-              <div className="bg-[#F5F3EE] rounded-xl p-3 text-center">
+              <div className="bg-[#F0F2F5] rounded-xl p-3 text-center">
                 <p className="text-2xl font-extrabold text-[#141b2d]">{overallProgress}%</p>
                 <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">Done</p>
               </div>
@@ -650,7 +650,7 @@ export default function StudentDashboard() {
           <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#FFF9E6] flex items-center justify-center flex-shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
                   <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
                 </div>
                 <div>
@@ -797,7 +797,7 @@ export default function StudentDashboard() {
           </div>
 
           {/* AI CO-FOUNDER section - character centered and massive */}
-          <div className="bg-gradient-to-b from-[#EDE9E0] to-[#F5F3EE] rounded-b-3xl relative overflow-visible pb-8 sm:pb-12">
+          <div className="bg-gradient-to-b from-[#E4E8F0] to-[#F0F2F5] rounded-b-3xl relative overflow-visible pb-8 sm:pb-12">
             <div className="relative z-10 flex justify-center">
               <img
                 src="/AIcofounderzunnva.png"
@@ -910,7 +910,7 @@ export default function StudentDashboard() {
               </div>
 
               <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-3 py-2.5 px-3 bg-[#FFF9E6] rounded-xl border border-[#D4AF37]/20">
+                <div className="flex items-center gap-3 py-2.5 px-3 bg-[#D4AF37]/10 rounded-xl border border-[#D4AF37]/20">
                   <span className="w-6 h-6 rounded bg-[#D4AF37]/20 flex items-center justify-center text-[11px] font-bold text-[#B8952E]">&ndash;</span>
                   <span className="text-sm text-[#B8952E] font-semibold flex-1">You</span>
                   <span className="text-sm font-bold text-[#B8952E]">
@@ -941,7 +941,7 @@ export default function StudentDashboard() {
               </div>
 
               <div className="border-t border-gray-100 pt-3">
-                <div className="flex items-center gap-3 py-3 px-4 bg-[#FFF9E6] rounded-xl border border-[#D4AF37]/20">
+                <div className="flex items-center gap-3 py-3 px-4 bg-[#D4AF37]/10 rounded-xl border border-[#D4AF37]/20">
                   <div className="w-8 h-8 rounded-full bg-[#D4AF37] flex items-center justify-center text-white text-xs font-bold">
                     {firstName.charAt(0)}
                   </div>
@@ -990,7 +990,7 @@ export default function StudentDashboard() {
                 })}
               </div>
 
-              <div className="mt-8 bg-gradient-to-br from-[#FFF9E6] to-[#FEF3C7] rounded-2xl p-5 flex items-center gap-4 border border-[#D4AF37]/20">
+              <div className="mt-8 bg-gradient-to-br from-[#D4AF37]/10 to-[#D4AF37]/5 rounded-2xl p-5 flex items-center gap-4 border border-[#D4AF37]/20">
                 <div className="w-16 h-16 flex-shrink-0">
                   <Star className="w-full h-full text-[#D4AF37] drop-shadow-lg" />
                 </div>
