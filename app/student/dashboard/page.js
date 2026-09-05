@@ -9,7 +9,7 @@ import { isStudent, getUser } from '@/lib/auth';
 import {
   Lock, ChevronRight, ChevronDown, ArrowRight, CheckCircle, Zap, Play,
   Compass, Trophy, Award, Star, Clock, TrendingUp,
-  MessageCircle, Flame, Target, Users, Volume2, GraduationCap, Rocket, Hexagon, Lightbulb,
+  MessageCircle, Flame, Target, Users, Volume2, GraduationCap, Rocket, Hexagon, Lightbulb, Flag,
   Instagram, Facebook, Linkedin, X
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -581,6 +581,25 @@ export default function StudentDashboard() {
                   style={{ clipPath: 'polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px)' }}
                 >
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_120%,rgba(201,168,76,0.18),transparent_55%)] pointer-events-none" />
+                  {/* fanned gold hairline texture */}
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true">
+                    {Array.from({ length: 48 }).map((_, i) => {
+                      const ox = 725, oy = 220;
+                      const ang = Math.PI * (1.02 + i * 0.0102);
+                      const len = 1200;
+                      return (
+                        <line
+                          key={i}
+                          x1={ox} y1={oy}
+                          x2={ox + Math.cos(ang) * len}
+                          y2={oy + Math.sin(ang) * len}
+                          stroke="#C9A84C"
+                          strokeWidth="0.5"
+                          strokeOpacity={0.16}
+                        />
+                      );
+                    })}
+                  </svg>
                   {/* gold corner brackets */}
                   <span className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-[#C9A84C]/70 pointer-events-none" />
                   <span className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-[#C9A84C]/70 pointer-events-none" />
@@ -687,114 +706,184 @@ export default function StudentDashboard() {
 
             {/* ── 04 · MY TITAN JOURNEY ── */}
             <RailSection n="04">
-              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] cut-panel p-6 sm:p-8 relative overflow-hidden">
-                <div className="absolute -top-10 right-10 w-64 h-64 bg-[#E5C872]/8 blur-[100px] rounded-full pointer-events-none" />
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2.5">
-                      <Star className="w-5 h-5 text-[#E5C872]" fill="currentColor" />
-                      <h3 className="font-extrabold text-white text-lg">My Titan Journey</h3>
+              <div className="bg-white cut-panel border border-[#E7E3D6] overflow-hidden">
+                {/* header tab */}
+                <div className="relative bg-[linear-gradient(120deg,#123420,#08160D)] px-6 sm:px-8 h-16 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="hex w-9 h-9 bg-[#C9A84C] flex items-center justify-center">
+                      <Trophy className="w-4 h-4 text-[#0E2A1B]" />
                     </div>
-                    <Link href="/student/profile" className="text-[13px] text-[#E5C872] font-semibold flex items-center gap-1 hover:gap-2 transition-all">
-                      View Details <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    <h3 className="text-white text-xl sm:text-2xl font-extrabold">My Titan Journey</h3>
+                  </div>
+                  <Link
+                    href="/student/profile"
+                    className="flex items-center gap-1.5 px-4 py-2 border border-[#C9A84C]/60 text-[#E5C872] text-[13px] font-bold hover:bg-[#C9A84C]/10 transition-all"
+                    style={{ clipPath: 'polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px)' }}
+                  >
+                    View Details <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                  <div className="absolute left-0 bottom-0 translate-y-full w-48 h-3.5 bg-[#123420]" style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 16px) 100%, 0 100%)' }} />
+                </div>
+
+                {/* body */}
+                <div className="p-6 sm:p-8">
+                  {/* modules % + segmented progress */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <span className="text-[#8A9A8E] text-[11px] font-bold uppercase tracking-widest">Modules</span>
+                    <span className="text-[#0E2A1B] text-2xl font-extrabold disp">{overallProgress}%</span>
+                    <div className="flex-1 h-3 bg-[#EDEBE2] relative overflow-hidden ml-2">
+                      <div className="absolute inset-y-0 left-0 bg-[#C9A84C] transition-all duration-700" style={{ width: `${overallProgress}%` }} />
+                      <div className="absolute inset-0 flex">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                          <span key={i} className="flex-1 border-r border-white/70 last:border-r-0" />
+                        ))}
+                      </div>
+                    </div>
                   </div>
 
-                  {/* progress path */}
-                  <p className="text-[#9FB5A6] text-[11px] font-bold uppercase tracking-widest mb-1">Modules</p>
-                  <p className="text-white text-3xl font-extrabold mb-5">{overallProgress}%</p>
-                  <div className="relative mb-8">
-                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#E5C872] rounded-full transition-all duration-700" style={{ width: `${overallProgress}%` }} />
-                    </div>
-                    <div className="flex justify-between mt-3">
-                      {Array.from({ length: Math.min(3, totalModules) }).map((_, i) => {
-                        const mod = sortedModules[i];
-                        const done = (mod?.userProgress?.completionPercentage || 0) >= 100;
-                        const started = (mod?.userProgress?.completionPercentage || 0) > 0;
-                        return (
-                          <div key={i} className="flex flex-col items-center gap-1.5">
-                            <div className={`w-9 h-9 hex flex items-center justify-center text-xs font-bold ${done ? 'bg-[#E5C872] text-[#0E2A1B]' : started ? 'bg-[#E5C872]/30 text-[#E5C872]' : 'bg-white/10 text-[#9FB5A6]'}`}>
-                              {String(i + 1).padStart(2, '0')}
+                  {/* journey map */}
+                  <div className="relative bg-[#FAFAF6] border border-[#ECEAE0] cut-card p-6 sm:p-8 mb-6 overflow-hidden">
+                    <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 300" preserveAspectRatio="none" aria-hidden="true">
+                      {[70, 140, 210, 280].map((r) => (
+                        <circle key={'a' + r} cx="150" cy="150" r={r} fill="none" stroke="rgba(46,125,70,0.06)" strokeWidth="1" />
+                      ))}
+                      {[70, 140, 210].map((r) => (
+                        <circle key={'b' + r} cx="820" cy="180" r={r} fill="none" stroke="rgba(46,125,70,0.05)" strokeWidth="1" />
+                      ))}
+                    </svg>
+
+                    <div className="relative">
+                      {/* connector track */}
+                      <div className="absolute top-7 left-8 right-8 border-t-2 border-dashed border-[#D8D5CA]" />
+                      <div className="absolute top-7 left-8 border-t-2 border-[#C9A84C] transition-all duration-700" style={{ width: `calc((100% - 4rem) * ${Math.max(0, overallProgress) / 100})` }} />
+
+                      <div className="relative flex items-center justify-between px-2">
+                        {[0, 1, 2].map((i) => {
+                          const mod = sortedModules[i];
+                          const done = (mod?.userProgress?.completionPercentage || 0) >= 100;
+                          const started = (mod?.userProgress?.completionPercentage || 0) > 0;
+                          const active = i === 0 || started || done;
+                          const locked = i > 0 && !((sortedModules[i - 1]?.userProgress?.completionPercentage || 0) >= 100);
+                          return (
+                            <div key={i} className="relative z-10 flex flex-col items-center" style={{ minWidth: 56 }}>
+                              <div className={`hex w-14 h-14 flex items-center justify-center text-lg font-extrabold disp shadow-sm ${active ? 'bg-[#C9A84C] text-[#0E2A1B]' : 'bg-white text-[#9A9E96] ring-2 ring-inset ring-[#DAD7CC]'}`}>
+                                {String(i + 1).padStart(2, '0')}
+                              </div>
+                              {active && <span className="mt-2 w-10 h-[3px] bg-[#C9A84C]" />}
+                              {locked && (
+                                <div className="mt-2 w-6 h-6 rounded-full bg-white border border-[#E0DDD2] flex items-center justify-center">
+                                  <Lock className="w-3 h-3 text-[#B9B7AE]" />
+                                </div>
+                              )}
                             </div>
-                            <span className="text-[10px] text-[#9FB5A6] max-w-[90px] text-center truncate">{mod?.title || `Module ${i + 1}`}</span>
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* milestone flag */}
+                    <div className="relative flex items-center justify-center gap-2 mt-6">
+                      <div className="hex w-9 h-9 bg-white ring-2 ring-inset ring-[#DAD7CC] flex items-center justify-center">
+                        <Flag className="w-4 h-4 text-[#B9B7AE]" />
+                      </div>
+                      <span className="text-[10px] uppercase tracking-widest text-[#9A9E96] font-semibold">{completedModules}/{totalModules} Milestones</span>
                     </div>
                   </div>
 
                   {/* stats row */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
                     {[
-                      { val: totalTimeMinutes > 0 ? `${(totalTimeMinutes / 60).toFixed(1)}h` : '0.0h', label: 'Time Tracked', gold: false },
-                      { val: `${completedModules}/${totalModules}`, label: 'Modules', gold: false },
-                      { val: `${completedModules}/${totalModules}`, label: 'Milestones', gold: false },
-                      { val: badgesEarned, label: 'Badges', gold: true },
-                    ].map((s, i) => (
-                      <div key={i} className={`rounded-xl p-4 ${s.gold ? 'bg-[#E5C872]/15 border border-[#E5C872]/30' : 'bg-white/[0.04] border border-white/5'}`}>
-                        <p className={`text-2xl font-extrabold ${s.gold ? 'text-[#E5C872]' : 'text-white'}`}>{s.val}</p>
-                        <p className="text-[10px] text-[#9FB5A6] font-medium uppercase tracking-wide mt-1">{s.label}</p>
-                      </div>
-                    ))}
+                      { val: totalTimeMinutes > 0 ? `${(totalTimeMinutes / 60).toFixed(1)}h` : '0.0h', label: 'Time Tracked', Icon: Clock, gold: false },
+                      { val: `${completedModules}/${totalModules}`, label: 'Modules', Icon: CheckCircle, gold: false },
+                      { val: `${completedModules}/${totalModules}`, label: 'Milestones', Icon: Target, gold: false },
+                      { val: `${badgesEarned}`, label: 'Badges', Icon: Trophy, gold: true },
+                    ].map((s, i) => {
+                      const Icon = s.Icon;
+                      return (
+                        <div key={i} className={`relative cut-card p-4 ${s.gold ? 'bg-[#FBF3DA] border border-[#EAD9A0]' : 'bg-[#F6F5EF] border border-[#ECEAE0]'}`}>
+                          <Icon className={`absolute top-3 right-3 w-4 h-4 ${s.gold ? 'text-[#B8952E]' : 'text-[#BDBBB2]'}`} />
+                          <p className={`text-3xl font-extrabold disp ${s.gold ? 'text-[#B8952E]' : 'text-[#0E2A1B]'}`}>{s.val}</p>
+                          <p className="text-[11px] text-[#8A9A8E] font-medium uppercase tracking-wide mt-1">{s.label}</p>
+                        </div>
+                      );
+                    })}
                   </div>
 
-                  {/* recent activity table */}
-                  <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4 mb-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-sm font-bold text-white">Recent Activity</p>
-                      <Link href="/student/modules" className="text-[11px] text-[#E5C872] font-semibold uppercase tracking-wide">View All</Link>
-                    </div>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left min-w-[420px]">
-                        <thead>
-                          <tr className="text-[10px] uppercase tracking-wider text-[#8FA596]">
-                            <th className="font-semibold pb-2">Lesson</th>
-                            <th className="font-semibold pb-2">Time</th>
-                            <th className="font-semibold pb-2">Status</th>
-                            <th className="font-semibold pb-2 text-right">Points</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {activityRows.length > 0 ? activityRows.map((r, i) => (
-                            <tr key={i} className="border-t border-white/5">
-                              <td className="py-2.5 text-[13px] text-white font-medium truncate max-w-[180px]">{r.lesson}</td>
-                              <td className="py-2.5 text-[12px] text-[#9FB5A6]">{r.time}</td>
-                              <td className="py-2.5">
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${r.done ? 'bg-[#E5C872]/20 text-[#E5C872]' : 'bg-white/10 text-[#9FB5A6]'}`}>{r.done ? 'Done' : 'New'}</span>
-                              </td>
-                              <td className="py-2.5 text-[13px] text-[#E5C872] font-bold text-right">{r.points}</td>
-                            </tr>
-                          )) : (
-                            <tr className="border-t border-white/5">
-                              <td colSpan="4" className="py-4 text-[13px] text-[#8FA596] text-center">No activity yet — start a module to begin your journey.</td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-
-                  {/* learning streak + badges */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Flame className="w-4 h-4 text-[#E5936B]" />
-                        <p className="text-sm font-bold text-white">Learning Streak</p>
+                  {/* recent activity + streak/badges */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-[#0E2A1B] font-extrabold text-lg">Recent Activity</h4>
+                        <Link href="/student/modules" className="text-[11px] text-[#B8952E] font-bold uppercase tracking-wide">View All</Link>
                       </div>
-                      <p className="text-[13px] text-[#9FB5A6]"><span className="text-white font-bold">0 Days.</span> Keep going! Consistency is the key to success.</p>
+                      <div className="overflow-x-auto border border-[#EEECE3] cut-card">
+                        <table className="w-full text-left min-w-[440px]">
+                          <thead>
+                            <tr className="text-[10px] uppercase tracking-wider text-[#9A9E96] bg-[#F6F5EF]">
+                              <th className="font-semibold px-4 py-2.5">Lesson</th>
+                              <th className="font-semibold px-2 py-2.5">Time</th>
+                              <th className="font-semibold px-2 py-2.5">Status</th>
+                              <th className="font-semibold px-2 py-2.5">Points</th>
+                              <th className="font-semibold px-4 py-2.5 text-right">Added On</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {activityRows.length > 0 ? activityRows.map((r, i) => (
+                              <tr key={i} className="border-t border-[#EEECE3]">
+                                <td className="px-4 py-3 text-[13px] text-[#0E2A1B] font-semibold truncate max-w-[180px] border-l-2 border-[#2E7D46]">{r.lesson}</td>
+                                <td className="px-2 py-3 text-[12px] text-[#8A9A8E]">{r.time}</td>
+                                <td className="px-2 py-3">
+                                  <span className={`text-[10px] font-bold px-2 py-0.5 inline-flex items-center gap-1 ${r.done ? 'bg-[#E7F2EC] text-[#2C7A57]' : 'bg-[#FBF3DA] text-[#B8952E]'}`}>
+                                    <span className="w-1.5 h-1.5 rotate-45 bg-current inline-block" />{r.done ? 'Done' : 'New'}
+                                  </span>
+                                </td>
+                                <td className="px-2 py-3 text-[13px] text-[#B8952E] font-bold">{r.points}</td>
+                                <td className="px-4 py-3 text-[12px] text-[#8A9A8E] text-right">—</td>
+                              </tr>
+                            )) : (
+                              <tr className="border-t border-[#EEECE3]">
+                                <td colSpan="5" className="px-4 py-5 text-[13px] text-[#9A9E96] text-center">No activity yet — start a module to begin your journey.</td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
-                      <p className="text-sm font-bold text-white mb-3">Badges</p>
-                      <div className="flex items-center gap-2.5">
-                        {badges.map((b, i) => {
-                          const unlocked = isBadgeUnlocked(b);
-                          return (
-                            <div key={i} title={b.name} className={`w-8 h-8 hex flex items-center justify-center ${unlocked ? 'bg-[#E5C872]' : 'bg-white/8'}`}>
-                              {unlocked ? <Star className="w-3.5 h-3.5 text-[#0E2A1B]" fill="currentColor" /> : <Lock className="w-3 h-3 text-[#8FA596]" />}
-                            </div>
-                          );
-                        })}
+
+                    <div className="flex flex-col gap-5">
+                      <div className="cut-card bg-white border border-[#E7E3D6] p-5">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Flame className="w-4 h-4 text-[#E5936B]" />
+                          <h4 className="text-[#0E2A1B] font-extrabold text-base">Learning Streak</h4>
+                        </div>
+                        <p className="text-[13px] text-[#8A9A8E]"><span className="text-[#0E2A1B] font-bold">0 Days.</span> Keep going! Consistency is the key to success.</p>
+                        <div className="flex items-center justify-between mt-3">
+                          <span className="text-[12px] font-bold text-[#B8952E] flex items-center gap-1.5">
+                            <span className="w-2 h-2 rotate-45 bg-[#C9A84C] inline-block" /> 3-day streak
+                          </span>
+                          <div className="flex gap-1">
+                            {Array.from({ length: 5 }).map((_, i) => (
+                              <span key={i} className="w-5 h-[4px] bg-[#E0DDD2]" />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <h4 className="text-[#0E2A1B] font-extrabold text-base mb-3">Badges</h4>
+                        <div className="flex items-center gap-2">
+                          {[Award, Star, Trophy].map((Ic, i) => {
+                            const unlocked = isBadgeUnlocked(badges[i]);
+                            return (
+                              <div key={i} className="flex items-center gap-2">
+                                <div className={`hex w-11 h-11 flex items-center justify-center ${unlocked ? 'bg-[#FBF3DA] ring-2 ring-inset ring-[#EAD9A0]' : 'bg-[#F3F1E9] ring-1 ring-inset ring-[#E0DDD2]'}`} title={badges[i]?.name}>
+                                  <Ic className={`w-4 h-4 ${unlocked ? 'text-[#C9A84C]' : 'text-[#C3C1B8]'}`} />
+                                </div>
+                                {i < 2 && <span className="w-4 border-t border-dashed border-[#D8D5CA]" />}
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -804,13 +893,38 @@ export default function StudentDashboard() {
 
             {/* ── 05 · FROM CAMPUS IDEA TO REAL IMPACT ── */}
             <RailSection n="05">
-              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] cut-panel p-6 sm:p-8 relative overflow-hidden">
-                <div className="absolute -top-8 -right-8 w-64 h-64 bg-[#E5C872]/8 blur-[90px] rounded-full pointer-events-none" />
-                <div className="relative z-10">
-                  <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-[0.2em] mb-3">Success Stories</p>
-                  <h2 className="text-white text-2xl sm:text-3xl font-extrabold leading-tight mb-2">From Campus Idea<br />to Real Impact</h2>
-                  <p className="text-[#9FB5A6] text-sm mb-6 max-w-md">See how youngpreneurs turned ideas into impactful ventures and inspired others.</p>
-                  <YouTubeEmbed id={YT_STARTING_YOUNG} title="From Campus Idea to Real Impact" className="shadow-2xl" />
+              <div
+                className="bg-[linear-gradient(120deg,#123420,#0A1E13)] relative overflow-hidden p-8 sm:p-10"
+                style={{ clipPath: 'polygon(28px 0, 100% 0, 100% 100%, 0 100%, 0 28px)' }}
+              >
+                {/* faint grid texture */}
+                <div className="absolute inset-0 pointer-events-none opacity-[0.5] bg-[linear-gradient(rgba(201,168,76,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(201,168,76,0.05)_1px,transparent_1px)] bg-[length:38px_38px]" />
+                <div className="absolute -top-8 -right-8 w-72 h-72 bg-[#E5C872]/8 blur-[90px] rounded-full pointer-events-none" />
+
+                <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
+                  {/* left — text */}
+                  <div>
+                    <p className="text-[#C9A84C] text-[11px] font-bold uppercase tracking-[0.25em] flex items-center gap-2.5 mb-5">
+                      <span className="w-6 h-[2px] bg-[#C9A84C]" /> Success Stories
+                    </p>
+                    <h2 className="text-white text-4xl sm:text-5xl font-extrabold leading-[0.95] mb-4">From Campus Idea<br />to Real Impact</h2>
+                    <p className="text-[#9FB5A6] text-[15px] leading-relaxed max-w-md">See how youngpreneurs turned ideas into impactful ventures and inspired others.</p>
+                    <div className="flex items-center gap-2.5 mt-6">
+                      <span className="w-3 h-3 border-2 border-[#C9A84C] rotate-45 inline-block" />
+                      <span className="w-10 h-[2px] bg-[#C9A84C]" />
+                      <span className="w-5 h-[2px] bg-[#C9A84C]/40" />
+                      <span className="w-3 h-[2px] bg-[#C9A84C]/25" />
+                    </div>
+                  </div>
+
+                  {/* right — framed video */}
+                  <div className="relative aspect-video">
+                    <span className="absolute -top-1.5 -left-1.5 w-7 h-7 border-t-2 border-l-2 border-[#C9A84C]/70 z-10 pointer-events-none" />
+                    <span className="absolute -top-1.5 -right-1.5 w-7 h-7 border-t-2 border-r-2 border-[#C9A84C]/70 z-10 pointer-events-none" />
+                    <span className="absolute -bottom-1.5 -left-1.5 w-7 h-7 border-b-2 border-l-2 border-[#C9A84C]/70 z-10 pointer-events-none" />
+                    <span className="absolute -bottom-1.5 -right-1.5 w-7 h-7 border-b-2 border-r-2 border-[#C9A84C]/70 z-10 pointer-events-none" />
+                    <YouTubeEmbed id={YT_STARTING_YOUNG} title="From Campus Idea to Real Impact" aspectClass="aspect-video" className="w-full h-full shadow-2xl" />
+                  </div>
                 </div>
               </div>
             </RailSection>
@@ -884,7 +998,7 @@ export default function StudentDashboard() {
 
             {/* ── 08 · ZUNNOVA AI + AI CO-FOUNDER ── */}
             <RailSection n="08">
-              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-t-2xl p-6 sm:p-8 border border-[#E5C872]/15 relative overflow-hidden">
+              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] cut-panel p-6 sm:p-8 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-[#E5C872]/8 blur-[140px] rounded-full pointer-events-none" />
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
@@ -935,22 +1049,55 @@ export default function StudentDashboard() {
                 </div>
               </div>
 
-              {/* AI CO-FOUNDER */}
-              <div className="bg-white border border-[#E7E3D6] border-t-0 rounded-b-2xl relative overflow-hidden pb-6">
-                <div className="flex items-center justify-between px-6 sm:px-8 pt-16 sm:pt-20 pb-2 relative z-10">
-                  <div>
-                    <p className="text-[#B8952E] text-[11px] font-bold uppercase tracking-[0.2em] mb-1">Your AI</p>
-                    <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0E2A1B]">Ai Co-Founder</h2>
-                    <Link href="/student/modules" className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-full border-2 border-[#0E2A1B]/15 text-[#0E2A1B] text-sm font-semibold hover:border-[#D4AF37] transition-all">
+              {/* AI CO-FOUNDER — standalone light banner */}
+              <div className="relative mt-10 bg-[#EDF1EA] border border-[#DDE4D9] cut-panel overflow-hidden min-h-[260px]">
+                {/* faint grid texture */}
+                <div className="absolute inset-0 pointer-events-none opacity-60 bg-[linear-gradient(rgba(46,125,70,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(46,125,70,0.05)_1px,transparent_1px)] bg-[length:34px_34px]" />
+
+                <div className="relative z-10 p-8 sm:p-10 max-w-[62%]">
+                  {/* signal + marker row */}
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <div className="flex items-end gap-0.5">
+                      <span className="w-1 h-1.5 bg-[#2E7D46]" />
+                      <span className="w-1 h-2.5 bg-[#2E7D46]" />
+                      <span className="w-1 h-3.5 bg-[#2E7D46]" />
+                      <span className="w-1 h-4 bg-[#2E7D46]/40" />
+                    </div>
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#2E7D46]" />
+                    <span className="w-16 border-t border-dashed border-[#B9C4B8]" />
+                    <span className="w-8 h-2 bg-[#C9A84C]/40" />
+                  </div>
+
+                  <h2 className="text-4xl sm:text-5xl font-extrabold text-[#0E2A1B] leading-none mb-6">Ai Co-founder</h2>
+
+                  <div className="flex items-center gap-4">
+                    <Link
+                      href="/student/modules"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-[#CBD3C8] text-[#0E2A1B] text-sm font-bold hover:border-[#C9A84C] transition-all"
+                      style={{ clipPath: 'polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px)' }}
+                    >
                       See all messages <ArrowRight className="w-4 h-4" />
                     </Link>
+                    <div className="hidden sm:flex items-center gap-1.5">
+                      <span className="w-6 h-[3px] bg-[#2E7D46]/40" />
+                      <span className="w-4 h-[3px] bg-[#C9A84C]/40" />
+                      <span className="w-4 h-[3px] bg-[#D3D8CE]" />
+                    </div>
                   </div>
                 </div>
-                <img
-                  src="/AIcofounderzunnva.png"
-                  alt="Zunnova AI Co-Founder"
-                  className="absolute right-0 bottom-0 w-[220px] sm:w-[300px] md:w-[360px] h-auto object-contain drop-shadow-2xl pointer-events-none"
-                />
+
+                {/* character + orbit */}
+                <div className="absolute right-2 sm:right-10 bottom-0 top-0 flex items-end pointer-events-none">
+                  <div className="relative flex items-end">
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-56 h-56 sm:w-72 sm:h-72 rounded-full border border-dashed border-[#C9A84C]/30" />
+                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 sm:w-52 sm:h-52 rounded-full border border-[#C9A84C]/15" />
+                    <img
+                      src="/AIcofounderzunnva.png"
+                      alt="Zunnova AI Co-Founder"
+                      className="relative w-[200px] sm:w-[260px] md:w-[300px] h-auto object-contain drop-shadow-2xl"
+                    />
+                  </div>
+                </div>
               </div>
             </RailSection>
 
