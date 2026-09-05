@@ -9,7 +9,7 @@ import { isStudent, getUser } from '@/lib/auth';
 import {
   Lock, ChevronRight, ChevronDown, ArrowRight, CheckCircle, Zap, Play,
   Compass, Trophy, Award, Star, Clock, TrendingUp,
-  MessageCircle, Flame, Target, Users, Volume2,
+  MessageCircle, Flame, Target, Users, Volume2, GraduationCap, Rocket, Hexagon,
   Instagram, Facebook, Linkedin, X
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -104,7 +104,7 @@ function StoryThumbnail({ story }) {
   };
 
   return (
-    <div className="rounded-xl overflow-hidden border-2 border-transparent hover:border-[#D4AF37]/50 transition-all">
+    <div className="rounded-xl overflow-hidden border border-[#E7E3D6] bg-white hover:border-[#D4AF37]/60 transition-all shadow-sm">
       <div className="relative aspect-video bg-black rounded-t-xl overflow-hidden">
         <video
           ref={videoRef}
@@ -121,15 +121,15 @@ function StoryThumbnail({ story }) {
             aria-label={`Play ${story.name}`}
             className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/40 transition-colors"
           >
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-110">
-              <Play className="w-4 h-4 text-gray-900 fill-gray-900 ml-0.5" />
+            <div className="w-11 h-11 rounded-full bg-[#E5C872] hover:bg-[#D4AF37] flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+              <Play className="w-4 h-4 text-[#0E2A1B] fill-[#0E2A1B] ml-0.5" />
             </div>
           </button>
         )}
       </div>
-      <div className="bg-[#0d1321] px-2 py-1.5">
-        <p className="text-white text-[11px] font-bold leading-tight">{story.name}</p>
-        <p className="text-white/50 text-[9px]">{story.label}</p>
+      <div className="px-3 py-2.5">
+        <p className="text-[#0E2A1B] text-[13px] font-bold leading-tight">{story.name}</p>
+        <p className="text-[#8A9A8E] text-[10px] font-medium mt-0.5">{story.label}</p>
       </div>
     </div>
   );
@@ -169,6 +169,18 @@ function YouTubeModal({ id, title, onClose }) {
         </div>
       </div>
     </div>
+  );
+}
+
+// Numbered rail section wrapper — the vertical 01..10 stepper down the left edge
+function RailSection({ n, children, className = '' }) {
+  return (
+    <section className={`relative ${className}`}>
+      <span className="hidden md:flex absolute -left-[52px] top-0 w-9 h-9 rounded-full bg-[#0E2A1B] text-[#E5C872] text-[12px] font-extrabold items-center justify-center ring-2 ring-[#E5C872]/25 shadow-md z-10 tabular-nums">
+        {n}
+      </span>
+      {children}
+    </section>
   );
 }
 
@@ -428,12 +440,14 @@ export default function StudentDashboard() {
 
   const isUserPaid = profile?.isPaid || user?.isPaid || paymentStatus?.isPaid;
   const firstName = profile?.name?.split(' ')[0] || user?.name?.split(' ')[0] || 'Titan';
+  const fullName = profile?.name || user?.name || 'Titan';
 
   const sortedModules = [...modulesList].sort((a, b) => {
     const weights = { beginner: 1, intermediate: 2, advanced: 3 };
     return (weights[a.difficulty] || 4) - (weights[b.difficulty] || 4);
   });
 
+  const totalModules = sortedModules.length || 3;
   const completedModules = sortedModules.filter(m => (m.userProgress?.completionPercentage || 0) >= 100).length;
   const totalTimeMinutes = Math.round((profile?.totalTimeSpent || sortedModules.reduce((acc, m) => acc + (m.userProgress?.timeSpent || 0), 0)) / 60);
   const overallProgress = sortedModules.length > 0 ? Math.round(sortedModules.reduce((acc, m) => acc + (m.userProgress?.completionPercentage || 0), 0) / sortedModules.length) : 0;
@@ -444,748 +458,633 @@ export default function StudentDashboard() {
   const wordPercent = totalWords > 0 ? Math.round((remainingWords / totalWords) * 100) : 100;
   const canSubmitIdea = completedModules >= 1;
 
+  const activityRows = sortedModules
+    .filter(m => (m.userProgress?.completionPercentage || 0) > 0)
+    .slice(0, 4)
+    .map((m) => ({
+      lesson: m.title,
+      time: `${Math.max(1, Math.round((m.userProgress?.timeSpent || 0) / 60))} min`,
+      done: (m.userProgress?.completionPercentage || 0) >= 100,
+      points: `+${Math.max(1, Math.round((m.userProgress?.completionPercentage || 0) / 10))}`,
+    }));
+
+  const badges = [
+    { name: 'Founder', moduleIndex: 0 },
+    { name: 'Seeker', moduleIndex: 1 },
+    { name: 'Builder', moduleIndex: 2 },
+    { name: 'Launcher', moduleIndex: -1 },
+    { name: 'Titan', moduleIndex: -1 },
+  ];
+  const isBadgeUnlocked = (badge) =>
+    badge.moduleIndex >= 0 && sortedModules[badge.moduleIndex]
+      ? (sortedModules[badge.moduleIndex].userProgress?.completionPercentage || 0) >= 100
+      : badge.name === 'Launcher' ? completedModules >= 3
+        : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
+          : false;
+  const badgesEarned = badges.filter(isBadgeUnlocked).length;
+
+  const ssiPct = Math.min(100, Math.max(0, ssiScore));
+  const ssiCirc = 2 * Math.PI * 42;
+
+  const navTabs = [
+    { label: 'Dashboard', href: '/student/dashboard', active: true },
+    { label: 'Learn', href: '/student/modules' },
+    { label: 'Innovation Club', href: '/student/innovation-club' },
+    { label: 'Build an Idea', href: '/student/submission' },
+    { label: 'My Titan Journey', href: '/student/profile' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F0F2F5] font-sans pb-20">
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8">
+    <div className="min-h-screen bg-[#F3F1E9] font-sans pb-20">
 
-        {/* ── SECTION 1: UNLOCK FULL ACCESS BANNER (dark navy like design) ── */}
-        {!isUserPaid && (
-          <div className="mb-8 bg-[#141b2d] rounded-2xl px-6 py-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#D4AF37]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <Zap className="w-4 h-4 text-[#D4AF37]" />
-              </div>
-              <div>
-                <h3 className="text-white font-bold text-base">Unlock Full Access</h3>
-                <p className="text-gray-400 text-sm mt-0.5">All 3 modules, unlimited Zunnova AI, IIT mentorship and the Innovation Club -- everything below is waiting for you.</p>
-              </div>
+      {/* ── TOP NAV ── */}
+      <header className="sticky top-0 z-40 bg-[linear-gradient(90deg,#0E2A1B_0%,#0A1E13_100%)] border-b border-[#E5C872]/15 shadow-sm">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <Link href="/student/dashboard" className="flex items-center gap-2.5 flex-shrink-0">
+            <div className="hex w-8 h-8 bg-[#E5C872] flex items-center justify-center">
+              <span className="text-[#0E2A1B] font-black text-sm">Y</span>
             </div>
-            <button
-              onClick={handlePayment}
-              className="bg-[#D4AF37] text-white px-6 py-2.5 rounded-xl font-bold text-sm hover:bg-[#B8952E] transition-colors flex-shrink-0 shadow-gold"
-            >
-              Pay &#8377;1500 + 18% GST
-            </button>
-          </div>
-        )}
-
-        {/* ── SECTION 2: GREETING ── */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#141b2d] tracking-tight leading-tight">
-              Hey, {firstName}
-            </h1>
-            <p className="text-[#DC2626] font-bold text-sm uppercase tracking-[0.15em] mt-2 font-heading-now">WHAT&apos;S YOUR NEXT MOVE?</p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowFAQ(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-gray-200 bg-white text-[#141b2d] text-sm font-semibold hover:border-[#D4AF37] hover:text-[#B8952E] transition-all"
-            >
-              <MessageCircle className="w-4 h-4" />
-              Got Questions ?
-            </button>
-            <button
-              onClick={() => setShowIntroVideo(true)}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#141b2d] text-white text-sm font-semibold hover:bg-[#1a2240] transition-colors"
-            >
-              <Play className="w-4 h-4" />
-              Click Me First
-            </button>
-          </div>
-        </div>
-
-        {/* ── SECTION 3: QUICK ACTION CARDS ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-          <Link href="/student/modules" className="group">
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
-                <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
-              </div>
-              <div>
-                <h3 className="font-bold text-[#141b2d] text-[15px]">Learn something new</h3>
-                <p className="text-gray-400 text-xs mt-0.5">{sortedModules.length} modules waiting</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-300 ml-auto group-hover:text-[#D4AF37] transition-colors" />
-            </div>
+            <span className="text-[#E5C872] font-extrabold tracking-tight text-[15px] hidden sm:block">YOUNGPRENEURS</span>
           </Link>
-          <Link href="/student/submission" className="group">
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
-                <img src="/bulbrocket.png" alt="" className="w-7 h-7 object-contain" />
-              </div>
-              <div>
-                <h3 className="font-bold text-[#141b2d] text-[15px]">Build an Idea</h3>
-                <p className="text-gray-400 text-xs mt-0.5">submit your first submission</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-300 ml-auto group-hover:text-[#D4AF37] transition-colors" />
-            </div>
-          </Link>
-          <Link href="/student/innovation-club" className="group">
-            <div className="bg-white border border-gray-100 rounded-2xl p-5 flex items-center gap-4 hover:shadow-lg hover:border-[#D4AF37]/30 transition-all cursor-pointer">
-              <div className="w-12 h-12 rounded-xl bg-[#141b2d]/[0.06] flex items-center justify-center flex-shrink-0">
-                <img src="/compass.png" alt="" className="w-7 h-7 object-contain" />
-              </div>
-              <div>
-                <h3 className="font-bold text-[#141b2d] text-[15px]">Explore the Club</h3>
-                <p className="text-gray-400 text-xs mt-0.5">Mentors & community</p>
-              </div>
-              <ChevronRight className="w-5 h-5 text-gray-300 ml-auto group-hover:text-[#D4AF37] transition-colors" />
-            </div>
-          </Link>
-        </div>
 
-        {/* ── SECTION 4: SUCCESS STORIES + MY TITAN JOURNEY ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-10">
-          <div className="lg:col-span-3 bg-[#141b2d] rounded-3xl p-6 sm:p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/10 blur-[120px] rounded-full pointer-events-none" />
-            <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em] mb-4">Success Stories</p>
-            <h2 className="text-white text-2xl sm:text-3xl font-extrabold leading-tight mb-2">
-              This is What Starting<br />Young Looks Like
-            </h2>
-            <p className="text-gray-400 text-sm mb-5">Meet the youngpreneurs who turned<br className="hidden sm:block" />their ideas into something real</p>
-
-            <YouTubeEmbed id={YT_STARTING_YOUNG} title="This is What Starting Young Looks Like" className="shadow-2xl mb-5" />
-
-            {/* Success Story Video Thumbnails */}
-            <div className="grid grid-cols-3 gap-3">
-              {SUCCESS_STORIES.map((story, i) => (
-                <StoryThumbnail key={i} story={story} />
-              ))}
-            </div>
-          </div>
-
-          {/* My Titan Journey */}
-          <div className="lg:col-span-2 bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex flex-col">
-            <div className="flex items-center gap-2 mb-5">
-              <Star className="w-5 h-5 text-[#D4AF37]" />
-              <h3 className="font-bold text-[#141b2d] text-lg">My Titan Journey</h3>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 mb-5">
-              <div className="bg-[#F0F2F5] rounded-xl p-3 text-center">
-                <p className="text-2xl font-extrabold text-[#141b2d]">{Math.round(ssiScore)}</p>
-                <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">SSI</p>
-              </div>
-              <div className="bg-[#F0F2F5] rounded-xl p-3 text-center">
-                <p className="text-2xl font-extrabold text-[#141b2d]">{totalTimeMinutes > 0 ? `${(totalTimeMinutes / 60).toFixed(1)}h` : '0.0h'}</p>
-                <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">Time</p>
-              </div>
-              <div className="bg-[#F0F2F5] rounded-xl p-3 text-center">
-                <p className="text-2xl font-extrabold text-[#141b2d]">{overallProgress}%</p>
-                <p className="text-[10px] text-gray-400 font-medium uppercase mt-1">Done</p>
-              </div>
-            </div>
-
-            <div className="space-y-2.5 mb-5">
-              {[
-                { label: 'Self-Awareness', key: 'selfAwareness' },
-                { label: 'Understanding', key: 'understanding' },
-                { label: 'Resilience', key: 'resilience' },
-                { label: 'Growth', key: 'growth' },
-                { label: 'E. Leadership', key: 'entrepreneurialLeadership' },
-              ].map((dim) => {
-                const val = profile?.ssiBreakdown?.[dim.key] || ssiData?.breakdown?.[dim.key] || 0;
-                return (
-                  <div key={dim.key} className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400 w-24 flex-shrink-0">{dim.label}</span>
-                    <div className="flex-1 bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                      <div className="h-full bg-[#D4AF37] rounded-full transition-all duration-700" style={{ width: `${val}%` }} />
-                    </div>
-                    <span className="text-xs font-semibold text-[#141b2d] w-8 text-right">{Math.round(val)}</span>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="border-t border-gray-100 pt-4 mb-4">
-              <p className="text-sm font-bold text-[#141b2d] mb-3">Recent Activity</p>
-              {sortedModules.some(m => (m.userProgress?.completionPercentage || 0) > 0) ? (
-                <div className="space-y-2">
-                  {sortedModules.filter(m => (m.userProgress?.completionPercentage || 0) > 0).slice(0, 3).map((m, i) => (
-                    <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
-                      <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-                      <span className="truncate">{m.title} - {m.userProgress?.completionPercentage || 0}%</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-xs text-gray-400">No activity yet. Start learning!</p>
-              )}
-            </div>
-
-            <div className="border-t border-gray-100 pt-4 mb-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Flame className="w-4 h-4 text-orange-400" />
-                <p className="text-sm font-bold text-[#141b2d]">Learning Streak</p>
-              </div>
-              <p className="text-xs text-gray-400">Complete a module to start your streak</p>
-            </div>
-
-            <div className="mt-auto pt-3">
+          <nav className="hidden lg:flex items-center gap-1">
+            {navTabs.map((t) => (
               <Link
-                href="/student/profile"
-                className="flex items-center justify-center gap-2 w-full py-3 bg-[#141b2d] text-white rounded-xl font-semibold text-sm hover:bg-[#1a2240] transition-colors"
+                key={t.label}
+                href={t.href}
+                className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-colors ${
+                  t.active
+                    ? 'bg-[#E5C872] text-[#0E2A1B]'
+                    : 'text-[#C4D2C8] hover:text-white hover:bg-white/10'
+                }`}
               >
-                View Full Journey <ArrowRight className="w-4 h-4" />
+                {t.label}
               </Link>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="hidden md:flex flex-col items-end leading-tight pr-3 border-r border-white/15">
+              <span className="text-[9px] uppercase tracking-widest text-[#8FA596] font-semibold">Knowledge Partner</span>
+              <span className="text-[12px] text-white font-bold">IIT Kharagpur</span>
+            </div>
+            <div className="flex items-center gap-2 bg-[#E5C872] rounded-full pl-1 pr-3 py-1">
+              <div className="w-7 h-7 rounded-full bg-[#0E2A1B] text-[#E5C872] flex items-center justify-center text-xs font-bold">
+                {firstName.charAt(0).toUpperCase()}
+              </div>
+              <span className="text-[13px] font-bold text-[#0E2A1B] max-w-[120px] truncate">{fullName}</span>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* ── SECTION 5: LEARN ── */}
-        <section className="mb-10">
-          <div className="flex items-center gap-3 mb-2">
-            <img src="/compass.png" alt="" className="w-8 h-8 object-contain drop-shadow-md" />
-            <h2 className="text-3xl font-extrabold text-[#141b2d]">Learn</h2>
-          </div>
-          <p className="text-gray-400 text-sm mb-6 ml-11">Three modules: from founder mindset to launch.</p>
+      {/* ── BODY with numbered rail ── */}
+      <div className="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
+        <div className="relative md:pl-[68px]">
+          {/* the dashed rail line */}
+          <div className="hidden md:block absolute left-[16px] top-3 bottom-3 border-l-2 border-dashed border-[#0E2A1B]/15" />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {sortedModules.map((module, index) => {
-              const isDone = (module.userProgress?.completionPercentage || 0) >= 100;
-              const progress = module.userProgress?.completionPercentage || 0;
-              const chaptersCount = module.chapters?.length || 0;
-              const completedChapters = module.userProgress?.completedChapters?.length || 0;
-              const lockedChapters = chaptersCount - completedChapters;
-              const coverImg = module.coverImage || MODULE_IMAGES[index] || MODULE_IMAGES[0];
-              const hasStarted = progress > 0;
+          <div className="space-y-8 sm:space-y-10">
 
-              return (
-                <div key={module._id} className="relative group">
-                  <div className={`bg-white rounded-3xl overflow-hidden border-2 transition-all duration-300 h-full flex flex-col
-                    ${isDone ? 'border-green-300 shadow-lg' : 'border-gray-100 shadow-sm hover:shadow-xl hover:border-[#D4AF37]/30'}`}>
+            {/* ── 01 · GREETING + SSI ── */}
+            <RailSection n="01">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div className="lg:col-span-2 flex flex-col justify-center">
+                  <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.05] text-[#0E2A1B]">
+                    Hey, <span className="text-[#2E7D46]">{firstName}</span>
+                  </h1>
+                  <p className="text-[#5B6B60] text-base mt-3">What&apos;s your next move?</p>
+                  <div className="flex flex-wrap items-center gap-3 mt-5">
+                    <button
+                      onClick={() => setShowIntroVideo(true)}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0E2A1B] text-[#E5C872] text-sm font-semibold hover:bg-[#123420] transition-colors"
+                    >
+                      <Play className="w-4 h-4" /> Click Me First
+                    </button>
+                    <button
+                      onClick={() => setShowFAQ(true)}
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#0E2A1B]/15 bg-white text-[#0E2A1B] text-sm font-semibold hover:border-[#D4AF37] transition-all"
+                    >
+                      <MessageCircle className="w-4 h-4" /> Got Questions?
+                    </button>
+                  </div>
+                </div>
 
-                    {!isUserPaid && (
-                      <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-20 flex items-center justify-center rounded-3xl">
-                        <div className="bg-white p-4 rounded-full shadow-xl text-[#B8952E] flex flex-col items-center">
-                          <Lock className="w-8 h-8 mb-1" />
-                          <span className="text-xs font-bold uppercase tracking-widest">Locked</span>
+                {/* SSI Score card */}
+                <div className="relative bg-[linear-gradient(150deg,#123420,#0A1E13)] rounded-2xl p-5 flex items-center gap-4 overflow-hidden border border-[#E5C872]/15">
+                  <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#E5C872]/10 blur-[60px] rounded-full pointer-events-none" />
+                  <div className="relative z-10">
+                    <p className="text-[#E5C872] text-[10px] font-bold uppercase tracking-[0.18em]">Your SSI Score</p>
+                    <p className="text-[#9FB5A6] text-xs mt-1.5 leading-snug max-w-[150px]">SSI adds up module progress, badges and Zunnova points.</p>
+                  </div>
+                  <div className="relative w-24 h-24 flex-shrink-0 ml-auto">
+                    <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(229,200,114,0.15)" strokeWidth="8" />
+                      <circle
+                        cx="50" cy="50" r="42" fill="none" stroke="#E5C872" strokeWidth="8" strokeLinecap="round"
+                        strokeDasharray={ssiCirc}
+                        strokeDashoffset={ssiCirc * (1 - ssiPct / 100)}
+                        style={{ transition: 'stroke-dashoffset 1s ease' }}
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="text-2xl font-extrabold text-white leading-none">{Math.round(ssiScore)}</span>
+                      <span className="text-[9px] text-[#E5C872] uppercase tracking-widest mt-0.5">Points</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </RailSection>
+
+            {/* ── 02 · UNLOCK FULL ACCESS ── */}
+            {!isUserPaid && (
+              <RailSection n="02">
+                <div className="bg-[linear-gradient(120deg,#123420,#0A1E13)] rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-[#E5C872]/20 shadow-lg relative overflow-hidden">
+                  <div className="absolute top-0 right-1/3 w-52 h-52 bg-[#E5C872]/10 blur-[80px] rounded-full pointer-events-none" />
+                  <div className="flex items-start gap-3 relative z-10">
+                    <div className="hex w-9 h-9 bg-[#E5C872]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Zap className="w-4 h-4 text-[#E5C872]" />
+                    </div>
+                    <div>
+                      <h3 className="text-white font-bold text-base">Unlock Full Access</h3>
+                      <p className="text-[#9FB5A6] text-sm mt-0.5 max-w-xl">All 3 modules, unlimited Zunnova AI, IIT mentorship and the Innovation Club — everything below is waiting for you.</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={handlePayment}
+                    className="relative z-10 bg-[#E5C872] text-[#0E2A1B] px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#D4AF37] transition-colors flex-shrink-0 shadow-[0_8px_24px_rgba(229,200,114,0.25)]"
+                  >
+                    Pay &#8377;1500 + 18% GST
+                  </button>
+                </div>
+              </RailSection>
+            )}
+
+            {/* ── 03 · QUICK ACTION CARDS ── */}
+            <RailSection n="03">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {[
+                  { href: '/student/modules', step: '01', tag: `${totalModules} modules waiting`, icon: GraduationCap, title: 'Learn something new', desc: 'Three modules, from founder mindset to launch.' },
+                  { href: '/student/submission', step: '02', tag: 'Unlocks after module 1', icon: Rocket, title: 'Build an idea', desc: 'Turn what you learn into a real submission.' },
+                  { href: '/student/innovation-club', step: '03', tag: 'Mentors & community', icon: Compass, title: 'Explore the Club', desc: 'Mentorship, incubation and the wider Youngpreneurs community.' },
+                ].map((c) => {
+                  const Icon = c.icon;
+                  return (
+                    <Link key={c.step} href={c.href} className="group">
+                      <div className="bg-white border border-[#E7E3D6] rounded-2xl p-5 h-full flex flex-col hover:shadow-lg hover:border-[#D4AF37]/40 transition-all">
+                        <div className="flex items-center justify-between mb-4">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8952E] flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-md bg-[#FBF3DA] text-[#B8952E] flex items-center justify-center text-[10px] tabular-nums">{c.step}</span>
+                            {c.tag}
+                          </span>
                         </div>
-                      </div>
-                    )}
-
-                    <div className="w-full h-48 bg-[#141b2d] relative overflow-hidden flex items-center justify-center">
-                      <img src={coverImg} alt={module.title} className="w-full h-full object-cover" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#141b2d]/70 via-transparent to-transparent" />
-                      <div className="absolute top-3 left-3">
-                        <span className="text-[10px] px-3 py-1 rounded-full uppercase tracking-wider font-bold bg-white/90 text-[#141b2d] shadow-sm">
-                          Module {String(index + 1).padStart(2, '0')}
+                        <div className="hex w-11 h-11 bg-[#0E2A1B] flex items-center justify-center mb-4">
+                          <Icon className="w-5 h-5 text-[#E5C872]" />
+                        </div>
+                        <h3 className="font-extrabold text-[#0E2A1B] text-[16px] mb-1">{c.title}</h3>
+                        <p className="text-[#8A9A8E] text-[13px] leading-snug mb-4">{c.desc}</p>
+                        <span className="mt-auto inline-flex w-8 h-8 rounded-full bg-[#F3F1E9] group-hover:bg-[#E5C872] items-center justify-center transition-colors">
+                          <ArrowRight className="w-4 h-4 text-[#0E2A1B]" />
                         </span>
                       </div>
-                      {isDone && (
-                        <div className="absolute top-3 right-3">
-                          <span className="text-[10px] px-3 py-1 rounded-full font-bold bg-green-500 text-white shadow-sm">100%</span>
-                        </div>
-                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </RailSection>
+
+            {/* ── 04 · MY TITAN JOURNEY ── */}
+            <RailSection n="04">
+              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-6 sm:p-8 border border-[#E5C872]/15 relative overflow-hidden">
+                <div className="absolute -top-10 right-10 w-64 h-64 bg-[#E5C872]/8 blur-[100px] rounded-full pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-2.5">
+                      <Star className="w-5 h-5 text-[#E5C872]" fill="currentColor" />
+                      <h3 className="font-extrabold text-white text-lg">My Titan Journey</h3>
                     </div>
+                    <Link href="/student/profile" className="text-[13px] text-[#E5C872] font-semibold flex items-center gap-1 hover:gap-2 transition-all">
+                      View Details <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
 
-                    <div className="p-5 flex flex-col flex-1">
-                      <h3 className="font-extrabold text-lg text-[#141b2d] mb-1 line-clamp-2">{module.title}</h3>
-                      <p className="text-gray-400 text-sm line-clamp-2 mb-4">{module.description}</p>
+                  {/* progress path */}
+                  <p className="text-[#9FB5A6] text-[11px] font-bold uppercase tracking-widest mb-1">Modules</p>
+                  <p className="text-white text-3xl font-extrabold mb-5">{overallProgress}%</p>
+                  <div className="relative mb-8">
+                    <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-[#E5C872] rounded-full transition-all duration-700" style={{ width: `${overallProgress}%` }} />
+                    </div>
+                    <div className="flex justify-between mt-3">
+                      {Array.from({ length: Math.min(3, totalModules) }).map((_, i) => {
+                        const mod = sortedModules[i];
+                        const done = (mod?.userProgress?.completionPercentage || 0) >= 100;
+                        const started = (mod?.userProgress?.completionPercentage || 0) > 0;
+                        return (
+                          <div key={i} className="flex flex-col items-center gap-1.5">
+                            <div className={`w-9 h-9 hex flex items-center justify-center text-xs font-bold ${done ? 'bg-[#E5C872] text-[#0E2A1B]' : started ? 'bg-[#E5C872]/30 text-[#E5C872]' : 'bg-white/10 text-[#9FB5A6]'}`}>
+                              {String(i + 1).padStart(2, '0')}
+                            </div>
+                            <span className="text-[10px] text-[#9FB5A6] max-w-[90px] text-center truncate">{mod?.title || `Module ${i + 1}`}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
 
-                      <div className="flex items-center gap-3 text-xs text-gray-400 mb-4 mt-auto">
-                        <span>{chaptersCount} chapters</span>
-                        <span className="w-1 h-1 bg-gray-300 rounded-full" />
-                        <span>{lockedChapters > 0 ? `${lockedChapters} locked` : 'All unlocked'}</span>
+                  {/* stats row */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+                    {[
+                      { val: totalTimeMinutes > 0 ? `${(totalTimeMinutes / 60).toFixed(1)}h` : '0.0h', label: 'Time Tracked', gold: false },
+                      { val: `${completedModules}/${totalModules}`, label: 'Modules', gold: false },
+                      { val: `${completedModules}/${totalModules}`, label: 'Milestones', gold: false },
+                      { val: badgesEarned, label: 'Badges', gold: true },
+                    ].map((s, i) => (
+                      <div key={i} className={`rounded-xl p-4 ${s.gold ? 'bg-[#E5C872]/15 border border-[#E5C872]/30' : 'bg-white/[0.04] border border-white/5'}`}>
+                        <p className={`text-2xl font-extrabold ${s.gold ? 'text-[#E5C872]' : 'text-white'}`}>{s.val}</p>
+                        <p className="text-[10px] text-[#9FB5A6] font-medium uppercase tracking-wide mt-1">{s.label}</p>
                       </div>
+                    ))}
+                  </div>
 
-                      <div className="mb-4">
-                        <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
-                          <div
-                            className={`h-1.5 rounded-full transition-all duration-700 ${isDone ? 'bg-green-500' : 'bg-gradient-to-r from-[#D4AF37] to-[#F5D76E]'}`}
-                            style={{ width: `${progress}%` }}
-                          />
-                        </div>
-                      </div>
-
-                      {isUserPaid ? (
-                        <Link
-                          href={`/student/modules`}
-                          className={`w-full py-2.5 rounded-xl flex items-center justify-center gap-2 font-bold text-sm transition-all
-                            ${isDone
-                              ? 'bg-green-50 border border-green-200 text-green-700 hover:bg-green-100'
-                              : hasStarted
-                                ? 'bg-gradient-to-r from-[#D4AF37] to-[#B8952E] text-white hover:shadow-gold'
-                                : 'bg-[#141b2d] text-white hover:bg-[#1a2240]'
-                            }`}
-                        >
-                          {isDone ? (
-                            <><CheckCircle className="w-4 h-4" /> Completed</>
-                          ) : hasStarted ? (
-                            <><Zap className="w-4 h-4" /> Continue</>
-                          ) : (
-                            <><Play className="w-3.5 h-3.5" /> Start Learning</>
+                  {/* recent activity table */}
+                  <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4 mb-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-sm font-bold text-white">Recent Activity</p>
+                      <Link href="/student/modules" className="text-[11px] text-[#E5C872] font-semibold uppercase tracking-wide">View All</Link>
+                    </div>
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left min-w-[420px]">
+                        <thead>
+                          <tr className="text-[10px] uppercase tracking-wider text-[#8FA596]">
+                            <th className="font-semibold pb-2">Lesson</th>
+                            <th className="font-semibold pb-2">Time</th>
+                            <th className="font-semibold pb-2">Status</th>
+                            <th className="font-semibold pb-2 text-right">Points</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {activityRows.length > 0 ? activityRows.map((r, i) => (
+                            <tr key={i} className="border-t border-white/5">
+                              <td className="py-2.5 text-[13px] text-white font-medium truncate max-w-[180px]">{r.lesson}</td>
+                              <td className="py-2.5 text-[12px] text-[#9FB5A6]">{r.time}</td>
+                              <td className="py-2.5">
+                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${r.done ? 'bg-[#E5C872]/20 text-[#E5C872]' : 'bg-white/10 text-[#9FB5A6]'}`}>{r.done ? 'Done' : 'New'}</span>
+                              </td>
+                              <td className="py-2.5 text-[13px] text-[#E5C872] font-bold text-right">{r.points}</td>
+                            </tr>
+                          )) : (
+                            <tr className="border-t border-white/5">
+                              <td colSpan="4" className="py-4 text-[13px] text-[#8FA596] text-center">No activity yet — start a module to begin your journey.</td>
+                            </tr>
                           )}
-                        </Link>
-                      ) : (
-                        <button onClick={handlePayment} className="w-full py-2.5 rounded-xl flex items-center justify-center gap-2 font-bold text-sm bg-gray-100 text-gray-400 cursor-pointer hover:bg-gray-200 transition-colors">
-                          <Lock className="w-3.5 h-3.5" /> Unlock to Access
-                        </button>
-                      )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* learning streak + badges */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Flame className="w-4 h-4 text-[#E5936B]" />
+                        <p className="text-sm font-bold text-white">Learning Streak</p>
+                      </div>
+                      <p className="text-[13px] text-[#9FB5A6]"><span className="text-white font-bold">0 Days.</span> Keep going! Consistency is the key to success.</p>
+                    </div>
+                    <div className="bg-white/[0.03] border border-white/5 rounded-xl p-4">
+                      <p className="text-sm font-bold text-white mb-3">Badges</p>
+                      <div className="flex items-center gap-2.5">
+                        {badges.map((b, i) => {
+                          const unlocked = isBadgeUnlocked(b);
+                          return (
+                            <div key={i} title={b.name} className={`w-8 h-8 hex flex items-center justify-center ${unlocked ? 'bg-[#E5C872]' : 'bg-white/8'}`}>
+                              {unlocked ? <Star className="w-3.5 h-3.5 text-[#0E2A1B]" fill="currentColor" /> : <Lock className="w-3 h-3 text-[#8FA596]" />}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* ── SECTION 6: BUILD AN IDEA ── */}
-        <section className="mb-10 sm:pl-2 pt-4">
-          <div className="mb-6">
-            <h2 className="text-3xl font-extrabold text-[#141b2d] mb-1">Build an Idea</h2>
-            <p className="text-gray-400 text-sm">Turn what you learn into a real submission.</p>
-          </div>
-
-          <div className="bg-white rounded-[24px] sm:rounded-[32px] p-6 sm:p-7 border border-gray-100 shadow-sm relative flex flex-col sm:flex-row items-center justify-between gap-6 ml-6 sm:ml-16 mt-8">
-            {/* The 3D image protruding left */}
-            <div className="absolute -left-10 sm:-left-[76px] top-1/2 -translate-y-1/2 w-[100px] h-[100px] sm:w-[130px] sm:h-[130px] drop-shadow-xl z-10 pointer-events-none">
-              <img src="/bulbrocket.png" alt="Idea" className="w-full h-full object-contain" />
-            </div>
-
-            {/* Left Content */}
-            <div className="pl-16 sm:pl-20 flex-1 w-full relative z-20">
-              <p className="text-[10px] text-[#B8952E] font-extrabold uppercase tracking-widest mb-1.5">Innovation Submission</p>
-              <h3 className="font-extrabold text-[#141b2d] text-xl mb-1.5">Submit Your Idea</h3>
-              <p className="text-gray-400 text-sm mb-4">
-                {canSubmitIdea
-                  ? 'You have completed a module. Submit your idea now!'
-                  : 'Complete at least one module to unlock idea submission.'}
-              </p>
-
-              <div className="flex items-center gap-3">
-                <div className="w-16 sm:w-20 h-[2px] bg-gray-200 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#D4AF37] rounded-full transition-all duration-500" style={{ width: `${completedModules > 0 ? 100 : 0}%` }} />
-                </div>
-                <span className="text-gray-400 text-[11px] sm:text-xs font-medium">{completedModules > 0 ? 1 : 0} of 1 modules complete</span>
               </div>
-            </div>
+            </RailSection>
 
-            {/* Right Action */}
-            <div className="flex flex-col items-center sm:items-end gap-2.5 w-full sm:w-auto mt-2 sm:mt-0 relative z-20">
-              {canSubmitIdea ? (
-                <Link href="/student/submission" className="px-7 py-2.5 bg-[#141b2d] text-[#e5c872] rounded-full text-sm font-bold shadow-lg hover:shadow-xl hover:bg-[#1a2240] transition-all whitespace-nowrap w-full sm:w-auto text-center">
-                  Submit Now
-                </Link>
-              ) : (
-                <div className="px-6 py-2.5 bg-[#FFF0F0] text-[#DC2626] border border-[#FFE4E4] rounded-full flex items-center justify-center gap-2 whitespace-nowrap w-full sm:w-auto shadow-sm">
-                  <Lock className="w-3.5 h-3.5 text-[#DC2626]" />
-                  <span className="text-sm font-bold">Locked</span>
+            {/* ── 05 · FROM CAMPUS IDEA TO REAL IMPACT ── */}
+            <RailSection n="05">
+              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-6 sm:p-8 border border-[#E5C872]/15 relative overflow-hidden">
+                <div className="absolute -top-8 -right-8 w-64 h-64 bg-[#E5C872]/8 blur-[90px] rounded-full pointer-events-none" />
+                <div className="relative z-10">
+                  <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-[0.2em] mb-3">Success Stories</p>
+                  <h2 className="text-white text-2xl sm:text-3xl font-extrabold leading-tight mb-2">From Campus Idea<br />to Real Impact</h2>
+                  <p className="text-[#9FB5A6] text-sm mb-6 max-w-md">See how youngpreneurs turned ideas into impactful ventures and inspired others.</p>
+                  <YouTubeEmbed id={YT_STARTING_YOUNG} title="From Campus Idea to Real Impact" className="shadow-2xl" />
                 </div>
-              )}
+              </div>
+            </RailSection>
 
-              {!canSubmitIdea && (
-                <Link href="/student/modules" className="text-xs text-[#B8952E] font-bold hover:underline whitespace-nowrap flex items-center gap-1 transition-colors hover:text-[#9c7a21]">
-                  Start The Founder&apos;s Mindset &rarr;
-                </Link>
-              )}
-            </div>
-          </div>
-        </section>
-
-        {/* ── SECTION 7: INNOVATION CLUB ── */}
-        <section className="mb-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-full bg-[#D4AF37]/15 flex items-center justify-center">
-              <Star className="w-4 h-4 text-[#D4AF37]" />
-            </div>
-            <h2 className="text-3xl font-extrabold text-[#141b2d]">Innovation Club</h2>
-          </div>
-          <p className="text-gray-400 text-sm mb-6 ml-11">Mentorship, incubation and the wider Youngpreneurs community.</p>
-
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-gray-100 shadow-sm">
-            <span className="inline-block px-4 py-1.5 bg-[#141b2d] text-white rounded-full text-xs font-bold uppercase tracking-wider mb-6">
-              Mentorship & Incubation
-            </span>
-
-            <YouTubeEmbed id={YT_INCUBATION} title="Incubation" className="shadow-lg mb-6" />
-
-            <h3 className="font-bold text-[#141b2d] text-xl mb-4">Incubated and mentored by IIT mentors</h3>
-            <div className="space-y-3 mb-6">
-              {[
-                'One-on-one incubation sessions',
-                'Idea, business model and pitch reviews',
-                'Direct access through the Innovation Club',
-              ].map((item, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-5 h-5 rounded-full bg-[#D4AF37]/15 flex items-center justify-center flex-shrink-0">
-                    <CheckCircle className="w-3 h-3 text-[#D4AF37]" />
-                  </div>
-                  <p className="text-gray-500 text-sm">{item}</p>
+            {/* ── 06 · THIS IS WHAT STARTING YOUNG LOOKS LIKE ── */}
+            <RailSection n="06">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">This is what starting Young looks like</h2>
+                <div className="hidden sm:flex items-center gap-2">
+                  <span className="w-8 h-8 rounded-full border border-[#0E2A1B]/15 flex items-center justify-center text-[#0E2A1B]"><ChevronRight className="w-4 h-4 rotate-180" /></span>
+                  <span className="w-8 h-8 rounded-full border border-[#0E2A1B]/15 flex items-center justify-center text-[#0E2A1B]"><ChevronRight className="w-4 h-4" /></span>
                 </div>
-              ))}
-            </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {SUCCESS_STORIES.map((story, i) => (
+                  <StoryThumbnail key={i} story={story} />
+                ))}
+              </div>
+            </RailSection>
 
-            {!isUserPaid ? (
-              <button onClick={handlePayment} className="px-6 py-3 bg-[#DC2626] text-white rounded-xl font-bold text-sm hover:bg-[#b91c1c] transition-colors">
-                Get mentored &rarr; join full access
-              </button>
-            ) : (
-              <Link href="/student/innovation-club" className="inline-flex px-6 py-3 bg-[#D4AF37] text-white rounded-xl font-bold text-sm hover:bg-[#B8952E] transition-colors items-center gap-2">
-                Enter Innovation Club <ArrowRight className="w-4 h-4" />
-              </Link>
-            )}
-          </div>
-        </section>
-
-        {/* ── SECTION 8: SNEAK PEEK ── */}
-        <section className="mb-10">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">Sneak Peek</p>
-            <span className="px-3 py-1 bg-[#DC2626] text-white rounded-full text-[10px] font-bold uppercase tracking-wider">Members Only</span>
-          </div>
-          <div className="bg-[#141b2d] rounded-3xl p-4 sm:p-6 overflow-hidden">
-            <YouTubeEmbed id={YT_SNEAK_PEEK} title="Sneak Peek" className="shadow-2xl" />
-          </div>
-        </section>
-
-        {/* ── SECTION 9 + 10: ZUNNOVA AI + AI CO-FOUNDER ── */}
-        <section className="mb-10">
-          {/* Dark top section */}
-          <div className="bg-gradient-to-br from-[#141b2d] to-[#1a2240] rounded-t-3xl p-6 sm:p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-[#D4AF37]/10 blur-[150px] rounded-full pointer-events-none" />
-            <div className="relative z-10 lg:w-[55%]">
-              <div className="pt-4 pb-8">
-                <p className="text-[#D4AF37] text-xs font-bold uppercase tracking-[0.2em] mb-3">Zunnova AI &middot; Our Own AI</p>
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">Watch what Zunnova can do for your startup</h2>
-                <p className="text-gray-400 text-sm leading-relaxed mb-6">
-                  A 2-minute look at Zunnova building pitch decks, business plans and market research on command. Full members get unlimited word balance.
+            {/* ── 07 · INNOVATION ECOSYSTEM ── */}
+            <RailSection n="07">
+              <div className="mb-4">
+                <p className="text-[#B8952E] text-[11px] font-bold uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5">
+                  <Hexagon className="w-3.5 h-3.5" fill="currentColor" /> Innovation Club
                 </p>
-                {!isUserPaid ? (
-                  <button onClick={handlePayment} className="px-6 py-3 bg-[#D4AF37] text-white rounded-full font-bold text-sm hover:bg-[#B8952E] transition-colors shadow-gold">
-                    Unlock Zunnova AI &rarr;
-                  </button>
-                ) : (
-                  <Link href="/student/modules" className="inline-flex px-6 py-3 bg-[#D4AF37] text-white rounded-full font-bold text-sm hover:bg-[#B8952E] transition-colors shadow-gold items-center gap-2">
-                    Chat with Zunnova <ArrowRight className="w-4 h-4" />
-                  </Link>
-                )}
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">From Idea to Venture — The Innovation Ecosystem</h2>
+                <p className="text-[#8A9A8E] text-sm mt-2 max-w-2xl">The Club is where the learning turns into a venture — mentor circles, live builds and a cohort that ships alongside you.</p>
               </div>
-            </div>
-          </div>
-
-          {/* Word Balance Bar */}
-          <div className="relative z-20 mx-4 sm:mx-8 -mt-6">
-            <div className="bg-white rounded-2xl p-4 shadow-xl border border-gray-100">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/15 flex items-center justify-center">
-                    <MessageCircle className="w-5 h-5 text-[#D4AF37]" />
-                  </div>
-                  <div>
-                    <span className="font-bold text-[#141b2d] text-sm">Zunnova AI</span>
-                    <p className="text-[10px] text-[#D4AF37] font-bold uppercase tracking-wider">Word Balance</p>
-                  </div>
-                  <span className="text-[#141b2d] font-extrabold text-3xl ml-4">{totalWords.toLocaleString()}</span>
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+                <div className="lg:col-span-3 bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-5 border border-[#E5C872]/15 relative">
+                  <span className="absolute top-4 right-4 z-10 px-3 py-1 bg-[#E5C872] text-[#0E2A1B] rounded-full text-[10px] font-bold uppercase tracking-wider">2 min tour</span>
+                  <YouTubeEmbed id={YT_INCUBATION} title="Innovation Club tour" className="shadow-lg" />
+                  <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-widest mt-4">Innovation Club · The Tour</p>
+                  <h3 className="text-white font-bold text-lg mt-1">See what a week in the Club looks like</h3>
+                  <p className="text-[#9FB5A6] text-sm mt-1">Mentor circles, build sessions and demo day — filmed inside the last cohort.</p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs text-gray-400">{wordPercent}% asks left on free plan</span>
-                  <Link href="/student/modules" className="px-4 py-2 bg-[#141b2d] text-white rounded-lg text-xs font-bold hover:bg-[#1a2240] transition-colors">
-                    View Packages
-                  </Link>
-                </div>
-              </div>
-              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#D4AF37] to-[#F5D76E] rounded-full transition-all duration-700" style={{ width: `${wordPercent}%` }} />
-              </div>
-            </div>
-          </div>
-
-          {/* AI CO-FOUNDER section - character centered and massive */}
-          <div className="bg-gradient-to-b from-[#E4E8F0] to-[#F0F2F5] rounded-b-3xl relative overflow-visible pb-8 sm:pb-12">
-            <div className="relative z-30 flex justify-center pointer-events-none">
-              <img
-                src="/AIcofounderzunnva.png"
-                alt="Zunnova AI Co-Founder"
-                className="w-[420px] sm:w-[550px] md:w-[650px] lg:w-[780px] xl:w-[880px] h-auto object-contain drop-shadow-2xl -mt-20 sm:-mt-28 md:-mt-36 lg:-mt-44"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* ── SECTION 11: CATCH ZUNNOVA GAME ── */}
-        <section className="mb-10">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-[#0F172A] rounded-[32px] p-6 sm:p-8 shadow-xl relative overflow-hidden flex flex-col border border-white/5">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E5C872] mb-2">Mini Game</p>
-
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Catch Zunnova</h3>
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="px-4 py-2 bg-transparent rounded-full border border-white/20 text-xs font-bold text-red-400">
-                    {gameState === 'playing' ? `0:${gameTimeLeft.toString().padStart(2, '0')}` : '0:20'}
-                  </span>
-                  <span className="px-4 py-2 bg-transparent rounded-full border border-white/20 text-xs font-medium text-white">
-                    Caught {catches}
-                  </span>
-                  <span className="px-4 py-2 bg-transparent rounded-full border border-white/20 text-xs font-medium text-white">
-                    {gameScore} pts
-                  </span>
-                  {gameState !== 'playing' && (
-                    <button
-                      onClick={startGame}
-                      className="px-6 py-2 bg-[#E5C872] text-[#141b2d] rounded-full text-xs font-bold hover:bg-[#D4AF37] transition-all shadow-[0_0_15px_rgba(229,200,114,0.2)]"
-                    >
-                      {gameState === 'ended' ? 'Play Again' : 'Start'}
+                <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-[#E7E3D6] flex flex-col">
+                  <h3 className="font-extrabold text-[#0E2A1B] text-lg mb-4">What you get inside</h3>
+                  <div className="space-y-3 flex-1">
+                    {[
+                      { n: '01', t: 'Webinar', d: 'Sessions with IIT mentors and working founders.' },
+                      { n: '02', t: 'Inter-School Hackathons', d: '' },
+                      { n: '03', t: 'Innovation Library', d: '' },
+                      { n: '04', t: 'Live Q&A', d: '' },
+                    ].map((item) => (
+                      <div key={item.n} className="flex items-start gap-3">
+                        <span className="w-6 h-6 rounded-md bg-[#FBF3DA] text-[#B8952E] flex items-center justify-center text-[10px] font-bold flex-shrink-0 tabular-nums">{item.n}</span>
+                        <div>
+                          <p className="text-[#0E2A1B] font-bold text-sm">{item.t}</p>
+                          {item.d && <p className="text-[#8A9A8E] text-xs mt-0.5">{item.d}</p>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-[11px] text-[#8A9A8E] flex items-center gap-1.5 mt-4 mb-4">
+                    <CheckCircle className="w-3.5 h-3.5 text-[#2E7D46]" /> Included with full access
+                  </p>
+                  {!isUserPaid ? (
+                    <button onClick={handlePayment} className="w-full py-3 bg-[#0E2A1B] text-[#E5C872] rounded-xl font-bold text-sm hover:bg-[#123420] transition-colors flex items-center justify-center gap-2">
+                      Explore the Club <ArrowRight className="w-4 h-4" />
                     </button>
+                  ) : (
+                    <Link href="/student/innovation-club" className="w-full py-3 bg-[#0E2A1B] text-[#E5C872] rounded-xl font-bold text-sm hover:bg-[#123420] transition-colors flex items-center justify-center gap-2">
+                      Explore the Club <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </RailSection>
+
+            {/* ── 08 · ZUNNOVA AI + AI CO-FOUNDER ── */}
+            <RailSection n="08">
+              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-t-2xl p-6 sm:p-8 border border-[#E5C872]/15 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-[#E5C872]/8 blur-[140px] rounded-full pointer-events-none" />
+                <div className="relative z-10">
+                  <div className="flex items-center justify-between mb-4">
+                    <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-[0.2em]">Zunnova AI · Our Own AI</p>
+                    <span className="px-3 py-1 bg-[#E5C872]/15 text-[#E5C872] rounded-full text-[10px] font-bold uppercase tracking-wider border border-[#E5C872]/25">Members Only</span>
+                  </div>
+                  <YouTubeEmbed id={YT_SNEAK_PEEK} title="Zunnova AI teaser" className="shadow-2xl mb-6" />
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-3 leading-tight">Watch what Zunnova can do for your startup</h2>
+                  <p className="text-[#9FB5A6] text-sm leading-relaxed mb-6 max-w-xl">
+                    A 2-minute look at Zunnova building pitch decks, business plans and market research on command. Full members get unlimited word balance.
+                  </p>
+                  {!isUserPaid ? (
+                    <button onClick={handlePayment} className="px-6 py-3 bg-[#E5C872] text-[#0E2A1B] rounded-full font-bold text-sm hover:bg-[#D4AF37] transition-colors shadow-[0_8px_24px_rgba(229,200,114,0.25)]">
+                      Unlock Zunnova AI &rarr;
+                    </button>
+                  ) : (
+                    <Link href="/student/modules" className="inline-flex px-6 py-3 bg-[#E5C872] text-[#0E2A1B] rounded-full font-bold text-sm hover:bg-[#D4AF37] transition-colors shadow-[0_8px_24px_rgba(229,200,114,0.25)] items-center gap-2">
+                      Chat with Zunnova <ArrowRight className="w-4 h-4" />
+                    </Link>
                   )}
                 </div>
               </div>
 
-              <div
-                ref={gameAreaRef}
-                onMouseMove={handleGameMouseMove}
-                onClick={handleGameClick}
-                className="relative w-full aspect-[21/9] sm:aspect-[21/9] rounded-[24px] overflow-hidden bg-[#090D18] border border-white/5 mb-6 select-none flex-1 min-h-[250px]"
-                style={{ cursor: gameState === 'playing' ? 'crosshair' : 'default' }}
-              >
-                {gameState === 'idle' && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-[#E5C872]/20 blur-xl rounded-full" />
-                      <img src="/AIcofounderzunnva.png" alt="Zunnova" className="relative w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-80 mb-6 animate-float" />
+              {/* word balance bar */}
+              <div className="relative z-20 mx-4 sm:mx-8 -mt-6">
+                <div className="bg-white rounded-2xl p-4 shadow-xl border border-[#E7E3D6]">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="hex w-10 h-10 bg-[#0E2A1B] flex items-center justify-center">
+                        <MessageCircle className="w-5 h-5 text-[#E5C872]" />
+                      </div>
+                      <div>
+                        <span className="font-bold text-[#0E2A1B] text-sm">Zunnova AI</span>
+                        <p className="text-[10px] text-[#B8952E] font-bold uppercase tracking-wider">Word Balance</p>
+                      </div>
+                      <span className="text-[#0E2A1B] font-extrabold text-3xl ml-4">{totalWords.toLocaleString()}</span>
                     </div>
-                    <p className="text-gray-400 text-xs text-center px-8 font-medium">
-                      Press Start, then click Zunnova before it slips away. Every catch is 5 points.
-                    </p>
-                  </div>
-                )}
-                {gameState === 'playing' && showZunnova && (
-                  <button
-                    onClick={(e) => { e.stopPropagation(); catchZunnova(); }}
-                    className="absolute active:scale-75"
-                    style={{
-                      left: `${zunnovaPos.x}%`,
-                      top: `${zunnovaPos.y}%`,
-                      transform: 'translate(-50%, -50%)',
-                      transition: 'left 0.05s linear, top 0.05s linear',
-                      padding: 0,
-                    }}
-                  >
-                    <div className="relative">
-                      <div className="absolute inset-0 bg-[#E5C872]/15 blur-md rounded-full" />
-                      <img
-                        src="/zunnova.svg"
-                        alt="Catch me!"
-                        className={`relative w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-100`}
-                      />
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-[#8A9A8E]">{wordPercent}% asks left on free plan</span>
+                      <Link href="/student/modules" className="px-4 py-2 bg-[#0E2A1B] text-[#E5C872] rounded-lg text-xs font-bold hover:bg-[#123420] transition-colors">
+                        View Packages
+                      </Link>
                     </div>
-                  </button>
-                )}
-                {gameState === 'ended' && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#090D18]/90 backdrop-blur-sm">
-                    <Trophy className="w-12 h-12 text-[#E5C872] mb-3" />
-                    <p className="text-2xl font-extrabold text-white">{gameScore} pts</p>
-                    <p className="text-sm text-gray-300 mt-1">You caught {catches} Zunnovas!</p>
-                    {catches >= 5 && <p className="text-xs text-[#E5C872] font-bold mt-2">Bonus earned!</p>}
                   </div>
-                )}
+                  <div className="w-full bg-[#F3F1E9] rounded-full h-2 overflow-hidden">
+                    <div className="h-full bg-[#E5C872] rounded-full transition-all duration-700" style={{ width: `${wordPercent}%` }} />
+                  </div>
+                </div>
               </div>
 
-              <div className="flex flex-wrap items-center gap-3 text-xs">
-                <span className="text-gray-400 mr-2">Best today <span className="text-[#E5C872] font-bold">{catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}</span></span>
-                <span className="px-4 py-2 bg-transparent rounded-full text-gray-300 border border-white/10">1 catch = 5 points</span>
-                <span className="px-4 py-2 bg-transparent rounded-full text-gray-300 border border-white/10">5 catches = +20 bonus</span>
-                <span className="px-4 py-2 bg-transparent rounded-full text-gray-300 border border-white/10">8+ = +50 bonus</span>
+              {/* AI CO-FOUNDER */}
+              <div className="bg-white border border-[#E7E3D6] border-t-0 rounded-b-2xl relative overflow-hidden pb-6">
+                <div className="flex items-center justify-between px-6 sm:px-8 pt-16 sm:pt-20 pb-2 relative z-10">
+                  <div>
+                    <p className="text-[#B8952E] text-[11px] font-bold uppercase tracking-[0.2em] mb-1">Your AI</p>
+                    <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0E2A1B]">Ai Co-Founder</h2>
+                    <Link href="/student/modules" className="inline-flex items-center gap-2 mt-4 px-5 py-2.5 rounded-full border-2 border-[#0E2A1B]/15 text-[#0E2A1B] text-sm font-semibold hover:border-[#D4AF37] transition-all">
+                      See all messages <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+                <img
+                  src="/AIcofounderzunnva.png"
+                  alt="Zunnova AI Co-Founder"
+                  className="absolute right-0 bottom-0 w-[220px] sm:w-[300px] md:w-[360px] h-auto object-contain drop-shadow-2xl pointer-events-none"
+                />
               </div>
-            </div>
+            </RailSection>
 
-            {/* Top Catchers */}
-            <div className="lg:col-span-1 bg-[#0F172A] rounded-[32px] p-6 sm:p-8 border border-white/5 shadow-xl flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="font-bold text-white text-xl">Top Catchers</h3>
-                <span className="px-3 py-1 bg-transparent border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest text-gray-300">
-                  Today
-                </span>
-              </div>
-              <p className="text-xs text-gray-400 mb-6 font-medium">Catch Zunnova high scores</p>
-
-              <div className="space-y-2 flex-1">
-                {catchGameScores.length > 0 ? (
-                  catchGameScores.slice(0, 5).map((entry, i) => (
-                    <div key={i} className="flex items-center gap-4 py-3 px-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                      <span className="w-4 text-center text-xs font-semibold text-gray-400 flex-shrink-0">
-                        {i + 1}
+            {/* ── 09 · CATCH ZUNNOVA + TOP CATCHERS ── */}
+            <RailSection n="09">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                <div className="lg:col-span-2 bg-[linear-gradient(160deg,#0A1E13,#06120B)] rounded-2xl p-6 sm:p-7 shadow-xl relative overflow-hidden flex flex-col border border-[#E5C872]/15">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E5C872] mb-2">Mini Game</p>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Catch Zunnova</h3>
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className="px-3.5 py-1.5 rounded-full border border-white/15 text-xs font-bold text-[#E5936B]">
+                        {gameState === 'playing' ? `0:${gameTimeLeft.toString().padStart(2, '0')}` : '0:20'}
                       </span>
-                      <span className="text-sm text-gray-200 font-medium flex-1">{entry.name}</span>
-                      <span className={`text-sm font-bold ${i === 0 ? 'text-[#E5C872]' : 'text-gray-300'}`}>{entry.score}</span>
+                      <span className="px-3.5 py-1.5 rounded-full border border-white/15 text-xs font-medium text-white">Caught {catches}</span>
+                      <span className="px-3.5 py-1.5 rounded-full border border-white/15 text-xs font-medium text-white">{gameScore} pts</span>
+                      {gameState !== 'playing' && (
+                        <button
+                          onClick={startGame}
+                          className="px-6 py-1.5 bg-[#E5C872] text-[#0E2A1B] rounded-full text-xs font-bold hover:bg-[#D4AF37] transition-all shadow-[0_0_15px_rgba(229,200,114,0.2)]"
+                        >
+                          {gameState === 'ended' ? 'Play Again' : 'Start'}
+                        </button>
+                      )}
                     </div>
-                  ))
-                ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
-                    <Target className="w-10 h-10 text-gray-600 mb-3" />
-                    <p className="text-sm text-gray-400 font-medium">No scores yet</p>
-                    <p className="text-xs text-gray-500 mt-1">Play the game to see your scores here</p>
                   </div>
-                )}
-              </div>
 
-              <div className="mt-4 pt-4">
-                <div className="flex items-center gap-4 py-3 px-4 bg-[#E5C872] rounded-[16px] shadow-lg">
-                  <span className="w-4 text-center text-xs font-bold text-[#141b2d] flex-shrink-0">&ndash;</span>
-                  <span className="text-sm text-[#141b2d] font-bold flex-1">You</span>
-                  <span className="text-sm font-extrabold text-[#141b2d]">
-                    {catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}
-                  </span>
-                </div>
-                <p className="text-[10px] text-gray-400 mt-4 font-medium">Beat 120 pts to enter the top 5.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── SECTION 12: LEADERBOARD & BADGES ── */}
-        <section className="mb-10">
-          <div className="flex items-center gap-4 mb-6">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#B8952E] whitespace-nowrap">Leaderboard & Badges</p>
-            <div className="flex-1 h-px bg-gray-200" />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-gray-100 shadow-sm flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="text-xl font-extrabold text-[#141b2d]">Leaderboard</h3>
-                <span className="px-3 py-1 bg-[#FDF8E7] text-[#B8952E] rounded-full text-[10px] font-bold uppercase tracking-widest border border-[#F5D76E]/30">
-                  SSI
-                </span>
-              </div>
-              <p className="text-xs text-gray-400 mb-6 font-medium">All time &middot; all cohorts</p>
-
-              <div className="space-y-2 mb-4">
-                {leaderboardData?.leaderboard?.length > 0 ? (
-                  leaderboardData.leaderboard.slice(0, 5).map((entry, i) => (
-                    <div key={i} className="flex items-center gap-4 px-4 py-3 bg-[#F4F6F4] rounded-[16px]">
-                      <span className="text-xs font-semibold text-gray-400 w-4 text-center">{entry.rank}</span>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-[#E5C872] text-[#141b2d]' : 'bg-[#E8EAE6] text-gray-500'}`}>
-                        {entry.initial}
+                  <div
+                    ref={gameAreaRef}
+                    onMouseMove={handleGameMouseMove}
+                    onClick={handleGameClick}
+                    className="relative w-full aspect-[21/9] rounded-2xl overflow-hidden bg-[#050D08] border border-white/5 mb-5 select-none flex-1 min-h-[250px]"
+                    style={{ cursor: gameState === 'playing' ? 'crosshair' : 'default' }}
+                  >
+                    {gameState === 'idle' && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-[#E5C872]/20 blur-xl rounded-full" />
+                          <img src="/AIcofounderzunnva.png" alt="Zunnova" className="relative w-16 h-16 sm:w-20 sm:h-20 object-contain opacity-80 mb-6 animate-float" />
+                        </div>
+                        <p className="text-[#9FB5A6] text-xs text-center px-8 font-medium">
+                          Press Start, then click Zunnova before it slips away. Every catch is 5 points.
+                        </p>
                       </div>
-                      <span className="text-sm font-bold text-[#141b2d] flex-1">{entry.name}</span>
-                      <span className="text-sm font-extrabold text-[#141b2d]">{entry.ssiScore.toLocaleString()}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-center py-6">
-                    <Trophy className="w-10 h-10 text-gray-200 mx-auto mb-2" />
-                    <p className="text-sm text-gray-400 font-medium">No scores yet</p>
-                    <p className="text-xs text-gray-300 mt-1">Complete modules to appear on the leaderboard</p>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-4 px-4 py-3 bg-[#141b2d] rounded-[16px] shadow-lg mt-2">
-                  <span className="text-xs font-bold text-[#E5C872] w-6 text-center">{leaderboardData?.currentUser?.rank ?? '--'}</span>
-                  <div className="w-8 h-8 rounded-full bg-[#E5C872] flex items-center justify-center text-[#141b2d] text-xs font-bold">
-                    {firstName.charAt(0)}
-                  </div>
-                  <span className="text-sm font-bold text-white flex-1">You &mdash; {firstName}</span>
-                  <span className="text-sm font-extrabold text-white">{Math.round(ssiScore)}</span>
-                </div>
-              </div>
-
-              {!isUserPaid && (
-                <p className="text-[10px] text-gray-400 mt-auto flex items-center gap-1.5 font-medium">
-                  <Lock className="w-3 h-3 text-[#E5C872]" /> Full members complete all modules and climb the board faster.
-                </p>
-              )}
-            </div>
-
-            <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-gray-100 shadow-sm relative overflow-hidden flex flex-col">
-              <div className="flex items-center justify-between mb-1">
-                <h3 className="text-xl font-extrabold text-[#141b2d]">Your Badges</h3>
-                <span className="px-3 py-1 bg-[#FDF8E7] text-[#B8952E] rounded-full text-[10px] font-bold uppercase tracking-widest border border-[#F5D76E]/30 flex items-center gap-1.5">
-                  <Trophy className="w-3 h-3" /> {completedModules}/5
-                </span>
-              </div>
-              <p className="text-xs text-gray-400 mb-6 font-medium">Earned by completing modules</p>
-
-              <div className="grid grid-cols-5 gap-2 sm:gap-3 mt-2">
-                {[
-                  { name: 'Founder', moduleIndex: 0 },
-                  { name: 'Seeker', moduleIndex: 1 },
-                  { name: 'Builder', moduleIndex: 2 },
-                  { name: 'Launcher', moduleIndex: -1 },
-                  { name: 'Titan', moduleIndex: -1 },
-                ].map((badge, i) => {
-                  const unlocked = badge.moduleIndex >= 0 && sortedModules[badge.moduleIndex]
-                    ? (sortedModules[badge.moduleIndex].userProgress?.completionPercentage || 0) >= 100
-                    : badge.name === 'Launcher' ? completedModules >= 3
-                      : badge.name === 'Titan' ? completedModules >= 3 && !!submissionData
-                        : false;
-                  return (
-                    <div key={i} className="flex flex-col items-center gap-2">
-                      <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center transition-all ${unlocked ? 'bg-[#FDF8E7] border border-[#F5D76E]/40 shadow-sm' : 'bg-[#F4F6F4] border border-gray-100/50 grayscale opacity-60'}`}>
-                        {unlocked ? (
-                          <Star className="w-5 h-5 sm:w-7 sm:h-7 text-[#D4AF37]" fill="currentColor" />
-                        ) : (
-                          <Lock className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-                        )}
+                    )}
+                    {gameState === 'playing' && showZunnova && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); catchZunnova(); }}
+                        className="absolute active:scale-75"
+                        style={{
+                          left: `${zunnovaPos.x}%`,
+                          top: `${zunnovaPos.y}%`,
+                          transform: 'translate(-50%, -50%)',
+                          transition: 'left 0.05s linear, top 0.05s linear',
+                          padding: 0,
+                        }}
+                      >
+                        <div className="relative">
+                          <div className="absolute inset-0 bg-[#E5C872]/15 blur-md rounded-full" />
+                          <img
+                            src="/zunnova.svg"
+                            alt="Catch me!"
+                            className={`relative w-8 h-8 sm:w-10 sm:h-10 object-contain drop-shadow-lg ${catchAnim ? 'scale-150 opacity-0' : ''} transition-all duration-100`}
+                          />
+                        </div>
+                      </button>
+                    )}
+                    {gameState === 'ended' && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#050D08]/90 backdrop-blur-sm">
+                        <Trophy className="w-12 h-12 text-[#E5C872] mb-3" />
+                        <p className="text-2xl font-extrabold text-white">{gameScore} pts</p>
+                        <p className="text-sm text-[#9FB5A6] mt-1">You caught {catches} Zunnovas!</p>
+                        {catches >= 5 && <p className="text-xs text-[#E5C872] font-bold mt-2">Bonus earned!</p>}
                       </div>
-                      <span className={`text-[9px] sm:text-[11px] font-bold text-center leading-tight ${unlocked ? 'text-[#141b2d]' : 'text-gray-400'}`}>{badge.name}</span>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2.5 text-xs">
+                    <span className="text-[#9FB5A6] mr-2">Best today <span className="text-[#E5C872] font-bold">{catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}</span></span>
+                    <span className="px-3.5 py-1.5 rounded-full text-[#9FB5A6] border border-white/10">1 catch = 5 points</span>
+                    <span className="px-3.5 py-1.5 rounded-full text-[#9FB5A6] border border-white/10">5 catches = +20 bonus</span>
+                    <span className="px-3.5 py-1.5 rounded-full text-[#9FB5A6] border border-white/10">8+ = +50 bonus</span>
+                  </div>
+                </div>
+
+                {/* Top Catchers */}
+                <div className="lg:col-span-1 bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-6 border border-[#E5C872]/15 shadow-xl flex flex-col">
+                  <div className="flex items-center justify-between mb-1">
+                    <h3 className="font-bold text-white text-xl">Top Catchers</h3>
+                    <span className="px-3 py-1 border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest text-[#9FB5A6]">Today</span>
+                  </div>
+                  <p className="text-xs text-[#9FB5A6] mb-5 font-medium">Catch Zunnova high scores</p>
+
+                  <div className="space-y-2 flex-1">
+                    {catchGameScores.length > 0 ? (
+                      catchGameScores.slice(0, 5).map((entry, i) => (
+                        <div key={i} className="flex items-center gap-3 py-2.5 px-3.5 rounded-xl bg-white/[0.04] border border-white/5">
+                          <span className={`w-6 h-6 hex flex items-center justify-center text-[10px] font-bold flex-shrink-0 ${i === 0 ? 'bg-[#E5C872] text-[#0E2A1B]' : 'bg-white/10 text-[#9FB5A6]'}`}>{i + 1}</span>
+                          <span className="text-sm text-white font-medium flex-1 truncate">{entry.name}</span>
+                          <span className={`text-sm font-bold ${i === 0 ? 'text-[#E5C872]' : 'text-[#C4D2C8]'}`}>{entry.score}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex-1 flex flex-col items-center justify-center text-center py-8">
+                        <Target className="w-10 h-10 text-white/20 mb-3" />
+                        <p className="text-sm text-[#9FB5A6] font-medium">No scores yet</p>
+                        <p className="text-xs text-[#8FA596] mt-1">Play the game to see your scores here</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-4 pt-4">
+                    <div className="flex items-center gap-3 py-2.5 px-3.5 bg-[#E5C872] rounded-xl shadow-lg">
+                      <span className="w-6 h-6 hex bg-[#0E2A1B] text-[#E5C872] flex items-center justify-center text-[10px] font-bold flex-shrink-0">&ndash;</span>
+                      <span className="text-sm text-[#0E2A1B] font-bold flex-1">You</span>
+                      <span className="text-sm font-extrabold text-[#0E2A1B]">{catchGameScores.length > 0 ? Math.max(...catchGameScores.map(s => s.score)) : 0}</span>
                     </div>
-                  );
-                })}
+                    <p className="text-[10px] text-[#9FB5A6] mt-3 font-medium">Beat 120 pts to enter the top 5.</p>
+                  </div>
+                </div>
               </div>
-            </div>
+            </RailSection>
+
+            {/* ── 10 · LATEST FROM US ── */}
+            <RailSection n="10">
+              <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#E7E3D6] shadow-sm">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="text-lg sm:text-xl font-extrabold text-[#0E2A1B]">Latest From Us</h3>
+                    <span className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#DC2626] rounded-full text-[10px] font-bold uppercase tracking-wider border border-red-100">
+                      <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full animate-pulse" /> Live
+                    </span>
+                    <span className="text-sm text-[#8A9A8E] font-medium">Auto-updates from our socials</span>
+                  </div>
+                  <div className="flex items-center gap-3 w-full sm:w-auto">
+                    <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==" target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full border border-[#0E2A1B]/15 text-sm font-semibold text-[#0E2A1B] hover:bg-[#F3F1E9] transition-colors">
+                      Follow us
+                    </a>
+                    <Link href="/student/innovation-club" className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-[#0E2A1B] text-[#E5C872] text-sm font-semibold hover:bg-[#123420] transition-all">
+                      See all posts
+                    </Link>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {[
+                    { href: 'https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==', color: '#C1354C', Icon: Instagram, title: 'Cohort 4 demo day highlights', net: 'Instagram · 2h ago', fill: false },
+                    { href: 'https://www.facebook.com/share/16jUKyEemq/?mibextid=wwXIfr', color: '#1A2847', Icon: Facebook, title: 'Zunnova AI just crossed 10k asks', net: 'Facebook · 1d ago', fill: true },
+                    { href: 'https://www.linkedin.com/company/youngpreneurs-ai/', color: '#142845', Icon: Linkedin, title: 'IIT mentor AMA — recap and slides', net: 'LinkedIn · 3d ago', fill: true },
+                  ].map((p, i) => (
+                    <a key={i} href={p.href} target="_blank" rel="noopener noreferrer" className="bg-[#F3F1E9] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-[#E7E3D6]">
+                      <div className="w-11 h-11 rounded-[14px] flex items-center justify-center flex-shrink-0 text-white shadow-sm" style={{ backgroundColor: p.color }}>
+                        <p.Icon className={`w-5 h-5 ${p.fill ? 'fill-current' : ''}`} />
+                      </div>
+                      <div>
+                        <h4 className="font-bold text-[#0E2A1B] text-sm leading-tight mb-1">{p.title}</h4>
+                        <p className="text-xs text-[#8A9A8E] font-medium">{p.net}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </RailSection>
+
           </div>
-        </section>
-
-        {/* ── SECTION 13: LATEST FROM US ── */}
-        <section className="mb-10">
-          <div className="bg-white rounded-[28px] p-6 sm:p-7 border border-gray-100 shadow-sm">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-7 gap-4">
-              <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                <h3 className="text-lg sm:text-xl font-extrabold text-[#141b2d]">Latest From Us</h3>
-                <span className="flex items-center gap-1.5 px-3 py-1 bg-red-50 text-[#DC2626] rounded-full text-[10px] font-bold uppercase tracking-wider border border-red-100">
-                  <span className="w-1.5 h-1.5 bg-[#DC2626] rounded-full animate-pulse" />
-                  Live
-                </span>
-                <span className="text-sm text-gray-400 font-medium">Auto-updates from our socials</span>
-              </div>
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==" target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full border border-gray-200 text-sm font-semibold text-[#141b2d] hover:bg-gray-50 transition-colors">
-                  Follow us
-                </a>
-                <Link href="/student/innovation-club" className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-[#141b2d] text-[#e5c872] text-sm font-semibold shadow-[0_8px_24px_rgba(20,27,45,0.25)] hover:shadow-[0_12px_28px_rgba(20,27,45,0.35)] hover:bg-[#1a2240] transition-all">
-                  See all posts
-                </Link>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==" target="_blank" rel="noopener noreferrer" className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
-                <div className="w-11 h-11 rounded-[14px] bg-[#C1354C] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
-                  <Instagram className="w-5 h-5" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">Cohort 4 demo day highlights</h4>
-                  <p className="text-xs text-gray-400 font-medium">Instagram</p>
-                </div>
-              </a>
-
-              <a href="https://www.facebook.com/share/16jUKyEemq/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
-                <div className="w-11 h-11 rounded-[14px] bg-[#1A2847] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
-                  <Facebook className="w-5 h-5 fill-current" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">Zunnova AI just crossed 10k asks</h4>
-                  <p className="text-xs text-gray-400 font-medium">Facebook</p>
-                </div>
-              </a>
-
-              <a href="https://www.linkedin.com/company/youngpreneurs-ai/" target="_blank" rel="noopener noreferrer" className="bg-[#F4F6F4] rounded-2xl p-4 flex items-center gap-4 hover:scale-[1.02] transition-transform cursor-pointer border border-gray-100/50">
-                <div className="w-11 h-11 rounded-[14px] bg-[#142845] flex items-center justify-center flex-shrink-0 text-white shadow-sm">
-                  <Linkedin className="w-5 h-5 fill-current" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-[#141b2d] text-sm leading-tight mb-1">IIT mentor AMA &mdash; recap and slides</h4>
-                  <p className="text-xs text-gray-400 font-medium">LinkedIn</p>
-                </div>
-              </a>
-            </div>
-          </div>
-        </section>
-
+        </div>
       </div>
 
       {showIntroVideo && (
@@ -1267,12 +1166,15 @@ export default function StudentDashboard() {
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
 
       <style jsx global>{`
+        .hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(212, 175, 55, 0.5); }
+        .faq-answer-collapse { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+        .faq-answer-collapse.open { max-height: 800px; }
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
