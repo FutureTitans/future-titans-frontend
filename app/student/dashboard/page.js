@@ -9,7 +9,7 @@ import { isStudent, getUser } from '@/lib/auth';
 import {
   Lock, ChevronRight, ChevronDown, ArrowRight, CheckCircle, Zap, Play,
   Compass, Trophy, Award, Star, Clock, TrendingUp,
-  MessageCircle, Flame, Target, Users, Volume2, GraduationCap, Rocket, Hexagon,
+  MessageCircle, Flame, Target, Users, Volume2, GraduationCap, Rocket, Hexagon, Lightbulb,
   Instagram, Facebook, Linkedin, X
 } from 'lucide-react';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
