@@ -106,14 +106,8 @@ export default function Navbar() {
           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 font-[family-name:var(--font-rajdhani)]">
             <div className="flex justify-between items-center h-16 gap-4">
               {/* Logo */}
-              <Link href="/student/dashboard" className="flex items-center gap-2.5 flex-shrink-0" onClick={closeMobileMenu}>
-                <div className="w-9 h-9 flex items-center justify-center bg-[#E5C872]" style={{ clipPath: HEX_CLIP }}>
-                  <span className="text-[#0E2A1B] font-black text-sm">Y</span>
-                </div>
-                <div className="hidden sm:block">
-                  <div className="text-[#E5C872] font-extrabold text-[14px] tracking-[0.14em] leading-tight font-[family-name:var(--font-oxanium)]">YOUNGPRENEURS</div>
-                  <div className="text-[#7d9184] text-[8px] tracking-[0.2em] font-medium leading-tight">MINDSET IS THE ULTIMATE EDGE</div>
-                </div>
+              <Link href="/student/dashboard" className="flex items-center flex-shrink-0" onClick={closeMobileMenu}>
+                <img src="/images/yp/yp-logo-full.png" alt="Youngpreneurs" className="h-8 sm:h-9 w-auto object-contain" />
               </Link>
 
               {/* Desktop Navigation */}
