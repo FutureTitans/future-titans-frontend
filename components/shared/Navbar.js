@@ -6,15 +6,17 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { removeAuthToken, isStudent, isAdmin } from '@/lib/auth';
 import { auth } from '@/lib/api';
-import { Menu, X, LogOut, User, LayoutDashboard, BookOpen, Shield, Newspaper, Lightbulb, Lock } from 'lucide-react';
+import { Menu, X, LogOut, User, LayoutDashboard, LayoutGrid, BookOpen, Compass, Flag, GraduationCap, Shield, Newspaper, Lightbulb, Lock } from 'lucide-react';
 import Image from 'next/image';
 
+const HEX_CLIP = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)';
+
 const studentNavItems = [
-  { href: '/student/dashboard', label: 'Dashboard', emoji: null },
-  { href: '/student/modules', label: 'Learn', emoji: '\u{1F9E0}' },
-  { href: '/student/innovation-club', label: 'Innovation Club', emoji: '\u{1F680}', lockForDemo: true },
-  { href: '/student/submission', label: 'Build an Idea', emoji: '\u{1F4A1}' },
-  { href: '/student/profile', label: 'My Titan Journey', emoji: '\u{1F464}' },
+  { href: '/student/dashboard', label: 'Dashboard', Icon: LayoutGrid },
+  { href: '/student/modules', label: 'Learn', Icon: BookOpen },
+  { href: '/student/innovation-club', label: 'Innovation Club', Icon: Compass, lockForDemo: true },
+  { href: '/student/submission', label: 'Build an Idea', Icon: Lightbulb },
+  { href: '/student/profile', label: 'My Titan Journey', Icon: Flag },
 ];
 
 export default function Navbar() {
@@ -87,42 +89,46 @@ export default function Navbar() {
 
   const displayName = profileName || user?.name;
   const userInitial = displayName ? displayName.charAt(0).toUpperCase() : 'U';
+  const userInitials = displayName
+    ? displayName.trim().split(/\s+/).slice(0, 2).map((w) => w.charAt(0).toUpperCase()).join('')
+    : 'U';
   const isStudentUser = user && isStudent();
 
   if (isStudentUser) {
     return (
       <>
         <nav
-          className={`sticky top-0 z-50 transition-all duration-300 border-b ${scrolled
-            ? 'bg-[#0f1628] backdrop-blur-2xl shadow-[0_1px_24px_rgba(0,0,0,0.4)] border-[#2a3352]'
-            : 'bg-[#141b2d] border-[#1e2740]'
+          className={`sticky top-0 z-50 transition-all duration-300 border-b border-[#E5C872]/15 ${scrolled
+            ? 'bg-[#0A1E13] backdrop-blur-2xl shadow-[0_1px_24px_rgba(0,0,0,0.4)]'
+            : 'bg-[linear-gradient(90deg,#0E2A1B_0%,#0A1E13_100%)]'
             }`}
         >
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 font-[family-name:var(--font-rajdhani)]">
+            <div className="flex justify-between items-center h-16 gap-4">
               {/* Logo */}
-              <Link href="/student/dashboard" className="flex items-center gap-3 flex-shrink-0" onClick={closeMobileMenu}>
-                <div className="w-9 h-9 rounded-full border-2 border-[#D4AF37] flex items-center justify-center bg-transparent">
-                  <span className="text-[#D4AF37] font-bold text-sm">Y</span>
+              <Link href="/student/dashboard" className="flex items-center gap-2.5 flex-shrink-0" onClick={closeMobileMenu}>
+                <div className="w-9 h-9 flex items-center justify-center bg-[#E5C872]" style={{ clipPath: HEX_CLIP }}>
+                  <span className="text-[#0E2A1B] font-black text-sm">Y</span>
                 </div>
                 <div className="hidden sm:block">
-                  <div className="text-white font-bold text-sm tracking-[0.2em] leading-tight">YOUNGPRENEURS</div>
-                  <div className="text-[#7b8aa8] text-[9px] tracking-[0.22em] font-medium leading-tight">MINDSET IS THE ULTIMATE EDGE</div>
+                  <div className="text-[#E5C872] font-extrabold text-[14px] tracking-[0.14em] leading-tight font-[family-name:var(--font-oxanium)]">YOUNGPRENEURS</div>
+                  <div className="text-[#7d9184] text-[8px] tracking-[0.2em] font-medium leading-tight">MINDSET IS THE ULTIMATE EDGE</div>
                 </div>
               </Link>
 
               {/* Desktop Navigation */}
-              <div className="hidden lg:flex items-center gap-1">
+              <div className="hidden lg:flex items-center gap-1.5">
                 {studentNavItems.map((item) => {
+                  const Icon = item.Icon;
                   const isDemoLocked = item.lockForDemo && user?.email === 'demo@futuretitans.com';
                   if (isDemoLocked) {
                     return (
                       <div
                         key={item.href}
-                        className="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium text-white/30 cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold text-white/25 cursor-not-allowed border border-transparent"
                         title="Premium Feature"
                       >
-                        {item.emoji && <span className="text-sm opacity-40">{item.emoji}</span>}
+                        <Icon className="w-4 h-4 opacity-50" />
                         {item.label}
                         <Lock className="w-3.5 h-3.5 ml-0.5 opacity-60" />
                       </div>
@@ -133,37 +139,46 @@ export default function Navbar() {
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition-all duration-200 ${active
-                        ? 'border border-[#D4AF37]/70 text-white'
-                        : 'text-[#c8cdd8] hover:text-white'
+                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[13px] font-semibold transition-all duration-200 border ${active
+                        ? 'border-[#E5C872] bg-[#E5C872]/10 text-[#E5C872]'
+                        : 'border-transparent text-[#C4D2C8] hover:text-white hover:bg-white/[0.06]'
                         }`}
                     >
-                      {item.emoji && <span className="text-sm">{item.emoji}</span>}
+                      <Icon className={`w-4 h-4 ${active ? 'text-[#E5C872]' : 'text-[#8FA596]'}`} />
                       {item.label}
+                      {active && <span className="w-1.5 h-1.5 rounded-full bg-[#E5C872] ml-0.5" />}
                     </Link>
                   );
                 })}
               </div>
 
-              {/* User Profile Pill */}
-              <div className="hidden lg:flex items-center">
+              {/* Right cluster: Knowledge Partner + User pill */}
+              <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-white/12 bg-white/[0.03]">
+                  <GraduationCap className="w-5 h-5 text-[#8FA596] flex-shrink-0" />
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-[8px] uppercase tracking-[0.14em] text-[#8FA596] font-semibold">Knowledge Partner</span>
+                    <span className="text-[11px] text-white font-bold tracking-wide">IIT KHARAGPUR</span>
+                  </div>
+                </div>
+
                 <div className="relative" ref={userMenuRef}>
                   <button
                     type="button"
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#D4AF37]/60 hover:border-[#D4AF37] transition-all"
+                    className="flex items-center gap-2.5 pl-1.5 pr-3.5 py-1.5 rounded-full border border-[#E5C872]/60 hover:border-[#E5C872] hover:bg-[#E5C872]/5 transition-all"
                   >
-                    <div className="w-7 h-7 rounded-full bg-[#D4AF37] flex items-center justify-center flex-shrink-0">
-                      <span className="text-white font-semibold text-xs">{userInitial}</span>
+                    <div className="w-7 h-7 flex items-center justify-center flex-shrink-0 bg-[#E5C872]" style={{ clipPath: HEX_CLIP }}>
+                      <span className="text-[#0E2A1B] font-bold text-[11px]">{userInitials}</span>
                     </div>
-                    <span className="text-white text-sm font-medium max-w-[140px] truncate">{displayName}</span>
+                    <span className="text-white text-sm font-bold max-w-[140px] truncate">{displayName}</span>
                   </button>
 
                   {showUserMenu && (
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-[#1a2138] border border-[#2a3352] rounded-xl shadow-xl py-1 z-50">
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-[#0E2A1B] border border-[#E5C872]/20 rounded-xl shadow-xl py-1 z-50">
                       <Link
                         href="/student/profile"
-                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#c8cdd8] hover:text-white hover:bg-white/[0.06] transition-colors"
+                        className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[#C4D2C8] hover:text-white hover:bg-white/[0.06] transition-colors"
                         onClick={() => setShowUserMenu(false)}
                       >
                         <User className="w-4 h-4" />
@@ -183,7 +198,7 @@ export default function Navbar() {
 
               {/* Mobile Menu Button */}
               <button
-                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/[0.08] text-gray-300 transition-colors"
+                className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl hover:bg-white/[0.08] text-[#E5C872] transition-colors"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
                 aria-expanded={isMobileMenuOpen}
@@ -203,24 +218,34 @@ export default function Navbar() {
               style={{ animation: 'fadeInOverlay 0.2s ease-out' }}
             />
             <div
-              className="absolute top-16 right-0 left-0 bg-[#141b2d] border-b border-[#1e2740] shadow-2xl safe-bottom"
+              className="absolute top-16 right-0 left-0 bg-[#0E2A1B] border-b border-[#E5C872]/15 shadow-2xl safe-bottom"
               style={{ animation: 'slideDown 0.25s ease-out' }}
             >
               <div className="max-w-[1440px] mx-auto px-4 sm:px-6 py-4 space-y-1">
                 {/* User info */}
                 <div className="flex items-center gap-3 px-4 py-3 mb-2">
-                  <div className="w-10 h-10 rounded-full bg-[#D4AF37] flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold text-base">{userInitial}</span>
+                  <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 bg-[#E5C872]" style={{ clipPath: HEX_CLIP }}>
+                    <span className="text-[#0E2A1B] font-bold text-sm">{userInitials}</span>
                   </div>
                   <div className="min-w-0">
                     <p className="text-white font-semibold truncate">{displayName}</p>
-                    <p className="text-[#7b8aa8] text-sm truncate">{user?.email}</p>
+                    <p className="text-[#7d9184] text-sm truncate">{user?.email}</p>
                   </div>
                 </div>
 
-                <div className="h-px bg-[#2a3352] mx-3 mb-2" />
+                {/* Knowledge partner */}
+                <div className="flex items-center gap-2 mx-4 mb-2 px-3 py-2 rounded-xl border border-white/10 bg-white/[0.03]">
+                  <GraduationCap className="w-5 h-5 text-[#8FA596] flex-shrink-0" />
+                  <div className="flex flex-col leading-tight">
+                    <span className="text-[8px] uppercase tracking-[0.14em] text-[#8FA596] font-semibold">Knowledge Partner</span>
+                    <span className="text-[11px] text-white font-bold tracking-wide">IIT KHARAGPUR</span>
+                  </div>
+                </div>
+
+                <div className="h-px bg-white/10 mx-3 mb-2" />
 
                 {studentNavItems.map((item) => {
+                  const Icon = item.Icon;
                   const isDemoLocked = item.lockForDemo && user?.email === 'demo@futuretitans.com';
                   if (isDemoLocked) {
                     return (
@@ -229,7 +254,7 @@ export default function Navbar() {
                         className="flex items-center justify-between px-4 py-3.5 rounded-2xl font-medium text-white/30 cursor-not-allowed"
                       >
                         <div className="flex items-center gap-3">
-                          {item.emoji && <span className="text-lg opacity-40">{item.emoji}</span>}
+                          <Icon className="w-5 h-5 opacity-50" />
                           {item.label}
                         </div>
                         <Lock className="w-4 h-4 opacity-60" />
@@ -242,18 +267,18 @@ export default function Navbar() {
                       key={item.href}
                       href={item.href}
                       className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-colors font-medium ${active
-                        ? 'bg-[#D4AF37]/10 text-white border border-[#D4AF37]/30'
-                        : 'text-[#c8cdd8] hover:bg-white/[0.06]'
+                        ? 'bg-[#E5C872]/10 text-[#E5C872] border border-[#E5C872]/40'
+                        : 'text-[#C4D2C8] hover:bg-white/[0.06]'
                         }`}
                       onClick={closeMobileMenu}
                     >
-                      {item.emoji && <span className="text-lg">{item.emoji}</span>}
+                      <Icon className={`w-5 h-5 ${active ? 'text-[#E5C872]' : 'text-[#8FA596]'}`} />
                       {item.label}
                     </Link>
                   );
                 })}
 
-                <div className="h-px bg-[#2a3352] mx-3 my-2" />
+                <div className="h-px bg-white/10 mx-3 my-2" />
 
                 <button
                   onClick={handleLogout}

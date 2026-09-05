@@ -1,4 +1,4 @@
-import { Inter } from 'next/font/google';
+import { Inter, Oxanium, Rajdhani } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/shared/Navbar';
@@ -10,6 +10,21 @@ const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
+});
+
+// Gamified display + body typefaces used across the student portal
+const oxanium = Oxanium({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  display: 'swap',
+  variable: '--font-oxanium',
+});
+
+const rajdhani = Rajdhani({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-rajdhani',
 });
 
 export const viewport = {
@@ -91,7 +106,7 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${oxanium.variable} ${rajdhani.variable}`}>
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/xok1vst.css" />
         <script

@@ -172,11 +172,14 @@ function YouTubeModal({ id, title, onClose }) {
   );
 }
 
-// Numbered rail section wrapper — the vertical 01..10 stepper down the left edge
-function RailSection({ n, children, className = '' }) {
+// Numbered rail section wrapper — the vertical 01..10 hex stepper down the left edge
+function RailSection({ n, children, className = '', filled = true }) {
   return (
     <section className={`relative ${className}`}>
-      <span className="hidden md:flex absolute -left-[52px] top-0 w-9 h-9 rounded-full bg-[#0E2A1B] text-[#E5C872] text-[12px] font-extrabold items-center justify-center ring-2 ring-[#E5C872]/25 shadow-md z-10 tabular-nums">
+      <span
+        className={`hidden md:flex absolute -left-[54px] top-0 w-9 h-9 text-[12px] font-extrabold items-center justify-center z-10 tabular-nums disp ${filled ? 'bg-[#C9A84C] text-[#0E2A1B]' : 'bg-[#F3F1E9] text-[#C9A84C] ring-2 ring-inset ring-[#C9A84C]'}`}
+        style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+      >
         {n}
       </span>
       {children}
@@ -440,7 +443,6 @@ export default function StudentDashboard() {
 
   const isUserPaid = profile?.isPaid || user?.isPaid || paymentStatus?.isPaid;
   const firstName = profile?.name?.split(' ')[0] || user?.name?.split(' ')[0] || 'Titan';
-  const fullName = profile?.name || user?.name || 'Titan';
 
   const sortedModules = [...modulesList].sort((a, b) => {
     const weights = { beginner: 1, intermediate: 2, advanced: 3 };
@@ -486,110 +488,85 @@ export default function StudentDashboard() {
   const ssiPct = Math.min(100, Math.max(0, ssiScore));
   const ssiCirc = 2 * Math.PI * 42;
 
-  const navTabs = [
-    { label: 'Dashboard', href: '/student/dashboard', active: true },
-    { label: 'Learn', href: '/student/modules' },
-    { label: 'Innovation Club', href: '/student/innovation-club' },
-    { label: 'Build an Idea', href: '/student/submission' },
-    { label: 'My Titan Journey', href: '/student/profile' },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#F3F1E9] font-sans pb-20">
+    <div className="gamified-dash gamified-dash-bg min-h-screen pb-20">
 
-      {/* ── TOP NAV ── */}
-      <header className="sticky top-0 z-40 bg-[linear-gradient(90deg,#0E2A1B_0%,#0A1E13_100%)] border-b border-[#E5C872]/15 shadow-sm">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          <Link href="/student/dashboard" className="flex items-center gap-2.5 flex-shrink-0">
-            <div className="hex w-8 h-8 bg-[#E5C872] flex items-center justify-center">
-              <span className="text-[#0E2A1B] font-black text-sm">Y</span>
-            </div>
-            <span className="text-[#E5C872] font-extrabold tracking-tight text-[15px] hidden sm:block">YOUNGPRENEURS</span>
-          </Link>
-
-          <nav className="hidden lg:flex items-center gap-1">
-            {navTabs.map((t) => (
-              <Link
-                key={t.label}
-                href={t.href}
-                className={`px-3.5 py-1.5 rounded-full text-[13px] font-semibold transition-colors ${
-                  t.active
-                    ? 'bg-[#E5C872] text-[#0E2A1B]'
-                    : 'text-[#C4D2C8] hover:text-white hover:bg-white/10'
-                }`}
-              >
-                {t.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <div className="hidden md:flex flex-col items-end leading-tight pr-3 border-r border-white/15">
-              <span className="text-[9px] uppercase tracking-widest text-[#8FA596] font-semibold">Knowledge Partner</span>
-              <span className="text-[12px] text-white font-bold">IIT Kharagpur</span>
-            </div>
-            <div className="flex items-center gap-2 bg-[#E5C872] rounded-full pl-1 pr-3 py-1">
-              <div className="w-7 h-7 rounded-full bg-[#0E2A1B] text-[#E5C872] flex items-center justify-center text-xs font-bold">
-                {firstName.charAt(0).toUpperCase()}
-              </div>
-              <span className="text-[13px] font-bold text-[#0E2A1B] max-w-[120px] truncate">{fullName}</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* ── BODY with numbered rail ── */}
+      {/* ── BODY with numbered rail (top nav comes from the global <Navbar /> in app/layout.js) ── */}
       <div className="max-w-[1120px] mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10">
-        <div className="relative md:pl-[68px]">
-          {/* the dashed rail line */}
-          <div className="hidden md:block absolute left-[16px] top-3 bottom-3 border-l-2 border-dashed border-[#0E2A1B]/15" />
+        <div className="relative md:pl-[70px]">
+          {/* the gold rail line */}
+          <div className="hidden md:block absolute left-[16px] top-4 bottom-24 w-px bg-gradient-to-b from-[#C9A84C]/70 via-[#C9A84C]/35 to-transparent" />
+          <div className="hidden md:block absolute left-[16px] bottom-4 h-24 border-l border-dashed border-[#C9A84C]/30" />
 
           <div className="space-y-8 sm:space-y-10">
 
             {/* ── 01 · GREETING + SSI ── */}
             <RailSection n="01">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                <div className="lg:col-span-2 flex flex-col justify-center">
-                  <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight leading-[1.05] text-[#0E2A1B]">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="flex flex-col justify-center">
+                  <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight leading-[0.95] text-[#0E2A1B]">
                     Hey, <span className="text-[#2E7D46]">{firstName}</span>
                   </h1>
-                  <p className="text-[#5B6B60] text-base mt-3">What&apos;s your next move?</p>
-                  <div className="flex flex-wrap items-center gap-3 mt-5">
+                  <p className="text-[#3B4A40] text-lg sm:text-xl mt-4 font-medium">What&apos;s your next move?</p>
+
+                  {/* decorative progress marker row */}
+                  <div className="flex items-center gap-2.5 mt-6">
+                    <span className="w-3 h-3 border-2 border-[#C9A84C] rotate-45 inline-block" />
+                    <span className="w-12 h-[3px] bg-[#0E2A1B]" />
+                    <span className="w-7 h-[3px] bg-[#C9A84C]/45" />
+                    <span className="w-5 h-[3px] bg-[#C9A84C]/30" />
+                    <span className="w-3 h-[3px] bg-[#C9A84C]/20" />
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3 mt-6">
                     <button
                       onClick={() => setShowIntroVideo(true)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0E2A1B] text-[#E5C872] text-sm font-semibold hover:bg-[#123420] transition-colors"
+                      className="flex items-center gap-2 px-5 py-2.5 bg-[#0E2A1B] text-[#E5C872] text-sm font-bold hover:bg-[#123420] transition-colors"
+                      style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
                     >
                       <Play className="w-4 h-4" /> Click Me First
                     </button>
                     <button
                       onClick={() => setShowFAQ(true)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-full border-2 border-[#0E2A1B]/15 bg-white text-[#0E2A1B] text-sm font-semibold hover:border-[#D4AF37] transition-all"
+                      className="flex items-center gap-2 px-5 py-2.5 border-2 border-[#0E2A1B]/20 bg-white/60 text-[#0E2A1B] text-sm font-bold hover:border-[#C9A84C] transition-all"
+                      style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}
                     >
                       <MessageCircle className="w-4 h-4" /> Got Questions?
                     </button>
                   </div>
                 </div>
 
-                {/* SSI Score card */}
-                <div className="relative bg-[linear-gradient(150deg,#123420,#0A1E13)] rounded-2xl p-5 flex items-center gap-4 overflow-hidden border border-[#E5C872]/15">
-                  <div className="absolute -top-8 -right-8 w-40 h-40 bg-[#E5C872]/10 blur-[60px] rounded-full pointer-events-none" />
-                  <div className="relative z-10">
-                    <p className="text-[#E5C872] text-[10px] font-bold uppercase tracking-[0.18em]">Your SSI Score</p>
-                    <p className="text-[#9FB5A6] text-xs mt-1.5 leading-snug max-w-[150px]">SSI adds up module progress, badges and Zunnova points.</p>
+                {/* SSI Score card — double-cut corners + segmented gauge */}
+                <div
+                  className="relative bg-[linear-gradient(150deg,#123420,#08160D)] p-6 sm:p-7 flex items-center gap-4 overflow-hidden"
+                  style={{ clipPath: 'polygon(0 22px, 22px 0, 100% 0, 100% 100%, 22px 100%, 0 calc(100% - 22px))' }}
+                >
+                  <div className="absolute -top-8 -right-8 w-48 h-48 bg-[#E5C872]/10 blur-[70px] rounded-full pointer-events-none" />
+                  <div className="relative z-10 flex-1">
+                    <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-[0.2em] flex items-center gap-1.5">
+                      <Star className="w-3.5 h-3.5" fill="currentColor" /> Your SSI Score
+                    </p>
+                    <p className="text-[#9FB5A6] text-[13px] mt-2 leading-snug max-w-[200px]">SSI adds up module progress, badges and Catch Zunnova points.</p>
+                    <div className="flex items-center gap-1 mt-4">
+                      {[0, 1, 2, 3, 4].map((i) => (
+                        <span key={i} className="w-6 h-[3px] bg-[#C9A84C]/25" />
+                      ))}
+                    </div>
                   </div>
-                  <div className="relative w-24 h-24 flex-shrink-0 ml-auto">
-                    <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                      <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(229,200,114,0.15)" strokeWidth="8" />
-                      <circle
-                        cx="50" cy="50" r="42" fill="none" stroke="#E5C872" strokeWidth="8" strokeLinecap="round"
-                        strokeDasharray={ssiCirc}
-                        strokeDashoffset={ssiCirc * (1 - ssiPct / 100)}
-                        style={{ transition: 'stroke-dashoffset 1s ease' }}
-                      />
+                  <div className="relative w-32 h-32 flex-shrink-0">
+                    <svg viewBox="0 0 120 120" className="w-full h-full">
+                      {Array.from({ length: 48 }).map((_, i) => {
+                        const ang = (i / 48) * 2 * Math.PI - Math.PI / 2;
+                        const on = (i / 48) <= (ssiPct / 100) && ssiPct > 0;
+                        const x1 = 60 + 46 * Math.cos(ang), y1 = 60 + 46 * Math.sin(ang);
+                        const x2 = 60 + 54 * Math.cos(ang), y2 = 60 + 54 * Math.sin(ang);
+                        return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={on ? '#E5C872' : 'rgba(229,200,114,0.18)'} strokeWidth="2.5" strokeLinecap="round" />;
+                      })}
+                      <circle cx="60" cy="14" r="2.5" fill="#E5C872" />
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl font-extrabold text-white leading-none">{Math.round(ssiScore)}</span>
-                      <span className="text-[9px] text-[#E5C872] uppercase tracking-widest mt-0.5">Points</span>
+                      <span className="text-4xl font-extrabold text-white leading-none disp">{Math.round(ssiScore)}</span>
+                      <span className="text-[10px] text-[#C9A84C] uppercase tracking-[0.25em] mt-1">Points</span>
                     </div>
                   </div>
                 </div>
@@ -599,53 +576,108 @@ export default function StudentDashboard() {
             {/* ── 02 · UNLOCK FULL ACCESS ── */}
             {!isUserPaid && (
               <RailSection n="02">
-                <div className="bg-[linear-gradient(120deg,#123420,#0A1E13)] rounded-2xl px-6 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border border-[#E5C872]/20 shadow-lg relative overflow-hidden">
-                  <div className="absolute top-0 right-1/3 w-52 h-52 bg-[#E5C872]/10 blur-[80px] rounded-full pointer-events-none" />
-                  <div className="flex items-start gap-3 relative z-10">
-                    <div className="hex w-9 h-9 bg-[#E5C872]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <Zap className="w-4 h-4 text-[#E5C872]" />
+                <div
+                  className="bg-[linear-gradient(120deg,#123420,#08160D)] px-6 sm:px-8 py-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 relative overflow-hidden"
+                  style={{ clipPath: 'polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px)' }}
+                >
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_120%,rgba(201,168,76,0.18),transparent_55%)] pointer-events-none" />
+                  {/* gold corner brackets */}
+                  <span className="absolute top-3 right-3 w-5 h-5 border-t-2 border-r-2 border-[#C9A84C]/70 pointer-events-none" />
+                  <span className="absolute bottom-3 left-3 w-5 h-5 border-b-2 border-l-2 border-[#C9A84C]/70 pointer-events-none" />
+
+                  <div className="flex items-start gap-3.5 relative z-10">
+                    <div className="w-10 h-10 bg-[#C9A84C]/20 flex items-center justify-center flex-shrink-0 mt-0.5" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}>
+                      <Lock className="w-4 h-4 text-[#E5C872]" />
                     </div>
                     <div>
-                      <h3 className="text-white font-bold text-base">Unlock Full Access</h3>
-                      <p className="text-[#9FB5A6] text-sm mt-0.5 max-w-xl">All 3 modules, unlimited Zunnova AI, IIT mentorship and the Innovation Club — everything below is waiting for you.</p>
+                      <h3 className="text-[#E5C872] font-extrabold text-xl sm:text-2xl">Unlock Full Access</h3>
+                      <p className="text-[#9FB5A6] text-sm mt-1.5 max-w-xl leading-relaxed">All 3 modules, unlimited Zunnova AI, IIT mentorship and the Innovation Club — everything below is waiting for you.</p>
+                      <div className="flex items-center gap-1.5 mt-4">
+                        {[0, 1, 2, 3].map((i) => (
+                          <span key={i} className="w-8 h-[3px] bg-[#C9A84C]/25" />
+                        ))}
+                      </div>
                     </div>
                   </div>
-                  <button
-                    onClick={handlePayment}
-                    className="relative z-10 bg-[#E5C872] text-[#0E2A1B] px-6 py-3 rounded-xl font-bold text-sm hover:bg-[#D4AF37] transition-colors flex-shrink-0 shadow-[0_8px_24px_rgba(229,200,114,0.25)]"
-                  >
-                    Pay &#8377;1500 + 18% GST
-                  </button>
+
+                  <div className="relative z-10 flex-shrink-0">
+                    <span className="absolute -top-1.5 -right-1.5 w-3.5 h-3.5 border-t-2 border-r-2 border-[#C9A84C] pointer-events-none" />
+                    <span className="absolute -bottom-1.5 -left-1.5 w-3.5 h-3.5 border-b-2 border-l-2 border-[#C9A84C] pointer-events-none" />
+                    <button
+                      onClick={handlePayment}
+                      className="flex items-center gap-2 bg-[linear-gradient(135deg,#E5C872,#C9A84C)] text-[#0E2A1B] px-7 py-3.5 font-extrabold text-sm hover:brightness-105 transition-all shadow-[0_8px_24px_rgba(201,168,76,0.3)]"
+                      style={{ clipPath: 'polygon(11px 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%, 0 11px)' }}
+                    >
+                      <Play className="w-3.5 h-3.5 fill-current" /> Pay &#8377;1500 + 18% GST
+                    </button>
+                  </div>
                 </div>
               </RailSection>
             )}
 
             {/* ── 03 · QUICK ACTION CARDS ── */}
-            <RailSection n="03">
+            <RailSection n="03" filled={false}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
-                  { href: '/student/modules', step: '01', tag: `${totalModules} modules waiting`, icon: GraduationCap, title: 'Learn something new', desc: 'Three modules, from founder mindset to launch.' },
-                  { href: '/student/submission', step: '02', tag: 'Unlocks after module 1', icon: Rocket, title: 'Build an idea', desc: 'Turn what you learn into a real submission.' },
-                  { href: '/student/innovation-club', step: '03', tag: 'Mentors & community', icon: Compass, title: 'Explore the Club', desc: 'Mentorship, incubation and the wider Youngpreneurs community.' },
+                  { href: '/student/modules', step: '01', tag: `${totalModules} MODULES WAITING`, Icon: GraduationCap, title: 'Learn something new', desc: 'Three modules, from founder mindset to launch.', locked: false, filledIcon: false, marker: 'bars' },
+                  { href: canSubmitIdea ? '/student/submission' : '/student/modules', step: '02', tag: 'UNLOCKS AFTER MODULE 1', Icon: Lightbulb, title: 'Build an idea', desc: 'Turn what you learn into a real submission.', locked: !canSubmitIdea, filledIcon: false, marker: 'bars' },
+                  { href: '/student/innovation-club', step: '03', tag: 'MENTORS & COMMUNITY', Icon: Rocket, title: 'Explore the Club', desc: 'Mentorship, incubation and the wider Youngpreneurs community.', locked: false, filledIcon: true, marker: 'diamonds' },
                 ].map((c) => {
-                  const Icon = c.icon;
+                  const Icon = c.Icon;
+                  const lk = c.locked;
+                  const TL_CUT = 'polygon(18px 0, 100% 0, 100% 100%, 0 100%, 0 18px)';
                   return (
                     <Link key={c.step} href={c.href} className="group">
-                      <div className="bg-white border border-[#E7E3D6] rounded-2xl p-5 h-full flex flex-col hover:shadow-lg hover:border-[#D4AF37]/40 transition-all">
-                        <div className="flex items-center justify-between mb-4">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#B8952E] flex items-center gap-1.5">
-                            <span className="w-5 h-5 rounded-md bg-[#FBF3DA] text-[#B8952E] flex items-center justify-center text-[10px] tabular-nums">{c.step}</span>
-                            {c.tag}
-                          </span>
+                      <div
+                        className={`relative pt-12 px-6 pb-5 h-full flex flex-col border transition-all ${lk ? 'bg-[#EDECE6] border-[#DEDCD3]' : 'bg-white border-[#E7E3D6] hover:shadow-lg hover:border-[#C9A84C]/40'}`}
+                        style={{ clipPath: TL_CUT }}
+                      >
+                        {/* angled number tab */}
+                        <div
+                          className={`absolute top-0 left-0 pl-4 pr-6 py-1.5 text-[12px] font-extrabold disp ${lk ? 'bg-[#C7CBC3] text-[#5B6B60]' : 'bg-[#0E2A1B] text-[#E5C872]'}`}
+                          style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%)' }}
+                        >
+                          {c.step}
                         </div>
-                        <div className="hex w-11 h-11 bg-[#0E2A1B] flex items-center justify-center mb-4">
-                          <Icon className="w-5 h-5 text-[#E5C872]" />
+                        <span className={`absolute top-[15px] left-[52px] w-8 h-[2px] ${lk ? 'bg-[#C7CBC3]' : 'bg-[#C9A84C]/50'}`} />
+                        {/* right tag */}
+                        <div className={`absolute top-3.5 right-5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] ${lk ? 'text-[#9A9E96]' : 'text-[#0E2A1B]/55'}`}>
+                          {lk && <Lock className="w-3 h-3" />}
+                          {!lk && <span className="w-2 h-2 border border-[#C9A84C] rotate-45 inline-block" />}
+                          {c.tag}
                         </div>
-                        <h3 className="font-extrabold text-[#0E2A1B] text-[16px] mb-1">{c.title}</h3>
-                        <p className="text-[#8A9A8E] text-[13px] leading-snug mb-4">{c.desc}</p>
-                        <span className="mt-auto inline-flex w-8 h-8 rounded-full bg-[#F3F1E9] group-hover:bg-[#E5C872] items-center justify-center transition-colors">
-                          <ArrowRight className="w-4 h-4 text-[#0E2A1B]" />
-                        </span>
+
+                        {/* hex icon */}
+                        <div
+                          className={`w-14 h-14 flex items-center justify-center mb-4 ${c.filledIcon ? 'bg-[#0E2A1B]' : lk ? 'bg-[#E2E1DB]' : 'bg-[#EAF0EA]'}`}
+                          style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }}
+                        >
+                          <Icon className={`w-6 h-6 ${c.filledIcon ? 'text-[#E5C872]' : lk ? 'text-[#9A9E96]' : 'text-[#1E5233]'}`} />
+                        </div>
+
+                        <h3 className={`font-extrabold text-[19px] mb-1.5 ${lk ? 'text-[#6B7268]' : 'text-[#0E2A1B]'}`}>{c.title}</h3>
+                        <p className={`text-[13px] leading-snug mb-4 ${lk ? 'text-[#9A9E96]' : 'text-[#8A9A8E]'}`}>{c.desc}</p>
+
+                        {/* footer markers + arrow */}
+                        <div className="mt-auto pt-4 flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            {c.marker === 'bars' ? (
+                              <>
+                                <span className={`w-5 h-[3px] ${lk ? 'bg-[#D3D1C9]' : 'bg-[#D8D5CA]'}`} />
+                                <span className={`w-5 h-[3px] ${lk ? 'bg-[#D3D1C9]' : 'bg-[#D8D5CA]'}`} />
+                                <span className={`w-5 h-[3px] ${lk ? 'bg-[#D3D1C9]' : 'bg-[#D8D5CA]'}`} />
+                                <span className={`w-2.5 h-2.5 border rotate-45 inline-block ml-0.5 ${lk ? 'border-[#B9B7AE]' : 'border-[#C9A84C]'}`} />
+                              </>
+                            ) : (
+                              <>
+                                <span className="w-2.5 h-2.5 border border-[#2E7D46]/50 rotate-45 inline-block" />
+                                <span className="w-2.5 h-2.5 border border-[#2E7D46]/50 rotate-45 inline-block" />
+                                <span className="w-2.5 h-2.5 border border-[#2E7D46]/50 rotate-45 inline-block" />
+                              </>
+                            )}
+                          </div>
+                          <ArrowRight className={`w-5 h-5 transition-transform group-hover:translate-x-1 ${lk ? 'text-[#9A9E96]' : 'text-[#C9A84C]'}`} />
+                        </div>
                       </div>
                     </Link>
                   );
@@ -655,7 +687,7 @@ export default function StudentDashboard() {
 
             {/* ── 04 · MY TITAN JOURNEY ── */}
             <RailSection n="04">
-              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-6 sm:p-8 border border-[#E5C872]/15 relative overflow-hidden">
+              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] cut-panel p-6 sm:p-8 relative overflow-hidden">
                 <div className="absolute -top-10 right-10 w-64 h-64 bg-[#E5C872]/8 blur-[100px] rounded-full pointer-events-none" />
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-6">
@@ -772,7 +804,7 @@ export default function StudentDashboard() {
 
             {/* ── 05 · FROM CAMPUS IDEA TO REAL IMPACT ── */}
             <RailSection n="05">
-              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-6 sm:p-8 border border-[#E5C872]/15 relative overflow-hidden">
+              <div className="bg-[linear-gradient(160deg,#123420,#0A1E13)] cut-panel p-6 sm:p-8 relative overflow-hidden">
                 <div className="absolute -top-8 -right-8 w-64 h-64 bg-[#E5C872]/8 blur-[90px] rounded-full pointer-events-none" />
                 <div className="relative z-10">
                   <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-[0.2em] mb-3">Success Stories</p>
@@ -809,14 +841,14 @@ export default function StudentDashboard() {
                 <p className="text-[#8A9A8E] text-sm mt-2 max-w-2xl">The Club is where the learning turns into a venture — mentor circles, live builds and a cohort that ships alongside you.</p>
               </div>
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-                <div className="lg:col-span-3 bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-5 border border-[#E5C872]/15 relative">
+                <div className="lg:col-span-3 bg-[linear-gradient(160deg,#123420,#0A1E13)] cut-card p-5 relative">
                   <span className="absolute top-4 right-4 z-10 px-3 py-1 bg-[#E5C872] text-[#0E2A1B] rounded-full text-[10px] font-bold uppercase tracking-wider">2 min tour</span>
                   <YouTubeEmbed id={YT_INCUBATION} title="Innovation Club tour" className="shadow-lg" />
                   <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-widest mt-4">Innovation Club · The Tour</p>
                   <h3 className="text-white font-bold text-lg mt-1">See what a week in the Club looks like</h3>
                   <p className="text-[#9FB5A6] text-sm mt-1">Mentor circles, build sessions and demo day — filmed inside the last cohort.</p>
                 </div>
-                <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-[#E7E3D6] flex flex-col">
+                <div className="lg:col-span-2 bg-white cut-card p-6 border border-[#E7E3D6] flex flex-col">
                   <h3 className="font-extrabold text-[#0E2A1B] text-lg mb-4">What you get inside</h3>
                   <div className="space-y-3 flex-1">
                     {[
@@ -925,7 +957,7 @@ export default function StudentDashboard() {
             {/* ── 09 · CATCH ZUNNOVA + TOP CATCHERS ── */}
             <RailSection n="09">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-                <div className="lg:col-span-2 bg-[linear-gradient(160deg,#0A1E13,#06120B)] rounded-2xl p-6 sm:p-7 shadow-xl relative overflow-hidden flex flex-col border border-[#E5C872]/15">
+                <div className="lg:col-span-2 bg-[linear-gradient(160deg,#0A1E13,#06120B)] cut-panel p-6 sm:p-7 shadow-xl relative overflow-hidden flex flex-col">
                   <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#E5C872] mb-2">Mini Game</p>
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
                     <h3 className="text-2xl sm:text-3xl font-extrabold text-white">Catch Zunnova</h3>
@@ -1005,7 +1037,7 @@ export default function StudentDashboard() {
                 </div>
 
                 {/* Top Catchers */}
-                <div className="lg:col-span-1 bg-[linear-gradient(160deg,#123420,#0A1E13)] rounded-2xl p-6 border border-[#E5C872]/15 shadow-xl flex flex-col">
+                <div className="lg:col-span-1 bg-[linear-gradient(160deg,#123420,#0A1E13)] cut-panel p-6 shadow-xl flex flex-col">
                   <div className="flex items-center justify-between mb-1">
                     <h3 className="font-bold text-white text-xl">Top Catchers</h3>
                     <span className="px-3 py-1 border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest text-[#9FB5A6]">Today</span>
@@ -1044,7 +1076,7 @@ export default function StudentDashboard() {
 
             {/* ── 10 · LATEST FROM US ── */}
             <RailSection n="10">
-              <div className="bg-white rounded-2xl p-6 sm:p-7 border border-[#E7E3D6] shadow-sm">
+              <div className="bg-white cut-card p-6 sm:p-7 border border-[#E7E3D6] shadow-sm">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
                   <div className="flex flex-wrap items-center gap-3">
                     <h3 className="text-lg sm:text-xl font-extrabold text-[#0E2A1B]">Latest From Us</h3>
@@ -1167,6 +1199,16 @@ export default function StudentDashboard() {
 
       <style jsx global>{`
         .hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+        .gamified-dash { font-family: var(--font-rajdhani), ui-sans-serif, system-ui, sans-serif; }
+        .gamified-dash h1, .gamified-dash h2, .gamified-dash h3, .gamified-dash .disp { font-family: var(--font-oxanium), ui-sans-serif, system-ui, sans-serif; }
+        .cut-panel { clip-path: polygon(22px 0, 100% 0, 100% calc(100% - 22px), calc(100% - 22px) 100%, 0 100%, 0 22px); }
+        .cut-card { clip-path: polygon(16px 0, 100% 0, 100% 100%, 0 100%, 0 16px); }
+        .gamified-dash-bg {
+          background-color: #F3F1E9;
+          background-image:
+            repeating-linear-gradient(60deg, rgba(14,42,27,0.04) 0 1px, transparent 1px 46px),
+            repeating-linear-gradient(-60deg, rgba(14,42,27,0.04) 0 1px, transparent 1px 46px);
+        }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
