@@ -25,6 +25,15 @@ const PRIORITY_OPTIONS = [
   { value: 'low', label: 'Low', color: 'text-gray-500' },
 ];
 
+const CATEGORY_OPTIONS = [
+  { value: 'school', label: 'Schools', color: 'bg-blue-100 text-blue-700' },
+  { value: 'parent', label: 'Parents', color: 'bg-purple-100 text-purple-700' },
+  { value: 'student', label: 'Students', color: 'bg-green-100 text-green-700' },
+  { value: 'other', label: 'Other', color: 'bg-gray-100 text-gray-700' },
+];
+const categoryColor = (c) => CATEGORY_OPTIONS.find((o) => o.value === c)?.color || 'bg-gray-100 text-gray-700';
+const categoryLabel = (c) => CATEGORY_OPTIONS.find((o) => o.value === c)?.label || 'Other';
+
 const CONTACT_METHODS = ['email', 'call', 'whatsapp', 'meeting', 'other'];
 const NOTE_TYPES = ['note', 'email_sent', 'call_made', 'meeting', 'status_change'];
 
@@ -72,7 +81,7 @@ function isOverdue(d) {
 }
 
 const emptyLead = {
-  name: '', designation: '', school: '', city: '', state: '', phone: '', email: '',
+  name: '', category: 'other', designation: '', school: '', city: '', state: '', phone: '', email: '',
   leadSource: '', contactMethod: 'email', status: 'new', priority: 'medium',
   response: '', assignedTo: '', nextFollowUp: '', lastContact: '',
 };
@@ -86,6 +95,7 @@ export default function AdminLeadsPage() {
   // Filters & Sorting
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [filterCategory, setFilterCategory] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [filterCity, setFilterCity] = useState('');
   const [filterAssigned, setFilterAssigned] = useState('');
@@ -126,6 +136,7 @@ export default function AdminLeadsPage() {
   const [importingLeads, setImportingLeads] = useState(false);
   const [importProgress, setImportProgress] = useState({ current: 0, total: 0 });
   const [importDescription, setImportDescription] = useState('');
+  const [importCategory, setImportCategory] = useState('school');
   const fileRef = useRef(null);
 
   const fetchLeads = useCallback(async () => {
@@ -134,6 +145,7 @@ export default function AdminLeadsPage() {
       const filters = { page: pagination.page, limit: 50 };
       if (search) filters.search = search;
       if (filterStatus) filters.status = filterStatus;
+      if (filterCategory) filters.category = filterCategory;
       if (filterPriority) filters.priority = filterPriority;
       if (filterCity) filters.city = filterCity;
       if (filterAssigned) filters.assignedTo = filterAssigned;
@@ -146,7 +158,7 @@ export default function AdminLeadsPage() {
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, search, filterStatus, filterPriority, filterCity, filterAssigned, sortField, sortDir]);
+  }, [pagination.page, search, filterStatus, filterCategory, filterPriority, filterCity, filterAssigned, sortField, sortDir]);
 
   const fetchDashboard = useCallback(async () => {
     try {
@@ -383,7 +395,7 @@ export default function AdminLeadsPage() {
     try {
       for (let i = 0; i < mapped.length; i += BATCH_SIZE) {
         const batch = mapped.slice(i, i + BATCH_SIZE);
-        const result = await adminLeads.bulkImport(batch, importDescription);
+        const result = await adminLeads.bulkImport(batch, importDescription, importCategory);
         totals.inserted += result.inserted || 0;
         totals.skipped += result.skipped || 0;
         if (result.errors?.length) {
@@ -412,14 +424,15 @@ export default function AdminLeadsPage() {
   const handleExport = async () => {
     try {
       const filters = {};
+      if (filterCategory) filters.category = filterCategory;
       if (filterStatus) filters.status = filterStatus;
       if (filterCity) filters.city = filterCity;
       if (filterAssigned) filters.assignedTo = filterAssigned;
       if (filterPriority) filters.priority = filterPriority;
       const data = await adminLeads.export(filters);
-      const headers = ['Name', 'Designation', 'School', 'City', 'State', 'Phone', 'Email', 'Lead Source', 'Contact Method', 'Last Contact', 'Response', 'Assigned To', 'Next Follow Up', 'Status', 'Priority'];
+      const headers = ['Name', 'Category', 'Designation', 'School', 'City', 'State', 'Phone', 'Email', 'Lead Source', 'Contact Method', 'Last Contact', 'Response', 'Assigned To', 'Next Follow Up', 'Status', 'Priority'];
       const rows = data.map((l) => [
-        l.name, l.designation, l.school, l.city, l.state, l.phone, l.email,
+        l.name, categoryLabel(l.category), l.designation, l.school, l.city, l.state, l.phone, l.email,
         l.leadSource, l.contactMethod, formatDate(l.lastContact), l.response,
         l.assignedTo, formatDate(l.nextFollowUp), l.status, l.priority,
       ]);
@@ -428,7 +441,7 @@ export default function AdminLeadsPage() {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `leads_export_${new Date().toISOString().split('T')[0]}.csv`;
+      a.download = `leads_${filterCategory || 'all'}_${new Date().toISOString().split('T')[0]}.csv`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
@@ -444,13 +457,13 @@ export default function AdminLeadsPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl font-bold gradient-text">Lead Management</h1>
-          <p className="text-sm text-gray-500 mt-1">Track and manage all school and institution leads</p>
+          <p className="text-sm text-gray-500 mt-1">Track and manage school, parent and student leads</p>
         </div>
         <div className="flex gap-2">
           <button onClick={() => { setShowForm(true); setEditingLead(null); setFormData(emptyLead); }} className="glass-button flex items-center gap-2 text-sm">
             <Plus className="w-4 h-4" /> Add Lead
           </button>
-          <button onClick={() => { setShowImport(true); setImportStep(1); setFileColumns([]); setFileRows([]); setColumnMapping({}); setImportResult(null); setImportDescription(''); }} className="glass-button-secondary flex items-center gap-2 text-sm">
+          <button onClick={() => { setShowImport(true); setImportStep(1); setFileColumns([]); setFileRows([]); setColumnMapping({}); setImportResult(null); setImportDescription(''); setImportCategory(filterCategory || 'school'); }} className="glass-button-secondary flex items-center gap-2 text-sm">
             <Upload className="w-4 h-4" /> Import
           </button>
           <button onClick={handleExport} className="glass-button-secondary flex items-center gap-2 text-sm">
@@ -485,6 +498,27 @@ export default function AdminLeadsPage() {
           })}
         </div>
       )}
+
+      {/* Category sheets */}
+      <div className="flex items-center gap-1 border-b border-gray-200 overflow-x-auto">
+        {[{ value: '', label: 'All Leads' }, ...CATEGORY_OPTIONS].map((tab) => {
+          const active = filterCategory === tab.value;
+          const count = tab.value
+            ? (dashboard?.categoryBreakdown?.[tab.value] || 0)
+            : (dashboard?.total || 0);
+          return (
+            <button
+              key={tab.value || 'all'}
+              onClick={() => { setFilterCategory(tab.value); setPagination((p) => ({ ...p, page: 1 })); }}
+              className={`relative px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors ${active ? 'text-[#DC2626]' : 'text-gray-500 hover:text-gray-800'}`}
+            >
+              {tab.label}
+              <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${active ? 'bg-[#DC2626]/10 text-[#DC2626]' : 'bg-gray-100 text-gray-500'}`}>{count}</span>
+              {active && <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#DC2626] rounded-t-full" />}
+            </button>
+          );
+        })}
+      </div>
 
       {/* Filters */}
       <div className="card !p-4">
@@ -597,7 +631,12 @@ export default function AdminLeadsPage() {
                     <input type="checkbox" checked={selected.has(lead._id)} onChange={() => toggleSelect(lead._id)} className="rounded border-gray-300" />
                   </td>
                   <td className="p-3">
-                    <p className="font-medium text-gray-900">{lead.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-gray-900">{lead.name}</p>
+                      {!filterCategory && (
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${categoryColor(lead.category)}`}>{categoryLabel(lead.category)}</span>
+                      )}
+                    </div>
                     <p className="text-xs text-gray-400 md:hidden">{lead.designation}</p>
                   </td>
                   <td className="p-3 hidden md:table-cell text-gray-600">{lead.designation || '-'}</td>
@@ -682,6 +721,21 @@ export default function AdminLeadsPage() {
                 </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-semibold text-gray-500 mb-1 block">Category</label>
+                  <div className="flex flex-wrap gap-2">
+                    {CATEGORY_OPTIONS.map((c) => (
+                      <button
+                        key={c.value}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, category: c.value })}
+                        className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${formData.category === c.value ? `${c.color} border-transparent ring-2 ring-offset-1 ring-[#DC2626]/40` : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 mb-1 block">Name *</label>
                   <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="glass-input w-full" placeholder="Full name" />
@@ -843,17 +897,36 @@ export default function AdminLeadsPage() {
 
               {/* Step 1: Upload */}
               {importStep === 1 && (
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
-                  <FileSpreadsheet className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                  <p className="text-sm text-gray-500 mb-3">Upload CSV or Excel file (.csv, .xlsx, .xls)</p>
-                  <input
-                    ref={fileRef}
-                    type="file"
-                    accept=".csv,.xlsx,.xls"
-                    onChange={handleFileUpload}
-                    className="block mx-auto text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer cursor-pointer"
-                  />
-                  {importLoading && <p className="text-sm text-[#D4AF37] mt-3 font-medium">Parsing file...</p>}
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-semibold text-gray-700 mb-1 block">Import as</label>
+                    <p className="text-xs text-gray-500 mb-2">Pick which sheet these leads belong to — every row in this file is added to this category.</p>
+                    <div className="flex flex-wrap gap-2">
+                      {CATEGORY_OPTIONS.map((c) => (
+                        <button
+                          key={c.value}
+                          type="button"
+                          onClick={() => setImportCategory(c.value)}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${importCategory === c.value ? `${c.color} border-transparent ring-2 ring-offset-1 ring-[#DC2626]/40` : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'}`}
+                        >
+                          {c.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center">
+                    <FileSpreadsheet className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+                    <p className="text-sm text-gray-500 mb-1">Upload CSV or Excel file (.csv, .xlsx, .xls)</p>
+                    <p className="text-xs text-gray-400 mb-3">These rows will be imported as <span className="font-semibold text-gray-600">{categoryLabel(importCategory)}</span></p>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept=".csv,.xlsx,.xls"
+                      onChange={handleFileUpload}
+                      className="block mx-auto text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer cursor-pointer"
+                    />
+                    {importLoading && <p className="text-sm text-[#D4AF37] mt-3 font-medium">Parsing file...</p>}
+                  </div>
                 </div>
               )}
 
