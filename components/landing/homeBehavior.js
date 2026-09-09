@@ -93,6 +93,28 @@ export function initHome(root) {
     });
   });
 
+  // ── Login dropdown ───────────────────────────────────────────────────
+  const loginRoot = q('[data-login]');
+  const loginToggle = q('[data-login-toggle]');
+  const loginMenu = q('[data-login-menu]');
+  const loginCaret = q('[data-login-caret]');
+  if (loginRoot && loginToggle && loginMenu) {
+    let loginOpen = false;
+    const setLoginOpen = (v) => {
+      loginOpen = v;
+      loginMenu.style.opacity = v ? '1' : '0';
+      loginMenu.style.pointerEvents = v ? 'auto' : 'none';
+      loginMenu.style.transform = v ? 'translateY(0)' : 'translateY(-6px)';
+      if (loginCaret) loginCaret.style.transform = v ? 'rotate(180deg)' : 'rotate(0deg)';
+      loginToggle.setAttribute('aria-expanded', v ? 'true' : 'false');
+    };
+    on(loginToggle, 'click', (e) => { e.stopPropagation(); setLoginOpen(!loginOpen); });
+    on(document, 'click', (e) => {
+      if (!loginRoot.contains(e.target)) setLoginOpen(false);
+    });
+    on(document, 'keydown', (e) => { if (e.key === 'Escape') setLoginOpen(false); });
+  }
+
   // ── Cursor label zones (--cur) ───────────────────────────────────────
   const cursorLabel = q('[data-cursor-label]');
   list('[data-zone]').forEach((el) => {
