@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { getUser } from '@/lib/auth';
 import { innovationClub } from '@/lib/api';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import HackathonChatModal from '@/components/student/HackathonChatModal';
 import {
   Trophy,
   Calendar,
@@ -25,6 +26,8 @@ import {
   Award,
   Landmark,
   School,
+  MessageCircle,
+  Sparkles,
   X,
 } from 'lucide-react';
 
@@ -153,6 +156,13 @@ export default function HackathonsPage() {
   const [registerSuccess, setRegisterSuccess] = useState(false);
   const [registerError, setRegisterError] = useState(null);
   const [leaderboardModal, setLeaderboardModal] = useState(null); // { title, teams, loading }
+  const [chatHackathon, setChatHackathon] = useState(null); // hackathon object for Zunnova coach modal
+
+  useEffect(() => {
+    if (!chatHackathon) return;
+    window.dispatchEvent(new Event('hideGlobalZunnova'));
+    return () => window.dispatchEvent(new Event('showGlobalZunnova'));
+  }, [chatHackathon]);
 
   useEffect(() => {
     const currentUser = getUser();
@@ -496,6 +506,13 @@ export default function HackathonsPage() {
                     <UserPlus className="w-4 h-4" />
                     Register Team
                   </button>
+                  <button
+                    onClick={() => setChatHackathon(featured)}
+                    className="inline-flex items-center gap-2 bg-white/10 border border-[#D4AF37]/50 text-[#D4AF37] font-bold px-6 py-3 rounded-xl text-sm hover:bg-[#D4AF37]/10 transition-colors"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Discuss Idea with Zunnova
+                  </button>
                   {featured.rulebookUrl && (
                     <a
                       href={featured.rulebookUrl}
@@ -611,7 +628,16 @@ export default function HackathonsPage() {
                     </div>
                   </div>
                 )}
-                <div className="mt-auto">{ctaFor(h)}</div>
+                <div className="mt-auto space-y-2">
+                  {ctaFor(h)}
+                  <button
+                    onClick={() => setChatHackathon(h)}
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-[#D4AF37]/10 border border-[#D4AF37]/40 text-[#8A6D1B] rounded-xl text-sm font-semibold hover:bg-[#D4AF37]/20 transition-all"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    Discuss Idea with Zunnova
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -824,6 +850,11 @@ export default function HackathonsPage() {
             )}
           </div>
         </div>
+      )}
+
+      {/* ===== HACKATHON CHAT MODAL ===== */}
+      {chatHackathon && (
+        <HackathonChatModal hackathon={chatHackathon} onClose={() => setChatHackathon(null)} />
       )}
 
       {/* ===== LEADERBOARD MODAL ===== */}
