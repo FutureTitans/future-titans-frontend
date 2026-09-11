@@ -331,7 +331,7 @@ export default function GlobalAIChat() {
                 <div className="glass-subtle p-6 rounded-2xl max-w-sm pt-8">
                   <ZunnovaAvatar isTalking={false} className="w-40 h-28 md:w-48 md:h-32 mx-auto mb-4 drop-shadow-lg scale-[1.4] origin-bottom" />
                   <p className="text-gray-600 font-medium mb-1 text-sm md:text-base">Start a conversation</p>
-                  <p className="text-xs md:text-sm text-gray-500">Ask anything about ideas, mindset, or SURGE</p>
+                  <p className="text-xs md:text-sm text-gray-500">Ask about your idea, mindset, SURGE, or how to ace an Innovation Club hackathon</p>
                 </div>
               </div>
             ) : (
