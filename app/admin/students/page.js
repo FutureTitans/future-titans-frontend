@@ -11,17 +11,23 @@ export default function StudentsPage() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [schoolSlugs, setSchoolSlugs] = useState([]);
-  const [selectedSlug, setSelectedSlug] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [schoolOptions, setSchoolOptions] = useState([]);
+  const [selectedSchool, setSelectedSchool] = useState('');
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
+
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(t);
+  }, [search]);
 
   useEffect(() => {
     const fetchStudents = async () => {
       try {
         setLoading(true);
         const data = await admin.getStudents({
-          search,
-          schoolSlug: selectedSlug || undefined,
+          search: debouncedSearch || undefined,
+          school: selectedSchool || undefined,
           page: pagination.page,
           limit: 50,
         });
@@ -38,18 +44,18 @@ export default function StudentsPage() {
       }
     };
     fetchStudents();
-  }, [search, selectedSlug, pagination.page]);
+  }, [debouncedSearch, selectedSchool, pagination.page]);
 
   useEffect(() => {
-    const fetchSlugs = async () => {
+    const fetchSchools = async () => {
       try {
-        const data = await admin.getSchoolSlugs();
-        setSchoolSlugs(data);
+        const data = await admin.getStudentSchools();
+        setSchoolOptions(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error('Failed to fetch school slugs for filter:', error);
+        console.error('Failed to fetch schools for filter:', error);
       }
     };
-    fetchSlugs();
+    fetchSchools();
   }, []);
 
   const handleDelete = async (student) => {
@@ -82,7 +88,7 @@ export default function StudentsPage() {
             <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
             <input
               type="text"
-              placeholder="Search by name or email..."
+              placeholder="Search by name, email, or school..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
@@ -92,17 +98,17 @@ export default function StudentsPage() {
             />
           </div>
           <select
-            value={selectedSlug}
+            value={selectedSchool}
             onChange={(e) => {
-              setSelectedSlug(e.target.value);
+              setSelectedSchool(e.target.value);
               setPagination(p => ({ ...p, page: 1 }));
             }}
             className="glass-input !py-2.5 text-sm sm:w-56"
           >
-            <option value="">All schools</option>
-            {schoolSlugs.map((slug) => (
-              <option key={slug._id} value={slug.slug}>
-                {slug.name} ({slug.slug})
+            <option value="">All schools ({schoolOptions.length})</option>
+            {schoolOptions.map((s) => (
+              <option key={s.name} value={s.name}>
+                {s.name} ({s.count})
               </option>
             ))}
           </select>
