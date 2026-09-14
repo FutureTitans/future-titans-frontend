@@ -50,13 +50,43 @@ export default function StudentsPage() {
     const fetchSchools = async () => {
       try {
         const data = await admin.getStudentSchools();
-        setSchoolOptions(Array.isArray(data) ? data : []);
+        if (Array.isArray(data) && data.length > 0) {
+          setSchoolOptions(data);
+          return;
+        }
+      } catch (error) {
+        // New endpoint not deployed yet — fall through to slug-based list.
+      }
+      try {
+        const slugs = await admin.getSchoolSlugs();
+        setSchoolOptions(
+          (Array.isArray(slugs) ? slugs : []).map((s) => ({
+            name: s.name,
+            count: s.studentCount || 0,
+            slug: s.slug,
+          }))
+        );
       } catch (error) {
         console.error('Failed to fetch schools for filter:', error);
       }
     };
     fetchSchools();
   }, []);
+
+  useEffect(() => {
+    if (!students.length) return;
+    setSchoolOptions((prev) => {
+      const map = new Map(prev.map((s) => [s.name, s]));
+      students.forEach((st) => {
+        if (st.school && !map.has(st.school)) {
+          map.set(st.school, { name: st.school, count: 0, slug: st.schoolSlug || null });
+        }
+      });
+      const merged = Array.from(map.values());
+      if (merged.length === prev.length) return prev;
+      return merged.sort((a, b) => a.name.localeCompare(b.name));
+    });
+  }, [students]);
 
   const handleDelete = async (student) => {
     if (!confirm(`Are you sure you want to delete ${student.name}? This will delete all their data including AI chats and submissions. This action cannot be undone.`)) return;
