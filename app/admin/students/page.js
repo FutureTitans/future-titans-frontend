@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { admin } from '@/lib/api';
-import { Search, Eye, Trash2, ChevronLeft, ChevronRight, Users } from 'lucide-react';
+import { Search, Eye, Trash2, ChevronLeft, ChevronRight, Users, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
@@ -15,6 +15,7 @@ export default function StudentsPage() {
   const [schoolOptions, setSchoolOptions] = useState([]);
   const [selectedSchool, setSelectedSchool] = useState('');
   const [pagination, setPagination] = useState({ page: 1, totalPages: 1, total: 0 });
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search.trim()), 300);
@@ -88,6 +89,80 @@ export default function StudentsPage() {
     });
   }, [students]);
 
+  const formatExportDate = (d) => {
+    if (!d) return '';
+    const dt = new Date(d);
+    if (Number.isNaN(dt.getTime())) return '';
+    return dt.toISOString().split('T')[0];
+  };
+
+  const handleExport = async () => {
+    try {
+      setExporting(true);
+      const baseFilters = {
+        search: debouncedSearch || undefined,
+        school: selectedSchool || undefined,
+        limit: 100,
+      };
+
+      const all = [];
+      let page = 1;
+      while (true) {
+        const data = await admin.getStudents({ ...baseFilters, page });
+        const batch = Array.isArray(data) ? data : (data.students || []);
+        all.push(...batch);
+        const totalPages = Array.isArray(data) ? 1 : (data.pagination?.totalPages || 1);
+        if (Array.isArray(data) || page >= totalPages || batch.length === 0) break;
+        page += 1;
+      }
+
+      if (all.length === 0) {
+        alert('No students to export.');
+        return;
+      }
+
+      const rows = all.map((s) => ({
+        Name: s.name || '',
+        Email: s.email || '',
+        Phone: s.phone || '',
+        School: s.school || '',
+        'School Slug': s.schoolSlug || '',
+        Class: s.class || s.grade || '',
+        City: s.city || '',
+        State: s.state || '',
+        Country: s.country || '',
+        'SSI Score': s.ssiScore ?? 0,
+        'Self Awareness': s.ssiBreakdown?.selfAwareness ?? '',
+        Understanding: s.ssiBreakdown?.understanding ?? '',
+        Resilience: s.ssiBreakdown?.resilience ?? '',
+        Growth: s.ssiBreakdown?.growth ?? '',
+        'Entrepreneurial Leadership': s.ssiBreakdown?.entrepreneurialLeadership ?? '',
+        'Is Paid': s.isPaid ? 'Yes' : 'No',
+        'Modules Started': Array.isArray(s.modulesProgress) ? s.modulesProgress.length : 0,
+        'Modules Completed': Array.isArray(s.modulesProgress)
+          ? s.modulesProgress.filter((m) => m.completedAt).length
+          : 0,
+        'Registered On': formatExportDate(s.createdAt),
+        'Last Updated': formatExportDate(s.updatedAt),
+      }));
+
+      const XLSX = await import('xlsx');
+      const xlsxLib = XLSX.default || XLSX;
+      const ws = xlsxLib.utils.json_to_sheet(rows);
+      const wb = xlsxLib.utils.book_new();
+      xlsxLib.utils.book_append_sheet(wb, ws, 'Students');
+      const filenameParts = ['students'];
+      if (selectedSchool) filenameParts.push(selectedSchool.replace(/[^a-z0-9]+/gi, '_'));
+      filenameParts.push(new Date().toISOString().split('T')[0]);
+      xlsxLib.writeFile(wb, `${filenameParts.join('_')}.xlsx`);
+    } catch (error) {
+      console.error('Failed to export students:', error);
+      alert('Failed to export students: ' + (error?.error || error?.message || 'Unknown error'));
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const handleDelete = async (student) => {
     if (!confirm(`Are you sure you want to delete ${student.name}? This will delete all their data including AI chats and submissions. This action cannot be undone.`)) return;
     try {
@@ -104,11 +179,20 @@ export default function StudentsPage() {
 
   return (
     <div className="space-y-5 sm:space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold gradient-text">Students</h1>
           <p className="text-sm text-gray-500 mt-1">{pagination.total || students.length} registered students</p>
         </div>
+        <button
+          onClick={handleExport}
+          disabled={exporting || students.length === 0}
+          className="glass-button-secondary flex items-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          title="Download students as XLSX"
+        >
+          <Download className="w-4 h-4" />
+          {exporting ? 'Exporting...' : 'Download XLSX'}
+        </button>
       </div>
 
       {/* Search & Filters */}
