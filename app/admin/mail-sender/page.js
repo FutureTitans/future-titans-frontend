@@ -3,7 +3,7 @@
 import { useState, useRef, useMemo, useEffect } from 'react';
 import {
   Send, Server, Paperclip, FileSpreadsheet, CheckCircle, XCircle,
-  Mail, Eye, PlayCircle, Trash2, AlertCircle, Loader2, Upload,
+  Mail, Eye, PlayCircle, Trash2, AlertCircle, Loader2, Upload, Save,
 } from 'lucide-react';
 import { adminMailSender } from '@/lib/api';
 
@@ -21,6 +21,9 @@ const defaultSmtp = {
   from: '',
   fromName: '',
 };
+
+const SMTP_STORAGE_KEY = 'admin_mail_sender_smtp';
+const TEMPLATE_STORAGE_KEY = 'admin_mail_sender_template';
 
 const readAsBase64 = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -68,6 +71,8 @@ export default function MailSenderPage() {
   const [progress, setProgress] = useState({ current: 0, total: 0, sent: 0, failed: 0 });
   const [runResults, setRunResults] = useState([]);
   const [showPreview, setShowPreview] = useState(false);
+  const [savedNotice, setSavedNotice] = useState('');
+  const [hydrated, setHydrated] = useState(false);
 
   const fileRef = useRef(null);
   const attachRef = useRef(null);
@@ -80,6 +85,58 @@ export default function MailSenderPage() {
   );
 
   const updateSmtp = (patch) => setSmtp((s) => ({ ...s, ...patch }));
+
+  useEffect(() => {
+    try {
+      const rawSmtp = localStorage.getItem(SMTP_STORAGE_KEY);
+      if (rawSmtp) {
+        const parsed = JSON.parse(rawSmtp);
+        setSmtp({ ...defaultSmtp, ...parsed });
+      }
+      const rawTpl = localStorage.getItem(TEMPLATE_STORAGE_KEY);
+      if (rawTpl) {
+        const parsed = JSON.parse(rawTpl);
+        if (typeof parsed.subject === 'string') setSubject(parsed.subject);
+        if (typeof parsed.htmlBody === 'string') setHtmlBody(parsed.htmlBody);
+      }
+    } catch (err) {
+      console.warn('Failed to load saved mail sender state:', err);
+    }
+    setHydrated(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      localStorage.setItem(TEMPLATE_STORAGE_KEY, JSON.stringify({ subject, htmlBody }));
+    } catch (err) {
+      // storage may be full or blocked; ignore
+    }
+  }, [subject, htmlBody, hydrated]);
+
+  const handleSaveSmtp = () => {
+    try {
+      localStorage.setItem(SMTP_STORAGE_KEY, JSON.stringify(smtp));
+      setSavedNotice('Saved to this browser');
+      setTimeout(() => setSavedNotice(''), 2500);
+    } catch (err) {
+      setSavedNotice('Failed to save');
+      setTimeout(() => setSavedNotice(''), 2500);
+    }
+  };
+
+  const handleClearSmtp = () => {
+    if (!window.confirm('Clear saved SMTP credentials from this browser?')) return;
+    try {
+      localStorage.removeItem(SMTP_STORAGE_KEY);
+    } catch (err) {
+      // ignore
+    }
+    setSmtp(defaultSmtp);
+    setVerifyResult(null);
+    setSavedNotice('Cleared');
+    setTimeout(() => setSavedNotice(''), 2000);
+  };
 
   const handleAttachmentAdd = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -307,18 +364,26 @@ export default function MailSenderPage() {
             <input type="text" value={smtp.fromName} onChange={(e) => updateSmtp({ fromName: e.target.value })} className="glass-input w-full" placeholder="Future Titans" />
           </div>
         </div>
-        <div className="flex items-center gap-3 mt-4">
+        <div className="flex items-center gap-3 mt-4 flex-wrap">
           <button onClick={handleVerify} disabled={!smtpReady || verifying} className="glass-button-secondary text-sm disabled:opacity-50 flex items-center gap-2">
             {verifying ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
             Verify Connection
           </button>
+          <button onClick={handleSaveSmtp} disabled={!smtpReady} className="glass-button text-sm disabled:opacity-50 flex items-center gap-2">
+            <Save className="w-4 h-4" />
+            Save Credentials
+          </button>
+          <button onClick={handleClearSmtp} className="text-xs text-red-600 hover:text-red-700 font-semibold px-3 py-1.5 rounded-lg hover:bg-red-50 transition">
+            Clear Saved
+          </button>
+          {savedNotice && <span className="text-xs text-green-600 font-semibold">{savedNotice}</span>}
           {verifyResult && (
             verifyResult.ok
               ? <span className="text-xs text-green-600 font-semibold flex items-center gap-1"><CheckCircle className="w-3.5 h-3.5" /> SMTP verified</span>
               : <span className="text-xs text-red-600 font-semibold flex items-center gap-1"><XCircle className="w-3.5 h-3.5" /> {verifyResult.message}</span>
           )}
         </div>
-        <p className="text-xs text-gray-400 mt-3">Credentials stay in your browser and are sent only to your admin backend for each send. Nothing is stored server-side.</p>
+        <p className="text-xs text-gray-400 mt-3">Credentials are saved to <span className="font-semibold">this browser only</span> (localStorage) and sent to your admin backend just for each send. Nothing is stored on the server.</p>
       </div>
 
       {/* Email content */}
