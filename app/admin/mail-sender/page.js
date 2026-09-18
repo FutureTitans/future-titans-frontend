@@ -6,6 +6,7 @@ import {
   Mail, Eye, PlayCircle, Trash2, AlertCircle, Loader2, Upload, Save,
 } from 'lucide-react';
 import { adminMailSender } from '@/lib/api';
+import { upload } from '@vercel/blob/client';
 
 const BATCH_SIZE = 50;
 const MAX_ATTACHMENT_TOTAL = 15 * 1024 * 1024;
@@ -24,17 +25,6 @@ const defaultSmtp = {
 
 const SMTP_STORAGE_KEY = 'admin_mail_sender_smtp';
 const TEMPLATE_STORAGE_KEY = 'admin_mail_sender_template';
-
-const readAsBase64 = (file) => new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => {
-    const result = reader.result;
-    const idx = String(result).indexOf(',');
-    resolve(String(result).slice(idx + 1));
-  };
-  reader.onerror = reject;
-  reader.readAsDataURL(file);
-});
 
 const fmtBytes = (b) => {
   if (b < 1024) return `${b} B`;
@@ -73,6 +63,8 @@ export default function MailSenderPage() {
   const [showPreview, setShowPreview] = useState(false);
   const [savedNotice, setSavedNotice] = useState('');
   const [hydrated, setHydrated] = useState(false);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
+  const [attachmentError, setAttachmentError] = useState('');
 
   const fileRef = useRef(null);
   const attachRef = useRef(null);
@@ -147,16 +139,32 @@ export default function MailSenderPage() {
       if (attachRef.current) attachRef.current.value = '';
       return;
     }
-    const encoded = await Promise.all(
-      files.map(async (f) => ({
-        filename: f.name,
-        size: f.size,
-        contentType: f.type || 'application/octet-stream',
-        contentBase64: await readAsBase64(f),
-      }))
-    );
-    setAttachments((prev) => [...prev, ...encoded]);
-    if (attachRef.current) attachRef.current.value = '';
+
+    setUploadingAttachment(true);
+    setAttachmentError('');
+    try {
+      const uploaded = await Promise.all(
+        files.map(async (f) => {
+          const blob = await upload(`mail-attachments/${Date.now()}-${f.name}`, f, {
+            access: 'public',
+            handleUploadUrl: '/api/mail-upload',
+            contentType: f.type || 'application/octet-stream',
+          });
+          return {
+            filename: f.name,
+            size: f.size,
+            contentType: f.type || 'application/octet-stream',
+            url: blob.url,
+          };
+        })
+      );
+      setAttachments((prev) => [...prev, ...uploaded]);
+    } catch (err) {
+      setAttachmentError(err.message || 'Upload failed');
+    } finally {
+      setUploadingAttachment(false);
+      if (attachRef.current) attachRef.current.value = '';
+    }
   };
 
   const removeAttachment = (idx) => {
@@ -417,7 +425,18 @@ export default function MailSenderPage() {
           <h2 className="font-semibold text-gray-800">Attachments</h2>
           <span className="text-xs text-gray-400 ml-auto">{fmtBytes(attachmentTotal)} / 15 MB</span>
         </div>
-        <input ref={attachRef} type="file" multiple onChange={handleAttachmentAdd} className="block text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer cursor-pointer" />
+        <input ref={attachRef} type="file" multiple onChange={handleAttachmentAdd} disabled={uploadingAttachment} className="block text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-[#D4AF37]/10 file:text-[#B8952E] hover:file:bg-[#D4AF37]/20 file:cursor-pointer cursor-pointer disabled:opacity-50" />
+        {uploadingAttachment && (
+          <div className="mt-2 flex items-center gap-2 text-xs text-gray-500">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            Uploading attachment to secure storage…
+          </div>
+        )}
+        {attachmentError && (
+          <div className="mt-2 flex items-center gap-2 text-xs text-red-600">
+            <XCircle className="w-3.5 h-3.5" /> {attachmentError}
+          </div>
+        )}
         {attachments.length > 0 && (
           <ul className="mt-3 space-y-2">
             {attachments.map((a, i) => (
@@ -539,7 +558,7 @@ export default function MailSenderPage() {
           />
           <button
             onClick={handleSendTest}
-            disabled={!smtpReady || !testEmail || !emailRegex.test(testEmail) || sendingTest}
+            disabled={!smtpReady || !testEmail || !emailRegex.test(testEmail) || sendingTest || uploadingAttachment}
             className="glass-button-secondary text-sm disabled:opacity-50 flex items-center gap-2"
           >
             {sendingTest ? <Loader2 className="w-4 h-4 animate-spin" /> : <Mail className="w-4 h-4" />}
@@ -565,7 +584,7 @@ export default function MailSenderPage() {
           </div>
           <button
             onClick={handleSendAll}
-            disabled={sending || !smtpReady || validRecipients.length === 0 || !subject || !htmlBody}
+            disabled={sending || !smtpReady || validRecipients.length === 0 || !subject || !htmlBody || uploadingAttachment}
             className="glass-button text-sm disabled:opacity-50 flex items-center gap-2"
           >
             {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
