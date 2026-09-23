@@ -965,7 +965,7 @@ export default function StudentDashboard() {
                   <span className="absolute top-4 right-4 z-10 px-3 py-1 bg-[#E5C872] text-[#0E2A1B] rounded-full text-[10px] font-bold uppercase tracking-wider">2 min tour</span>
                   <YouTubeEmbed id={YT_INCUBATION} title="Innovation Club tour" className="shadow-lg" />
                   <p className="text-[#E5C872] text-[11px] font-bold uppercase tracking-widest mt-4">Innovation Club · The Tour</p>
-                  <h3 className="text-white font-bold text-lg mt-1">See what a week in the Club looks like</h3>
+                  <h1 className="text-white font-bold text-lg mt-1">See what a week in the Club looks like</h1>
                   <p className="text-[#9FB5A6] text-sm mt-1">Mentor circles, build sessions and demo day — filmed inside the last cohort.</p>
                 </div>
                 <div className="lg:col-span-2 bg-white cut-card p-6 border border-[#E7E3D6] flex flex-col">
