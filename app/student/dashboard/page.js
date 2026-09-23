@@ -934,10 +934,12 @@ export default function StudentDashboard() {
 
             {/* ── 06 · THIS IS WHAT STARTING YOUNG LOOKS LIKE ── */}
             <RailSection n="06">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">Inside the Journey of Young Builders</h2><br />
-                <p className="text-[#8A9A8E] text-sm mt-2 max-w-2xl">Meet our brand ambassadors who are already turning ideas into action — hear their stories, discover how they got started, and get inspired to start building something of your own.</p>
-                <div className="hidden sm:flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
+                <div>
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">Inside the Journey of Young Builders</h2>
+                  <p className="text-[#8A9A8E] text-sm mt-2 max-w-2xl">Meet our brand ambassadors who are already turning ideas into action — hear their stories, discover how they got started, and get inspired to start building something of your own.</p>
+                </div>
+                <div className="hidden sm:flex items-center gap-2 pb-1">
                   <span className="w-8 h-8 rounded-full border border-[#0E2A1B]/15 flex items-center justify-center text-[#0E2A1B]"><ChevronRight className="w-4 h-4 rotate-180" /></span>
                   <span className="w-8 h-8 rounded-full border border-[#0E2A1B]/15 flex items-center justify-center text-[#0E2A1B]"><ChevronRight className="w-4 h-4" /></span>
                 </div>
@@ -970,10 +972,14 @@ export default function StudentDashboard() {
                   <h3 className="font-extrabold text-[#0E2A1B] text-lg mb-4">What you get inside</h3>
                   <div className="space-y-3 flex-1">
                     {[
-                      { n: '01', t: 'Webinar', d: 'Sessions with IIT mentors and working founders.' },
-                      { n: '02', t: 'Inter-School Hackathons', d: '' },
-                      { n: '03', t: 'Innovation Library', d: '' },
-                      { n: '04', t: 'Live Q&A', d: '' },
+                      { n: '01', t: 'Pick Your Space', d: 'Choose what pulls you in — Build, Future, Create, Think, Life or Explore.' },
+                      { n: '02', t: 'Follow Your Interests', d: 'Discover ideas, topics and opportunities around what you love.' },
+                      { n: '03', t: 'Go Live', d: 'Join live sessions, webinars and conversations with people doing the work.' },
+                      { n: '04', t: 'Meet Global Leaders', d: 'Hear from founders, creators, innovators and changemakers from around the world.' },
+                      { n: '05', t: 'Hear Young Builders', d: 'Discover young entrepreneurs who are already turning ideas into action.' },
+                      { n: '06', t: 'Take On Challenges', d: 'Compete, experiment, solve and put your ideas to the test.' },
+                      { n: '07', t: 'Build & Share', d: 'Turn your ideas into something real — and show the world what you’ve made.' },
+                      { n: '08', t: 'Grow Your Journey', d: 'Track what you explore, build and achieve as you grow.' },
                     ].map((item) => (
                       <div key={item.n} className="flex items-start gap-3">
                         <span className="w-6 h-6 rounded-md bg-[#FBF3DA] text-[#B8952E] flex items-center justify-center text-[10px] font-bold flex-shrink-0 tabular-nums">{item.n}</span>
