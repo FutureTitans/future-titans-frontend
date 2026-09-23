@@ -935,7 +935,7 @@ export default function StudentDashboard() {
             {/* ── 06 · THIS IS WHAT STARTING YOUNG LOOKS LIKE ── */}
             <RailSection n="06">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">Inside the Journey of Young Builder</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">Inside the Journey of Young Builders</h2><br />
                 <p className="text-[#8A9A8E] text-sm mt-2 max-w-2xl">Meet our brand ambassadors who are already turning ideas into action — hear their stories, discover how they got started, and get inspired to start building something of your own.</p>
                 <div className="hidden sm:flex items-center gap-2">
                   <span className="w-8 h-8 rounded-full border border-[#0E2A1B]/15 flex items-center justify-center text-[#0E2A1B]"><ChevronRight className="w-4 h-4 rotate-180" /></span>
