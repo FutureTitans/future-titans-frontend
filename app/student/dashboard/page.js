@@ -906,12 +906,13 @@ export default function StudentDashboard() {
                   <div>
 
                     <h2 className="text-white text-4xl sm:text-5xl font-extrabold leading-[0.95] mb-4">From Campus Idea<br />to Real Impact</h2>
+
+
                     <p className="text-[#C9A84C] text-[11px] font-bold uppercase tracking-[0.25em] flex items-center gap-2.5 mb-5">
-                      <span className="w-6 h-[2px] bg-[#C9A84C]" /> Professor Suman Chakraborty
+                      Professor Suman Chakraborty <br />
+                      Director, IIT Kharagpur
                     </p>
-                    <p className="text-[#C9A84C] text-[11px] font-bold uppercase tracking-[0.25em] flex items-center gap-2.5 mb-5">
-                      <span className="w-6 h-[2px] bg-[#C9A84C]" />Director, IIT Kharagpur
-                    </p>
+
                     <p className="text-[#9FB5A6] text-[15px] leading-relaxed max-w-md">A video message from Professor Suman Chakraborty, Director, IIT Kharagpur, sharing his insights on the Youngpreneurs and Future Titans initiative.</p>
                     <div className="flex items-center gap-2.5 mt-6">
                       <span className="w-3 h-3 border-2 border-[#C9A84C] rotate-45 inline-block" />
