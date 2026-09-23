@@ -307,7 +307,7 @@ export default function Navbar() {
                 alt="Youngpreneurs"
                 width={200}
                 height={32}
-                className="object-contain"
+                className="object-contain brightness-0 invert"
                 priority
                 onError={(e) => { e.target.style.display = 'none'; }}
               />
