@@ -98,7 +98,7 @@ function StoryThumbnail({ story }) {
 
   const handlePlay = () => {
     if (videoRef.current) {
-      videoRef.current.play().catch(() => {});
+      videoRef.current.play().catch(() => { });
       setStarted(true);
     }
   };
@@ -639,7 +639,7 @@ export default function StudentDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { href: '/student/modules', step: '01', tag: `${totalModules} MODULES WAITING`, Icon: GraduationCap, title: 'Learn something new', desc: 'Three modules, from founder mindset to launch.', locked: false, filledIcon: false, marker: 'bars' },
-                  { href: canSubmitIdea ? '/student/submission' : '/student/modules', step: '02', tag: 'UNLOCKS AFTER MODULE 1', Icon: Lightbulb, title: 'Build an idea', desc: 'Turn what you learn into a real submission.', locked: !canSubmitIdea, filledIcon: false, marker: 'bars' },
+                  { href: canSubmitIdea ? '/student/submission' : '/student/modules', step: '02', tag: 'Unlocks after compteing any one module.', Icon: Lightbulb, title: 'Submit Your Idea', desc: 'Ready to put your idea out there? Complete any one module to unlock your submission.', locked: !canSubmitIdea, filledIcon: false, marker: 'bars' },
                   { href: '/student/innovation-club', step: '03', tag: 'MENTORS & COMMUNITY', Icon: Rocket, title: 'Explore the Club', desc: 'Mentorship, incubation and the wider Youngpreneurs community.', locked: false, filledIcon: true, marker: 'diamonds' },
                 ].map((c) => {
                   const Icon = c.Icon;
@@ -1294,9 +1294,8 @@ export default function StudentDashboard() {
                     setActiveFaqTab(tab);
                     setOpenFaqIndex(null);
                   }}
-                  className={`pb-4 text-sm sm:text-base font-semibold transition-colors relative whitespace-nowrap ${
-                    activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
-                  }`}
+                  className={`pb-4 text-sm sm:text-base font-semibold transition-colors relative whitespace-nowrap ${activeFaqTab === tab ? 'text-[#D4AF37]' : 'text-gray-400 hover:text-gray-600'
+                    }`}
                 >
                   {tab === 'School' ? 'School / Principal FAQ' : `${tab} FAQ`}
                   {activeFaqTab === tab && (
