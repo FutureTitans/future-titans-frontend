@@ -904,11 +904,15 @@ export default function StudentDashboard() {
                 <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-10 items-center">
                   {/* left — text */}
                   <div>
-                    <p className="text-[#C9A84C] text-[11px] font-bold uppercase tracking-[0.25em] flex items-center gap-2.5 mb-5">
-                      <span className="w-6 h-[2px] bg-[#C9A84C]" /> Success Stories
-                    </p>
+
                     <h2 className="text-white text-4xl sm:text-5xl font-extrabold leading-[0.95] mb-4">From Campus Idea<br />to Real Impact</h2>
-                    <p className="text-[#9FB5A6] text-[15px] leading-relaxed max-w-md">See how youngpreneurs turned ideas into impactful ventures and inspired others.</p>
+                    <p className="text-[#C9A84C] text-[11px] font-bold uppercase tracking-[0.25em] flex items-center gap-2.5 mb-5">
+                      <span className="w-6 h-[2px] bg-[#C9A84C]" /> Professor Suman Chakraborty
+                    </p>
+                    <p className="text-[#C9A84C] text-[11px] font-bold uppercase tracking-[0.25em] flex items-center gap-2.5 mb-5">
+                      <span className="w-6 h-[2px] bg-[#C9A84C]" />Director, IIT Kharagpur
+                    </p>
+                    <p className="text-[#9FB5A6] text-[15px] leading-relaxed max-w-md">A video message from Professor Suman Chakraborty, Director, IIT Kharagpur, sharing his insights on the Youngpreneurs and Future Titans initiative.</p>
                     <div className="flex items-center gap-2.5 mt-6">
                       <span className="w-3 h-3 border-2 border-[#C9A84C] rotate-45 inline-block" />
                       <span className="w-10 h-[2px] bg-[#C9A84C]" />
@@ -923,7 +927,7 @@ export default function StudentDashboard() {
                     <span className="absolute -top-1.5 -right-1.5 w-7 h-7 border-t-2 border-r-2 border-[#C9A84C]/70 z-10 pointer-events-none" />
                     <span className="absolute -bottom-1.5 -left-1.5 w-7 h-7 border-b-2 border-l-2 border-[#C9A84C]/70 z-10 pointer-events-none" />
                     <span className="absolute -bottom-1.5 -right-1.5 w-7 h-7 border-b-2 border-r-2 border-[#C9A84C]/70 z-10 pointer-events-none" />
-                    <YouTubeEmbed id={YT_STARTING_YOUNG} title="From Campus Idea to Real Impact" aspectClass="aspect-video" className="w-full h-full shadow-2xl" />
+                    <YouTubeEmbed id={YT_STARTING_YOUNG} title="THE NEXT GENERATION STARTS HERE" aspectClass="aspect-video" className="w-full h-full shadow-2xl" />
                   </div>
                 </div>
               </div>
@@ -932,7 +936,8 @@ export default function StudentDashboard() {
             {/* ── 06 · THIS IS WHAT STARTING YOUNG LOOKS LIKE ── */}
             <RailSection n="06">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">This is what starting Young looks like</h2>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0E2A1B]">Inside the Journey of Young Builder</h2>
+                <p className="text-[#8A9A8E] text-sm mt-2 max-w-2xl">Meet our brand ambassadors who are already turning ideas into action — hear their stories, discover how they got started, and get inspired to start building something of your own.</p>
                 <div className="hidden sm:flex items-center gap-2">
                   <span className="w-8 h-8 rounded-full border border-[#0E2A1B]/15 flex items-center justify-center text-[#0E2A1B]"><ChevronRight className="w-4 h-4 rotate-180" /></span>
                   <span className="w-8 h-8 rounded-full border border-[#0E2A1B]/15 flex items-center justify-center text-[#0E2A1B]"><ChevronRight className="w-4 h-4" /></span>
