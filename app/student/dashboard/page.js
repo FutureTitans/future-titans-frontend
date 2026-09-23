@@ -639,7 +639,7 @@ export default function StudentDashboard() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { href: '/student/modules', step: '01', tag: `${totalModules} MODULES WAITING`, Icon: GraduationCap, title: 'Learn something new', desc: 'Three modules, from founder mindset to launch.', locked: false, filledIcon: false, marker: 'bars' },
-                  { href: canSubmitIdea ? '/student/submission' : '/student/modules', step: '02', tag: 'Unlocks after compteing any one module.', Icon: Lightbulb, title: 'Submit Your Idea', desc: 'Ready to put your idea out there? Complete any one module to unlock your submission.', locked: !canSubmitIdea, filledIcon: false, marker: 'bars' },
+                  { href: canSubmitIdea ? '/student/submission' : '/student/modules', step: '02', tag: 'Unlocks after compteing any a module.', Icon: Lightbulb, title: 'Submit Your Idea', desc: 'Ready to put your idea out there? Complete any one module to unlock your submission.', locked: !canSubmitIdea, filledIcon: false, marker: 'bars' },
                   { href: '/student/innovation-club', step: '03', tag: 'MENTORS & COMMUNITY', Icon: Rocket, title: 'Explore the Club', desc: 'Mentorship, incubation and the wider Youngpreneurs community.', locked: false, filledIcon: true, marker: 'diamonds' },
                 ].map((c) => {
                   const Icon = c.Icon;
@@ -651,14 +651,12 @@ export default function StudentDashboard() {
                         className={`relative pt-12 px-6 pb-5 h-full flex flex-col border transition-all ${lk ? 'bg-[#EDECE6] border-[#DEDCD3]' : 'bg-white border-[#E7E3D6] hover:shadow-lg hover:border-[#C9A84C]/40'}`}
                         style={{ clipPath: TL_CUT }}
                       >
-                        {/* angled number tab */}
                         <div
                           className={`absolute top-0 left-0 pl-4 pr-6 py-1.5 text-[12px] font-extrabold disp ${lk ? 'bg-[#C7CBC3] text-[#5B6B60]' : 'bg-[#0E2A1B] text-[#E5C872]'}`}
                           style={{ clipPath: 'polygon(0 0, 100% 0, calc(100% - 14px) 100%, 0 100%)' }}
                         >
                           {c.step}
                         </div>
-                        <span className={`absolute top-[15px] left-[52px] w-8 h-[2px] ${lk ? 'bg-[#C7CBC3]' : 'bg-[#C9A84C]/50'}`} />
                         {/* right tag */}
                         <div className={`absolute top-3.5 right-5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.12em] ${lk ? 'text-[#9A9E96]' : 'text-[#0E2A1B]/55'}`}>
                           {lk && <Lock className="w-3 h-3" />}
