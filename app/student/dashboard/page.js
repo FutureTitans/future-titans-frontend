@@ -36,14 +36,14 @@ const faqData = {
     { q: "Will I get a chance to try different types of ideas?", a: "Yes. During the learning journey, you will explore multiple problems before finalizing one idea for submission." },
     { q: "How can this help me in the future?", a: "You will learn how to identify problems, build solutions, test ideas and present them skills useful for any career path." },
     { q: "Will this actually help me build my own startup?", a: "It helps you understand how startups are built from idea to validation and presentation, giving you a strong foundation to pursue it in the future. The Youngpreneurs team is also here to guide you through the building of your entire startup journey." },
-    { q: "What are the main steps I will go through after registering?", a: "After registration, students enter a structured, progression-based learning journey designed to take them from curiosity to creation. They go through curated modules - Founder’s Mindset, Solution Seeker Index, and Entrepreneur Launch Blueprint, divided into chapters with ZUNOVA AI interactions that contribute to their Solution Seeker Index (SSI) and track their progress.\nAfter completing the modules, students develop and submit their ideas, which go through a multi-stage screening and evaluation process.\nEvery student who registers and logs in automatically becomes a part of the Future Titans Innovation Club, where community features including student interaction, knowledge bank, and projects, will be introduced soon.\nThe Top 50 students are then selected for a Bootcamp at IIT Kharagpur, where they receive advanced exposure, mentorship and opportunities to take their ideas forward." },
+    { q: "What are the main steps I will go through after registering?", a: "After registration, students enter a structured, progression-based learning journey designed to take them from curiosity to creation. They go through curated modules - Founder’s Mindset, Solution Seeker Index, and Entrepreneur Launch Blueprint, divided into chapters with ZUNOVA AI interactions that contribute to their Solution Seeker Index (SSI) and track their progress.\nAfter completing the modules, students develop and submit their ideas, which go through a multi-stage screening and evaluation process.\nEvery student who registers and logs in joins a continuing Future Titans community, where interaction features, a knowledge bank, and shared projects will be introduced soon.\nThe Top 50 students are then selected for a Bootcamp at IIT Kharagpur, where they receive advanced exposure, mentorship and opportunities to take their ideas forward." },
     { q: "How many rounds are there in the competition?", a: "The journey includes multiple stages: idea submission, AI-based screening, video pitch with AI interaction, physical assessment and final selection." },
     { q: "How does my idea grow from the first stage to the final stage?", a: "Your idea starts with identifying a problem, then becomes structured using frameworks, validated through early testing, and refined at each stage." },
     { q: "When does it go from just learning to actually building something real?", a: "This shift happens during the idea submission phase, where you apply what you’ve learned to build and present your own idea." }
   ],
   Parents: [
     { q: "What kind of skills will my child develop through this?", a: "Students develop problem-solving, structured thinking, creativity, communication and the ability to apply ideas in real-world contexts." },
-    { q: "How is this different from regular workshops or competitions?", a: "Future Titans is not a one-time workshop or competition, it is a multi-phase innovation ecosystem. Students first learn through structured modules, then apply their learning across progressive stages and evaluations. They also get opportunities to showcase their work through Pan-India channels in association with The Times of India. Selected students are inducted into the Future Titans Innovation Club, where they continue their journey. At its core, the program focuses on building a long-term innovation mindset." },
+    { q: "How is this different from regular workshops or competitions?", a: "Future Titans is not a one-time workshop or competition, it is a multi-phase innovation ecosystem. Students first learn through structured modules, then apply their learning across progressive stages and evaluations. They also get opportunities to showcase their work through Pan-India channels in association with The Times of India. Selected students continue their journey with the Future Titans community, mentorship and follow-on opportunities. At its core, the program focuses on building a long-term innovation mindset." },
     { q: "How does this prepare students for future opportunities?", a: "It builds a strong foundation in thinking, execution and communication skills essential for higher education, entrepreneurship, and careers." },
     { q: "How is this program designed for students of this age group?", a: "The program is simplified, structured, and interactive, ensuring students from Classes 8–12 can easily understand and apply concepts. The learning journey is designed across beginner, intermediate, and advanced levels, so each student can progress at a comfortable pace while building a strong understanding of the concepts." },
     { q: "How will this complement my child’s academic journey?", a: "It strengthens application-based and experience-based learning, helping students connect concepts with real-world problem-solving. The program is aligned with NEP and focuses on building critical thinking in the age of AI, preparing students for an AI-driven world. Students also receive a certificate upon completion." },
@@ -57,7 +57,7 @@ const faqData = {
   ],
   School: [
     { q: "What makes this experience meaningful for school students?", a: "It introduces structured problem-solving and application-based learning, helping students move beyond theoretical knowledge." },
-    { q: "What does the school gain by being a part of Future Titans?", a: "Schools gain enhanced student outcomes, national-level exposure, and association with a structured innovation program. The initiative provides an NEP-aligned innovation infrastructure that is readily available for schools.\nFuture Titans is built as a complete ecosystem across three key pillars—Skill, Showcase, and Community. Students first build skills through structured learning, then showcase their work, and become part of the Future Titans Innovation Club, where every registered student is inducted.\nThe model is fully digital and plug-and-play, requiring zero development cost for schools. Schools can also opt for a phygital (physical + digital) model, which is seamlessly integrated.\nOverall, schools get access to a complete, ready-to-deploy innovation ecosystem without any operational burden." },
+    { q: "What does the school gain by being a part of Future Titans?", a: "Schools gain enhanced student outcomes, national-level exposure, and association with a structured innovation program. The initiative provides an NEP-aligned innovation infrastructure that is readily available for schools.\nFuture Titans is built as a complete ecosystem across three key pillars—Skill, Showcase, and Community. Students first build skills through structured learning, then showcase their work, and join the wider Future Titans community that every registered student is inducted into.\nThe model is fully digital and plug-and-play, requiring zero development cost for schools. Schools can also opt for a phygital (physical + digital) model, which is seamlessly integrated.\nOverall, schools get access to a complete, ready-to-deploy innovation ecosystem without any operational burden." },
     { q: "How does this initiative support innovation within schools?", a: "It provides frameworks like IDEA DNA™ and S.U.R.G.E.™ that guide students in identifying problems and building solutions." },
     { q: "How is the program structured from start to finish?", a: "The program follows a structured journey: modules, idea development, submission, AI screening, pitch stages and final selection." },
     { q: "What is the overall timeline of the program?", a: "The program runs in defined phases, ensuring structured progression without disrupting academic schedules." },
@@ -610,7 +610,7 @@ export default function StudentDashboard() {
                     </div>
                     <div>
                       <h3 className="text-[#E5C872] font-extrabold text-xl sm:text-2xl">Unlock Full Access</h3>
-                      <p className="text-[#9FB5A6] text-sm mt-1.5 max-w-xl leading-relaxed">All 3 modules, unlimited Zunnova AI, IIT mentorship and the Innovation Club — everything below is waiting for you.</p>
+                      <p className="text-[#9FB5A6] text-sm mt-1.5 max-w-xl leading-relaxed">All 3 modules, unlimited Zunnova AI and IIT mentorship — everything below is waiting for you.</p>
                       <div className="flex items-center gap-1.5 mt-4">
                         {[0, 1, 2, 3].map((i) => (
                           <span key={i} className="w-8 h-[3px] bg-[#C9A84C]/25" />
@@ -640,7 +640,7 @@ export default function StudentDashboard() {
                 {[
                   { href: '/student/modules', step: '01', tag: `${totalModules} MODULES WAITING`, Icon: GraduationCap, title: 'Learn something new', desc: 'Three modules, from founder mindset to launch.', locked: false, filledIcon: false, marker: 'bars' },
                   { href: canSubmitIdea ? '/student/submission' : '/student/modules', step: '02', tag: 'Unlocks after compteing any a module.', Icon: Lightbulb, title: 'Submit Your Idea', desc: 'Ready to put your idea out there? Complete any one module to unlock your submission.', locked: !canSubmitIdea, filledIcon: false, marker: 'bars' },
-                  { href: '/student/innovation-club', step: '03', tag: 'MENTORS & COMMUNITY', Icon: Rocket, title: 'Explore the Club', desc: 'Mentorship, incubation and the wider Youngpreneurs community.', locked: false, filledIcon: true, marker: 'diamonds' },
+                  ...(isUserPaid ? [{ href: '/student/innovation-club', step: '03', tag: 'MENTORS & COMMUNITY', Icon: Rocket, title: 'Explore the Club', desc: 'Mentorship, incubation and the wider Youngpreneurs community.', locked: false, filledIcon: true, marker: 'diamonds' }] : []),
                 ].map((c) => {
                   const Icon = c.Icon;
                   const lk = c.locked;
@@ -951,7 +951,8 @@ export default function StudentDashboard() {
               </div>
             </RailSection>
 
-            {/* ── 07 · INNOVATION ECOSYSTEM ── */}
+            {/* ── 07 · INNOVATION ECOSYSTEM (paid only) ── */}
+            {isUserPaid && (
             <RailSection n="07">
               <div className="mb-4">
                 <p className="text-[#B8952E] text-[11px] font-bold uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5">
@@ -994,18 +995,13 @@ export default function StudentDashboard() {
                   <p className="text-[11px] text-[#8A9A8E] flex items-center gap-1.5 mt-4 mb-4">
                     <CheckCircle className="w-3.5 h-3.5 text-[#2E7D46]" /> Included with full access
                   </p>
-                  {!isUserPaid ? (
-                    <button onClick={handlePayment} className="w-full py-3 bg-[#0E2A1B] text-[#E5C872] rounded-xl font-bold text-sm hover:bg-[#123420] transition-colors flex items-center justify-center gap-2">
-                      Explore the Club <ArrowRight className="w-4 h-4" />
-                    </button>
-                  ) : (
-                    <Link href="/student/innovation-club" className="w-full py-3 bg-[#0E2A1B] text-[#E5C872] rounded-xl font-bold text-sm hover:bg-[#123420] transition-colors flex items-center justify-center gap-2">
-                      Explore the Club <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  )}
+                  <Link href="/student/innovation-club" className="w-full py-3 bg-[#0E2A1B] text-[#E5C872] rounded-xl font-bold text-sm hover:bg-[#123420] transition-colors flex items-center justify-center gap-2">
+                    Explore the Club <ArrowRight className="w-4 h-4" />
+                  </Link>
                 </div>
               </div>
             </RailSection>
+            )}
 
             {/* ── 08 · ZUNNOVA AI + AI CO-FOUNDER ── */}
             <RailSection n="08">
@@ -1247,9 +1243,11 @@ export default function StudentDashboard() {
                     <a href="https://www.instagram.com/youngpreneurs.ai?igsh=MWtlMW9weHU0NnUwOA==" target="_blank" rel="noopener noreferrer" className="flex-1 sm:flex-none text-center px-5 py-2.5 rounded-full border border-[#0E2A1B]/15 text-sm font-semibold text-[#0E2A1B] hover:bg-[#F3F1E9] transition-colors">
                       Follow us
                     </a>
-                    <Link href="/student/innovation-club" className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-[#0E2A1B] text-[#E5C872] text-sm font-semibold hover:bg-[#123420] transition-all">
-                      See all posts
-                    </Link>
+                    {isUserPaid && (
+                      <Link href="/student/innovation-club" className="flex-1 sm:flex-none text-center px-6 py-2.5 rounded-full bg-[#0E2A1B] text-[#E5C872] text-sm font-semibold hover:bg-[#123420] transition-all">
+                        See all posts
+                      </Link>
+                    )}
                   </div>
                 </div>
 

@@ -14,7 +14,7 @@ const HEX_CLIP = 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)'
 const studentNavItems = [
   { href: '/student/dashboard', label: 'Dashboard', Icon: LayoutGrid },
   { href: '/student/modules', label: 'Learn', Icon: BookOpen },
-  { href: '/student/innovation-club', label: 'Innovation Club', Icon: Compass, lockForDemo: true },
+  { href: '/student/innovation-club', label: 'Innovation Club', Icon: Compass, lockForDemo: true, paidOnly: true },
   { href: '/student/submission', label: 'Build an Idea', Icon: Lightbulb },
   { href: '/student/profile', label: 'My Titan Journey', Icon: Flag },
 ];
@@ -112,7 +112,7 @@ export default function Navbar() {
 
               {/* Desktop Navigation */}
               <div className="hidden lg:flex items-center gap-1.5">
-                {studentNavItems.map((item) => {
+                {studentNavItems.filter((item) => !item.paidOnly || user?.isPaid).map((item) => {
                   const Icon = item.Icon;
                   const isDemoLocked = item.lockForDemo && user?.email === 'demo@futuretitans.com';
                   if (isDemoLocked) {
@@ -238,7 +238,7 @@ export default function Navbar() {
 
                 <div className="h-px bg-white/10 mx-3 mb-2" />
 
-                {studentNavItems.map((item) => {
+                {studentNavItems.filter((item) => !item.paidOnly || user?.isPaid).map((item) => {
                   const Icon = item.Icon;
                   const isDemoLocked = item.lockForDemo && user?.email === 'demo@futuretitans.com';
                   if (isDemoLocked) {

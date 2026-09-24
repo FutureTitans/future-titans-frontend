@@ -49,7 +49,6 @@ export const HOME_HTML = `
         <a href="#students" data-href="/students" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Students</a>
         <a href="#parents" data-href="/parents" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Parents</a>
         <a href="#schools" data-href="/schools" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Schools</a>
-        <a href="#club" data-href="/innovation-club" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Innovation Club</a>
       </nav>
       <div data-login="data-login" style="position:relative;flex:none">
         <button data-login-toggle="data-login-toggle" type="button" style="display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:100px;border:1px solid rgba(6,61,53,calc(.18 + .3 * var(--nav,0)));background:rgba(255,255,255,calc(.06 + .35 * var(--nav,0)));color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;cursor:pointer;transition:background .4s ease,border-color .4s ease,color .5s ease">Login <span data-login-caret="data-login-caret" style="display:inline-block;font-size:9px;transition:transform .3s ease">▾</span></button>
@@ -669,60 +668,6 @@ export const HOME_HTML = `
           <p>These experiences help students discover new interests, recognise their own strengths and become more confident approaching situations they have never encountered before.</p>
         </div>
       </details>
-    </div>
-  </div>
-</section>
-
-<a id="club"></a>
-<section data-screen-label="10 Innovation Club" data-cap="Initiative" style="position:relative;padding:clamp(80px,12vh,144px) clamp(20px,5vw,72px);background:#ECFDF5;overflow:hidden">
-  <div style="max-width:1340px;margin:0 auto">
-    <h2 data-rv="0" style="font-size:clamp(29px,4vw,60px);line-height:1.02;letter-spacing:-.03em;font-weight:800;color:#071F1B;max-width:22ch;margin-bottom:clamp(34px,5vh,58px);opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">More than a programme. A continuing innovation ecosystem.</h2>
-
-    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,clamp(240px,26vw,340px));gap:clamp(20px,4vw,60px);align-items:center">
-      <div data-invgroup="data-invgroup" data-zone="data-zone" data-label="Explore" data-group="1" style="position:relative;aspect-ratio:1/.72;min-height:400px">
-        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true" style="position:absolute;inset:0;width:100%;height:100%">
-          <g stroke="#087A61" stroke-width=".2" fill="none">
-            <path d="M50 50 L50 8" opacity="calc(.14 + .66 * var(--l0,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L79.6 17.8" opacity="calc(.14 + .66 * var(--l1,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L95.3 42.7" opacity="calc(.14 + .66 * var(--l2,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L89.8 71" opacity="calc(.14 + .66 * var(--l3,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L65.7 89.5" opacity="calc(.14 + .66 * var(--l4,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L34.3 89.5" opacity="calc(.14 + .66 * var(--l5,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L10.2 71" opacity="calc(.14 + .66 * var(--l6,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L4.7 42.7" opacity="calc(.14 + .66 * var(--l7,0))" style="transition:opacity .4s ease"></path>
-            <path d="M50 50 L20.4 17.8" opacity="calc(.14 + .66 * var(--l8,0))" style="transition:opacity .4s ease"></path>
-          </g>
-          <ellipse cx="50" cy="50" rx="45" ry="41" fill="none" stroke="#D4AF37" stroke-width=".18" opacity=".34"></ellipse>
-        </svg>
-
-        <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); display: flex; flex-direction: column; align-items: center; gap: 5px; padding: clamp(16px,1.8vw,26px) clamp(20px,2.4vw,34px); background: linear-gradient(140deg,#063D35,#087A61 68%,#0E9E7F); border: 1px solid rgba(243,217,139,.38); text-align: center; box-shadow: 0 24px 60px rgba(6,61,53,.24); z-index: 2; border-style: none">
-          <span style="font-family:'Space Grotesk',monospace;font-size:9px;letter-spacing:.28em;text-transform:uppercase;color:rgba(243,217,139,.72)">Future Titans</span>
-          <span style="font-size:clamp(16px,1.8vw,26px);line-height:1.04;letter-spacing:-.024em;font-weight:800;color:#ECFDF5">Innovation<br>Club</span>
-        </span>
-
-        <span data-i="0" tabindex="0" data-hvf="1" style="position:absolute;left:50%;top:8%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Workshops</span>
-        <span data-i="1" tabindex="0" data-hvf="1" style="position:absolute;left:79.6%;top:17.8%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Hackathons</span>
-        <span data-i="2" tabindex="0" data-hvf="1" style="position:absolute;left:95.3%;top:42.7%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Expert Sessions</span>
-        <span data-i="3" tabindex="0" data-hvf="1" style="position:absolute;left:89.8%;top:71%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Live Q&amp;As</span>
-        <span data-i="4" tabindex="0" data-hvf="1" style="position:absolute;left:65.7%;top:89.5%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Mentor Interactions</span>
-        <span data-i="5" tabindex="0" data-hvf="1" style="position:absolute;left:34.3%;top:89.5%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Innovation Activities</span>
-        <span data-i="6" tabindex="0" data-hvf="1" style="position:absolute;left:10.2%;top:71%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#F7FBFF;border:1px solid rgba(37,99,235,calc(.22 + .34 * var(--h,0)));font-size:12.5px;font-weight:700;color:#2563EB;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">AI Learning</span>
-        <span data-i="7" tabindex="0" data-hvf="1" style="position:absolute;left:4.7%;top:42.7%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Peer Connections</span>
-        <span data-i="8" tabindex="0" data-hvf="1" style="position:absolute;left:20.4%;top:17.8%;transform:translate(-50%,-50%) translate3d(0,calc(var(--h,0) * -4px),0);padding:9px 14px;background:#FFFFFF;border:1px solid rgba(6,61,53,calc(.12 + .3 * var(--h,0)));font-size:12.5px;font-weight:700;color:#071F1B;white-space:nowrap;opacity:calc(1 - .45 * var(--dim,0) + .45 * var(--h,0));box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .16));transition:opacity .4s ease,transform .45s cubic-bezier(.2,.7,.2,1),border-color .4s ease,box-shadow .4s ease;cursor:default">Resource Library</span>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:clamp(16px,2.6vh,26px)">
-        <div style="padding:clamp(18px,2vw,26px);background:#FFFFFF;border:1px solid rgba(6,61,53,.12);min-height:150px">
-          <span style="display:block;font-family:'Space Grotesk',monospace;font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:#8A6D24;margin-bottom:12px">Selected</span>
-          <span style="display:block;font-size:clamp(17px,1.7vw,23px);line-height:1.1;letter-spacing:-.022em;font-weight:800;color:#071F1B;margin-bottom:10px" data-inv-name>Workshops</span>
-          <span style="display:block;font-size:14.5px;line-height:1.6;color:#3D4A45" data-inv-desc>Hands-on sessions where students practise the thinking behind an idea.</span>
-        </div>
-        <p style="font-size:16px;line-height:1.66;color:#3D4A45">Learning and exploration continue beyond a single activity or programme milestone. Through the Future Titans Innovation Club, students remain connected to ideas, people and experiences throughout the year.</p>
-        <details style="border-top:1px solid rgba(6,61,53,.12);padding-top:14px">
-          <summary style="cursor:pointer;list-style:none;display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#087A61">Read the full passage <span style="color:#8A6D24">+</span></summary>
-          <p style="padding-top:16px;font-size:16px;line-height:1.7;color:#3D4A45">Students get opportunities to ask questions, explore new industries, interact with experienced professionals, collaborate with other young minds and continue developing their ideas and capabilities.</p>
-        </details>
-      </div>
     </div>
   </div>
 </section>

@@ -15,7 +15,6 @@ const COLUMNS = [
     title: 'Programs',
     links: [
       { label: 'Future Titans', href: '/future-titans' },
-      { label: 'Innovation Club', href: '/innovation-club' },
     ],
   },
   {

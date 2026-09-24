@@ -3,14 +3,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronDown, Menu, X, ArrowRight, User, LayoutDashboard, Lock } from 'lucide-react';
+import { ChevronDown, Menu, X, ArrowRight, User, LayoutDashboard } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { isAuthenticated, isStudent, isAdmin } from '@/lib/auth';
 import { auth } from '@/lib/api';
 
 const NAV_LINKS = [
   { label: 'Future Titans', href: '/future-titans' },
-  { label: 'Innovation Club', href: '/innovation-club' },
   { label: 'For Parents', href: '/for-parents' },
   { label: 'For Schools', href: '/for-schools' },
   { label: 'Success Stories', href: '/success-stories' },
@@ -125,7 +124,7 @@ export default function PublicNavbar() {
 
             {/* Desktop Nav */}
             <div className="hidden lg:flex items-center gap-1">
-              {NAV_LINKS.filter(link => link.href !== '/innovation-club' || loggedIn || pathname === '/demo-access/ft-demo-2026x').map((link) =>
+              {NAV_LINKS.map((link) =>
                 link.dropdown ? (
                   <div
                     key={link.label}
@@ -164,15 +163,6 @@ export default function PublicNavbar() {
                         ))}
                       </div>
                     )}
-                  </div>
-                ) : link.href === '/innovation-club' && !loggedIn ? (
-                  <div
-                    key={link.label}
-                    className="flex items-center gap-1 px-2 py-2 text-sm font-medium rounded-lg whitespace-nowrap text-white/50 cursor-not-allowed"
-                    title="Login to access Innovation Club"
-                  >
-                    {link.label}
-                    <Lock className="w-3.5 h-3.5" />
                   </div>
                 ) : (
                   <Link
@@ -288,7 +278,7 @@ export default function PublicNavbar() {
           />
           <div className="relative bg-white border-t border-gray-100 shadow-xl max-h-[80vh] overflow-y-auto">
             <div className="px-4 py-4 space-y-1">
-              {NAV_LINKS.filter(link => link.href !== '/innovation-club' || loggedIn || pathname === '/demo-access/ft-demo-2026x').map((link) =>
+              {NAV_LINKS.map((link) =>
                 link.dropdown ? (
                   <div key={link.label}>
                     <button
@@ -318,14 +308,6 @@ export default function PublicNavbar() {
                         ))}
                       </div>
                     )}
-                  </div>
-                ) : link.href === '/innovation-club' && !loggedIn ? (
-                  <div
-                    key={link.label}
-                    className="flex items-center gap-2 px-4 py-3 font-medium rounded-xl text-gray-400 cursor-not-allowed bg-gray-50/50"
-                  >
-                    {link.label}
-                    <Lock className="w-4 h-4 opacity-70" />
                   </div>
                 ) : (
                   <Link
