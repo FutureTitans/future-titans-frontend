@@ -107,7 +107,7 @@ export default function Navbar() {
             <div className="flex justify-between items-center h-16 gap-4">
               {/* Logo */}
               <Link href="/student/dashboard" className="flex items-center flex-shrink-0" onClick={closeMobileMenu}>
-                <img src="/images/yp/yp-logo-full.png" alt="Youngpreneurs" className="h-8 sm:h-9 w-auto object-contain" />
+                <img src="/images/yp/logo-white.png" alt="Youngpreneurs" className="h-8 sm:h-9 w-auto object-contain" />
               </Link>
 
               {/* Desktop Navigation */}
