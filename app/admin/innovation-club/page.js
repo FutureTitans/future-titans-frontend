@@ -5,13 +5,13 @@ import Link from 'next/link';
 import {
   Users, Trophy, GraduationCap, BookOpen, Settings,
   Sparkles, ArrowRight, AlertCircle, Clock, RefreshCw,
-  Radio, Grid3x3, Target, Video, ShieldAlert,
+  Radio, Grid, Target, Video, ShieldAlert,
 } from 'lucide-react';
 import { adminICPanel } from '@/lib/api';
 
 // V7 sections (adminpanelinnovationclub microservice)
 const v7Links = [
-  { href: '/admin/innovation-club/rooms',       label: 'Rooms',       icon: Grid3x3,    description: '14 rooms across 6 universes' },
+  { href: '/admin/innovation-club/rooms',       label: 'Rooms',       icon: Grid,       description: '14 rooms across 6 universes' },
   { href: '/admin/innovation-club/events',      label: 'Events',      icon: Radio,      description: 'Create sessions, drive live status' },
   { href: '/admin/innovation-club/missions',    label: 'Missions',    icon: Target,     description: 'Steps, XP, deadlines and gates' },
   { href: '/admin/innovation-club/replays',     label: 'Replays',     icon: Video,      description: 'Published recordings by room' },
