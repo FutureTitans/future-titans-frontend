@@ -3,18 +3,12 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Target, ArrowRight, CheckCircle } from 'lucide-react';
 import { studentIC } from '@/lib/api';
 import { getUser } from '@/lib/auth';
-import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
-const diffColors = {
-  easy: 'bg-green-50 text-green-700',
-  medium: 'bg-amber-50 text-amber-700',
-  hard: 'bg-red-50 text-red-700',
-};
+const UNI_ACCENT = { BUILD: '#C2410C', FUTURE: '#2D5BFF', CREATE: '#7449F5', THINK: '#0E7C78', LIFE: '#D23A2A', EXPLORE: '#8A4DDB' };
 
-export default function MissionsListPage() {
+export default function MissionsList() {
   const router = useRouter();
   const [missions, setMissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,97 +17,73 @@ export default function MissionsListPage() {
   useEffect(() => {
     if (!getUser()) { router.push('/login'); return; }
     (async () => {
-      try {
-        const ms = await studentIC.listMissions();
-        setMissions(ms);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+      try { setMissions(await studentIC.listMissions()); }
+      catch (e) { console.error(e); }
+      finally { setLoading(false); }
     })();
   }, [router]);
 
-  const filtered = missions.filter((m) => {
+  const list = missions.filter((m) => {
     if (filter === 'submitted') return !!m.mySubmission;
     if (filter === 'open') return !m.mySubmission;
     return true;
   });
 
-  if (loading) return <LoadingSpinner message="Loading missions..." />;
-
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-[#FAF8F3]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/student/innovation-club" className="inline-flex items-center gap-2 text-sm text-[#0A2C22] hover:underline mb-6">
-          <ArrowLeft className="w-4 h-4" /> Command Center
-        </Link>
+    <>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ font: "600 14px/1 'Instrument Sans', sans-serif", color: '#8A6414', marginBottom: 12 }}>Missions</div>
+        <h1 style={{ font: "700 clamp(32px,4vw,46px)/1.02 'Space Grotesk', sans-serif", letterSpacing: '-.04em', margin: 0, color: '#0C1512' }}>Turn what you learn into something real.</h1>
+        <p style={{ font: "400 16px/1.6 'Instrument Sans', sans-serif", color: '#3E4C45', margin: '10px 0 0', maxWidth: 560 }}>Every mission awards XP toward your next level. Do them fast, don&apos;t polish.</p>
+      </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-[#0A2C22]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          Missions
-        </h1>
-        <p className="text-gray-600 text-sm mt-2 max-w-2xl">
-          Turn what you learn into something real. Every mission awards XP toward your next level.
-        </p>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 22 }}>
+        {['all', 'open', 'submitted'].map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            style={{
+              border: 'none', borderRadius: 999, padding: '9px 16px',
+              font: "600 13.5px/1 'Instrument Sans', sans-serif", cursor: 'pointer',
+              background: filter === f ? '#0C3B2E' : '#fff',
+              color: filter === f ? '#fff' : '#0C1512',
+              boxShadow: filter === f ? 'none' : '0 0 0 1px #E7EAE8 inset',
+            }}
+          >{f[0].toUpperCase() + f.slice(1)}</button>
+        ))}
+      </div>
 
-        <div className="flex gap-2 mt-6">
-          {['all', 'open', 'submitted'].map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${filter === f ? 'bg-[#0A2C22] text-white border-[#0A2C22]' : 'bg-white text-[#0A2C22] border-gray-200'}`}
-            >
-              {f[0].toUpperCase() + f.slice(1)}
-            </button>
-          ))}
-        </div>
-
-        {filtered.length === 0 ? (
-          <div className="mt-8 text-center py-16 text-gray-400 bg-white rounded-3xl border border-gray-100">
-            No missions to show.
-          </div>
+      {loading ? <div style={{ padding: 60, textAlign: 'center', color: '#56635C' }}>Loading…</div> :
+        list.length === 0 ? (
+          <div style={{ border: '1.5px dashed #DCD3C0', borderRadius: 20, padding: 32, background: '#FDFBF6', textAlign: 'center', color: '#3E4C45' }}>No missions to show.</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            {filtered.map((m) => (
-              <Link key={m._id} href={`/student/innovation-club/missions/${m._id}`} className="group rounded-3xl bg-white border border-gray-100 overflow-hidden hover:shadow-lg transition-all">
-                {m.coverImage ? (
-                  <div className="h-32 overflow-hidden">
-                    <img src={m.coverImage} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                  </div>
-                ) : (
-                  <div className="h-24 bg-gradient-to-br from-[#0A2C22] to-[#0C3B2E] flex items-center justify-center">
-                    <Target className="w-8 h-8 text-[#D4AF37]" />
-                  </div>
-                )}
-                <div className="p-5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-[10px] font-mono uppercase text-gray-500">{m.roomId?.name}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${diffColors[m.difficulty] || 'bg-gray-100'}`}>{m.difficulty}</span>
-                  </div>
-                  <h3 className="font-bold text-[#0A2C22]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{m.title}</h3>
-                  <p className="text-xs text-gray-600 mt-2 line-clamp-2">{m.description}</p>
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                    <div>
-                      <div className="text-lg font-bold text-[#D4AF37]">+{m.xpAward}</div>
-                      <div className="text-[10px] text-gray-500 uppercase">XP</div>
-                    </div>
-                    {m.mySubmission ? (
-                      <span className="text-xs font-semibold text-green-600 inline-flex items-center gap-1">
-                        <CheckCircle className="w-3.5 h-3.5" /> Submitted
-                      </span>
-                    ) : (
-                      <span className="text-xs text-[#0A2C22] font-semibold inline-flex items-center gap-1">Start <ArrowRight className="w-3 h-3" /></span>
-                    )}
-                  </div>
-                  {m.deadline && (
-                    <div className="text-[10px] text-gray-400 mt-2">Due {new Date(m.deadline).toLocaleDateString()}</div>
-                  )}
-                </div>
-              </Link>
-            ))}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,290px),1fr))', gap: 14 }}>
+            {list.map((m) => {
+              const submitted = !!m.mySubmission;
+              const accent = UNI_ACCENT[m.roomId?.universe] || '#8A6414';
+              return (
+                <Link key={m._id} href={`/student/innovation-club/missions/${m._id}`} style={{
+                  textAlign: 'left', border: '1px solid #E7EAE8', borderRadius: 20,
+                  padding: 20, background: '#fff', display: 'block', textDecoration: 'none',
+                }}>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                    <span style={{ font: "600 12px/1 'Instrument Sans', sans-serif", color: accent }}>{m.roomId?.name}</span>
+                    <span style={{ font: "700 13px/1 'JetBrains Mono', monospace", color: '#6E5416', background: '#FCF3DF', borderRadius: 8, padding: '6px 8px' }}>+{m.xpAward} XP</span>
+                  </span>
+                  <span style={{ display: 'block', font: "700 18px/1.25 'Space Grotesk', sans-serif", color: '#0C1512', marginBottom: 8 }}>{m.title}</span>
+                  <span style={{ display: 'block', font: "400 14.5px/1.5 'Instrument Sans', sans-serif", color: '#26322C', marginBottom: 14 }}>{m.description}</span>
+                  <span style={{ display: 'flex', gap: 10, alignItems: 'center', font: "500 13px/1 'JetBrains Mono', monospace", color: '#3E4C45' }}>
+                    <span>{m.difficulty}</span>
+                    {m.deadline && <span>· due {new Date(m.deadline).toLocaleDateString()}</span>}
+                    <span style={{ marginLeft: 'auto', font: "600 13px 'Instrument Sans', sans-serif", color: submitted ? '#0C3B2E' : '#8A6414' }}>
+                      {submitted ? '✓ Submitted' : 'Start →'}
+                    </span>
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         )}
-      </div>
-    </div>
+    </>
   );
 }

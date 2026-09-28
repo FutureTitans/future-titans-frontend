@@ -3,18 +3,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Users, ArrowRight } from 'lucide-react';
 import { studentIC } from '@/lib/api';
 import { getUser } from '@/lib/auth';
-import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
-const UNIVERSE_COLORS = {
-  BUILD: '#C2410C',
-  FUTURE: '#2D5BFF',
-  CREATE: '#7449F5',
-  THINK: '#0E7C78',
-  LIFE: '#D23A2A',
-  EXPLORE: '#8A4DDB',
+const UNI_ACCENT = { BUILD: '#C2410C', FUTURE: '#2D5BFF', CREATE: '#7449F5', THINK: '#0E7C78', LIFE: '#D23A2A', EXPLORE: '#8A4DDB' };
+const UNI_SOFT   = { BUILD: '#FDF1E4', FUTURE: '#E9EEFF', CREATE: '#F0EAFE', THINK: '#E4F1F0', LIFE: '#FBE9E7', EXPLORE: '#EFE7F8' };
+const UNI_BLURB  = {
+  BUILD: 'Founders, side hustles and everything in between.',
+  FUTURE: 'AI, robotics, space and future tech.',
+  CREATE: 'Content, design, music and style.',
+  THINK: 'Creativity, problem solving and self-mastery.',
+  LIFE: 'The real stuff — failure, comebacks, discipline.',
+  EXPLORE: 'The unexpected. The unconventional.',
 };
 
 export default function RoomsPage() {
@@ -22,150 +22,137 @@ export default function RoomsPage() {
   const [data, setData] = useState(null);
   const [journey, setJourney] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('ALL');
+  const [busy, setBusy] = useState(null);
 
   useEffect(() => {
     if (!getUser()) { router.push('/login'); return; }
     (async () => {
       try {
-        const [rooms, j] = await Promise.all([studentIC.listRooms(), studentIC.getJourney()]);
-        setData(rooms);
-        setJourney(j);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+        const [d, j] = await Promise.all([studentIC.listRooms(), studentIC.getJourney()]);
+        setData(d); setJourney(j);
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
     })();
   }, [router]);
 
-  const joinedSet = useMemo(() => new Set((journey?.joinedRoomIds || []).map(String)), [journey]);
-
+  const joined = useMemo(() => new Set((journey?.joinedRoomIds || []).map(String)), [journey]);
   const grouped = useMemo(() => {
-    if (!data) return {};
-    const byU = {};
-    for (const r of data.rooms) {
-      if (filter !== 'ALL' && r.universe !== filter) continue;
-      if (!byU[r.universe]) byU[r.universe] = [];
-      byU[r.universe].push(r);
-    }
-    return byU;
-  }, [data, filter]);
+    const map = {};
+    (data?.rooms || []).forEach((r) => {
+      (map[r.universe] = map[r.universe] || []).push(r);
+    });
+    return map;
+  }, [data]);
 
-  const toggleJoin = async (room) => {
+  const toggleJoin = async (r) => {
+    setBusy(r._id);
     try {
-      if (joinedSet.has(room._id.toString())) {
-        await studentIC.leaveRoom(room.slug);
-      } else {
-        await studentIC.joinRoom(room.slug);
-      }
-      const j = await studentIC.getJourney();
-      setJourney(j);
-    } catch (e) {
-      alert('Could not update room membership.');
-    }
+      if (joined.has(r._id.toString())) await studentIC.leaveRoom(r.slug);
+      else await studentIC.joinRoom(r.slug);
+      setJourney(await studentIC.getJourney());
+    } catch (e) { alert('Could not update room.'); }
+    finally { setBusy(null); }
   };
 
-  if (loading) return <LoadingSpinner message="Loading rooms..." />;
+  if (loading) return <div style={{ padding: 60, textAlign: 'center', color: '#56635C' }}>Loading rooms…</div>;
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-[#FAF8F3]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/student/innovation-club" className="inline-flex items-center gap-2 text-sm text-[#0A2C22] hover:underline mb-6">
-          <ArrowLeft className="w-4 h-4" /> Command Center
-        </Link>
-
-        <div className="mb-8">
-          <div className="text-xs font-bold tracking-[0.2em] text-[#0A2C22]/60 uppercase">Rooms</div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-[#0A2C22] mt-2" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-            Pick your rooms. Find your people.
+    <>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', marginBottom: 24 }}>
+        <div>
+          <div style={{ font: "600 14px/1 'Instrument Sans', sans-serif", color: '#8A6414', marginBottom: 12 }}>
+            Pick your space · {(data?.universes || []).length} universes · {(data?.rooms || []).length} rooms
+          </div>
+          <h1 style={{ font: "700 clamp(32px,4vw,46px)/1.02 'Space Grotesk', sans-serif", letterSpacing: '-.04em', margin: 0, color: '#0C1512' }}>
+            Build. Future. Create. Think. Life. Explore.
           </h1>
-          <p className="text-gray-600 text-sm mt-2 max-w-2xl">
-            Rooms are the identity layer of the club. Join what you care about — every room has live sessions, missions, replays and a moderated lounge.
+          <p style={{ font: "400 16px/1.6 'Instrument Sans', sans-serif", color: '#3E4C45', margin: '10px 0 0', maxWidth: 560 }}>
+            Start where you feel at home. Then explore what you haven&apos;t tried yet.
           </p>
         </div>
-
-        <div className="flex gap-2 flex-wrap mb-6">
-          <UPill active={filter === 'ALL'} onClick={() => setFilter('ALL')} label="All" />
-          {(data?.universes || []).map((u) => (
-            <UPill key={u.key} active={filter === u.key} onClick={() => setFilter(u.key)} label={`${u.emoji} ${u.name}`} color={UNIVERSE_COLORS[u.key]} />
-          ))}
-        </div>
-
-        {Object.keys(grouped).length === 0 ? (
-          <div className="bg-white rounded-3xl border border-gray-100 p-10 text-center text-gray-500">
-            No rooms published yet. Check back soon.
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {Object.entries(grouped).map(([universe, rooms]) => (
-              <section key={universe}>
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="w-2 h-2 rounded-full" style={{ background: UNIVERSE_COLORS[universe] || '#0A2C22' }} />
-                  <h2 className="text-lg font-bold text-[#0A2C22]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{universe}</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {rooms.map((r) => {
-                    const joined = joinedSet.has(r._id.toString());
-                    const accent = UNIVERSE_COLORS[universe] || '#0A2C22';
-                    return (
-                      <div key={r._id} className="group relative rounded-3xl bg-white border border-gray-100 overflow-hidden hover:shadow-lg transition-all" style={{ borderTop: `4px solid ${accent}` }}>
-                        {r.coverImage && (
-                          <div className="h-32 overflow-hidden">
-                            <img src={r.coverImage} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                          </div>
-                        )}
-                        <div className="p-5">
-                          <div className="flex items-start justify-between gap-3 mb-3">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xl">{r.iconEmoji || '•'}</span>
-                              <h3 className="font-bold text-[#0A2C22]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{r.name}</h3>
-                            </div>
-                            <span className="text-[10px] text-gray-400 font-mono uppercase inline-flex items-center gap-1">
-                              <Users className="w-3 h-3" /> {r.memberCount || 0}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-600 leading-relaxed min-h-[2.5rem]">{r.promise || 'A community for building, thinking and sharing.'}</p>
-                          {r.tags?.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-3">
-                              {r.tags.slice(0, 4).map((t) => (
-                                <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{t}</span>
-                              ))}
-                            </div>
-                          )}
-                          <div className="flex items-center justify-between gap-2 mt-4 pt-4 border-t border-gray-100">
-                            <button
-                              onClick={() => toggleJoin(r)}
-                              className={`text-xs font-bold px-4 py-2 rounded-full transition-all ${joined ? 'bg-[#0A2C22]/10 text-[#0A2C22]' : 'bg-[#0A2C22] text-white hover:bg-[#0C3B2E]'}`}
-                            >
-                              {joined ? 'Joined ✓' : 'Join Room'}
-                            </button>
-                            <Link href={`/student/innovation-club/rooms/${r.slug}`} className="text-xs text-[#0A2C22] font-semibold hover:underline inline-flex items-center gap-1">
-                              Open <ArrowRight className="w-3 h-3" />
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </section>
-            ))}
-          </div>
-        )}
       </div>
-    </div>
-  );
-}
 
-function UPill({ active, onClick, label, color }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${active ? 'bg-[#0A2C22] text-white border-[#0A2C22]' : 'bg-white text-[#0A2C22] border-gray-200 hover:border-[#0A2C22]/40'}`}
-      style={active && color ? { background: color, borderColor: color } : {}}
-    >
-      {label}
-    </button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 30 }}>
+        {(data?.universes || []).map((u) => {
+          const rooms = grouped[u.key] || [];
+          if (rooms.length === 0) return null;
+          return (
+            <section key={u.key}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14, flexWrap: 'wrap' }}>
+                <span style={{
+                  font: "700 14px/1 'Space Grotesk', sans-serif", letterSpacing: '.05em', color: '#fff',
+                  borderRadius: 11, padding: '9px 13px', background: UNI_ACCENT[u.key],
+                }}>{u.emoji} {u.name}</span>
+                <span style={{ font: "400 15px/1.4 'Instrument Sans', sans-serif", color: '#3E4C45' }}>
+                  {UNI_BLURB[u.key]}
+                </span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,280px),1fr))', gap: 14 }}>
+                {rooms.map((r) => {
+                  const isJoined = joined.has(r._id.toString());
+                  const accent = UNI_ACCENT[r.universe] || '#0C3B2E';
+                  const soft = UNI_SOFT[r.universe] || '#F4F7F5';
+                  return (
+                    <div key={r._id} style={{
+                      background: '#fff', border: '1px solid #E7EAE8', borderRadius: 22,
+                      padding: 20, display: 'flex', flexDirection: 'column', gap: 13,
+                    }}>
+                      <Link href={`/student/innovation-club/rooms/${r.slug}`} style={{
+                        display: 'flex', alignItems: 'center', gap: 14, background: 'none',
+                        border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', textDecoration: 'none',
+                      }}>
+                        <span style={{
+                          width: 54, height: 54, borderRadius: 18, display: 'grid', placeItems: 'center',
+                          fontSize: 27, flex: 'none', background: soft,
+                        }}>{r.iconEmoji || u.emoji}</span>
+                        <span style={{ minWidth: 0 }}>
+                          <span style={{ display: 'block', font: "700 19px/1.15 'Space Grotesk', sans-serif", letterSpacing: '-.015em', color: '#0C1512' }}>{r.name}</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: 6, font: "500 13px/1.2 'Instrument Sans', sans-serif", color: '#3E4C45', marginTop: 6 }}>
+                            <span style={{ width: 6, height: 6, borderRadius: 6, background: accent }} />
+                            {r.memberCount || 0} members
+                          </span>
+                        </span>
+                      </Link>
+                      <div style={{ font: "400 15px/1.5 'Instrument Sans', sans-serif", color: '#26322C', flex: 1 }}>
+                        {r.promise || 'A community for building, thinking and sharing.'}
+                      </div>
+                      {r.tags?.length > 0 && (
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {r.tags.slice(0, 4).map((t) => (
+                            <span key={t} style={{
+                              font: "500 13px/1 'Instrument Sans', sans-serif", color: '#26322C',
+                              background: '#F1F4F2', borderRadius: 8, padding: '6px 9px',
+                            }}>#{t}</span>
+                          ))}
+                        </div>
+                      )}
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button
+                          onClick={() => toggleJoin(r)}
+                          disabled={busy === r._id}
+                          style={{
+                            flex: 1, borderRadius: 13, padding: 12,
+                            font: "600 14px/1 'Instrument Sans', sans-serif",
+                            cursor: 'pointer',
+                            border: isJoined ? `1.5px solid ${accent}` : '1.5px solid #0C3B2E',
+                            background: isJoined ? soft : '#0C3B2E',
+                            color: isJoined ? accent : '#fff',
+                          }}
+                        >{isJoined ? 'Joined ✓' : 'Join Room'}</button>
+                        <Link href={`/student/innovation-club/rooms/${r.slug}`} style={{
+                          border: '1px solid #E7EAE8', background: '#fff', color: '#0C1512',
+                          borderRadius: 13, padding: '12px 16px', font: "600 14px/1 'Instrument Sans', sans-serif",
+                          textDecoration: 'none',
+                        }}>Enter</Link>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          );
+        })}
+      </div>
+    </>
   );
 }

@@ -3,135 +3,131 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Radio, Video, ArrowRight } from 'lucide-react';
 import { studentIC } from '@/lib/api';
 import { getUser } from '@/lib/auth';
-import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
-const fmt = (d) => new Date(d).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+const UNI_ACCENT = { BUILD: '#C2410C', FUTURE: '#2D5BFF', CREATE: '#7449F5', THINK: '#0E7C78', LIFE: '#D23A2A', EXPLORE: '#8A4DDB' };
 
-export default function LiveHubPage() {
+export default function LiveHub() {
   const router = useRouter();
   const [tab, setTab] = useState('upcoming');
   const [events, setEvents] = useState([]);
   const [replays, setReplays] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const loadList = async (scope) => {
-    setLoading(true);
-    try {
-      if (scope === 'replays') {
-        const rp = await studentIC.listReplays();
-        setReplays(rp);
-      } else {
-        const ev = await studentIC.listEvents({ scope });
-        setEvents(ev);
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (!getUser()) { router.push('/login'); return; }
-    loadList(tab);
+    (async () => {
+      setLoading(true);
+      try {
+        if (tab === 'replays') setReplays(await studentIC.listReplays());
+        else setEvents(await studentIC.listEvents({ scope: tab }));
+      } catch (e) { console.error(e); }
+      finally { setLoading(false); }
+    })();
   }, [tab, router]);
 
+  const tabs = [
+    { key: 'upcoming', label: 'Upcoming' },
+    { key: 'live', label: 'Live now' },
+    { key: 'ended', label: 'Ended' },
+    { key: 'replays', label: 'Replays' },
+  ];
+
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-[#FAF8F3]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/student/innovation-club" className="inline-flex items-center gap-2 text-sm text-[#0A2C22] hover:underline mb-6">
-          <ArrowLeft className="w-4 h-4" /> Command Center
-        </Link>
+    <>
+      <div style={{ marginBottom: 24 }}>
+        <div style={{ font: "600 14px/1 'Instrument Sans', sans-serif", color: '#8A6414', marginBottom: 12 }}>Live sessions</div>
+        <h1 style={{ font: "700 clamp(32px,4vw,46px)/1.02 'Space Grotesk', sans-serif", letterSpacing: '-.04em', margin: 0, color: '#0C1512' }}>Show up. Ask what you actually want to know.</h1>
+        <p style={{ font: "400 16px/1.6 'Instrument Sans', sans-serif", color: '#3E4C45', margin: '10px 0 0', maxWidth: 560 }}>AMAs, build-alongs, VS. debates and confession booths. Save your seat before it starts.</p>
+      </div>
 
-        <h1 className="text-3xl sm:text-4xl font-bold text-[#0A2C22]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-          Live sessions
-        </h1>
-        <p className="text-gray-600 text-sm mt-2 max-w-2xl">
-          AMAs, build-alongs, VS. debates and confession booths. Save your seat before it starts.
-        </p>
+      <div role="tablist" style={{ display: 'flex', gap: 4, borderBottom: '1px solid #E7EAE8', marginBottom: 22, overflowX: 'auto' }}>
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            role="tab"
+            onClick={() => setTab(t.key)}
+            style={{
+              border: 'none', background: 'none', padding: '13px 16px',
+              font: "650 15px/1 'Instrument Sans', sans-serif", cursor: 'pointer',
+              whiteSpace: 'nowrap', marginBottom: -1,
+              color: tab === t.key ? '#0C1512' : '#56635C',
+              borderBottom: `3px solid ${tab === t.key ? '#0C3B2E' : 'transparent'}`,
+            }}
+          >{t.label}</button>
+        ))}
+      </div>
 
-        <div className="flex gap-1 border-b border-gray-200 mt-8">
-          {[
-            { key: 'upcoming', label: 'Upcoming' },
-            { key: 'live', label: 'Live now' },
-            { key: 'ended', label: 'Ended' },
-            { key: 'replays', label: 'Replays' },
-          ].map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={`text-sm font-semibold px-4 py-3 border-b-2 transition-all ${tab === t.key ? 'border-[#0A2C22] text-[#0A2C22]' : 'border-transparent text-gray-500 hover:text-[#0A2C22]'}`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-6">
-          {loading ? (
-            <div className="text-sm text-gray-400 py-10 text-center">Loading…</div>
-          ) : tab === 'replays' ? (
-            replays.length === 0 ? <Empty text="No replays yet." /> :
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {replays.map((r) => (
-                  <div key={r._id} className="rounded-2xl border border-gray-100 overflow-hidden bg-white hover:shadow-md transition-all">
-                    <div className="aspect-video bg-gray-100">
-                      {r.thumbnailUrl && <img src={r.thumbnailUrl} alt="" className="w-full h-full object-cover" />}
-                    </div>
-                    <div className="p-4">
-                      <div className="text-[10px] font-mono uppercase text-gray-400">{r.roomId?.name}</div>
-                      <div className="text-sm font-semibold text-[#0A2C22] line-clamp-2 mt-1">{r.title}</div>
-                      <a href={r.videoUrl} target="_blank" rel="noreferrer" onClick={() => studentIC.viewReplay(r._id).catch(() => {})} className="text-xs text-[#D4AF37] font-semibold hover:underline inline-flex items-center gap-1 mt-3">
-                        <Video className="w-3 h-3" /> Watch replay
-                      </a>
-                    </div>
+      {loading ? <div style={{ padding: 60, textAlign: 'center', color: '#56635C' }}>Loading…</div> :
+        tab === 'replays' ? (
+          replays.length === 0 ? <Empty text="No replays yet." icon="📼" /> :
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,280px),1fr))', gap: 14 }}>
+              {replays.map((r) => (
+                <div key={r._id} style={{ background: '#fff', border: '1px solid #E7EAE8', borderRadius: 22, overflow: 'hidden' }}>
+                  <div style={{ aspectRatio: '16 / 9', background: '#F1F4F2' }}>
+                    {r.thumbnailUrl && <img src={r.thumbnailUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
                   </div>
-                ))}
-              </div>
-          ) : events.length === 0 ? <Empty text="Nothing here yet." /> :
-            <div className="space-y-3">
-              {events.map((e) => (
-                <Link
-                  key={e._id}
-                  href={`/student/innovation-club/live/${e._id}`}
-                  className="flex items-center gap-4 rounded-2xl bg-white border border-gray-100 hover:shadow-md p-4 transition-all"
-                >
-                  {e.thumbnailUrl ? (
-                    <img src={e.thumbnailUrl} alt="" className="w-28 h-16 object-cover rounded-xl flex-shrink-0" />
-                  ) : (
-                    <div className="w-28 h-16 rounded-xl bg-[#0A2C22]/10 flex items-center justify-center flex-shrink-0">
-                      <Radio className="w-6 h-6 text-[#0A2C22]/40" />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 text-[11px] font-mono uppercase text-gray-500">
-                      <span>{e.roomId?.name}</span> · <span>{e.format}</span>
-                      {e.status === 'live' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#D23A2A] text-white ml-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> live
-                        </span>
-                      )}
-                    </div>
-                    <div className="font-semibold text-[#0A2C22] mt-1">{e.title}</div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {fmt(e.startAt)} · {e.durationMinutes} min · {e.guest || 'Guest TBA'}
-                      {e.myRegistration && <span className="ml-2 text-green-600 font-semibold">· ✓ RSVPed</span>}
-                    </div>
+                  <div style={{ padding: 16 }}>
+                    <div style={{ font: "500 12px/1 'JetBrains Mono', monospace", color: '#56635C', textTransform: 'uppercase', marginBottom: 6 }}>{r.roomId?.name}</div>
+                    <div style={{ font: "700 17px/1.25 'Space Grotesk', sans-serif", color: '#0C1512', marginBottom: 10 }}>{r.title}</div>
+                    <a href={r.videoUrl} target="_blank" rel="noreferrer" onClick={() => studentIC.viewReplay(r._id).catch(() => {})} style={{
+                      display: 'inline-block', background: '#0C3B2E', color: '#fff',
+                      borderRadius: 12, padding: '10px 14px',
+                      font: "600 13px/1 'Instrument Sans', sans-serif", textDecoration: 'none',
+                    }}>▶ Watch replay</a>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
-                </Link>
+                </div>
               ))}
             </div>
-          }
-        </div>
-      </div>
-    </div>
+        ) : events.length === 0 ? <Empty text="Nothing to show here yet." icon="🎤" /> :
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {events.map((e) => <BigEventCard key={e._id} event={e} />)}
+          </div>
+      }
+    </>
   );
 }
 
-function Empty({ text }) {
-  return <div className="text-sm text-gray-400 py-12 text-center bg-white rounded-2xl border border-gray-100">{text}</div>;
+function BigEventCard({ event }) {
+  const isLive = event.status === 'live';
+  const accent = UNI_ACCENT[event.roomId?.universe] || '#0C3B2E';
+  return (
+    <Link href={`/student/innovation-club/live/${event._id}`} style={{
+      display: 'flex', alignItems: 'stretch', gap: 16, background: '#fff',
+      border: '1px solid #E7EAE8', borderRadius: 22, padding: 18,
+      textDecoration: 'none',
+    }}>
+      <div style={{ width: 180, aspectRatio: '16 / 9', background: '#F1F4F2', borderRadius: 16, flex: 'none', overflow: 'hidden' }}>
+        {event.thumbnailUrl && <img src={event.thumbnailUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+      </div>
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+          <span style={{ font: "700 12px/1 'Space Grotesk', sans-serif", color: '#fff', background: accent, borderRadius: 8, padding: '5px 8px', letterSpacing: '.04em' }}>{event.roomId?.name}</span>
+          <span style={{ font: "500 12px/1 'JetBrains Mono', monospace", color: '#56635C', textTransform: 'uppercase' }}>{event.format}</span>
+          {isLive && (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, font: "700 12px/1 'Instrument Sans', sans-serif", color: '#A8322A', background: '#FDF5F4', border: '1px solid #F0D9D7', borderRadius: 999, padding: '5px 9px' }}>
+              <span style={{ width: 6, height: 6, borderRadius: 6, background: '#C83A30', animation: 'ftPulse 1.6s ease-in-out infinite' }} />
+              Live now
+            </span>
+          )}
+        </div>
+        <div style={{ font: "700 20px/1.2 'Space Grotesk', sans-serif", color: '#0C1512' }}>{event.title}</div>
+        <div style={{ font: "500 13.5px/1.4 'Instrument Sans', sans-serif", color: '#3E4C45' }}>with {event.guest || 'Guest TBA'}</div>
+        <div style={{ font: "500 13px/1 'JetBrains Mono', monospace", color: '#3E4C45', marginTop: 'auto' }}>
+          {new Date(event.startAt).toLocaleString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} · {event.durationMinutes} min
+          {event.myRegistration && <span style={{ marginLeft: 12, color: '#6E5416' }}>✓ Going</span>}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+function Empty({ text, icon }) {
+  return (
+    <div style={{ border: '1.5px dashed #DCD3C0', borderRadius: 20, padding: 32, background: '#FDFBF6', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontSize: 28 }}>{icon}</span>
+      <span style={{ font: "400 15px/1.55 'Instrument Sans', sans-serif", color: '#3E4C45' }}>{text}</span>
+    </div>
+  );
 }

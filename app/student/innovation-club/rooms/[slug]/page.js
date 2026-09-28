@@ -3,19 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft, Users, Radio, Target, Video, Calendar } from 'lucide-react';
 import { studentIC } from '@/lib/api';
 import { getUser } from '@/lib/auth';
-import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
-const UNIVERSE_COLORS = {
-  BUILD: '#C2410C',
-  FUTURE: '#2D5BFF',
-  CREATE: '#7449F5',
-  THINK: '#0E7C78',
-  LIFE: '#D23A2A',
-  EXPLORE: '#8A4DDB',
-};
+const UNI_ACCENT = { BUILD: '#C2410C', FUTURE: '#2D5BFF', CREATE: '#7449F5', THINK: '#0E7C78', LIFE: '#D23A2A', EXPLORE: '#8A4DDB' };
+const UNI_SOFT = { BUILD: '#FDF1E4', FUTURE: '#E9EEFF', CREATE: '#F0EAFE', THINK: '#E4F1F0', LIFE: '#FBE9E7', EXPLORE: '#EFE7F8' };
 
 export default function RoomDetailPage() {
   const router = useRouter();
@@ -26,14 +18,9 @@ export default function RoomDetailPage() {
   const [error, setError] = useState(null);
 
   const load = async () => {
-    try {
-      const d = await studentIC.getRoom(slug);
-      setData(d);
-    } catch (e) {
-      setError(e?.error || 'Room not found');
-    } finally {
-      setLoading(false);
-    }
+    try { setData(await studentIC.getRoom(slug)); }
+    catch (e) { setError(e?.error || 'Room not found'); }
+    finally { setLoading(false); }
   };
 
   useEffect(() => {
@@ -41,21 +28,19 @@ export default function RoomDetailPage() {
     load();
   }, [slug, router]);
 
-  const toggleJoin = async () => {
+  const toggle = async () => {
     try {
       if (data.joined) await studentIC.leaveRoom(slug);
       else await studentIC.joinRoom(slug);
       await load();
-    } catch (e) {
-      alert('Could not update membership.');
-    }
+    } catch { alert('Could not update.'); }
   };
 
-  if (loading) return <LoadingSpinner message="Loading room..." />;
-  if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
+  if (loading) return <div style={{ padding: 60, textAlign: 'center', color: '#56635C' }}>Loading room…</div>;
+  if (error) return <div style={{ padding: 60, textAlign: 'center', color: '#C83A30' }}>{error}</div>;
   const { room, events = [], missions = [], replays = [], joined } = data;
-
-  const accent = UNIVERSE_COLORS[room.universe] || '#0A2C22';
+  const accent = UNI_ACCENT[room.universe] || '#0C3B2E';
+  const soft = UNI_SOFT[room.universe] || '#F4F7F5';
   const upcoming = events.filter((e) => e.status !== 'ended');
   const past = events.filter((e) => e.status === 'ended');
 
@@ -67,164 +52,191 @@ export default function RoomDetailPage() {
   ];
 
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-[#FAF8F3]">
-      <div className="relative">
-        {room.coverImage ? (
-          <div className="h-56 md:h-64 overflow-hidden relative">
-            <img src={room.coverImage} alt="" className="w-full h-full object-cover" />
-            <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent 20%, ${accent}44 60%, #0A2C22 100%)` }} />
-          </div>
-        ) : (
-          <div className="h-40" style={{ background: `linear-gradient(135deg, ${accent}, #0A2C22)` }} />
-        )}
-      </div>
+    <>
+      <Link href="/student/innovation-club/rooms" style={{ background: 'none', border: 'none', font: "600 14px 'Instrument Sans', sans-serif", color: '#3E4C45', cursor: 'pointer', padding: '0 0 16px', textDecoration: 'none', display: 'inline-block' }}>← All rooms</Link>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-16 relative z-10">
-        <Link href="/student/innovation-club/rooms" className="inline-flex items-center gap-2 text-xs text-white hover:underline mb-4">
-          <ArrowLeft className="w-3 h-3" /> All rooms
-        </Link>
-        <div className="bg-white rounded-3xl border border-gray-100 p-6 md:p-8 shadow-lg">
-          <div className="flex flex-col md:flex-row md:items-center gap-4 justify-between">
-            <div>
-              <div className="text-[11px] font-mono uppercase tracking-wide" style={{ color: accent }}>{room.universe}</div>
-              <h1 className="text-3xl md:text-4xl font-bold text-[#0A2C22] mt-1 flex items-center gap-3" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>
-                <span>{room.iconEmoji || '•'}</span>
-                {room.name}
-              </h1>
-              <p className="text-gray-600 text-sm mt-2 max-w-2xl">{room.promise}</p>
-              <div className="flex items-center gap-3 mt-3">
-                <span className="text-xs text-gray-500 inline-flex items-center gap-1"><Users className="w-3 h-3" /> {room.memberCount || 0} members</span>
-                {room.tags?.map((t) => <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{t}</span>)}
-              </div>
+      <div style={{
+        borderRadius: 28, padding: 'clamp(22px,3vw,34px)', position: 'relative',
+        overflow: 'hidden', marginBottom: 20, background: soft,
+      }}>
+        <div style={{ position: 'absolute', right: -90, top: -90, width: 320, height: 320, borderRadius: '50%', opacity: 0.92, background: accent }} />
+        <div style={{ position: 'absolute', right: 26, top: 36, width: 250, height: 250, borderRadius: '50%', border: '1.5px dashed rgba(15,26,21,.2)', animation: 'ftSpin 70s linear infinite' }} />
+        <span style={{ position: 'absolute', right: 66, top: 56, fontSize: 70, lineHeight: 1, animation: 'ftBob 6s ease-in-out infinite' }}>{room.iconEmoji || '·'}</span>
+
+        <div style={{ position: 'relative', maxWidth: 620 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 16, flexWrap: 'wrap' }}>
+            <span style={{ font: "700 13px/1 'Space Grotesk', sans-serif", letterSpacing: '.05em', color: '#fff', borderRadius: 9, padding: '7px 11px', background: accent }}>{room.universe}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, font: "500 14px/1 'Instrument Sans', sans-serif", color: '#26322C' }}>
+              <span style={{ width: 7, height: 7, borderRadius: 7, background: accent }} />
+              {room.memberCount || 0} members
+            </span>
+          </div>
+          <h1 style={{ font: "700 clamp(36px,4.6vw,56px)/1 'Space Grotesk', sans-serif", letterSpacing: '-.04em', margin: '0 0 14px', color: '#0C1512', maxWidth: 520 }}>{room.name}</h1>
+          <p style={{ font: "400 18px/1.5 'Instrument Sans', sans-serif", color: '#26322C', margin: '0 0 16px', maxWidth: 500 }}>{room.promise}</p>
+          {room.tags?.length > 0 && (
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 22 }}>
+              {room.tags.map((t) => (
+                <span key={t} style={{ font: "600 13.5px/1 'Instrument Sans', sans-serif", color: '#0C1512', background: 'rgba(255,255,255,.75)', borderRadius: 999, padding: '8px 12px' }}>#{t}</span>
+              ))}
             </div>
-            <button
-              onClick={toggleJoin}
-              className={`text-sm font-bold px-6 py-3 rounded-full transition-all flex-shrink-0 ${joined ? 'bg-[#0A2C22]/10 text-[#0A2C22]' : 'bg-[#0A2C22] text-white hover:bg-[#0C3B2E]'}`}
-            >
-              {joined ? 'Joined ✓' : 'Join Room'}
-            </button>
-          </div>
-
-          <div className="flex gap-1 border-b border-gray-100 mt-8 overflow-x-auto">
-            {tabs.map((t) => (
-              <button
-                key={t.key}
-                onClick={() => setTab(t.key)}
-                className={`text-sm font-semibold px-4 py-3 border-b-2 transition-all ${tab === t.key ? 'border-[#0A2C22] text-[#0A2C22]' : 'border-transparent text-gray-500 hover:text-[#0A2C22]'}`}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-
-          <div className="pt-6">
-            {tab === 'home' && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <SectionCard title="Next up" icon={Radio} accent={accent}>
-                  {upcoming[0] ? (
-                    <EventRow event={upcoming[0]} />
-                  ) : (
-                    <Empty text="Nothing scheduled yet." />
-                  )}
-                </SectionCard>
-                <SectionCard title="Featured mission" icon={Target} accent={accent}>
-                  {missions[0] ? (
-                    <MissionRow mission={missions[0]} />
-                  ) : (
-                    <Empty text="No missions in this room yet." />
-                  )}
-                </SectionCard>
-              </div>
-            )}
-
-            {tab === 'upcoming' && (
-              <div className="space-y-3">
-                {upcoming.length === 0 ? <Empty text="Nothing scheduled." /> :
-                  upcoming.map((e) => <EventRow key={e._id} event={e} />)}
-              </div>
-            )}
-
-            {tab === 'missions' && (
-              <div className="space-y-3">
-                {missions.length === 0 ? <Empty text="No missions." /> :
-                  missions.map((m) => <MissionRow key={m._id} mission={m} />)}
-              </div>
-            )}
-
-            {tab === 'vault' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {replays.length === 0 && past.length === 0 && <Empty text="Nothing in the vault yet." />}
-                {replays.map((r) => (
-                  <div key={r._id} className="rounded-2xl border border-gray-100 overflow-hidden bg-white hover:shadow-md transition-all">
-                    <div className="aspect-video bg-gray-100">
-                      {r.thumbnailUrl && <img src={r.thumbnailUrl} alt="" className="w-full h-full object-cover" />}
-                    </div>
-                    <div className="p-3">
-                      <div className="text-sm font-semibold text-[#0A2C22] line-clamp-2">{r.title}</div>
-                      <a href={r.videoUrl} target="_blank" rel="noreferrer" onClick={() => studentIC.viewReplay(r._id).catch(() => {})} className="text-xs text-[#D4AF37] font-semibold hover:underline inline-flex items-center gap-1 mt-2">
-                        <Video className="w-3 h-3" /> Watch replay
-                      </a>
-                    </div>
-                  </div>
-                ))}
-                {past.map((e) => (
-                  <div key={e._id} className="rounded-2xl border border-gray-100 p-4 bg-white text-sm text-gray-600">
-                    <div className="text-[11px] uppercase font-mono text-gray-400 mb-1">Past event</div>
-                    <div className="font-semibold text-[#0A2C22]">{e.title}</div>
-                    <div className="text-xs text-gray-500 mt-1">{new Date(e.startAt).toLocaleDateString()}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+          )}
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+            <button onClick={toggle} style={{
+              background: joined ? '#fff' : '#0C3B2E', color: joined ? '#0C3B2E' : '#fff',
+              border: '2px solid #0C3B2E', borderRadius: 15,
+              padding: joined ? '15px 22px' : '15px 26px',
+              font: "700 15px/1 'Instrument Sans', sans-serif", cursor: 'pointer',
+            }}>{joined ? 'Joined ✓ · Leave' : 'Join Room'}</button>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
 
-function SectionCard({ title, icon: Icon, accent, children }) {
-  return (
-    <div className="rounded-2xl bg-[#FAF8F3] border border-gray-100 p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Icon className="w-4 h-4" style={{ color: accent }} />
-        <h3 className="text-sm font-bold text-[#0A2C22] uppercase tracking-wide">{title}</h3>
+      <div role="tablist" style={{ display: 'flex', gap: 4, borderBottom: '1px solid #E7EAE8', marginBottom: 22, overflowX: 'auto' }}>
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            role="tab"
+            onClick={() => setTab(t.key)}
+            style={{
+              border: 'none', background: 'none', padding: '13px 16px',
+              font: "650 15px/1 'Instrument Sans', sans-serif", cursor: 'pointer',
+              whiteSpace: 'nowrap', marginBottom: -1, transition: 'color .16s',
+              color: tab === t.key ? '#0C1512' : '#56635C',
+              borderBottom: `3px solid ${tab === t.key ? '#0C3B2E' : 'transparent'}`,
+            }}
+          >{t.label}</button>
+        ))}
       </div>
-      {children}
-    </div>
+
+      {tab === 'home' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,320px),1fr))', gap: 18 }}>
+          <Card>
+            <SectionTitle>Next session</SectionTitle>
+            {upcoming[0] ? <EventRow event={upcoming[0]} /> : <Empty text="Nothing scheduled yet. When a session lands, it appears here first." icon="🎤" />}
+          </Card>
+          <Card>
+            <SectionTitle>Featured mission</SectionTitle>
+            {missions[0] ? (
+              <>
+                <div style={{ font: "700 20px/1.25 'Space Grotesk', sans-serif", color: '#0C1512', marginBottom: 8 }}>{missions[0].title}</div>
+                <div style={{ font: "400 15px/1.55 'Instrument Sans', sans-serif", color: '#26322C', marginBottom: 14 }}>{missions[0].description}</div>
+                <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16, font: "500 13px/1 'JetBrains Mono', monospace", color: '#3E4C45' }}>
+                  <span>{missions[0].difficulty}</span>
+                  <span style={{ color: '#6E5416' }}>+{missions[0].xpAward} XP</span>
+                </div>
+                <Link href={`/student/innovation-club/missions/${missions[0]._id}`} style={{ background: '#0C3B2E', color: '#fff', borderRadius: 13, padding: '12px 18px', font: "600 14px/1 'Instrument Sans', sans-serif", textDecoration: 'none', display: 'inline-block' }}>Start mission</Link>
+              </>
+            ) : <Empty text="Missions for this room are released alongside sessions." icon="🎯" />}
+          </Card>
+          <Card>
+            <SectionTitle>Recent replay</SectionTitle>
+            {replays[0] ? <ReplayRow r={replays[0]} /> : <Empty text="Replays land here after live sessions end." icon="📼" />}
+          </Card>
+        </div>
+      )}
+
+      {tab === 'upcoming' && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {upcoming.length === 0 ? <Empty text="Nothing scheduled yet." icon="🎤" /> : upcoming.map((e) => <EventRow key={e._id} event={e} />)}
+        </div>
+      )}
+
+      {tab === 'missions' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,290px),1fr))', gap: 14 }}>
+          {missions.length === 0 ? <Empty text="No missions here yet." icon="🎯" /> :
+            missions.map((m) => (
+              <Link key={m._id} href={`/student/innovation-club/missions/${m._id}`} style={{
+                textAlign: 'left', border: '1px solid #E7EAE8', borderRadius: 20,
+                padding: 20, background: '#fff', display: 'block', textDecoration: 'none',
+              }}>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span style={{ font: "500 13px/1 'Instrument Sans', sans-serif", color: '#3E4C45' }}>{m.difficulty}</span>
+                  <span style={{ font: "700 13px/1 'JetBrains Mono', monospace", color: '#6E5416', background: '#FCF3DF', borderRadius: 8, padding: '6px 8px' }}>+{m.xpAward} XP</span>
+                </span>
+                <span style={{ display: 'block', font: "700 18px/1.25 'Space Grotesk', sans-serif", color: '#0C1512', marginBottom: 8 }}>{m.title}</span>
+                <span style={{ display: 'block', font: "400 14.5px/1.5 'Instrument Sans', sans-serif", color: '#26322C' }}>{m.description}</span>
+              </Link>
+            ))}
+        </div>
+      )}
+
+      {tab === 'vault' && (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(100%,260px),1fr))', gap: 14 }}>
+          {replays.length === 0 && past.length === 0 && <Empty text="Nothing in the vault yet." icon="📼" />}
+          {replays.map((r) => <ReplayCard key={r._id} r={r} />)}
+          {past.map((e) => (
+            <Card key={e._id}>
+              <div style={{ font: "500 11px/1 'JetBrains Mono', monospace", color: '#56635C', marginBottom: 8, textTransform: 'uppercase' }}>Past event</div>
+              <div style={{ font: "700 16px/1.25 'Space Grotesk', sans-serif", color: '#0C1512' }}>{e.title}</div>
+              <div style={{ font: "500 13px/1 'JetBrains Mono', monospace", color: '#3E4C45', marginTop: 8 }}>{new Date(e.startAt).toLocaleDateString()}</div>
+            </Card>
+          ))}
+        </div>
+      )}
+    </>
   );
 }
 
+function Card({ children }) {
+  return <div style={{ background: '#fff', border: '1px solid #E7EAE8', borderRadius: 22, padding: 22 }}>{children}</div>;
+}
+function SectionTitle({ children }) {
+  return <h2 style={{ font: "700 21px/1.15 'Space Grotesk', sans-serif", letterSpacing: '-.02em', color: '#0C1512', margin: '0 0 14px' }}>{children}</h2>;
+}
+function Empty({ text, icon }) {
+  return (
+    <div style={{ border: '1.5px dashed #DCD3C0', borderRadius: 20, padding: 22, background: '#FDFBF6', display: 'flex', gap: 14, alignItems: 'center' }}>
+      <span style={{ width: 46, height: 46, borderRadius: 15, background: '#FCF3DF', display: 'grid', placeItems: 'center', fontSize: 22, flex: 'none' }}>{icon}</span>
+      <span style={{ font: "400 15px/1.55 'Instrument Sans', sans-serif", color: '#3E4C45' }}>{text}</span>
+    </div>
+  );
+}
 function EventRow({ event }) {
   return (
-    <Link href={`/student/innovation-club/live/${event._id}`} className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-3 hover:shadow-sm">
-      <div className="w-14 text-center flex-shrink-0">
-        <div className="text-[10px] font-mono uppercase text-gray-500">{new Date(event.startAt).toLocaleDateString([], { weekday: 'short' })}</div>
-        <div className="text-sm font-bold text-[#0A2C22]">{new Date(event.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+    <Link href={`/student/innovation-club/live/${event._id}`} style={{
+      display: 'flex', alignItems: 'center', gap: 12, border: '1px solid #E7EAE8', borderRadius: 18,
+      padding: 15, background: '#FAFBFA', textDecoration: 'none',
+    }}>
+      <div style={{ width: 62, textAlign: 'center', flex: 'none' }}>
+        <div style={{ font: "500 12px/1 'JetBrains Mono', monospace", color: '#56635C', textTransform: 'uppercase' }}>{new Date(event.startAt).toLocaleDateString([], { weekday: 'short' })}</div>
+        <div style={{ font: "700 16px/1 'Space Grotesk', sans-serif", color: '#0C1512', marginTop: 4 }}>{new Date(event.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-sm text-[#0A2C22]">{event.title}</div>
-        <div className="text-xs text-gray-500 truncate">{event.format} · {event.guest || 'Guest TBA'}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ font: "600 16px/1.25 'Space Grotesk', sans-serif", color: '#0C1512' }}>{event.title}</div>
+        <div style={{ font: "500 13px/1.2 'Instrument Sans', sans-serif", color: '#3E4C45', marginTop: 4 }}>{event.format} · {event.guest || 'Guest TBA'}</div>
       </div>
+      {event.status === 'live' && (
+        <span style={{ font: "600 11px/1 'JetBrains Mono', monospace", color: '#C83A30', textTransform: 'uppercase' }}>● live</span>
+      )}
     </Link>
   );
 }
-
-function MissionRow({ mission }) {
+function ReplayCard({ r }) {
   return (
-    <Link href={`/student/innovation-club/missions/${mission._id}`} className="flex items-start gap-3 rounded-xl border border-gray-100 bg-white p-3 hover:shadow-sm">
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-sm text-[#0A2C22]">{mission.title}</div>
-        <div className="text-xs text-gray-500 line-clamp-1">{mission.description}</div>
+    <div style={{ background: '#fff', border: '1px solid #E7EAE8', borderRadius: 22, overflow: 'hidden' }}>
+      <div style={{ aspectRatio: '16 / 9', background: '#F1F4F2' }}>
+        {r.thumbnailUrl && <img src={r.thumbnailUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
       </div>
-      <div className="text-right flex-shrink-0">
-        <div className="text-sm font-bold text-[#D4AF37]">+{mission.xpAward}</div>
-        <div className="text-[10px] uppercase text-gray-400">XP</div>
+      <div style={{ padding: 14 }}>
+        <div style={{ font: "700 16px/1.25 'Space Grotesk', sans-serif", color: '#0C1512' }}>{r.title}</div>
+        <a href={r.videoUrl} target="_blank" rel="noreferrer" onClick={() => studentIC.viewReplay(r._id).catch(() => {})} style={{ font: "600 13px 'Instrument Sans', sans-serif", color: '#8A6414', marginTop: 8, display: 'inline-block' }}>▶ Watch replay</a>
       </div>
-    </Link>
+    </div>
   );
 }
-
-function Empty({ text }) {
-  return <div className="text-sm text-gray-400 py-6 text-center">{text}</div>;
+function ReplayRow({ r }) {
+  return (
+    <a href={r.videoUrl} target="_blank" rel="noreferrer" onClick={() => studentIC.viewReplay(r._id).catch(() => {})} style={{
+      display: 'flex', gap: 12, alignItems: 'center', border: '1px solid #E7EAE8',
+      borderRadius: 18, padding: 12, background: '#FAFBFA', textDecoration: 'none',
+    }}>
+      <div style={{ width: 96, aspectRatio: '16 / 9', background: '#F1F4F2', borderRadius: 12, flex: 'none', overflow: 'hidden' }}>
+        {r.thumbnailUrl && <img src={r.thumbnailUrl} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ font: "600 15px/1.25 'Space Grotesk', sans-serif", color: '#0C1512' }}>{r.title}</div>
+        <div style={{ font: "500 12px/1 'JetBrains Mono', monospace", color: '#56635C', marginTop: 4 }}>{Math.round((r.durationSeconds || 0) / 60)} min</div>
+      </div>
+    </a>
+  );
 }

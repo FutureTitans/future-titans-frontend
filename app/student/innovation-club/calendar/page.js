@@ -3,28 +3,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, ChevronLeft, ChevronRight, Radio } from 'lucide-react';
 import { studentIC } from '@/lib/api';
 import { getUser } from '@/lib/auth';
-import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
-const startOfWeek = (d) => {
-  const x = new Date(d);
-  x.setHours(0, 0, 0, 0);
-  const day = x.getDay();
-  const diff = (day + 6) % 7;
-  x.setDate(x.getDate() - diff);
-  return x;
-};
+const UNI_ACCENT = { BUILD: '#C2410C', FUTURE: '#2D5BFF', CREATE: '#7449F5', THINK: '#0E7C78', LIFE: '#D23A2A', EXPLORE: '#8A4DDB' };
 
-const addDays = (d, n) => {
-  const x = new Date(d);
-  x.setDate(x.getDate() + n);
-  return x;
-};
-
-const sameDay = (a, b) =>
-  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+const startOfWeek = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const sameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
 export default function CalendarPage() {
   const router = useRouter();
@@ -35,37 +21,18 @@ export default function CalendarPage() {
   const [loading, setLoading] = useState(true);
 
   const range = useMemo(() => {
-    if (view === 'today') {
-      const s = new Date(anchor); s.setHours(0, 0, 0, 0);
-      const e = new Date(s); e.setDate(e.getDate() + 1);
-      return { from: s, to: e };
-    }
-    if (view === 'week') {
-      const s = startOfWeek(anchor);
-      const e = addDays(s, 7);
-      return { from: s, to: e };
-    }
-    const s = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
-    const e = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 1);
-    return { from: s, to: e };
+    if (view === 'today') { const s = new Date(anchor); s.setHours(0, 0, 0, 0); const e = new Date(s); e.setDate(e.getDate() + 1); return { from: s, to: e }; }
+    if (view === 'week') { const s = startOfWeek(anchor); const e = addDays(s, 7); return { from: s, to: e }; }
+    const s = new Date(anchor.getFullYear(), anchor.getMonth(), 1); const e = new Date(anchor.getFullYear(), anchor.getMonth() + 1, 1); return { from: s, to: e };
   }, [view, anchor]);
 
   useEffect(() => {
     if (!getUser()) { router.push('/login'); return; }
     (async () => {
       setLoading(true);
-      try {
-        const res = await studentIC.getCalendar({
-          from: range.from.toISOString(),
-          to: range.to.toISOString(),
-          mine: mine ? 'true' : 'false',
-        });
-        setEvents(res);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
+      try { setEvents(await studentIC.getCalendar({ from: range.from.toISOString(), to: range.to.toISOString(), mine: mine ? 'true' : 'false' })); }
+      catch (e) { console.error(e); }
+      finally { setLoading(false); }
     })();
   }, [router, range.from.getTime(), range.to.getTime(), mine]);
 
@@ -77,16 +44,15 @@ export default function CalendarPage() {
     setAnchor(x);
   };
 
-  const eventsByDay = useMemo(() => {
-    const map = new Map();
+  const byDay = useMemo(() => {
+    const m = new Map();
     for (const e of events) {
-      const d = new Date(e.startAt);
-      d.setHours(0, 0, 0, 0);
+      const d = new Date(e.startAt); d.setHours(0, 0, 0, 0);
       const k = d.getTime();
-      if (!map.has(k)) map.set(k, []);
-      map.get(k).push(e);
+      if (!m.has(k)) m.set(k, []);
+      m.get(k).push(e);
     }
-    return map;
+    return m;
   }, [events]);
 
   const label = view === 'today'
@@ -95,87 +61,83 @@ export default function CalendarPage() {
       ? `${range.from.toLocaleDateString([], { month: 'short', day: 'numeric' })} — ${addDays(range.to, -1).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' })}`
       : anchor.toLocaleDateString([], { month: 'long', year: 'numeric' });
 
-  if (loading && events.length === 0) return <LoadingSpinner message="Loading calendar..." />;
-
   return (
-    <div className="min-h-[calc(100dvh-4rem)] bg-[#FAF8F3]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Link href="/student/innovation-club" className="inline-flex items-center gap-2 text-sm text-[#0A2C22] hover:underline mb-6">
-          <ArrowLeft className="w-4 h-4" /> Command Center
-        </Link>
-
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-[#0A2C22]" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>Calendar</h1>
-            <p className="text-gray-600 text-sm mt-1">{label}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex rounded-full border border-gray-200 overflow-hidden">
-              {['today', 'week', 'month'].map((v) => (
-                <button
-                  key={v}
-                  onClick={() => setView(v)}
-                  className={`text-xs font-semibold px-3 py-2 ${view === v ? 'bg-[#0A2C22] text-white' : 'bg-white text-[#0A2C22]'}`}
-                >
-                  {v[0].toUpperCase() + v.slice(1)}
-                </button>
-              ))}
-            </div>
-            <label className="inline-flex items-center gap-2 text-xs text-[#0A2C22] font-semibold bg-white border border-gray-200 rounded-full px-3 py-2 cursor-pointer">
-              <input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} className="accent-[#0A2C22]" />
-              My rooms only
-            </label>
-          </div>
+    <>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap', marginBottom: 24 }}>
+        <div>
+          <div style={{ font: "600 14px/1 'Instrument Sans', sans-serif", color: '#8A6414', marginBottom: 12 }}>Calendar</div>
+          <h1 style={{ font: "700 clamp(32px,4vw,46px)/1.02 'Space Grotesk', sans-serif", letterSpacing: '-.04em', margin: 0, color: '#0C1512' }}>{label}</h1>
         </div>
-
-        <div className="flex items-center gap-2 mt-6">
-          <button onClick={() => move(-1)} className="p-2 rounded-full border border-gray-200 hover:bg-gray-50">
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button onClick={() => setAnchor(new Date())} className="text-xs font-semibold px-3 py-2 rounded-full border border-gray-200 hover:bg-gray-50">Today</button>
-          <button onClick={() => move(1)} className="p-2 rounded-full border border-gray-200 hover:bg-gray-50">
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-
-        <div className="mt-6">
-          {view === 'today' && <DayView events={events} />}
-          {view === 'week' && <WeekView from={range.from} eventsByDay={eventsByDay} />}
-          {view === 'month' && <MonthView anchor={anchor} eventsByDay={eventsByDay} />}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 4, border: '1px solid #E7EAE8', background: '#fff', borderRadius: 14, padding: 4 }}>
+            {['today', 'week', 'month'].map((v) => (
+              <button key={v} onClick={() => setView(v)} style={{
+                border: 'none', borderRadius: 10, padding: '10px 16px',
+                font: "600 14px/1 'Instrument Sans', sans-serif", cursor: 'pointer',
+                background: view === v ? '#0C3B2E' : 'transparent',
+                color: view === v ? '#fff' : '#26322C',
+              }}>{v[0].toUpperCase() + v.slice(1)}</button>
+            ))}
+          </div>
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 8, font: "600 13px/1 'Instrument Sans', sans-serif", color: '#0C1512', background: '#fff', border: '1px solid #E7EAE8', borderRadius: 999, padding: '10px 14px', cursor: 'pointer' }}>
+            <input type="checkbox" checked={mine} onChange={(e) => setMine(e.target.checked)} style={{ accentColor: '#0C3B2E' }} />
+            My rooms only
+          </label>
         </div>
       </div>
-    </div>
+
+      <div style={{ display: 'flex', gap: 6, marginBottom: 18 }}>
+        <button onClick={() => move(-1)} style={{ width: 40, height: 40, borderRadius: 12, border: '1px solid #E7EAE8', background: '#fff', cursor: 'pointer' }}>←</button>
+        <button onClick={() => setAnchor(new Date())} style={{ height: 40, borderRadius: 12, border: '1px solid #E7EAE8', background: '#fff', padding: '0 14px', font: "600 13px 'Instrument Sans', sans-serif", cursor: 'pointer' }}>Today</button>
+        <button onClick={() => move(1)} style={{ width: 40, height: 40, borderRadius: 12, border: '1px solid #E7EAE8', background: '#fff', cursor: 'pointer' }}>→</button>
+      </div>
+
+      {loading ? <div style={{ padding: 60, textAlign: 'center', color: '#56635C' }}>Loading…</div> :
+        view === 'today' ? <DayView events={events} /> :
+        view === 'week' ? <WeekView from={range.from} byDay={byDay} /> :
+        <MonthView anchor={anchor} byDay={byDay} />}
+    </>
   );
 }
 
 function DayView({ events }) {
   return events.length === 0 ? (
-    <div className="bg-white rounded-3xl border border-gray-100 p-16 text-center text-gray-400">No sessions today.</div>
+    <Empty text="No sessions today." icon="🗓️" />
   ) : (
-    <div className="bg-white rounded-3xl border border-gray-100 divide-y divide-gray-100">
+    <div style={{ background: '#fff', border: '1px solid #E7EAE8', borderRadius: 22, overflow: 'hidden' }}>
       {events.map((e) => <EventLine key={e._id} event={e} />)}
     </div>
   );
 }
 
-function WeekView({ from, eventsByDay }) {
+function WeekView({ from, byDay }) {
   const days = Array.from({ length: 7 }).map((_, i) => addDays(from, i));
   return (
-    <div className="grid grid-cols-1 md:grid-cols-7 gap-3">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,150px),1fr))', gap: 10 }}>
       {days.map((d) => {
         const key = new Date(d); key.setHours(0, 0, 0, 0);
-        const list = eventsByDay.get(key.getTime()) || [];
+        const list = byDay.get(key.getTime()) || [];
         const isToday = sameDay(d, new Date());
         return (
-          <div key={d.toISOString()} className={`rounded-2xl border p-3 min-h-[160px] ${isToday ? 'bg-[#0A2C22] text-white border-[#0A2C22]' : 'bg-white border-gray-100'}`}>
-            <div className="text-[10px] uppercase font-mono opacity-70">{d.toLocaleDateString([], { weekday: 'short' })}</div>
-            <div className={`text-2xl font-bold ${isToday ? '' : 'text-[#0A2C22]'}`} style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{d.getDate()}</div>
-            <div className="space-y-1 mt-2">
-              {list.length === 0 ? <div className={`text-[10px] ${isToday ? 'text-white/50' : 'text-gray-400'}`}>—</div> :
+          <div key={d.toISOString()} style={{
+            borderRadius: 18, padding: 12, minHeight: 200,
+            background: isToday ? '#0C3B2E' : '#fff',
+            border: isToday ? '1px solid #0C3B2E' : '1px solid #E7EAE8',
+            color: isToday ? '#fff' : '#0C1512',
+          }}>
+            <div style={{ font: "500 12px/1 'JetBrains Mono', monospace", opacity: 0.7, textTransform: 'uppercase' }}>{d.toLocaleDateString([], { weekday: 'short' })}</div>
+            <div style={{ font: "700 26px/1 'Space Grotesk', sans-serif", marginTop: 4, letterSpacing: '-.02em' }}>{d.getDate()}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 10 }}>
+              {list.length === 0 ? <div style={{ font: "500 12px/1.4 'Instrument Sans', sans-serif", opacity: 0.55 }}>—</div> :
                 list.map((e) => (
-                  <Link key={e._id} href={`/student/innovation-club/live/${e._id}`} className={`block text-[11px] rounded p-1.5 ${isToday ? 'bg-white/10 hover:bg-white/20 text-white' : 'bg-[#FAF8F3] hover:bg-gray-100 text-[#0A2C22]'}`}>
-                    <div className="font-semibold truncate">{e.title}</div>
-                    <div className="opacity-70">{new Date(e.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                  <Link key={e._id} href={`/student/innovation-club/live/${e._id}`} style={{
+                    display: 'block', font: "500 12px/1.35 'Instrument Sans', sans-serif",
+                    borderRadius: 8, padding: '6px 8px',
+                    background: isToday ? 'rgba(255,255,255,.1)' : '#FAF8F3',
+                    color: isToday ? '#fff' : '#0C1512', textDecoration: 'none',
+                  }}>
+                    <div style={{ fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{e.title}</div>
+                    <div style={{ opacity: 0.7, fontFamily: "'JetBrains Mono', monospace", fontSize: 11 }}>{new Date(e.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
                   </Link>
                 ))
               }
@@ -187,33 +149,38 @@ function WeekView({ from, eventsByDay }) {
   );
 }
 
-function MonthView({ anchor, eventsByDay }) {
+function MonthView({ anchor, byDay }) {
   const first = new Date(anchor.getFullYear(), anchor.getMonth(), 1);
   const gridStart = startOfWeek(first);
   const cells = Array.from({ length: 42 }).map((_, i) => addDays(gridStart, i));
   return (
-    <div className="bg-white rounded-3xl border border-gray-100 overflow-hidden">
-      <div className="grid grid-cols-7 text-[10px] uppercase font-mono text-gray-500 bg-[#FAF8F3] border-b border-gray-100">
-        {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d) => (
-          <div key={d} className="p-2 text-center">{d}</div>
+    <div style={{ background: '#fff', border: '1px solid #E7EAE8', borderRadius: 22, overflow: 'hidden' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', background: '#FAF8F3', borderBottom: '1px solid #EDF0EE' }}>
+        {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d) => (
+          <div key={d} style={{ padding: '10px 8px', textAlign: 'center', font: "500 11px/1 'JetBrains Mono', monospace", color: '#56635C', textTransform: 'uppercase' }}>{d}</div>
         ))}
       </div>
-      <div className="grid grid-cols-7">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)' }}>
         {cells.map((d) => {
           const key = new Date(d); key.setHours(0, 0, 0, 0);
-          const list = eventsByDay.get(key.getTime()) || [];
+          const list = byDay.get(key.getTime()) || [];
           const inMonth = d.getMonth() === anchor.getMonth();
           const isToday = sameDay(d, new Date());
           return (
-            <div key={d.toISOString()} className={`min-h-[90px] p-2 border-b border-r border-gray-100 ${inMonth ? '' : 'bg-gray-50'}`}>
-              <div className={`text-xs font-semibold ${isToday ? 'text-[#D4AF37]' : inMonth ? 'text-[#0A2C22]' : 'text-gray-300'}`}>{d.getDate()}</div>
-              <div className="space-y-0.5 mt-1">
+            <div key={d.toISOString()} style={{
+              minHeight: 100, padding: 8, borderBottom: '1px solid #F0F2F0', borderRight: '1px solid #F0F2F0',
+              background: inMonth ? '#fff' : '#FAFBFA',
+            }}>
+              <div style={{ font: "700 13px 'Space Grotesk', sans-serif", color: isToday ? '#C9A55C' : inMonth ? '#0C1512' : '#C9CFCA' }}>{d.getDate()}</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 5 }}>
                 {list.slice(0, 2).map((e) => (
-                  <Link key={e._id} href={`/student/innovation-club/live/${e._id}`} className="block text-[10px] truncate text-[#0A2C22] hover:underline">
-                    · {e.title}
-                  </Link>
+                  <Link key={e._id} href={`/student/innovation-club/live/${e._id}`} style={{
+                    display: 'block', font: "500 11.5px/1.3 'Instrument Sans', sans-serif",
+                    color: '#0C3B2E', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    textDecoration: 'none',
+                  }}>· {e.title}</Link>
                 ))}
-                {list.length > 2 && <div className="text-[10px] text-gray-400">+{list.length - 2} more</div>}
+                {list.length > 2 && <div style={{ font: "500 11px 'JetBrains Mono', monospace", color: '#56635C' }}>+{list.length - 2} more</div>}
               </div>
             </div>
           );
@@ -224,21 +191,31 @@ function MonthView({ anchor, eventsByDay }) {
 }
 
 function EventLine({ event }) {
+  const accent = UNI_ACCENT[event.roomId?.universe] || '#0C3B2E';
   return (
-    <Link href={`/student/innovation-club/live/${event._id}`} className="flex items-center gap-4 p-4 hover:bg-gray-50">
-      <div className="w-16 text-center flex-shrink-0">
-        <div className="text-[10px] uppercase font-mono text-gray-500">{new Date(event.startAt).toLocaleDateString([], { weekday: 'short' })}</div>
-        <div className="text-sm font-bold text-[#0A2C22]">{new Date(event.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+    <Link href={`/student/innovation-club/live/${event._id}`} style={{
+      display: 'flex', alignItems: 'center', gap: 14, padding: '14px 16px',
+      borderBottom: '1px solid #F0F2F0', textDecoration: 'none',
+    }}>
+      <span style={{ width: 4, height: 40, borderRadius: 4, flex: 'none', background: accent }} />
+      <div style={{ width: 72, flex: 'none' }}>
+        <div style={{ font: "500 11px 'JetBrains Mono', monospace", color: '#56635C', textTransform: 'uppercase' }}>{new Date(event.startAt).toLocaleDateString([], { weekday: 'short' })}</div>
+        <div style={{ font: "700 15px 'Space Grotesk', sans-serif", color: '#0C1512', marginTop: 4 }}>{new Date(event.startAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="font-semibold text-sm text-[#0A2C22]">{event.title}</div>
-        <div className="text-xs text-gray-500">{event.roomId?.name} · {event.format} · {event.durationMinutes} min</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ font: "600 15px 'Space Grotesk', sans-serif", color: '#0C1512' }}>{event.title}</div>
+        <div style={{ font: "500 12.5px 'Instrument Sans', sans-serif", color: '#3E4C45', marginTop: 3 }}>{event.roomId?.name} · {event.format} · {event.durationMinutes} min</div>
       </div>
-      {event.status === 'live' && (
-        <span className="inline-flex items-center gap-1 text-[10px] text-[#D23A2A] font-bold uppercase">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#D23A2A] animate-pulse" /> Live
-        </span>
-      )}
+      {event.myRegistration && <span style={{ font: "600 12px 'Instrument Sans', sans-serif", color: '#6E5416', background: '#FCF8EF', border: '1px solid #EDE3CC', borderRadius: 7, padding: '5px 8px' }}>Going</span>}
     </Link>
+  );
+}
+
+function Empty({ text, icon }) {
+  return (
+    <div style={{ border: '1.5px dashed #DCD3C0', borderRadius: 20, padding: 32, background: '#FDFBF6', display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ fontSize: 28 }}>{icon}</span>
+      <span style={{ font: "400 15px 'Instrument Sans', sans-serif", color: '#3E4C45' }}>{text}</span>
+    </div>
   );
 }

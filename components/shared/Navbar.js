@@ -74,6 +74,7 @@ export default function Navbar() {
 
   const publicPages = ['/', '/about-us', '/team', '/for-parents', '/for-schools', '/future-titans', '/academy', '/success-stories', '/media', '/contact', '/innovation-club', '/signup'];
   if (publicPages.includes(pathname) || pathname?.startsWith('/school-poc') || pathname?.startsWith('/association')) return null;
+  if (pathname?.startsWith('/student/innovation-club')) return null;
   if (!mounted) return null;
 
   const handleLogout = () => {
