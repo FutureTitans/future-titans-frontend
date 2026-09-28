@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Plus, Trash2, Save, X, AlertCircle } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Plus, Trash2, Save, X, AlertCircle, Loader2 } from 'lucide-react';
+import { upload } from '@vercel/blob/client';
 import { adminICPanel } from '@/lib/api';
 
 const empty = {
@@ -12,6 +13,7 @@ const empty = {
   submissionType: 'text',
   xpAward: 40,
   deadline: '',
+  coverImage: '',
 };
 
 export default function AdminMissionsPage() {
@@ -21,6 +23,10 @@ export default function AdminMissionsPage() {
   const [error, setError] = useState(null);
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState(empty);
+  const [coverFile, setCoverFile] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
 
   const load = async () => {
     setLoading(true);
@@ -39,20 +45,41 @@ export default function AdminMissionsPage() {
 
   const roomOptions = useMemo(() => rooms.map((r) => ({ id: r._id, name: r.name })), [rooms]);
 
+  const resetForm = () => {
+    setDraft(empty);
+    setCoverFile(null);
+    setCreating(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const submit = async () => {
     if (!draft.roomId || !draft.title) {
       alert('Room and title required');
       return;
     }
+    setSaving(true);
     try {
-      const payload = { ...draft };
+      let coverImage = draft.coverImage;
+      if (coverFile) {
+        setUploading(true);
+        const res = await upload(
+          `ic-mission-cover-${Date.now()}-${coverFile.name}`,
+          coverFile,
+          { access: 'public', handleUploadUrl: '/api/upload' }
+        );
+        coverImage = res.url;
+        setUploading(false);
+      }
+      const payload = { ...draft, coverImage };
       if (!payload.deadline) delete payload.deadline;
       await adminICPanel.createMission(payload);
-      setDraft(empty);
-      setCreating(false);
+      resetForm();
       load();
     } catch (e) {
       alert(e?.error || 'Failed to create mission');
+    } finally {
+      setSaving(false);
+      setUploading(false);
     }
   };
 
@@ -69,7 +96,7 @@ export default function AdminMissionsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Missions</h1>
           <p className="text-gray-500 text-sm mt-1">Steps, XP, deadlines. Students submit; you review in Top Builds.</p>
         </div>
-        <button onClick={() => setCreating((v) => !v)} className="inline-flex items-center gap-2 bg-[#0C3B2E] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2C22]">
+        <button onClick={() => (creating ? resetForm() : setCreating(true))} className="inline-flex items-center gap-2 bg-[#0C3B2E] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2C22]">
           {creating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
           {creating ? 'Cancel' : 'New mission'}
         </button>
@@ -93,8 +120,28 @@ export default function AdminMissionsPage() {
             <input type="datetime-local" placeholder="Deadline" value={draft.deadline} onChange={(e) => setDraft({ ...draft, deadline: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <textarea placeholder="Description" value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} className="md:col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm" rows={3} />
           </div>
-          <button onClick={submit} className="inline-flex items-center gap-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#B8952E]">
-            <Save className="w-4 h-4" /> Create
+
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-2">Cover image</label>
+            <div className="flex items-center gap-3">
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} className="text-sm" />
+              {(coverFile || draft.coverImage) && (
+                <img
+                  src={coverFile ? URL.createObjectURL(coverFile) : draft.coverImage}
+                  alt="preview"
+                  className="w-24 h-14 object-cover rounded border border-gray-200"
+                />
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={submit}
+            disabled={saving || uploading}
+            className="inline-flex items-center gap-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#B8952E] disabled:opacity-60"
+          >
+            {saving || uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {uploading ? 'Uploading…' : 'Create'}
           </button>
         </div>
       )}
@@ -110,6 +157,7 @@ export default function AdminMissionsPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>
+                <th className="text-left px-4 py-3">Cover</th>
                 <th className="text-left px-4 py-3">Title</th>
                 <th className="text-left px-4 py-3">Room</th>
                 <th className="text-left px-4 py-3">Difficulty</th>
@@ -121,6 +169,13 @@ export default function AdminMissionsPage() {
             <tbody>
               {missions.map((m) => (
                 <tr key={m._id} className="border-t border-gray-100">
+                  <td className="px-4 py-3">
+                    {m.coverImage ? (
+                      <img src={m.coverImage} alt="" className="w-16 h-10 object-cover rounded" />
+                    ) : (
+                      <div className="w-16 h-10 rounded bg-gray-100" />
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-medium text-gray-900">{m.title}</td>
                   <td className="px-4 py-3 text-gray-600">{m.roomId?.name || '—'}</td>
                   <td className="px-4 py-3 text-gray-500">{m.difficulty}</td>

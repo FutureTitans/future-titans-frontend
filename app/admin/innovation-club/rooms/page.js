@@ -1,10 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Plus, Trash2, Save, X, AlertCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Plus, Trash2, Save, X, AlertCircle, Loader2, Pencil } from 'lucide-react';
+import { upload } from '@vercel/blob/client';
 import { adminICPanel } from '@/lib/api';
 
-const emptyRoom = { slug: '', name: '', universe: 'BUILD', promise: '', tags: '' };
+const emptyRoom = {
+  slug: '',
+  name: '',
+  universe: 'BUILD',
+  promise: '',
+  tags: '',
+  iconEmoji: '',
+  coverImage: '',
+};
 
 export default function AdminRoomsPage() {
   const [rooms, setRooms] = useState([]);
@@ -12,7 +21,12 @@ export default function AdminRoomsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [draft, setDraft] = useState(emptyRoom);
+  const [coverFile, setCoverFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef(null);
 
   const load = async () => {
     setLoading(true);
@@ -30,18 +44,64 @@ export default function AdminRoomsPage() {
 
   useEffect(() => { load(); }, []);
 
+  const resetForm = () => {
+    setDraft(emptyRoom);
+    setCoverFile(null);
+    setCreating(false);
+    setEditing(null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const openEdit = (room) => {
+    setEditing(room._id);
+    setCreating(true);
+    setDraft({
+      slug: room.slug,
+      name: room.name,
+      universe: room.universe,
+      promise: room.promise || '',
+      tags: (room.tags || []).join(', '),
+      iconEmoji: room.iconEmoji || '',
+      coverImage: room.coverImage || '',
+    });
+    setCoverFile(null);
+  };
+
   const submit = async () => {
+    if (!draft.slug || !draft.name) {
+      alert('Slug and name are required.');
+      return;
+    }
+    setSaving(true);
     try {
+      let coverImage = draft.coverImage;
+      if (coverFile) {
+        setUploading(true);
+        const res = await upload(
+          `ic-room-cover-${Date.now()}-${coverFile.name}`,
+          coverFile,
+          { access: 'public', handleUploadUrl: '/api/upload' }
+        );
+        coverImage = res.url;
+        setUploading(false);
+      }
       const payload = {
         ...draft,
+        coverImage,
         tags: draft.tags ? draft.tags.split(',').map((t) => t.trim()).filter(Boolean) : [],
       };
-      await adminICPanel.createRoom(payload);
-      setDraft(emptyRoom);
-      setCreating(false);
-      load();
+      if (editing) {
+        await adminICPanel.updateRoom(editing, payload);
+      } else {
+        await adminICPanel.createRoom(payload);
+      }
+      resetForm();
+      await load();
     } catch (e) {
-      alert(e?.error || 'Failed to create room');
+      alert(e?.error || 'Failed to save room');
+    } finally {
+      setSaving(false);
+      setUploading(false);
     }
   };
 
@@ -59,7 +119,7 @@ export default function AdminRoomsPage() {
           <p className="text-gray-500 text-sm mt-1">Universes host rooms. Rooms hold events, missions and lounges.</p>
         </div>
         <button
-          onClick={() => setCreating((v) => !v)}
+          onClick={() => (creating ? resetForm() : setCreating(true))}
           className="inline-flex items-center gap-2 bg-[#0C3B2E] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2C22]"
         >
           {creating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -77,11 +137,33 @@ export default function AdminRoomsPage() {
                 <option key={u.key} value={u.key}>{u.emoji} {u.name}</option>
               ))}
             </select>
-            <input placeholder="Tags (comma separated)" value={draft.tags} onChange={(e) => setDraft({ ...draft, tags: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+            <input placeholder="Icon emoji (optional)" value={draft.iconEmoji} onChange={(e) => setDraft({ ...draft, iconEmoji: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+            <input placeholder="Tags (comma separated)" value={draft.tags} onChange={(e) => setDraft({ ...draft, tags: e.target.value })} className="md:col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <textarea placeholder="Promise / one-liner" value={draft.promise} onChange={(e) => setDraft({ ...draft, promise: e.target.value })} className="md:col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm" rows={2} />
           </div>
-          <button onClick={submit} className="inline-flex items-center gap-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#B8952E]">
-            <Save className="w-4 h-4" /> Create room
+
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-2">Cover image</label>
+            <div className="flex items-center gap-3">
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} className="text-sm" />
+              {(coverFile || draft.coverImage) && (
+                <img
+                  src={coverFile ? URL.createObjectURL(coverFile) : draft.coverImage}
+                  alt="preview"
+                  className="w-24 h-14 object-cover rounded border border-gray-200"
+                />
+              )}
+            </div>
+            <p className="text-xs text-gray-400 mt-1">Uploaded to Vercel Blob on save.</p>
+          </div>
+
+          <button
+            onClick={submit}
+            disabled={saving || uploading}
+            className="inline-flex items-center gap-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#B8952E] disabled:opacity-60"
+          >
+            {saving || uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {uploading ? 'Uploading…' : editing ? 'Save changes' : 'Create room'}
           </button>
         </div>
       )}
@@ -99,24 +181,37 @@ export default function AdminRoomsPage() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>
+                <th className="text-left px-4 py-3">Cover</th>
                 <th className="text-left px-4 py-3">Name</th>
                 <th className="text-left px-4 py-3">Universe</th>
                 <th className="text-left px-4 py-3">Slug</th>
                 <th className="text-right px-4 py-3">Members</th>
-                <th className="w-10"></th>
+                <th className="w-24"></th>
               </tr>
             </thead>
             <tbody>
               {rooms.map((r) => (
                 <tr key={r._id} className="border-t border-gray-100">
+                  <td className="px-4 py-3">
+                    {r.coverImage ? (
+                      <img src={r.coverImage} alt="" className="w-16 h-10 object-cover rounded" />
+                    ) : (
+                      <div className="w-16 h-10 rounded bg-gray-100 flex items-center justify-center text-lg">{r.iconEmoji || '·'}</div>
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-medium text-gray-900">{r.name}</td>
                   <td className="px-4 py-3 text-gray-600">{r.universe}</td>
                   <td className="px-4 py-3 text-gray-500 font-mono text-xs">{r.slug}</td>
                   <td className="px-4 py-3 text-right text-gray-500">{r.memberCount || 0}</td>
                   <td className="px-4 py-3">
-                    <button onClick={() => remove(r._id)} className="text-gray-400 hover:text-red-600">
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex items-center gap-2 justify-end">
+                      <button onClick={() => openEdit(r)} className="text-gray-400 hover:text-[#0C3B2E]" title="Edit">
+                        <Pencil className="w-4 h-4" />
+                      </button>
+                      <button onClick={() => remove(r._id)} className="text-gray-400 hover:text-red-600" title="Delete">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

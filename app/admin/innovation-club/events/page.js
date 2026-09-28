@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { Plus, Trash2, Save, X, AlertCircle, Radio, EyeOff } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Plus, Trash2, Save, X, AlertCircle, Radio, EyeOff, Loader2 } from 'lucide-react';
+import { upload } from '@vercel/blob/client';
 import { adminICPanel } from '@/lib/api';
 
 const emptyEvent = {
@@ -14,6 +15,8 @@ const emptyEvent = {
   startAt: '',
   durationMinutes: 45,
   xpAward: 20,
+  thumbnailUrl: '',
+  streamUrl: '',
 };
 
 const STATUS_ORDER = ['upcoming', 'starting_soon', 'live', 'ended'];
@@ -33,7 +36,11 @@ export default function AdminEventsPage() {
   const [error, setError] = useState(null);
   const [creating, setCreating] = useState(false);
   const [draft, setDraft] = useState(emptyEvent);
+  const [thumbFile, setThumbFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [filter, setFilter] = useState({ status: '', roomId: '' });
+  const fileInputRef = useRef(null);
 
   const load = async () => {
     setLoading(true);
@@ -61,18 +68,39 @@ export default function AdminEventsPage() {
 
   const roomOptions = useMemo(() => rooms.map((r) => ({ id: r._id, name: r.name })), [rooms]);
 
+  const resetForm = () => {
+    setDraft(emptyEvent);
+    setThumbFile(null);
+    setCreating(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const submit = async () => {
     if (!draft.roomId || !draft.title || !draft.startAt) {
       alert('Room, title and start time are required.');
       return;
     }
+    setSaving(true);
     try {
-      await adminICPanel.createEvent(draft);
-      setDraft(emptyEvent);
-      setCreating(false);
+      let thumbnailUrl = draft.thumbnailUrl;
+      if (thumbFile) {
+        setUploading(true);
+        const res = await upload(
+          `ic-event-thumb-${Date.now()}-${thumbFile.name}`,
+          thumbFile,
+          { access: 'public', handleUploadUrl: '/api/upload' }
+        );
+        thumbnailUrl = res.url;
+        setUploading(false);
+      }
+      await adminICPanel.createEvent({ ...draft, thumbnailUrl });
+      resetForm();
       load();
     } catch (e) {
       alert(e?.error || 'Failed to publish event');
+    } finally {
+      setSaving(false);
+      setUploading(false);
     }
   };
 
@@ -86,7 +114,7 @@ export default function AdminEventsPage() {
   };
 
   const unpublish = async (id) => {
-    if (!confirm('Unpublish this event? Students who saved a seat will be notified.')) return;
+    if (!confirm('Unpublish this event?')) return;
     await adminICPanel.unpublishEvent(id);
     load();
   };
@@ -105,7 +133,7 @@ export default function AdminEventsPage() {
           <p className="text-gray-500 text-sm mt-1">Publish sessions and drive their lifecycle.</p>
         </div>
         <button
-          onClick={() => setCreating((v) => !v)}
+          onClick={() => (creating ? resetForm() : setCreating(true))}
           className="inline-flex items-center gap-2 bg-[#0C3B2E] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0A2C22]"
         >
           {creating ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
@@ -131,15 +159,35 @@ export default function AdminEventsPage() {
             <input type="datetime-local" value={draft.startAt} onChange={(e) => setDraft({ ...draft, startAt: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <input type="number" min="5" placeholder="Duration (min)" value={draft.durationMinutes} onChange={(e) => setDraft({ ...draft, durationMinutes: Number(e.target.value) })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <input type="number" min="0" placeholder="XP award" value={draft.xpAward} onChange={(e) => setDraft({ ...draft, xpAward: Number(e.target.value) })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+            <input placeholder="Live stream URL (optional)" value={draft.streamUrl} onChange={(e) => setDraft({ ...draft, streamUrl: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <textarea placeholder="Description" value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} className="md:col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm" rows={2} />
           </div>
-          <button onClick={submit} className="inline-flex items-center gap-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#B8952E]">
-            <Save className="w-4 h-4" /> Publish
+
+          <div>
+            <label className="block text-xs font-medium text-gray-500 mb-2">Thumbnail image</label>
+            <div className="flex items-center gap-3">
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={(e) => setThumbFile(e.target.files?.[0] || null)} className="text-sm" />
+              {(thumbFile || draft.thumbnailUrl) && (
+                <img
+                  src={thumbFile ? URL.createObjectURL(thumbFile) : draft.thumbnailUrl}
+                  alt="preview"
+                  className="w-24 h-14 object-cover rounded border border-gray-200"
+                />
+              )}
+            </div>
+          </div>
+
+          <button
+            onClick={submit}
+            disabled={saving || uploading}
+            className="inline-flex items-center gap-2 bg-[#D4AF37] text-black px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#B8952E] disabled:opacity-60"
+          >
+            {saving || uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+            {uploading ? 'Uploading…' : 'Publish'}
           </button>
         </div>
       )}
 
-      {/* Filters */}
       <div className="flex gap-3">
         <select value={filter.status} onChange={(e) => setFilter({ ...filter, status: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm">
           <option value="">All statuses</option>
@@ -157,13 +205,14 @@ export default function AdminEventsPage() {
         <div className="flex items-center gap-2 text-red-500 text-sm"><AlertCircle className="w-4 h-4" /> {error}</div>
       ) : events.length === 0 ? (
         <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center text-gray-400">
-          Nothing scheduled yet. Publish the club's first session.
+          Nothing scheduled yet. Publish the club&apos;s first session.
         </div>
       ) : (
         <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
               <tr>
+                <th className="text-left px-4 py-3">Thumb</th>
                 <th className="text-left px-4 py-3">Title</th>
                 <th className="text-left px-4 py-3">Room</th>
                 <th className="text-left px-4 py-3">Format</th>
@@ -175,6 +224,13 @@ export default function AdminEventsPage() {
             <tbody>
               {events.map((ev) => (
                 <tr key={ev._id} className="border-t border-gray-100">
+                  <td className="px-4 py-3">
+                    {ev.thumbnailUrl ? (
+                      <img src={ev.thumbnailUrl} alt="" className="w-16 h-10 object-cover rounded" />
+                    ) : (
+                      <div className="w-16 h-10 rounded bg-gray-100" />
+                    )}
+                  </td>
                   <td className="px-4 py-3 font-medium text-gray-900">{ev.title}</td>
                   <td className="px-4 py-3 text-gray-600">{ev.roomId?.name || '—'}</td>
                   <td className="px-4 py-3 text-gray-500 font-mono text-xs">{ev.format}</td>
