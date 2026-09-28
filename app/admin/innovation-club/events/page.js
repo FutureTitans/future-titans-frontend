@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Plus, Trash2, Save, X, AlertCircle, Radio, EyeOff, Loader2 } from 'lucide-react';
+import { Plus, Trash2, Save, X, AlertCircle, Radio, EyeOff, Loader2, Youtube } from 'lucide-react';
 import { upload } from '@vercel/blob/client';
 import { adminICPanel } from '@/lib/api';
 
@@ -125,6 +125,36 @@ export default function AdminEventsPage() {
     load();
   };
 
+  const goLive = async (ev) => {
+    const currentUrl = ev.streamUrl || '';
+    const url = window.prompt(
+      'Paste the YouTube URL or video ID for the live stream:\n\n' +
+      'Accepted:\n  https://youtu.be/VIDEO_ID\n  https://www.youtube.com/watch?v=VIDEO_ID\n  https://www.youtube.com/live/VIDEO_ID\n  VIDEO_ID (11 chars)',
+      currentUrl
+    );
+    if (url == null) return;
+    const trimmed = url.trim();
+    if (!trimmed) return;
+    try {
+      await adminICPanel.updateEvent(ev._id, { streamUrl: trimmed });
+      await adminICPanel.setEventStatus(ev._id, 'live');
+      load();
+    } catch (e) {
+      alert(e?.error || 'Could not go live.');
+    }
+  };
+
+  const setStreamUrl = async (ev) => {
+    const url = window.prompt('Update stream URL (YouTube URL or video ID). Leave empty to clear.', ev.streamUrl || '');
+    if (url == null) return;
+    try {
+      await adminICPanel.updateEvent(ev._id, { streamUrl: url.trim() });
+      load();
+    } catch (e) {
+      alert(e?.error || 'Could not update stream URL.');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -159,7 +189,7 @@ export default function AdminEventsPage() {
             <input type="datetime-local" value={draft.startAt} onChange={(e) => setDraft({ ...draft, startAt: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <input type="number" min="5" placeholder="Duration (min)" value={draft.durationMinutes} onChange={(e) => setDraft({ ...draft, durationMinutes: Number(e.target.value) })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <input type="number" min="0" placeholder="XP award" value={draft.xpAward} onChange={(e) => setDraft({ ...draft, xpAward: Number(e.target.value) })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
-            <input placeholder="Live stream URL (optional)" value={draft.streamUrl} onChange={(e) => setDraft({ ...draft, streamUrl: e.target.value })} className="border border-gray-200 rounded-lg px-3 py-2 text-sm" />
+            <input placeholder="YouTube URL or video ID (embedded on the event page when live)" value={draft.streamUrl} onChange={(e) => setDraft({ ...draft, streamUrl: e.target.value })} className="md:col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm" />
             <textarea placeholder="Description" value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} className="md:col-span-2 border border-gray-200 rounded-lg px-3 py-2 text-sm" rows={2} />
           </div>
 
@@ -238,25 +268,39 @@ export default function AdminEventsPage() {
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-1 rounded-full ${statusColor(ev.status)}`}>{ev.status}</span>
                   </td>
-                  <td className="px-4 py-3 flex items-center gap-1 flex-wrap">
-                    {STATUS_ORDER.map((s) => (
+                  <td className="px-4 py-3">
+                    <div className="flex items-center gap-1 flex-wrap">
                       <button
-                        key={s}
-                        onClick={() => setStatus(ev._id, s)}
-                        disabled={ev.status === s}
-                        className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
-                        title={`Move to ${s}`}
+                        onClick={() => goLive(ev)}
+                        className="text-xs px-2 py-1 rounded bg-red-600 text-white hover:bg-red-700 font-semibold"
+                        title="Set YouTube URL and go live"
                       >
-                        {s === 'live' && <Radio className="inline w-3 h-3 mr-1" />}
-                        {s}
+                        <Youtube className="inline w-3 h-3 mr-1" />
+                        {ev.status === 'live' ? 'Update live URL' : 'Go Live'}
                       </button>
-                    ))}
-                    <button onClick={() => unpublish(ev._id)} className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 text-gray-500" title="Unpublish">
-                      <EyeOff className="inline w-3 h-3" />
-                    </button>
-                    <button onClick={() => remove(ev._id)} className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-red-50 text-red-500">
-                      <Trash2 className="inline w-3 h-3" />
-                    </button>
+                      <button
+                        onClick={() => setStreamUrl(ev)}
+                        className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-gray-50"
+                        title={ev.streamUrl ? `Current: ${ev.streamUrl}` : 'No stream URL set'}
+                      >
+                        {ev.streamUrl ? '✓ URL' : 'Set URL'}
+                      </button>
+                      {STATUS_ORDER.filter((s) => s !== 'live').map((s) => (
+                        <button
+                          key={s}
+                          onClick={() => setStatus(ev._id, s)}
+                          disabled={ev.status === s}
+                          className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+                          title={`Move to ${s}`}
+                        >{s}</button>
+                      ))}
+                      <button onClick={() => unpublish(ev._id)} className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-gray-50 text-gray-500" title="Unpublish">
+                        <EyeOff className="inline w-3 h-3" />
+                      </button>
+                      <button onClick={() => remove(ev._id)} className="text-xs px-2 py-1 rounded border border-gray-200 hover:bg-red-50 text-red-500" title="Delete">
+                        <Trash2 className="inline w-3 h-3" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

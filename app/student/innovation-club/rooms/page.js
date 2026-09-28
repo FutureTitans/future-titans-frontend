@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { studentIC } from '@/lib/api';
@@ -54,6 +54,10 @@ export default function RoomsPage() {
     finally { setBusy(null); }
   };
 
+  const openRoom = useCallback((slug) => {
+    router.push(`/student/innovation-club/rooms/${slug}`);
+  }, [router]);
+
   if (loading) return <div style={{ padding: 60, textAlign: 'center', color: '#56635C' }}>Loading rooms…</div>;
 
   return (
@@ -97,10 +101,13 @@ export default function RoomsPage() {
                       background: '#fff', border: '1px solid #E7EAE8', borderRadius: 22,
                       padding: 20, display: 'flex', flexDirection: 'column', gap: 13,
                     }}>
-                      <Link href={`/student/innovation-club/rooms/${r.slug}`} style={{
-                        display: 'flex', alignItems: 'center', gap: 14, background: 'none',
-                        border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', textDecoration: 'none',
-                      }}>
+                      <button
+                        onClick={() => openRoom(r.slug)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 14, background: 'none',
+                          border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', width: '100%',
+                        }}
+                      >
                         <span style={{
                           width: 54, height: 54, borderRadius: 18, display: 'grid', placeItems: 'center',
                           fontSize: 27, flex: 'none', background: soft,
@@ -112,7 +119,7 @@ export default function RoomsPage() {
                             {r.memberCount || 0} members
                           </span>
                         </span>
-                      </Link>
+                      </button>
                       <div style={{ font: "400 15px/1.5 'Instrument Sans', sans-serif", color: '#26322C', flex: 1 }}>
                         {r.promise || 'A community for building, thinking and sharing.'}
                       </div>
@@ -139,11 +146,14 @@ export default function RoomsPage() {
                             color: isJoined ? accent : '#fff',
                           }}
                         >{isJoined ? 'Joined ✓' : 'Join Room'}</button>
-                        <Link href={`/student/innovation-club/rooms/${r.slug}`} style={{
-                          border: '1px solid #E7EAE8', background: '#fff', color: '#0C1512',
-                          borderRadius: 13, padding: '12px 16px', font: "600 14px/1 'Instrument Sans', sans-serif",
-                          textDecoration: 'none',
-                        }}>Enter</Link>
+                        <button
+                          onClick={() => openRoom(r.slug)}
+                          style={{
+                            border: '1px solid #E7EAE8', background: '#fff', color: '#0C1512',
+                            borderRadius: 13, padding: '12px 16px',
+                            font: "600 14px/1 'Instrument Sans', sans-serif", cursor: 'pointer',
+                          }}
+                        >Enter</button>
                       </div>
                     </div>
                   );
