@@ -268,12 +268,23 @@ export default function StudentDashboard() {
         description: 'Innovation Challenge Access',
         order_id: orderData.orderId,
         handler: async (response) => {
+          const tryVerify = () => payment.verifyPayment(response);
           try {
-            await payment.verifyPayment(response);
+            await tryVerify();
             setPaymentStatus({ isPaid: true });
             fetchDashboardData();
-          } catch (error) {
-            console.error('Payment verification failed:', error);
+          } catch (firstError) {
+            console.warn('Payment verify failed, retrying once...', firstError);
+            try {
+              alert('Payment captured, refreshing…');
+              await new Promise((r) => setTimeout(r, 1500));
+              await tryVerify();
+              setPaymentStatus({ isPaid: true });
+              fetchDashboardData();
+            } catch (retryError) {
+              console.error('Payment verification failed after retry:', retryError);
+              alert('Payment received. Please refresh in 30 seconds — we\'re confirming it with the bank.');
+            }
           }
         },
         prefill: {
