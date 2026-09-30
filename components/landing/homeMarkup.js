@@ -45,10 +45,12 @@ export const HOME_HTML = `
       </a>
       <nav aria-label="Primary" style="display:flex;align-items:center;gap:clamp(7px,1.15vw,23px);margin-left:auto;font-size:13.5px;font-weight:600;letter-spacing:.01em">
         <a href="#about" data-href="/about" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">About</a>
-        <a href="#titans" data-href="/future-titans" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Future Titans</a>
+        <a href="/future-titans" data-href="/future-titans" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Future Titans</a>
         <a href="#students" data-href="/students" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Students</a>
         <a href="#parents" data-href="/parents" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Parents</a>
-        <a href="#schools" data-href="/schools" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Schools</a>
+        <a href="/for-schools" data-href="/for-schools" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Schools</a>
+        <a href="/success-stories" data-href="/success-stories" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Success Stories</a>
+        <a href="/media" data-href="/media" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Media</a>
       </nav>
       <div data-login="data-login" style="position:relative;flex:none">
         <button data-login-toggle="data-login-toggle" type="button" style="display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:100px;border:1px solid rgba(6,61,53,calc(.18 + .3 * var(--nav,0)));background:rgba(255,255,255,calc(.06 + .35 * var(--nav,0)));color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;cursor:pointer;transition:background .4s ease,border-color .4s ease,color .5s ease">Login <span data-login-caret="data-login-caret" style="display:inline-block;font-size:9px;transition:transform .3s ease">▾</span></button>
@@ -59,9 +61,29 @@ export const HOME_HTML = `
         </div>
       </div>
       <a href="#start" data-href="/start" data-hv="1" style="flex:none;display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:100px;background:linear-gradient(135deg,#063D35,#087A61);color:#ECFDF5;font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;border:1px solid rgba(243,217,139,calc(.3 + .5 * var(--h,0)));transform:translate3d(0,calc(var(--h,0) * -2px),0);box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .3));transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease,border-color .35s ease">Start your journey <span style="transform:translate3d(calc(var(--h,0) * 4px),0,0);transition:transform .35s cubic-bezier(.2,.7,.2,1)">→</span></a>
+      <button data-m="burger" type="button" aria-label="Menu" aria-expanded="false" style="display:none;flex:none;margin-left:auto;width:44px;height:44px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,calc(.08 + .6 * max(var(--nav,0), var(--menu,0))));border:1px solid rgba(212,175,55,.42);transition:background .45s ease">
+        <span style="display:block;width:18px;height:1.5px;border-radius:2px;background:color-mix(in oklab, #F1EFE4 calc((1 - max(var(--nav,0), var(--menu,0))) * 100%), #063D35);transform:translate3d(0,calc(var(--menu,0) * 3.25px),0) rotate(calc(var(--menu,0) * 45deg));transition:transform .45s cubic-bezier(.2,.7,.2,1),background .45s ease"></span>
+        <span style="display:block;width:18px;height:1.5px;border-radius:2px;background:color-mix(in oklab, #F1EFE4 calc((1 - max(var(--nav,0), var(--menu,0))) * 100%), #063D35);transform:translate3d(0,calc(var(--menu,0) * -3.25px),0) rotate(calc(var(--menu,0) * -45deg));transition:transform .45s cubic-bezier(.2,.7,.2,1),background .45s ease"></span>
+      </button>
     </div>
   </div>
 </header>
+
+<div data-m="menu" aria-hidden="true" style="display:none;position:fixed;inset:0;z-index:105;flex-direction:column;justify-content:space-between;gap:32px;padding:calc(100px + env(safe-area-inset-top,0px)) 24px calc(32px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,#FFFFFF,#F5FFFB 70%,#ECFDF5);opacity:var(--menu,0);pointer-events:var(--menuPe,none);transition:opacity .45s ease;overflow-y:auto">
+  <nav aria-label="Primary mobile" style="display:flex;flex-direction:column">
+    <a href="#about" data-href="/about" data-m-link="1" style="display:flex;align-items:center;min-height:56px;padding:10px 0;border-bottom:1px solid rgba(6,61,53,.1);font-size:clamp(24px,7.4vw,34px);font-weight:800;letter-spacing:-.026em;color:#071F1B;opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .04s,transform .6s cubic-bezier(.2,.7,.2,1) .04s">About</a>
+    <a href="/future-titans" data-href="/future-titans" data-m-link="1" style="display:flex;align-items:center;min-height:56px;padding:10px 0;border-bottom:1px solid rgba(6,61,53,.1);font-size:clamp(24px,7.4vw,34px);font-weight:800;letter-spacing:-.026em;color:#071F1B;opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .08s,transform .6s cubic-bezier(.2,.7,.2,1) .08s">Future Titans</a>
+    <a href="#students" data-href="/students" data-m-link="1" style="display:flex;align-items:center;min-height:56px;padding:10px 0;border-bottom:1px solid rgba(6,61,53,.1);font-size:clamp(24px,7.4vw,34px);font-weight:800;letter-spacing:-.026em;color:#071F1B;opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .12s,transform .6s cubic-bezier(.2,.7,.2,1) .12s">Students</a>
+    <a href="#parents" data-href="/parents" data-m-link="1" style="display:flex;align-items:center;min-height:56px;padding:10px 0;border-bottom:1px solid rgba(6,61,53,.1);font-size:clamp(24px,7.4vw,34px);font-weight:800;letter-spacing:-.026em;color:#071F1B;opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .16s,transform .6s cubic-bezier(.2,.7,.2,1) .16s">Parents</a>
+    <a href="/for-schools" data-href="/for-schools" data-m-link="1" style="display:flex;align-items:center;min-height:56px;padding:10px 0;border-bottom:1px solid rgba(6,61,53,.1);font-size:clamp(24px,7.4vw,34px);font-weight:800;letter-spacing:-.026em;color:#071F1B;opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .2s,transform .6s cubic-bezier(.2,.7,.2,1) .2s">Schools</a>
+    <a href="/success-stories" data-href="/success-stories" data-m-link="1" style="display:flex;align-items:center;min-height:56px;padding:10px 0;border-bottom:1px solid rgba(6,61,53,.1);font-size:clamp(24px,7.4vw,34px);font-weight:800;letter-spacing:-.026em;color:#071F1B;opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .24s,transform .6s cubic-bezier(.2,.7,.2,1) .24s">Success Stories</a>
+    <a href="/media" data-href="/media" data-m-link="1" style="display:flex;align-items:center;min-height:56px;padding:10px 0;border-bottom:1px solid rgba(6,61,53,.1);font-size:clamp(24px,7.4vw,34px);font-weight:800;letter-spacing:-.026em;color:#071F1B;opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .28s,transform .6s cubic-bezier(.2,.7,.2,1) .28s">Media</a>
+  </nav>
+  <div style="display:flex;flex-direction:column;gap:14px;padding-top:24px;border-top:1px solid rgba(6,61,53,.12);opacity:var(--menu,0);transform:translate3d(0,calc((1 - var(--menu,0)) * 14px),0);transition:opacity .5s ease .28s,transform .6s cubic-bezier(.2,.7,.2,1) .28s">
+    <a href="/login" data-href="/login" data-m-link="1" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border-radius:100px;background:#FFFFFF;border:1px solid rgba(6,61,53,.18);color:#063D35;font-family:'Space Grotesk',monospace;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase">Student Login</a>
+    <a href="#start" data-href="/start" data-m-link="1" style="display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:14px 22px;border-radius:100px;background:linear-gradient(135deg,#063D35,#087A61);color:#ECFDF5;font-family:'Space Grotesk',monospace;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase">Start your journey <span>→</span></a>
+  </div>
+</div>
 
 <a id="top"></a>
 
@@ -81,7 +103,7 @@ export const HOME_HTML = `
   <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(6,61,53,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(6,61,53,.045) 1px,transparent 1px);background-size:clamp(60px,7vw,110px) clamp(60px,7vw,110px);mask-image:radial-gradient(110% 90% at 60% 40%,#000,transparent 72%)"></div>
   <div style="position:absolute;right:-8%;top:-14%;width:52vw;height:52vw;border-radius:50%;background:radial-gradient(circle,rgba(236,253,245,.9),transparent 66%);transform:translate3d(calc(var(--mx,0) * -18px),calc(var(--my,0) * -14px),0);transition:transform .9s cubic-bezier(.2,.7,.2,1)"></div>
 
-  <div style="position:relative;width:100%;max-width:1460px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:clamp(28px,4vw,72px);align-items:center">
+  <div data-m="hero-grid" style="position:relative;width:100%;max-width:1460px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,1fr);gap:clamp(28px,4vw,72px);align-items:center">
 
     <div style="max-width:690px">
       <span style="display:inline-flex;align-items:center;gap:10px;margin-bottom:clamp(20px,3vh,34px);font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:#087A61"><span style="width:26px;height:1px;background:#D4AF37"></span>Student innovation &amp; future-readiness</span>
@@ -179,7 +201,7 @@ export const HOME_HTML = `
 </section>
 <a id="about"></a>
 <section data-story="data-story" data-screen-label="04 The world students are entering" style="position:relative;height:520vh;background:#FFFFFF">
-  <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:grid;grid-template-columns:minmax(0,38%) minmax(0,62%);align-items:center;gap:clamp(20px,3vw,56px);padding:clamp(96px,13vh,140px) clamp(20px,5vw,72px) clamp(40px,7vh,80px)">
+  <div data-m="story-stick" style="position:sticky;top:0;height:100vh;overflow:hidden;display:grid;grid-template-columns:minmax(0,38%) minmax(0,62%);align-items:center;gap:clamp(20px,3vw,56px);padding:clamp(96px,13vh,140px) clamp(20px,5vw,72px) clamp(40px,7vh,80px)">
     <div style="position:absolute;left:clamp(20px,5vw,72px);right:clamp(20px,5vw,72px);top:clamp(60px,9vh,96px);display:flex;align-items:center;gap:14px">
       <span style="font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#4C5A54;white-space:nowrap">Preparing young minds for what comes next</span>
       <span style="flex:1;height:1px;background:rgba(6,61,53,.1);position:relative"><span style="position:absolute;left:0;top:0;height:1px;width:calc(var(--sp,0) * 100%);background:linear-gradient(90deg,#D4AF37,#F3D98B)"></span></span>
@@ -234,7 +256,7 @@ export const HOME_HTML = `
       </div>
 
       <div style="position:absolute;inset:0;display:flex;align-items:center;opacity:var(--f4,0);transition:opacity .8s ease">
-        <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%">
+        <div data-m="story-chips" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%">
           <span style="padding:16px 14px;border:1px solid rgba(6,61,53,.14);background:#F5FFFB;font-size:13.5px;font-weight:700;color:#071F1B;line-height:1.25">Independent Thinking</span>
           <span style="padding:16px 14px;border:1px solid rgba(6,61,53,.14);background:#F5FFFB;font-size:13.5px;font-weight:700;color:#071F1B;line-height:1.25">Problem Solving</span>
           <span style="padding:16px 14px;border:1px solid rgba(6,61,53,.14);background:#F5FFFB;font-size:13.5px;font-weight:700;color:#071F1B;line-height:1.25">Communication</span>
@@ -259,7 +281,7 @@ export const HOME_HTML = `
 </section>
 
 <section style="position:relative;padding:clamp(56px,8vh,96px) clamp(20px,5vw,72px);background:#FFFFFF;border-top:1px solid rgba(6,61,53,.08)">
-  <div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(24px,4vw,72px);align-items:start">
+  <div data-m="pair" style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(24px,4vw,72px);align-items:start">
     <p data-rv="0" style="font-size:clamp(19px,2vw,27px);line-height:1.4;letter-spacing:-.018em;font-weight:700;color:#071F1B;opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">Youngpreneurs helps students build the capabilities to navigate this world with confidence.</p>
     <div data-rv="120" style="opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">
       <p style="font-size:17px;line-height:1.68;color:#3D4A45;margin-bottom:20px">We focus on developing independent thinking, problem-solving, communication, creativity, leadership, adaptability, judgement, initiative and self-belief — capabilities that technology can support, but cannot substitute for.</p>
@@ -285,7 +307,7 @@ export const HOME_HTML = `
       <span style="font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#8A6D24">Which produces</span>
     </div>
     <h2 data-rv="380" style="font-size:clamp(38px,6.2vw,92px);line-height:.95;letter-spacing:-.034em;font-weight:800;color:#071F1B;max-width:20ch;margin-left:auto;text-align:right;opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .9s ease,transform .9s cubic-bezier(.2,.7,.2,1)">Future-readiness<br>is the outcome.</h2>
-    <div data-rv="0" style="margin-top:clamp(44px,7vh,84px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);padding-top:clamp(26px,4vh,40px);border-top:1px solid rgba(6,61,53,.1);opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">
+    <div data-m="pair" data-rv="0" style="margin-top:clamp(44px,7vh,84px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,4vw,64px);padding-top:clamp(26px,4vh,40px);border-top:1px solid rgba(6,61,53,.1);opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">
       <p style="font-size:17px;line-height:1.68;color:#3D4A45">At Youngpreneurs, entrepreneurship is not treated only as starting a business.</p>
       <div>
         <p style="font-size:17px;line-height:1.68;color:#3D4A45;margin-bottom:16px">It is a powerful way for students to learn how to observe, question, identify problems, explore possibilities, make decisions, communicate ideas, collaborate, experiment and turn thinking into action.</p>
@@ -312,7 +334,7 @@ export const HOME_HTML = `
         <span style="font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(243,217,139,.7)">Scroll to advance</span>
       </div>
 
-      <div style="position:relative;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:clamp(6px,.8vw,14px)">
+      <div data-m="pipe-grid" style="position:relative;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:clamp(6px,.8vw,14px)">
         <span style="position:absolute;left:0;right:0;top:26px;height:1px;background:rgba(236,253,245,.14)"></span>
         <span style="position:absolute;left:0;top:26px;height:1px;width:calc(var(--pp,0) * 100%);background:linear-gradient(90deg,#D4AF37,#F3D98B)"></span>
         <span style="display:flex;flex-direction:column;gap:16px"><span style="width:12px;height:12px;margin-top:20px;border-radius:50%;border:1px solid rgba(243,217,139,.5);background:color-mix(in oklab, #F3D98B calc(var(--s0,0) * 100%), transparent);transform:scale(calc(1 + var(--s0,0) * .35));transition:background .4s ease,transform .4s cubic-bezier(.2,.7,.2,1)"></span><span style="display:flex;flex-direction:column;gap:5px;opacity:calc(.26 + .74 * var(--s0,0));transition:opacity .5s ease"><span style="font-family:'Space Grotesk',monospace;font-size:9px;letter-spacing:.2em;color:rgba(243,217,139,.8)">01</span><span style="font-size:clamp(11px,1.15vw,16px);font-weight:700;letter-spacing:-.01em;color:#ECFDF5">Observe</span></span></span>
@@ -325,7 +347,7 @@ export const HOME_HTML = `
         <span style="display:flex;flex-direction:column;gap:16px"><span style="width:12px;height:12px;margin-top:20px;border-radius:50%;border:1px solid rgba(243,217,139,.5);background:color-mix(in oklab, #F3D98B calc(var(--s7,0) * 100%), transparent);transform:scale(calc(1 + var(--s7,0) * .35));transition:background .4s ease,transform .4s cubic-bezier(.2,.7,.2,1)"></span><span style="display:flex;flex-direction:column;gap:5px;opacity:calc(.26 + .74 * var(--s7,0));transition:opacity .5s ease"><span style="font-family:'Space Grotesk',monospace;font-size:9px;letter-spacing:.2em;color:rgba(243,217,139,.8)">08</span><span style="font-size:clamp(11px,1.15vw,16px);font-weight:700;letter-spacing:-.01em;color:#ECFDF5">Act</span></span></span>
       </div>
 
-      <div style="margin-top:clamp(38px,6vh,76px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,64px);align-items:end">
+      <div data-m="pair" style="margin-top:clamp(38px,6vh,76px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(20px,4vw,64px);align-items:end">
         <p style="font-size:clamp(18px,2vw,29px);line-height:1.24;letter-spacing:-.02em;font-weight:700;color:rgba(236,253,245,.48);opacity:var(--s6,0);transform:translate3d(0,calc((1 - var(--s6,0)) * 14px),0);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)">You do not need to already have a business idea.</p>
         <p style="font-size:clamp(20px,2.3vw,35px);line-height:1.18;letter-spacing:-.024em;font-weight:800;color:#F3D98B;opacity:var(--s7,0);transform:translate3d(0,calc((1 - var(--s7,0)) * 14px),0);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)">You need the opportunity to explore what you are capable of.</p>
       </div>
@@ -531,7 +553,7 @@ export const HOME_HTML = `
       <span style="font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#4C5A54">Ideas grow. Students grow too.</span>
     </div>
 
-    <div style="display:grid;grid-template-columns:minmax(0,clamp(180px,20vw,280px)) minmax(0,1fr);gap:clamp(18px,3vw,48px);align-items:center">
+    <div data-m="tit-grid" style="display:grid;grid-template-columns:minmax(0,clamp(180px,20vw,280px)) minmax(0,1fr);gap:clamp(18px,3vw,48px);align-items:center">
       <div style="position:relative;aspect-ratio:1/1;max-height:44vh;border:1px solid rgba(6,61,53,.14);background:#FFFFFF">
         <span style="position:absolute;left:12px;top:10px;font-family:'Space Grotesk',monospace;font-size:8.5px;letter-spacing:.22em;text-transform:uppercase;color:#4C5A54">The idea</span>
         <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" aria-hidden="true" style="width:100%;height:100%">
@@ -657,7 +679,7 @@ export const HOME_HTML = `
 </section>
 
 <section style="position:relative;padding:clamp(56px,8vh,96px) clamp(20px,5vw,72px);background:#FFFFFF;border-top:1px solid rgba(6,61,53,.08)">
-  <div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(24px,4vw,72px);align-items:start">
+  <div data-m="pair" style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(24px,4vw,72px);align-items:start">
     <p data-rv="0" style="font-size:clamp(19px,2vw,27px);line-height:1.4;letter-spacing:-.018em;font-weight:700;color:#071F1B;opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">Students grow differently when they get the opportunity to apply what they know.</p>
     <div data-rv="120" style="opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">
       <p style="font-size:17px;line-height:1.68;color:#3D4A45;margin-bottom:20px">Youngpreneurs creates structured experiences where students move beyond understanding concepts to using their thinking in practical situations.</p>
@@ -675,7 +697,7 @@ export const HOME_HTML = `
 <section data-screen-label="11 Impact" style="position:relative;padding:clamp(72px,11vh,132px) clamp(20px,5vw,72px);background:linear-gradient(#FFFDF6,#FFF7DF);border-top:1px solid rgba(212,175,55,.32)">
   <div style="max-width:1400px;margin:0 auto">
     <span style="display:block;font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#8A6D24;margin-bottom:clamp(30px,5vh,54px)">Where the ecosystem stands</span>
-    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,2vw,36px)">
+    <div data-m="impact" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(14px,2vw,36px)">
       <div data-rv="0" style="display:flex;flex-direction:column;gap:10px;padding-top:22px;border-top:1px solid rgba(6,61,53,.16);opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">
         <span style="font-size:clamp(38px,6.6vw,104px);line-height:.86;letter-spacing:-.05em;font-weight:800;color:#063D35;font-variant-numeric:tabular-nums"><span data-to="5000">5,000</span>+</span>
         <span style="font-family:'Space Grotesk',monospace;font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:#4C5A54">Students</span>
@@ -706,7 +728,7 @@ export const HOME_HTML = `
         <span style="font-family:'Space Grotesk',monospace;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:rgba(243,217,139,.62)">Not against · alongside</span>
       </div>
 
-      <div style="flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:clamp(14px,2vw,40px)">
+      <div data-m="hai-grid" style="flex:1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr);align-items:center;gap:clamp(14px,2vw,40px)">
         <div style="display:flex;flex-direction:column;gap:12px;transform:translate3d(calc((1 - var(--cp,0)) * -7vw),0,0);transition:transform .3s linear">
           <span style="font-family:'Space Grotesk',monospace;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#38BDF8;padding-bottom:10px;border-bottom:1px solid rgba(37,99,235,.3)">AI</span>
           <span style="font-size:clamp(13px,1.3vw,18px);font-weight:600;color:rgba(236,253,245,.6)">Speed</span>
@@ -745,7 +767,7 @@ export const HOME_HTML = `
 </section>
 
 <section style="position:relative;padding:clamp(56px,8vh,96px) clamp(20px,5vw,72px);background:#04211D;border-top:1px solid rgba(236,253,245,.08)">
-  <div style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(24px,4vw,72px);align-items:start">
+  <div data-m="pair" style="max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:clamp(24px,4vw,72px);align-items:start">
     <p data-rv="0" style="font-size:clamp(18px,1.9vw,26px);line-height:1.4;letter-spacing:-.018em;font-weight:700;color:#ECFDF5;opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">Because as technology becomes more capable, human judgement, creativity, communication, leadership, empathy, adaptability and original thinking become even more important.</p>
     <div data-rv="120" style="opacity:var(--rv,1);transform:translate3d(0,var(--rvy,0px),0);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)">
       <p style="font-size:16.5px;line-height:1.68;color:rgba(236,253,245,.6);margin-bottom:20px">Youngpreneurs encourages students to understand and use AI as a powerful tool — while continuing to strengthen the capabilities that make their own thinking valuable.</p>

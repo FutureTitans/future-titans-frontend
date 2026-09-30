@@ -30,6 +30,24 @@ export function initHome(root) {
 
   root.style.setProperty('--wash', PHOTO_WASH);
 
+  // ── Mobile burger + menu ─────────────────────────────────────────────
+  const burger = q('[data-m="burger"]');
+  const menu = q('[data-m="menu"]');
+  if (burger && menu) {
+    let open = false;
+    const setOpen = (v) => {
+      open = !!v;
+      root.style.setProperty('--menu', open ? 1 : 0);
+      root.style.setProperty('--menuPe', open ? 'auto' : 'none');
+      menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+      try { document.body.style.overflow = open ? 'hidden' : ''; } catch {}
+    };
+    on(burger, 'click', () => setOpen(!open));
+    list('[data-m-link]').forEach((a) => on(a, 'click', () => setOpen(false)));
+    on(window, 'resize', () => { if (open && window.innerWidth > 1080) setOpen(false); });
+  }
+
   // ── Hover targets (--h) ──────────────────────────────────────────────
   list('[data-hv]').forEach((el) => {
     on(el, 'mouseenter', () => el.style.setProperty('--h', 1));

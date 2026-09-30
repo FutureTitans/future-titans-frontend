@@ -1,4 +1,4 @@
-import PublicNavbar from '@/components/shared/PublicNavbar';
+import LandingNavbar from '@/components/shared/LandingNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 import FoundersSection from '@/components/success-stories/FoundersCarousel';
 
@@ -18,8 +18,8 @@ const KEYFRAMES = `
 .ss-wrap [data-reveal]{opacity:1 !important;transform:none !important}
 .ss-wrap a{color:#0E4B3A;text-decoration:none}
 .ss-wrap ::selection{background:#0E4B3A;color:#fff}
-@media (max-width:980px){.ss-wrap [data-rsp~="cols"]{grid-template-columns:1fr !important}.ss-wrap [data-rsp~="hidesm"]{display:none !important}.ss-wrap [data-rsp~="stack"]{flex-direction:column !important;align-items:flex-start !important}}
-@media (max-width:640px){.ss-wrap [data-rsp~="two"]{grid-template-columns:1fr !important}}
+@media (max-width:980px){.ss-wrap [data-rsp~="cols"]{grid-template-columns:1fr !important}.ss-wrap [data-rsp~="hidesm"]{display:none !important}.ss-wrap [data-rsp~="stack"]{flex-direction:column !important;align-items:flex-start !important}.ss-wrap [data-rsp~="full"]{width:100% !important;max-width:100% !important}}
+@media (max-width:640px){.ss-wrap [data-rsp~="two"]{grid-template-columns:1fr !important}.ss-wrap section{padding-left:16px !important;padding-right:16px !important}.ss-wrap h1{font-size:clamp(38px,10vw,52px) !important;line-height:1 !important}.ss-wrap h2{font-size:clamp(30px,8vw,42px) !important;line-height:1.06 !important}}
 @media (prefers-reduced-motion:reduce){.ss-wrap *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
 `;
 
@@ -332,7 +332,7 @@ const CONTENT_HTML_BOTTOM = `
 export default function SuccessStories() {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavbar />
+      <LandingNavbar />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
       <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />
       <div

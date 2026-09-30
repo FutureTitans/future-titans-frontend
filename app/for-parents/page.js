@@ -1,4 +1,4 @@
-import PublicNavbar from '@/components/shared/PublicNavbar';
+import LandingNavbar from '@/components/shared/LandingNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 
 export const metadata = { title: 'For Parents | Youngpreneurs' };
@@ -353,7 +353,7 @@ const CONTENT_HTML = `
 export default function ForParents() {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavbar />
+      <LandingNavbar />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" />
       <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />
       <div

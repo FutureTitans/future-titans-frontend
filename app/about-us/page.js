@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import PublicNavbar from '@/components/shared/PublicNavbar';
+import LandingNavbar from '@/components/shared/LandingNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 
 export const metadata = { title: 'About Us | Youngpreneurs' };
@@ -8,7 +8,7 @@ export const metadata = { title: 'About Us | Youngpreneurs' };
 export default function AboutUs() {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavbar />
+      <LandingNavbar />
 
       <section className="relative w-full overflow-hidden pt-16 lg:pt-[72px] bg-[#0A101D]">
         <Image src="/images/yp/about-hero-new.png" alt="About Us Hero" width={1920} height={1080} className="w-full h-auto object-cover" priority />

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import PublicNavbar from '@/components/shared/PublicNavbar';
+import LandingNavbar from '@/components/shared/LandingNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 import { Phone, Mail, Calendar } from 'lucide-react';
 
@@ -42,7 +42,7 @@ export default function Contact() {
 
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavbar />
+      <LandingNavbar />
 
       <section className="relative w-full h-[60vh] min-h-[400px] overflow-hidden">
         <Image src="/images/yp/contactHeaderBg.jpg" alt="Contact" fill className="object-cover" priority />

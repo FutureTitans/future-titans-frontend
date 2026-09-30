@@ -1,4 +1,4 @@
-import PublicNavbar from '@/components/shared/PublicNavbar';
+import LandingNavbar from '@/components/shared/LandingNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 
 export const metadata = { title: 'For Schools | Youngpreneurs' };
@@ -20,10 +20,30 @@ const KEYFRAMES = `
 .fs-wrap a{color:#0F3B2E;text-decoration:none}
 .fs-wrap ::selection{background:rgba(201,162,39,.28)}
 @media (prefers-reduced-motion: reduce){.fs-wrap *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
+@media (max-width:900px){
+  .fs-wrap [data-hero]{min-height:100svh !important;padding:calc(88px + env(safe-area-inset-top,0px)) 20px calc(64px + env(safe-area-inset-bottom,0px)) !important}
+  .fs-wrap [data-hero-grid]{gap:36px !important}
+  .fs-wrap [data-steps-grid]{gap:24px !important;max-width:640px !important}
+  .fs-wrap [data-sticky-col]{position:static !important;flex:1 1 100% !important;max-width:none !important;top:auto !important}
+  .fs-wrap [data-panel]{padding:16px !important;border-radius:24px !important}
+  .fs-wrap [data-panel-ring]{width:88px !important;height:88px !important;margin:0 auto 14px !important}
+  .fs-wrap [data-ghost-num]{font-size:30px !important}
+  .fs-wrap [data-glyph-box]{width:34px !important;height:34px !important;border-radius:11px !important}
+  .fs-wrap [data-glyph-box] svg{width:18px !important;height:18px !important}
+  .fs-wrap [data-panel-rail]{flex-direction:row !important;flex:1 1 auto !important;gap:2px !important;min-width:0}
+  .fs-wrap [data-panel-rail] > a{flex:1 1 0 !important;min-width:0;flex-direction:column !important;height:44px !important;padding:6px 4px !important;gap:6px !important;font-size:11px !important;justify-content:center !important;align-items:center !important;text-align:center}
+  .fs-wrap [data-panel-rail] > a > span[data-rail-bar]{display:none !important}
+  .fs-wrap [data-panel-divider]{display:none !important}
+  .fs-wrap [data-steps-col]{flex:1 1 100% !important;min-width:0 !important;gap:16px !important}
+  .fs-wrap [data-steps-col] article{padding:22px !important;border-radius:22px !important}
+  .fs-wrap [data-steps-col] article h3{font-size:20px !important}
+  .fs-wrap [data-steps-col] article p{font-size:15px !important;line-height:1.66 !important}
+  .fs-wrap [data-steps-col] article > span:first-child{font-size:76px !important;top:-16px !important;right:6px !important}
+}
 `;
 
 const CONTENT_HTML = `
-<section style="position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;min-height:min(100svh,940px);padding:clamp(120px,15vh,180px) clamp(20px,5vw,80px) clamp(96px,14vh,170px);background:linear-gradient(155deg,#0A2E24 0%,#0F3B2E 52%,#123F31 100%)">
+<section data-hero style="position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;min-height:min(100svh,940px);padding:clamp(120px,15vh,180px) clamp(20px,5vw,80px) clamp(96px,14vh,170px);background:linear-gradient(155deg,#0A2E24 0%,#0F3B2E 52%,#123F31 100%)">
   <div aria-hidden="true" style="position:absolute;inset:0;background-image:radial-gradient(rgba(225,199,106,.16) 1px,transparent 1px);background-size:28px 28px;animation:ypDrift 90s linear infinite;mask-image:radial-gradient(120% 90% at 30% 20%,#000 20%,transparent 75%);-webkit-mask-image:radial-gradient(120% 90% at 30% 20%,#000 20%,transparent 75%)"></div>
   <div aria-hidden="true" style="position:absolute;top:-12%;left:-8%;width:44vw;height:44vw;max-width:620px;max-height:620px;border-radius:50%;background:radial-gradient(circle,rgba(22,74,58,.85),rgba(10,46,36,0) 68%);filter:blur(14px)"></div>
   <div aria-hidden="true" style="position:absolute;bottom:-18%;right:-6%;width:38vw;height:38vw;max-width:520px;max-height:520px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.22),rgba(201,162,39,0) 66%);filter:blur(22px)"></div>
@@ -101,58 +121,58 @@ const CONTENT_HTML = `
   <div aria-hidden="true" style="position:absolute;top:14%;right:-14%;width:42vw;height:42vw;max-width:560px;max-height:560px;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.10),rgba(201,162,39,0) 68%)"></div>
   <div aria-hidden="true" style="position:absolute;inset:0;background-image:radial-gradient(rgba(15,59,46,.09) 1px,transparent 1px);background-size:30px 30px;mask-image:radial-gradient(90% 60% at 12% 85%,#000,transparent 70%);-webkit-mask-image:radial-gradient(90% 60% at 12% 85%,#000,transparent 70%);opacity:.7"></div>
 
-  <div style="position:relative;display:flex;flex-wrap:wrap;align-items:flex-start;gap:clamp(28px,4vw,64px);max-width:1320px;margin:0 auto">
-    <div style="flex:1 1 330px;max-width:430px;min-width:min(100%,280px);position:sticky;top:clamp(96px,12vh,140px);align-self:flex-start">
+  <div data-steps-grid style="position:relative;display:flex;flex-wrap:wrap;align-items:flex-start;gap:clamp(28px,4vw,64px);max-width:1320px;margin:0 auto">
+    <div data-sticky-col style="flex:1 1 330px;max-width:430px;min-width:min(100%,280px);position:sticky;top:clamp(96px,12vh,140px);align-self:flex-start">
       <div data-reveal>
-        <div style="position:relative;overflow:hidden;padding:clamp(26px,3vw,38px);border-radius:30px;background:linear-gradient(160deg,#0A2E24 0%,#0F3B2E 58%,#164A3A 100%);box-shadow:0 60px 110px -60px rgba(10,46,36,.75),inset 0 0 0 1px rgba(225,199,106,.16)">
+        <div data-panel style="position:relative;overflow:hidden;padding:clamp(26px,3vw,38px);border-radius:30px;background:linear-gradient(160deg,#0A2E24 0%,#0F3B2E 58%,#164A3A 100%);box-shadow:0 60px 110px -60px rgba(10,46,36,.75),inset 0 0 0 1px rgba(225,199,106,.16)">
           <div aria-hidden="true" style="position:absolute;inset:0;background-image:radial-gradient(rgba(225,199,106,.14) 1px,transparent 1px);background-size:22px 22px;opacity:.7"></div>
           <div aria-hidden="true" style="position:absolute;top:-40%;right:-30%;width:80%;aspect-ratio:1/1;border-radius:50%;background:radial-gradient(circle,rgba(201,162,39,.22),rgba(201,162,39,0) 66%);animation:ypGlow 11s ease-in-out infinite"></div>
 
-          <div style="position:relative;display:grid;place-items:center;width:clamp(150px,17vw,190px);height:clamp(150px,17vw,190px);margin:0 auto clamp(20px,2.6vw,30px)">
+          <div data-panel-ring style="position:relative;display:grid;place-items:center;width:clamp(150px,17vw,190px);height:clamp(150px,17vw,190px);margin:0 auto clamp(20px,2.6vw,30px)">
             <svg viewBox="0 0 160 160" style="position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)">
               <circle cx="80" cy="80" r="64" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="3"></circle>
               <circle cx="80" cy="80" r="64" fill="none" stroke="#C9A227" stroke-width="3" stroke-linecap="round" stroke-dasharray="402.1" stroke-dashoffset="321.7" style="filter:drop-shadow(0 0 8px rgba(201,162,39,.6))"></circle>
               <circle cx="80" cy="80" r="74" fill="none" stroke="rgba(225,199,106,.22)" stroke-width="1" stroke-dasharray="2 8" style="transform-origin:80px 80px;animation:ypSpin 60s linear infinite"></circle>
             </svg>
-            <span style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(42px,4.6vw,64px);line-height:1;letter-spacing:-.04em;background-image:linear-gradient(140deg,#E1C76A,#C9A227);-webkit-background-clip:text;background-clip:text;color:transparent">01</span>
-            <span aria-hidden="true" style="position:absolute;top:2px;right:2px;display:grid;place-items:center;width:clamp(42px,5vw,52px);height:clamp(42px,5vw,52px);border-radius:16px;background:linear-gradient(150deg,#164A3A,#0A2E24);border:1px solid rgba(225,199,106,.34);box-shadow:0 16px 30px -18px rgba(0,0,0,.8)">
+            <span data-ghost-num style="font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(42px,4.6vw,64px);line-height:1;letter-spacing:-.04em;background-image:linear-gradient(140deg,#E1C76A,#C9A227);-webkit-background-clip:text;background-clip:text;color:transparent">01</span>
+            <span data-glyph-box aria-hidden="true" style="position:absolute;top:2px;right:2px;display:grid;place-items:center;width:clamp(42px,5vw,52px);height:clamp(42px,5vw,52px);border-radius:16px;background:linear-gradient(150deg,#164A3A,#0A2E24);border:1px solid rgba(225,199,106,.34);box-shadow:0 16px 30px -18px rgba(0,0,0,.8)">
               <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#E1C76A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"></path><path d="M6 4h11l-2.4 4L17 12H6"></path></svg>
             </span>
           </div>
 
-          <div style="position:relative;display:flex;flex-direction:column;gap:2px">
+          <div data-panel-rail style="position:relative;display:flex;flex-direction:column;gap:2px">
             <a href="#yp-step-1" style="display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;color:#C9A227">
               <span style="display:block;width:9px;height:9px;flex:0 0 auto;border-radius:50%;border:1px solid #C9A227;background:#C9A227;box-shadow:0 0 0 4px rgba(201,162,39,.18);transform:scale(1.25)"></span>
-              <span style="display:block;height:1px;width:26px;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
+              <span data-rail-bar style="display:block;height:1px;width:26px;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
               <span>01</span>
             </a>
             <a href="#yp-step-2" style="display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;color:rgba(255,255,255,.5)">
               <span style="display:block;width:9px;height:9px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(225,199,106,.35);background:transparent"></span>
-              <span style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
+              <span data-rail-bar style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
               <span>02</span>
             </a>
             <a href="#yp-step-3" style="display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;color:rgba(255,255,255,.5)">
               <span style="display:block;width:9px;height:9px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(225,199,106,.35);background:transparent"></span>
-              <span style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
+              <span data-rail-bar style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
               <span>03</span>
             </a>
             <a href="#yp-step-4" style="display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;color:rgba(255,255,255,.5)">
               <span style="display:block;width:9px;height:9px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(225,199,106,.35);background:transparent"></span>
-              <span style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
+              <span data-rail-bar style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
               <span>04</span>
             </a>
             <a href="#yp-step-5" style="display:flex;align-items:center;gap:14px;padding:11px 10px;border-radius:12px;font-family:'Sora',sans-serif;font-weight:700;font-size:14px;letter-spacing:.1em;color:rgba(255,255,255,.5)">
               <span style="display:block;width:9px;height:9px;flex:0 0 auto;border-radius:50%;border:1px solid rgba(225,199,106,.35);background:transparent"></span>
-              <span style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
+              <span data-rail-bar style="display:block;height:1px;width:10px;opacity:.4;background:linear-gradient(90deg,#E1C76A,rgba(225,199,106,0))"></span>
               <span>05</span>
             </a>
           </div>
-          <div aria-hidden="true" style="position:relative;margin-top:clamp(18px,2.4vw,26px);height:1px;background:linear-gradient(90deg,rgba(225,199,106,.5),rgba(225,199,106,0))"></div>
+          <div data-panel-divider aria-hidden="true" style="position:relative;margin-top:clamp(18px,2.4vw,26px);height:1px;background:linear-gradient(90deg,rgba(225,199,106,.5),rgba(225,199,106,0))"></div>
         </div>
       </div>
     </div>
 
-    <div style="flex:1 1 560px;min-width:min(100%,280px);display:flex;flex-direction:column;gap:clamp(18px,2.4vw,30px)">
+    <div data-steps-col style="flex:1 1 560px;min-width:min(100%,280px);display:flex;flex-direction:column;gap:clamp(18px,2.4vw,30px)">
 
       <div data-reveal>
         <article id="yp-step-1" style="position:relative;overflow:hidden;padding:clamp(26px,3.2vw,44px);border:1px solid rgba(15,59,46,.10);border-radius:26px;background:linear-gradient(180deg,#FFFFFF,#FDFBF6);box-shadow:0 2px 0 rgba(15,59,46,.03)">
@@ -301,7 +321,7 @@ const CONTENT_HTML = `
 export default function ForSchools() {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavbar />
+      <LandingNavbar />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" />
       <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />
       <div

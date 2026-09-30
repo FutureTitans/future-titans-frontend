@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import PublicNavbar from '@/components/shared/PublicNavbar';
+import LandingNavbar from '@/components/shared/LandingNavbar';
 import PublicFooter from '@/components/shared/PublicFooter';
 
 export const metadata = { title: 'Academy | Youngpreneurs' };
@@ -8,7 +8,7 @@ export const metadata = { title: 'Academy | Youngpreneurs' };
 export default function Academy() {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavbar />
+      <LandingNavbar />
 
       <section className="relative w-full h-[60vh] min-h-[400px] overflow-hidden">
         <Image src="/images/yp/academy.png" alt="Academy" fill className="object-cover object-right" priority />
