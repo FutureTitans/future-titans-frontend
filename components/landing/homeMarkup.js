@@ -38,22 +38,21 @@ export const HOME_HTML = `
 
 <header style="position:fixed;top:0;left:0;right:0;z-index:110;padding:calc(20px - var(--nav,0) * 8px) 0;transition:padding .45s cubic-bezier(.2,.7,.2,1)">
   <div style="max-width:1460px;margin:0 auto;padding:0 clamp(16px,3.4vw,48px)">
-    <div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,34px);padding:10px 12px 10px 20px;border-radius:100px;background:rgba(255,255,255,calc(.04 + .93 * var(--nav,0)));backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(212,175,55,calc(.3 - .16 * var(--nav,0)));box-shadow:0 calc(var(--nav,0) * 16px) calc(var(--nav,0) * 40px) rgba(6,61,53,calc(var(--nav,0) * .09));transition:background .55s ease,border-color .55s ease,box-shadow .55s ease">
+    <div style="display:flex;align-items:center;gap:clamp(8px,1.5vw,34px);padding:10px 12px 10px 20px;border-radius:100px;background:linear-gradient(135deg,#063D35,#0A5A4A);backdrop-filter:blur(20px) saturate(1.4);border:1px solid rgba(212,175,55,.35);box-shadow:0 12px 32px rgba(6,61,53,.22)">
       <a href="#top" style="position:relative;display:block;width:clamp(122px,12.5vw,182px);height:28px;flex:none">
-        <img src="/images/yp-landing/yp-logo-gold.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:left center;opacity:calc(1 - var(--nav,0));transition:opacity .5s ease">
-        <img src="/images/yp-landing/yp-logo-green.png" alt="Youngpreneurs — Mindset is the ultimate edge" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:left center;opacity:var(--nav,0);transition:opacity .5s ease">
+        <img src="/images/yp-landing/yp-logo-gold.png" alt="Youngpreneurs — Mindset is the ultimate edge" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;object-position:left center">
       </a>
       <nav aria-label="Primary" style="display:flex;align-items:center;gap:clamp(7px,1.15vw,23px);margin-left:auto;font-size:13.5px;font-weight:600;letter-spacing:.01em">
-        <a href="#about" data-href="/about" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">About</a>
-        <a href="/future-titans" data-href="/future-titans" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Future Titans</a>
-        <a href="#students" data-href="/students" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Students</a>
-        <a href="#parents" data-href="/parents" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Parents</a>
-        <a href="/for-schools" data-href="/for-schools" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Schools</a>
-        <a href="/success-stories" data-href="/success-stories" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Success Stories</a>
-        <a href="/media" data-href="/media" style="color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);padding:6px 2px;white-space:nowrap;transition:color .5s ease,opacity .3s ease" data-style-hover="opacity:.62">Media</a>
+        <a href="#about" data-href="/about" style="color:#F1EFE4;padding:6px 2px;white-space:nowrap;transition:opacity .3s ease" data-style-hover="opacity:.62">About</a>
+        <a href="/future-titans" data-href="/future-titans" style="color:#F1EFE4;padding:6px 2px;white-space:nowrap;transition:opacity .3s ease" data-style-hover="opacity:.62">Future Titans</a>
+        <a href="#students" data-href="/students" style="color:#F1EFE4;padding:6px 2px;white-space:nowrap;transition:opacity .3s ease" data-style-hover="opacity:.62">Students</a>
+        <a href="#parents" data-href="/parents" style="color:#F1EFE4;padding:6px 2px;white-space:nowrap;transition:opacity .3s ease" data-style-hover="opacity:.62">Parents</a>
+        <a href="/for-schools" data-href="/for-schools" style="color:#F1EFE4;padding:6px 2px;white-space:nowrap;transition:opacity .3s ease" data-style-hover="opacity:.62">Schools</a>
+        <a href="/success-stories" data-href="/success-stories" style="color:#F1EFE4;padding:6px 2px;white-space:nowrap;transition:opacity .3s ease" data-style-hover="opacity:.62">Success Stories</a>
+        <a href="/media" data-href="/media" style="color:#F1EFE4;padding:6px 2px;white-space:nowrap;transition:opacity .3s ease" data-style-hover="opacity:.62">Media</a>
       </nav>
       <div data-login="data-login" style="position:relative;flex:none">
-        <button data-login-toggle="data-login-toggle" type="button" style="display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:100px;border:1px solid rgba(6,61,53,calc(.18 + .3 * var(--nav,0)));background:rgba(255,255,255,calc(.06 + .35 * var(--nav,0)));color:color-mix(in oklab, #F1EFE4 calc((1 - var(--nav,0)) * 100%), #123F30);font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;cursor:pointer;transition:background .4s ease,border-color .4s ease,color .5s ease">Login <span data-login-caret="data-login-caret" style="display:inline-block;font-size:9px;transition:transform .3s ease">▾</span></button>
+        <button data-login-toggle="data-login-toggle" type="button" style="display:inline-flex;align-items:center;gap:7px;padding:11px 18px;border-radius:100px;border:1px solid rgba(243,217,139,.4);background:rgba(255,255,255,.08);color:#F3D98B;font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;cursor:pointer;transition:background .3s ease,border-color .3s ease">Login <span data-login-caret="data-login-caret" style="display:inline-block;font-size:9px;transition:transform .3s ease">▾</span></button>
         <div data-login-menu="data-login-menu" style="position:absolute;top:calc(100% + 12px);right:0;min-width:210px;padding:8px;background:#FFFFFF;border:1px solid rgba(6,61,53,.1);border-radius:18px;box-shadow:0 20px 44px rgba(6,61,53,.16);opacity:0;pointer-events:none;transform:translateY(-6px);transition:opacity .25s ease,transform .25s ease;z-index:120">
           <a href="/login" data-href="/login" style="display:block;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:600;color:#063D35;text-decoration:none;transition:background .2s ease" data-style-hover="background:#F5FFFB">Student Login</a>
           <a href="/school-poc/login" data-href="/school-poc/login" style="display:block;padding:11px 14px;border-radius:12px;font-size:13px;font-weight:600;color:#063D35;text-decoration:none;transition:background .2s ease" data-style-hover="background:#F5FFFB">School POC Login</a>
@@ -61,9 +60,9 @@ export const HOME_HTML = `
         </div>
       </div>
       <a href="#start" data-href="/start" data-hv="1" style="flex:none;display:inline-flex;align-items:center;gap:9px;padding:12px 20px;border-radius:100px;background:linear-gradient(135deg,#063D35,#087A61);color:#ECFDF5;font-family:'Space Grotesk',monospace;font-size:10.5px;font-weight:500;letter-spacing:.19em;text-transform:uppercase;border:1px solid rgba(243,217,139,calc(.3 + .5 * var(--h,0)));transform:translate3d(0,calc(var(--h,0) * -2px),0);box-shadow:0 calc(var(--h,0) * 12px) calc(var(--h,0) * 26px) rgba(6,61,53,calc(var(--h,0) * .3));transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s ease,border-color .35s ease">Start your journey <span style="transform:translate3d(calc(var(--h,0) * 4px),0,0);transition:transform .35s cubic-bezier(.2,.7,.2,1)">→</span></a>
-      <button data-m="burger" type="button" aria-label="Menu" aria-expanded="false" style="display:none;flex:none;margin-left:auto;width:44px;height:44px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,calc(.08 + .6 * max(var(--nav,0), var(--menu,0))));border:1px solid rgba(212,175,55,.42);transition:background .45s ease">
-        <span style="display:block;width:18px;height:1.5px;border-radius:2px;background:color-mix(in oklab, #F1EFE4 calc((1 - max(var(--nav,0), var(--menu,0))) * 100%), #063D35);transform:translate3d(0,calc(var(--menu,0) * 3.25px),0) rotate(calc(var(--menu,0) * 45deg));transition:transform .45s cubic-bezier(.2,.7,.2,1),background .45s ease"></span>
-        <span style="display:block;width:18px;height:1.5px;border-radius:2px;background:color-mix(in oklab, #F1EFE4 calc((1 - max(var(--nav,0), var(--menu,0))) * 100%), #063D35);transform:translate3d(0,calc(var(--menu,0) * -3.25px),0) rotate(calc(var(--menu,0) * -45deg));transition:transform .45s cubic-bezier(.2,.7,.2,1),background .45s ease"></span>
+      <button data-m="burger" type="button" aria-label="Menu" aria-expanded="false" style="display:none;flex:none;margin-left:auto;width:44px;height:44px;border-radius:50%;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:rgba(255,255,255,calc(.08 + .55 * var(--menu,0)));border:1px solid rgba(212,175,55,.42);transition:background .45s ease">
+        <span style="display:block;width:18px;height:1.5px;border-radius:2px;background:color-mix(in oklab, #F1EFE4 calc((1 - var(--menu,0)) * 100%), #063D35);transform:translate3d(0,calc(var(--menu,0) * 3.25px),0) rotate(calc(var(--menu,0) * 45deg));transition:transform .45s cubic-bezier(.2,.7,.2,1),background .45s ease"></span>
+        <span style="display:block;width:18px;height:1.5px;border-radius:2px;background:color-mix(in oklab, #F1EFE4 calc((1 - var(--menu,0)) * 100%), #063D35);transform:translate3d(0,calc(var(--menu,0) * -3.25px),0) rotate(calc(var(--menu,0) * -45deg));transition:transform .45s cubic-bezier(.2,.7,.2,1),background .45s ease"></span>
       </button>
     </div>
   </div>
@@ -175,26 +174,26 @@ export const HOME_HTML = `
   <div style="position:relative;mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)">
     <div style="display:flex;width:max-content;animation:ypMarquee 46s linear infinite">
       <div style="display:flex;align-items:center;gap:clamp(34px,5vw,76px);padding-right:clamp(34px,5vw,76px)">
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">The Statesman</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">Business Standard</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">BW Business World</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">The Economic Times</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">CNBC Awaz</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">Entrepreneur India</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">The Telegraph</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">IBNS</span>
-        <span data-hv="1" style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:color-mix(in oklab, #7C8A84 calc((1 - var(--h,0)) * 100%), #063D35);transition:color .45s ease">The Times of India</span>
+        <img data-hv="1" src="/images/yp/statesman.png" alt="The Statesman" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/businesStandard.png" alt="Business Standard" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/bussinessworld.png" alt="BW Business World" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/et.png" alt="The Economic Times" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/cnbc.png" alt="CNBC Awaz" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/enterpreneurIndia.png" alt="Entrepreneur India" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/telegraph.png" alt="The Telegraph" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/ibns.png" alt="IBNS" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
+        <img data-hv="1" src="/images/yp/ttoi.png" alt="The Times of India" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(calc(.55 + .45 * var(--h,0)));transition:filter .45s ease">
       </div>
       <div aria-hidden="true" style="display:flex;align-items:center;gap:clamp(34px,5vw,76px);padding-right:clamp(34px,5vw,76px)">
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">The Statesman</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">Business Standard</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">BW Business World</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">The Economic Times</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">CNBC Awaz</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">Entrepreneur India</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">The Telegraph</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">IBNS</span>
-        <span style="font-size:clamp(19px,2.2vw,29px);font-weight:700;letter-spacing:-.02em;white-space:nowrap;color:#7C8A84">The Times of India</span>
+        <img src="/images/yp/statesman.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/businesStandard.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/bussinessworld.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/et.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/cnbc.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/enterpreneurIndia.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/telegraph.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/ibns.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
+        <img src="/images/yp/ttoi.png" alt="" style="height:clamp(36px,4.6vw,58px);width:auto;object-fit:contain;filter:grayscale(1) opacity(.55)">
       </div>
     </div>
   </div>
