@@ -3,7 +3,6 @@ import Script from 'next/script';
 import './globals.css';
 import Navbar from '@/components/shared/Navbar';
 import GlobalAIChat from '@/components/student/GlobalAIChat';
-import FaceGuardWrapper from '@/components/shared/FaceGuardWrapper';
 import { Analytics } from '@vercel/analytics/next';
 
 const inter = Inter({
@@ -116,9 +115,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="bg-cream text-neutral-dark antialiased">
         <Navbar />
-        <FaceGuardWrapper>
-          <main id="main-content">{children}</main>
-        </FaceGuardWrapper>
+        <main id="main-content">{children}</main>
         <GlobalAIChat />
         <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" />
         <Analytics />

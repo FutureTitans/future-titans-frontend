@@ -8,7 +8,6 @@ import { BookOpen, Play, CheckCircle, ArrowLeft, ArrowRight, Trophy, Target, Lig
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import AIChatComponent from '@/components/student/AIChat';
 import ChapterQuiz from '@/components/student/ChapterQuiz';
-import ModuleFaceGuard from '@/components/shared/ModuleFaceGuard';
 import TopupPopup from '@/components/student/TopupPopup';
 
 export default function ModulePlayerPage() {
@@ -401,7 +400,6 @@ export default function ModulePlayerPage() {
   const isCompleted = chapterCompleted[currentChapterData?._id];
 
   return (
-    <ModuleFaceGuard>
     <div className="min-h-[calc(100dvh-4rem)] bg-[#FDFDFD] font-sans text-gray-900 pb-12 flex flex-col">
       <div className="bg-[#FDFDFD] sticky top-16 z-40 border-b border-gray-100">
         <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-3 sm:py-4 flex justify-between items-center gap-3 sm:gap-4">
@@ -707,6 +705,5 @@ export default function ModulePlayerPage() {
         </div>
       )}
     </div>
-    </ModuleFaceGuard>
   );
 }
