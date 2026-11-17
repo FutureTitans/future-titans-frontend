@@ -33,16 +33,8 @@ const KEYFRAMES = `
 .mp-wrap [data-stat]{transition:background .35s}
 .mp-wrap [data-stat]:hover{background:linear-gradient(180deg,rgba(12,64,44,1),#062618)}
 @media (prefers-reduced-motion:reduce){.mp-wrap *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}}
-@media (max-width:900px){.mp-wrap [data-hero-body]{flex-direction:column !important}.mp-wrap [data-hero-media]{position:relative !important;width:100% !important;height:280px !important;margin-top:24px}.mp-wrap [data-hero-content]{padding-top:0 !important}}
-@media (max-width:640px){.mp-wrap [data-stats]{grid-template-columns:1fr 1fr !important}.mp-wrap [data-press-header]{grid-template-columns:1fr !important}.mp-wrap [data-quote]{padding:64px 20px !important}.mp-wrap [data-quote-media]{height:220px !important}}
+@media (max-width:640px){.mp-wrap [data-press-header]{grid-template-columns:1fr !important}.mp-wrap [data-quote]{padding:64px 20px !important}.mp-wrap [data-quote-media]{height:220px !important}}
 `;
-
-const STATS = [
-  { icon: 'M3 4h18v16H3zM7 8h5v4H7zM14.5 8.5h3M14.5 11.5h3M7 16h10', num: '150+', title: 'Media Mentions', sub: 'Across leading platforms' },
-  { icon: 'M8.5 5a3 3 0 1 1 0 6 3 3 0 0 1 0-6zM16 5.6a2.6 2.6 0 1 1 0 5.2 2.6 2.6 0 0 1 0-5.2zM3 19.5c.7-3.2 2.9-5.2 5.5-5.2s4.8 2 5.5 5.2M14.4 14.3c2.8-.4 5 1.3 5.8 4.9', num: '25,000+', title: 'Students Impacted', sub: 'Through the Youngpreneurs movement' },
-  { icon: 'M2.5 20.5h19M4.5 20.5V11l7.5-4.2 7.5 4.2v9.5M12 6.8V2.6h3.2v1.8H12M10 20.5v-4h4v4', num: '1,200+', title: 'Schools Engaged', sub: 'Pan India presence' },
-  { icon: 'M7.5 3.5h9v5.5a4.5 4.5 0 0 1-9 0zM7.5 5.5H4.5a3.2 3.2 0 0 0 3.4 4.4M16.5 5.5h3a3.2 3.2 0 0 1-3.4 4.4M12 13.5v3.5M9 20.5h6M10 17h4v3.5h-4z', num: '500+', title: 'Young Changemakers', sub: 'Ideas turning into impact' },
-];
 
 const TICKER = [...MEDIA_ITEMS, ...MEDIA_ITEMS];
 
@@ -54,84 +46,9 @@ export default function Media() {
       <style dangerouslySetInnerHTML={{ __html: KEYFRAMES }} />
 
       <div className="mp-wrap">
-        {/* ─── Hero (dark green radial) ─────────────────────────────── */}
-        <section style={{ position: 'relative', isolation: 'isolate', color: '#FFFFFF', background: 'radial-gradient(1100px 760px at 76% 32%,#0C4A33 0%,#062A1D 44%,#03170F 80%)', paddingTop: 96, paddingBottom: 96, overflow: 'hidden' }}>
-          {/* Ambient background decorators */}
-          <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
-            <div style={{ position: 'absolute', left: '-4%', bottom: '6%', width: '56%', height: '62%', backgroundImage: 'radial-gradient(rgba(225,198,120,.22) 1px,transparent 1.4px)', backgroundSize: '22px 22px', WebkitMaskImage: 'radial-gradient(closest-side,#000,transparent)', maskImage: 'radial-gradient(closest-side,#000,transparent)', opacity: 0.55 }} />
-            <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(225,198,120,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(225,198,120,.05) 1px,transparent 1px)', backgroundSize: '96px 96px', WebkitMaskImage: 'linear-gradient(115deg,transparent 30%,#000 55%,transparent 85%)', maskImage: 'linear-gradient(115deg,transparent 30%,#000 55%,transparent 85%)', opacity: 0.6 }} />
-          </div>
-
-          {/* Hero image on right */}
-          <div data-hero-media aria-hidden="true" style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '58%', zIndex: 1, overflow: 'hidden', pointerEvents: 'none' }}>
-            <div style={{ position: 'absolute', inset: 0, WebkitMaskImage: 'linear-gradient(90deg,transparent 0%,#000 26%),linear-gradient(180deg,#000 62%,transparent 98%)', WebkitMaskComposite: 'source-in', maskImage: 'linear-gradient(90deg,transparent 0%,#000 26%),linear-gradient(180deg,#000 62%,transparent 98%)', maskComposite: 'intersect' }}>
-              <img src="/images/media/hero-interview.jpg" alt="Youngpreneurs student giving a media interview" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 12%' }} />
-            </div>
-            <svg width="560" height="560" viewBox="0 0 560 560" style={{ position: 'absolute', left: '19%', top: '47%', marginLeft: -280, marginTop: -280, mixBlendMode: 'screen' }}>
-              <circle cx="280" cy="280" r="96" fill="none" stroke="rgba(225,198,120,.26)" strokeWidth="1" />
-              <circle cx="280" cy="280" r="160" fill="none" stroke="rgba(225,198,120,.18)" strokeWidth="1" strokeDasharray="2 7" />
-              <circle cx="280" cy="280" r="224" fill="none" stroke="rgba(225,198,120,.12)" strokeWidth="1" />
-              <path d="M 280 40 A 240 240 0 0 1 505 200" fill="none" stroke="rgba(225,198,120,.42)" strokeWidth="1.2" />
-              <circle cx="505" cy="200" r="3" fill="#E1C678" />
-            </svg>
-          </div>
-
-          {/* Hero content */}
-          <div data-hero-body style={{ position: 'relative', zIndex: 2, maxWidth: 1280, margin: '0 auto', padding: '0 clamp(20px,4vw,48px)', display: 'flex' }}>
-            <div data-hero-content style={{ maxWidth: 760, paddingTop: 24 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <span style={{ display: 'block', width: 34, height: 1, background: '#D6A73A' }} />
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D6A73A" strokeWidth="1.5" strokeLinejoin="round" aria-hidden="true"><path d="M3 5.5c3-1 6-.7 9 1 3-1.7 6-2 9-1V19c-3-1-6-.7-9 1-3-1.7-6-2-9-1z" /><path d="M12 6.5V20" /></svg>
-                <p style={{ margin: 0, fontSize: 12.5, fontWeight: 600, letterSpacing: '.18em', color: '#E1C678' }}>AS SEEN. AS TRUSTED. AS RECOGNIZED.</p>
-              </div>
-              <h1 className="mp-serif" style={{ margin: '22px 0 0', fontWeight: 600, fontSize: 'clamp(42px,5.1vw,78px)', lineHeight: 0.98, letterSpacing: '-.005em', color: '#FFFFFF' }}>
-                <span style={{ display: 'block', color: '#FFFFFF' }}>FEATURED BY</span>
-                <span style={{ display: 'block', backgroundImage: 'linear-gradient(95deg,#F0CF7A 0%,#D6A73A 55%,#C08F27 100%)', WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent' }}>INDIA&rsquo;S LEADING</span>
-                <span style={{ display: 'block', color: '#FFFFFF' }}>MEDIA NETWORKS</span>
-              </h1>
-              <p style={{ margin: '26px 0 0', maxWidth: 500, fontSize: 'clamp(16px,1.25vw,18px)', lineHeight: 1.62, color: 'rgba(255,255,255,.85)', textWrap: 'pretty' }}>
-                From national publications to business leaders — India&rsquo;s top media platforms are recognizing the Youngpreneurs and Future Titans movement.
-              </p>
-
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 36 }}>
-                {[
-                  { title: 'Amplifying Student Voices', sub: 'Inspiration that reaches millions.', icon: <><path d="M4 10v4h3l6 4V6L7 10H4z" /><path d="M16.5 9a4 4 0 0 1 0 6" /><path d="M19 6.5a7.5 7.5 0 0 1 0 11" /></> },
-                  { title: 'Celebrating Young Changemakers', sub: 'Spotlighting ideas that shape tomorrow.', icon: <><path d="M12 2.8l2.2 1.6 2.7-.1.8 2.6 2.2 1.6-.9 2.5.9 2.5-2.2 1.6-.8 2.6-2.7-.1L12 21.2l-2.2-1.6-2.7.1-.8-2.6-2.2-1.6.9-2.5-.9-2.5 2.2-1.6.8-2.6 2.7.1z" /><path d="M12 8.6l1 2.1 2.3.3-1.7 1.6.4 2.3-2-1.1-2 1.1.4-2.3-1.7-1.6 2.3-.3z" /></> },
-                ].map((m) => (
-                  <div key={m.title} data-mod style={{ position: 'relative', flex: '1 1 250px', maxWidth: 340, display: 'flex', gap: 14, alignItems: 'flex-start', padding: '16px 18px', borderRadius: 14, border: '1px solid rgba(225,198,120,.18)', background: 'rgba(255,255,255,.035)', backdropFilter: 'blur(6px)' }}>
-                    <span aria-hidden="true" style={{ flex: 'none', width: 40, height: 40, borderRadius: '50%', border: '1px solid rgba(225,198,120,.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#E1C678' }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" strokeLinecap="round">{m.icon}</svg>
-                    </span>
-                    <span style={{ display: 'block' }}>
-                      <span style={{ display: 'block', fontSize: 15, fontWeight: 600, color: '#FFFFFF' }}>{m.title}</span>
-                      <span style={{ display: 'block', marginTop: 4, fontSize: 13.5, lineHeight: 1.45, color: 'rgba(255,255,255,.7)' }}>{m.sub}</span>
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Stat grid */}
-              <div data-stats style={{ position: 'relative', marginTop: 60, borderRadius: 18, overflow: 'hidden', background: 'rgba(225,198,120,.16)', border: '1px solid rgba(225,198,120,.22)', boxShadow: '0 18px 30px -24px rgba(3,23,15,.45)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(100%,168px),1fr))', gap: 1 }}>
-                {STATS.map((s) => (
-                  <div key={s.title} data-stat style={{ position: 'relative', background: 'linear-gradient(180deg,rgba(12,64,44,.96),#062618)', padding: '26px clamp(16px,2vw,26px) 24px' }}>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px 16px', alignItems: 'flex-start' }}>
-                      <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="#D6A73A" strokeWidth="1.2" strokeLinejoin="round" strokeLinecap="round" aria-hidden="true" style={{ flex: 'none' }}><path d={s.icon} /></svg>
-                      <div>
-                        <p style={{ margin: 0, fontSize: 'clamp(30px,2.8vw,40px)', fontWeight: 600, letterSpacing: '-.025em', lineHeight: 1, color: '#E9C66A', fontVariantNumeric: 'tabular-nums' }}>{s.num}</p>
-                        <p style={{ margin: '10px 0 0', fontSize: 15, fontWeight: 600, color: '#FFFFFF' }}>{s.title}</p>
-                        <p style={{ margin: '4px 0 0', fontSize: 13, lineHeight: 1.45, color: 'rgba(255,255,255,.66)' }}>{s.sub}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <svg aria-hidden="true" viewBox="0 0 1440 120" preserveAspectRatio="none" style={{ position: 'absolute', left: 0, bottom: -1, width: '100%', height: 'clamp(70px,9vw,128px)', zIndex: 1, display: 'block' }}>
-            <path d="M0 120 L0 74 C 320 18, 1120 18, 1440 74 L1440 120 Z" fill="#FBF9F3" />
-            <path d="M0 74 C 320 18, 1120 18, 1440 74" fill="none" stroke="rgba(214,167,58,.55)" strokeWidth="1" />
-          </svg>
+        {/* ─── Hero (image-only) ─────────────────────────────── */}
+        <section style={{ position: 'relative', width: '100%', background: '#03170F', overflow: 'hidden' }}>
+          <img src="/images/media/hero-interview.jpg" alt="Featured by India's Leading Media Networks — Youngpreneurs" style={{ display: 'block', width: '100%', height: 'auto', objectFit: 'cover' }} />
         </section>
 
         {/* ─── Media & Press header + ticker + press archive ─────── */}

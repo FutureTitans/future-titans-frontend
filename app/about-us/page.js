@@ -11,7 +11,7 @@ export default function AboutUs() {
       <LandingNavbar />
 
       <section className="relative w-full overflow-hidden pt-16 lg:pt-[72px] bg-[#0A101D]">
-        <Image src="/images/yp/about-hero-new.png" alt="About Us Hero" width={1920} height={1080} className="w-full h-auto object-cover" priority />
+        <Image src="/images/yp/about-hero-new.jpeg" alt="About Us Hero" width={1920} height={1080} className="w-full h-auto object-cover" priority />
       </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative overflow-hidden">
